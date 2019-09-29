@@ -1,0 +1,109 @@
+class Player
+{
+  name;
+  boolean isTurn;
+  int wallsLeft;
+  int position;
+  colour;
+
+public void decrementWall(){
+
+}
+public int checkWinCondition(){
+
+}
+
+public void resign(){
+
+}
+  
+}
+
+class Board
+{   
+  
+  public void movePlayer(){
+
+}
+public boolean pathExists(){
+
+}
+public void placeWall(){
+
+}
+public boolean validateMove(){
+
+}
+public boolean validateWall(){
+
+}
+      1 -> 0..20 Wall;
+     
+  1 -> 2 Player;
+}
+
+class State
+{
+int indexForListOfBoards;
+int playerTurn;
+  
+public Board startNewGame(){
+
+}
+public Board loadGame(){
+
+}
+public void saveGame(){
+
+}
+public void saveBoard(){
+
+}
+public boolean checkDraw(){
+
+}
+public Board undo(){
+
+}
+public int switchTurns(){
+
+}
+1 -> * Board;
+
+}
+
+
+class Wall
+{
+  int position;
+  direction;
+}
+
+//$?[End_of_model]$?
+
+namespace -;
+
+
+class Player
+{
+  position 504 238 109 214;
+}
+
+class Board
+{
+  position 206 495 202 41;
+  position.association Board__Wall 0,27 133,95;
+      position.association Board__State 151,0 0,19;
+  position.association Board__Player 82,0 235,214;
+}
+
+class State
+{
+  position 219 81 190 78;
+  position.association Board__State 123,75 7,0;
+}
+
+class Wall
+{
+  position 36 312 131 95;
+}
