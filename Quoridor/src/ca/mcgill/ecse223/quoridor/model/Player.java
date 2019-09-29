@@ -1,4 +1,4 @@
-package quoridor;
+package ca.mcgill.ecse223.quoridor.model;
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.29.1.4677.5b9d0a5c4 modeling language!*/
 
