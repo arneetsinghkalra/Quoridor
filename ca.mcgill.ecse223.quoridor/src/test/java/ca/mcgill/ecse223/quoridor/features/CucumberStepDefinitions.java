@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
+import ca.mcgill.ecse223.quoridor.controller.QuoridorControllerImplementation;
 import ca.mcgill.ecse223.quoridor.model.Board;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
@@ -19,12 +20,19 @@ import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.User;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
+import com.sun.org.apache.xpath.internal.operations.Quo;
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class CucumberStepDefinitions {
 
+    private QuoridorControllerImplementation quoridorController = new QuoridorControllerImplementation();
 	// ***********************************************
 	// Background step definitions
 	// ***********************************************
@@ -103,7 +111,7 @@ public class CucumberStepDefinitions {
 	public void iHaveAWallInMyHandOverTheBoard() throws Throwable {
 		// GUI-related feature -- TODO for later
 	}
-	
+
 	// ***********************************************
 	// Scenario and scenario outline step definitions
 	// ***********************************************
@@ -115,6 +123,86 @@ public class CucumberStepDefinitions {
 	 * are implemented
 	 * 
 	 */
+
+    /** @author Sam Perreault */
+    @Given("A new game is initializing")
+    public void aNewGameIsInitializing() {
+        this.initQuoridorAndBoard();
+        this.createUsersAndPlayers("player1", "player2");
+    }
+
+    /** @author Sam Perreault */
+    @When("{int}:{int} is set as the thinking time")
+    public void minSecIsSetAsTheThinkingTime(int min, int sec) {
+        quoridorController.setPlayerThinkingTime(min, sec);
+    }
+
+    /** @author Sam Perreault */
+    @Then("Both players shall have {int}:{int} remaining time left")
+    public void BothPlayersShallHaveMinSecRemainingTimeLeft(int min, int sec) {
+        Quoridor quoridor = QuoridorApplication.getQuoridor();
+        long timeRem = min*60*1000+sec*1000;
+        assertEquals(timeRem, quoridor.getCurrentGame().getWhitePlayer().getRemainingTime().getTime());
+        assertEquals(timeRem, quoridor.getCurrentGame().getBlackPlayer().getRemainingTime().getTime());
+    }
+
+    /** @author Sam Perreault */
+    @When("The initialization of the board is initiated")
+    public void theInitializationOfTheBoardIsInitiated() {
+        quoridorController.initializeBoard();
+    }
+
+    /** @author Sam Perreault */
+    @Then("It shall be white player to move")
+    public void itShallBeWhitePlayerToMove() {
+        Quoridor quoridor = QuoridorApplication.getQuoridor();
+        assertEquals(quoridor.getCurrentGame().getWhitePlayer(), quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove());
+    }
+
+    /** @author Sam Perreault */
+    @And("White's pawn shall be in its initial position")
+    public void whitesPawnShallBeInItsInitialPosition() {
+        Quoridor quoridor = QuoridorApplication.getQuoridor();
+        assertEquals(new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(), quoridor.getBoard().getTile(36)),
+                quoridor.getCurrentGame().getCurrentPosition().getWhitePosition());
+    }
+
+    /** @author Sam Perreault */
+    @And("Black's pawn shall be in its initial position")
+    public void blackSPawnShallBeInItsInitialPosition() {
+        Quoridor quoridor = QuoridorApplication.getQuoridor();
+        assertEquals(new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), quoridor.getBoard().getTile(44)),
+                quoridor.getCurrentGame().getCurrentPosition().getBlackPosition());
+    }
+
+    /** @author Sam Perreault */
+    @And("All of White's walls shall be in stock")
+    public void allOfWhiteSWallsShallBeInStock() {
+        Quoridor quoridor = QuoridorApplication.getQuoridor();
+        assertEquals(10, quoridor.getCurrentGame().getWhitePlayer().getWalls().size());
+    }
+
+    /** @author Sam Perreault */
+    @And("All of Black's walls shall be in stock")
+    public void allOfBlackSWallsShallBeInStock() {
+        Quoridor quoridor = QuoridorApplication.getQuoridor();
+        assertEquals(10, quoridor.getCurrentGame().getBlackPlayer().getWalls().size());
+    }
+
+    /** @author Sam Perreault */
+    @And("White's clock shall be counting down")
+    public void whiteSClockShallBeCountingDown() {
+        Quoridor quoridor = QuoridorApplication.getQuoridor();
+        // Save start instant, compare with
+        assertNotEquals((new Time(System.currentTimeMillis())),
+                quoridor.getCurrentGame().getWhitePlayer().getRemainingTime());
+    }
+
+    /** @author Sam Perreault */
+    @And("It shall be shown that this is White's turn")
+    public void itShallBeShownThatThisIsWhiteSTurn() {
+        // GUI method to be implemented later
+    }
 
 	// ***********************************************
 	// Clean up
