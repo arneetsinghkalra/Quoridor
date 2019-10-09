@@ -1,5 +1,8 @@
 package ca.mcgill.ecse223.quoridor.features;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.sql.Time;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +24,9 @@ import ca.mcgill.ecse223.quoridor.model.WallMove;
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import ca.mcgill.ecse223.quoridor.controller.Controller;
 
 public class CucumberStepDefinitions {
 
@@ -30,10 +36,14 @@ public class CucumberStepDefinitions {
 	private Player player2;
 	private Player currentPlayer;
 	private Game game;
+	private Controller controller;
 
 	// ***********************************************
 	// Background step definitions
 	// ***********************************************
+	private GamePosition gamePosition;
+	private boolean validationResult;
+	
 
 	@Given("^The game is not running$")
 	public void theGameIsNotRunning() {
@@ -112,7 +122,29 @@ public class CucumberStepDefinitions {
 	 * are implemented
 	 * 
 	 */
-
+	@Given("^A game position is supplied with pawn coordinate {int}:{int}")
+	public void gamePositionWithPawnCoordinate(int row,int column) {
+		theGameIsRunning();
+		gamePosition = game.getCurrentPosition();
+		Tile playerCurrentPosition = board.getTile(row+9*column);
+		PlayerPosition player1Position = new PlayerPosition(player1, playerCurrentPosition);
+		gamePosition.setWhitePosition(player1Position);
+	}
+	
+	@When("^validation of the position is initiated")
+	public void validationOfPositionIsInitialted() {
+		validationResult = controller.validatePosition(gamePosition);
+	}
+	
+	@Then("^The position is {String}")
+	public void thePositionIs(String expectedResult) {
+		if(expectedResult.equals("OK")) {
+			assertTrue(validationResult);
+		}
+		else if(expectedResult.equals("error")){
+				assertTrue(validationResult);
+		}
+	}
 	// ***********************************************
 	// Clean up
 	// ***********************************************
@@ -200,5 +232,6 @@ public class CucumberStepDefinitions {
 
 		game.setCurrentPosition(gamePosition);
 	}
+
 
 }
