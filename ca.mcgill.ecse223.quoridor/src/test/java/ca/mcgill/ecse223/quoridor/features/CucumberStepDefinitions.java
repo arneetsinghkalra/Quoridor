@@ -1,6 +1,7 @@
 package ca.mcgill.ecse223.quoridor.features;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Time;
@@ -34,8 +35,9 @@ public class CucumberStepDefinitions {
 	// ***********************************************
 	// Background step definitions
 	// ***********************************************
-	private GamePosition gamePosition;
+	private Controller cotroller;
 	private boolean validationResult;
+
 	
 
 	@Given("^The game is not running$")
@@ -126,16 +128,20 @@ public class CucumberStepDefinitions {
 	 */
 	@Given("^A game position is supplied with pawn coordinate {int}:{int}")
 	public void gamePositionWithPawnCoordinate(int row,int column) {
-		theGameIsRunning();
-		gamePosition = game.getCurrentPosition();
-		Tile playerCurrentPosition = board.getTile(row+9*column);
-		PlayerPosition player1Position = new PlayerPosition(player1, playerCurrentPosition);
-		gamePosition.setWhitePosition(player1Position);
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		initQuoridorAndBoard();
+		ArrayList<Player> createUsersAndPlayers = createUsersAndPlayers("user1", "user2");
+		createAndStartGame(createUsersAndPlayers);
+		
+		GamePosition gamePosition = quoridor.getCurrentGame().getCurrentPosition();
+		Tile playerCurrentPosition = quoridor.getBoard().getTile(row+9*column);
+		gamePosition.getWhitePosition().setTile(playerCurrentPosition);
 	}
 	
 	@When("^validation of the position is initiated")
 	public void validationOfPositionIsInitialted() {
-		validationResult = controller.validatePosition(gamePosition);
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		validationResult = cotroller.validatePosition(quoridor.getCurrentGame().getCurrentPosition());
 	}
 	
 	@Then("^The position is {String}")
@@ -144,7 +150,7 @@ public class CucumberStepDefinitions {
 			assertTrue(validationResult);
 		}
 		else if(expectedResult.equals("error")){
-				assertTrue(validationResult);
+			assertFalse(validationResult);
 		}
 	}
 	// ***********************************************
