@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
+import ca.mcgill.ecse223.quoridor.controller.Controller;
 import ca.mcgill.ecse223.quoridor.model.Board;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
@@ -119,11 +120,11 @@ public class CucumberStepDefinitions {
 	 * are implemented
 	 * 
 	 */
-
 	
 	
 	//Global Variables for the features//
 	private User user;
+	private Player player;
 	private Player player1, player2;
 	private Quoridor quoridor;
 	private Game game;
@@ -133,51 +134,48 @@ public class CucumberStepDefinitions {
 	//---------------------------------------------------------------------//
 	
 	 @When("A new game is being initialized")
-	 public void aNewGameIsBeingInitialized() { 
-		 quoridor = QuoridorApplication.getQuoridor();
-		 game = new Game(GameStatus.Initializing, MoveMode.PlayerMove, 
-				 		  player1, player2, quoridor);
+	 public void aNewGameIsBeingInitialized() throws IllegalArgumentException{ 
+		 Controller.startNewGame();
 	 }
 	 
 	 @And("White player chooses a username")
-	 public void whitePlayerChoosesAUsername() throws Throwable {
-		 
+	 public void whitePlayerChoosesAUsername() throws IllegalArgumentException {
+		 Controller.selectExistingUserName(player1);
 	 }
 	 
 	 @And("Black player chooses a username")
-	 public void blackPlayerChoosesAUsername() throws Throwable {
-		 
+	 public void blackPlayerChoosesAUsername() throws IllegalArgumentException {
+		 Controller.selectExistingUserName(player2);
 	 } 
 	 
 	 @And("Total thinking time is set")
-	 public void totalThinkingTimeIsSet() throws Throwable {
-		
+	 public void totalThinkingTimeIsSet() throws IllegalArgumentException {
+		Controller.setTimer();
 	 } 
 		 
-	
 	 @Then("The game shall become ready to start")
 	 public void theGameIsReadyToStart() {
-		 //assertEquals();
+		 assertEquals(GameStatus.ReadyToStart, game.getGameStatus());
 	 }
-	 
 		 
 	 @Given("The game is ready to start")
 	 public void theGameIsReadyToStart$() {
-	  
+		 game.setGameStatus(GameStatus.ReadyToStart);
 	 }
 	 
 	 @When("I start the clock")
-	 public void iStartTheClock() {
-		 
+	 public void iStartTheClock() throws Throwable {
+		 Controller.startClock();
 	 }
 	 
 	 @Then("The game shall be running")
 	 public void theGameShallbeRunning() {
-		 
+		 assertEquals(GameStatus.Running, game.getGameStatus());
 	 }
 	 
 	 @And("The board shall be initialized")
 	 public void theBoardShallBeInitialized() {
+		 theGameIsRunning();
 		 
 	 }
 	 
@@ -188,24 +186,24 @@ public class CucumberStepDefinitions {
 	 @Given("A new game is initializing")
 	 public void aNewGameIsInitializing() {
 		 quoridor = QuoridorApplication.getQuoridor();
-		 game = new Game(GameStatus.Initializing, MoveMode.PlayerMove, 
-				 		  player1, player2, quoridor);
+		 game = new Game(GameStatus.Initializing, MoveMode.PlayerMove, player, player, quoridor);
+		 quoridor.setCurrentGame(game);
+		//game.setGameStatus(GameStatus.Initializing);
 	 }
 	 
 	 @Given("Next player to set user name is {string}")
 	 public void nextPlayerToSetUserNameIs(String color) {
-		 player2.setNextPlayer(player1);
-		 if (color == "black")
+		 if (color == "white")
 		 {
-			 player1.setNextPlayer(player2);
-			 player1 = game.getBlackPlayer();
-			 user = player1.getUser();
+			 player = game.getWhitePlayer();
+			 user = player.getUser();
 		 }
-		 else if(color == "white")
+		 else if(color == "black")
 		 {
-			 player2 = game.getWhitePlayer();
-			 user = player2.getUser();
+			 player = game.getBlackPlayer();
+			 user = player.getUser();
 		 }
+		 
 	 }
 	 
 	 @And("There is existing user {string}")
@@ -215,9 +213,9 @@ public class CucumberStepDefinitions {
 	 
 	 @When("The player selects existing {string}")
 	 public void thePlayerSelectsExisting(String username) throws IllegalArgumentException {
-		 user.setName(username);
+		 Controller.selectExistingUserName(player);
 		 try {
-			 user.setName(username);
+			 Controller.selectExistingUserName(player);
 			 fail(); // We should not reach this statement
 		 } catch (IllegalArgumentException e){
 			 // OK, the expected exception was thrown
@@ -236,9 +234,9 @@ public class CucumberStepDefinitions {
 	 
 	 @When("The player provides new user name: {string}")
 	 public void thePlayerProvidesNewUserName(String username) throws IllegalArgumentException {
-		 user.setName(username);
+		 Controller.enterNewUserName(username);
 		 try {
-			 user.setName(username);
+			 Controller.enterNewUserName(username);
 			 fail(); // We should not reach this statement
 		 } catch (IllegalArgumentException e){
 			 // OK, the expected exception was thrown
@@ -252,7 +250,7 @@ public class CucumberStepDefinitions {
 	 
 	 @And("Next player to set user name shall be {string}")
 	 public void nextPlayerToSetUserNameShallBe(String color){
-		 
+		 player.getNextPlayer();
 	 }
 	 
 	//---------------------------------------------------------------------//
