@@ -127,6 +127,7 @@ public class CucumberStepDefinitions {
 	private Player player;
 	private Quoridor quoridor;
 	private Game game;
+	ArrayList<Player> createUsersAndPlayers;
 	
 	//-----------------------------------------------------------------------------//
 	//Feature 1 - StartNewGame - Implemented by Ali Tapan - 260556540
@@ -136,32 +137,40 @@ public class CucumberStepDefinitions {
 	 @When("A new game is being initialized")
 	 public void aNewGameIsBeingInitialized() throws IllegalArgumentException{ 
 		 game = Controller.InitNewGame();
+		 //throw new cucumber.api.PendingException();
 	 }
 	 
 	 @And("White player chooses a username")
 	 public void whitePlayerChoosesAUsername() throws IllegalArgumentException {
 		 Controller.selectExistingUserName(game.getWhitePlayer());
+		 throw new cucumber.api.PendingException();
 	 }
 	 
 	 @And("Black player chooses a username")
 	 public void blackPlayerChoosesAUsername() throws IllegalArgumentException {
 		 Controller.selectExistingUserName(game.getBlackPlayer());
+		 throw new cucumber.api.PendingException();
 	 } 
 	 
 	 @And("Total thinking time is set")
 	 public void totalThinkingTimeIsSet() throws IllegalArgumentException {
 		 Controller.setTimer(game);
+		 throw new cucumber.api.PendingException();
 	 } 
 		 
 	 @Then("The game shall become ready to start")
 	 public void theGameShallBecomeReadyToStart() {
 		 assertEquals(GameStatus.ReadyToStart, game.getGameStatus());
+		 throw new cucumber.api.PendingException();
 	 }
 		 
 	 @Given("The game is ready to start")
 	 public void theGameIsReadyToStart() {
-		 quoridor = QuoridorApplication.getQuoridor();
-		 quoridor.getCurrentGame().setGameStatus(GameStatus.ReadyToStart);
+		 //ArrayList<Player> createUsersAndPlayers = createUsersAndPlayers("userw", "userb");
+		 game = createAndReadyGame();
+		 
+		 //quoridor = QuoridorApplication.getQuoridor();
+		 //quoridor.getCurrentGame().setGameStatus(GameStatus.ReadyToStart);
 	 }
 	 
 	 @When("I start the clock")
@@ -171,14 +180,13 @@ public class CucumberStepDefinitions {
 	 
 	 @Then("The game shall be running")
 	 public void theGameShallbeRunning() {
-		 assertEquals(GameStatus.Running, quoridor.getCurrentGame().getGameStatus());
+		 assertEquals(GameStatus.Running, game.getGameStatus());
 	 }
 	 
 	 @And("The board shall be initialized")
 	 public void theBoardShallBeInitialized() {
 		 // Check if the board has tiles, if it has tiles then the board is initialized
-		 assertEquals(true, quoridor.getBoard().hasTiles());
-		 
+		 assertEquals(true, game.getQuoridor().getBoard().hasTiles());
 	 }
 	 
 	//-----------------------------------------------------------------------------//
@@ -189,6 +197,7 @@ public class CucumberStepDefinitions {
 	 public void aNewGameIsInitializing() {
 		 quoridor = QuoridorApplication.getQuoridor();
 		 quoridor.getCurrentGame().setGameStatus(GameStatus.Initializing);
+		 //throw new cucumber.api.PendingException();
 	 }
 	 
 	 @Given("Next player to set user name is {string}")
@@ -203,11 +212,13 @@ public class CucumberStepDefinitions {
 			 player.setGameAsBlack(quoridor.getCurrentGame());
 			 user = player.getUser();
 		 }
+		 throw new cucumber.api.PendingException();
 	 }
 	 
 	 @And("There is existing user {string}")
 	 public void thereIsExistingUser(String username) {
 		 assertEquals(true, User.hasWithName(username));
+		 throw new cucumber.api.PendingException();
 	 }
 	 
 	 @When("The player selects existing {string}")
@@ -219,16 +230,19 @@ public class CucumberStepDefinitions {
 		 } catch (IllegalArgumentException e){
 			 // OK, the expected exception was thrown
 		 }
+		 throw new cucumber.api.PendingException();
 	 }
 	 
 	 @Then("The name of player {string} in the new game shall be {string}")
 	 public void theNameOfPlayerInTheNewGameShallBe(String color, String username) {
 		 assertEquals(username, user.getName());
+		 throw new cucumber.api.PendingException();
 	 }
 	 
 	 @And("There is no existing user {string}")
 	 public void thereIsNoExistingUser(String username) {
 		 assertEquals(false, User.hasWithName(username));
+		 throw new cucumber.api.PendingException();
 	 }
 	 
 	 @When("The player provides new user name: {string}")
@@ -240,16 +254,19 @@ public class CucumberStepDefinitions {
 		 } catch (IllegalArgumentException e){
 			 // OK, the expected exception was thrown
 		 }
+		 throw new cucumber.api.PendingException();
 	 }
 	 
 	 @Then("The player shall be warned that {string} already exists")
 	 public void thePlayerShallBeWarnedThatAlreadyExists(String color, String username) {
 		 user.notify();
+		 throw new cucumber.api.PendingException();
 	 }
 	 
 	 @And("Next player to set user name shall be {string}")
 	 public void nextPlayerToSetUserNameShallBe(String color){
 		 player.getNextPlayer();
+		 throw new cucumber.api.PendingException();
 	 }
 	 
 	//-----------------------------------------------------------------------------//
@@ -362,6 +379,24 @@ public class CucumberStepDefinitions {
 
 		game.setCurrentPosition(gamePosition);
 	}
-
+	
+	private Game createAndReadyGame() {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Board board = new Board(quoridor);
+		// Creating tiles by rows, i.e., the column index changes with every tile
+		// creation
+		for (int i = 1; i <= 9; i++) { // rows
+			for (int j = 1; j <= 9; j++) { // columns
+				board.addTile(i, j);
+			}
+		}
+		User user1 = quoridor.addUser("userWhite");
+		User user2 = quoridor.addUser("userBlack");
+		int thinkingTime = 180;
+		Player player1 = new Player(new Time(thinkingTime), user1, 9, Direction.Horizontal);
+		Player player2 = new Player(new Time(thinkingTime), user2, 1, Direction.Horizontal);
+		Game game = new Game(GameStatus.ReadyToStart, MoveMode.PlayerMove, player1, player2, quoridor);
+		return game;
+	}
 
 }
