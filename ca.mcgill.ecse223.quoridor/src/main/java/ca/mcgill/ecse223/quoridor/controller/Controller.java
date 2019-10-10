@@ -10,8 +10,9 @@ public interface Controller {
 		
 	}
 	
-	public static void startNewGame() throws IllegalArgumentException {
-		
+	public static Game InitNewGame() throws IllegalArgumentException {
+		Game game = null;
+		return game;
 	}
 	
 	public static void enterNewUserName(String username) throws IllegalArgumentException {
@@ -22,7 +23,7 @@ public interface Controller {
 		
 	}
 	
-	public static void setTimer() throws IllegalArgumentException {
+	public static void setTimer(Game game) throws IllegalArgumentException {
 		
 	}
 	

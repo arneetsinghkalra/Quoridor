@@ -125,42 +125,43 @@ public class CucumberStepDefinitions {
 	//Global Variables for the features//
 	private User user;
 	private Player player;
-	private Player player1, player2;
 	private Quoridor quoridor;
 	private Game game;
 	
-	//---------------------------------------------------------------------//
-	//Feature 1 - Implemented by Ali Tapan - 260556540
-	//---------------------------------------------------------------------//
+	//-----------------------------------------------------------------------------//
+	//Feature 1 - StartNewGame - Implemented by Ali Tapan - 260556540
+	//-----------------------------------------------------------------------------//
+		
 	
 	 @When("A new game is being initialized")
 	 public void aNewGameIsBeingInitialized() throws IllegalArgumentException{ 
-		 Controller.startNewGame();
+		 game = Controller.InitNewGame();
 	 }
 	 
 	 @And("White player chooses a username")
 	 public void whitePlayerChoosesAUsername() throws IllegalArgumentException {
-		 Controller.selectExistingUserName(player1);
+		 Controller.selectExistingUserName(game.getWhitePlayer());
 	 }
 	 
 	 @And("Black player chooses a username")
 	 public void blackPlayerChoosesAUsername() throws IllegalArgumentException {
-		 Controller.selectExistingUserName(player2);
+		 Controller.selectExistingUserName(game.getBlackPlayer());
 	 } 
 	 
 	 @And("Total thinking time is set")
 	 public void totalThinkingTimeIsSet() throws IllegalArgumentException {
-		Controller.setTimer();
+		 Controller.setTimer(game);
 	 } 
 		 
 	 @Then("The game shall become ready to start")
-	 public void theGameIsReadyToStart() {
+	 public void theGameShallBecomeReadyToStart() {
 		 assertEquals(GameStatus.ReadyToStart, game.getGameStatus());
 	 }
 		 
 	 @Given("The game is ready to start")
-	 public void theGameIsReadyToStart$() {
-		 game.setGameStatus(GameStatus.ReadyToStart);
+	 public void theGameIsReadyToStart() {
+		 quoridor = QuoridorApplication.getQuoridor();
+		 quoridor.getCurrentGame().setGameStatus(GameStatus.ReadyToStart);
 	 }
 	 
 	 @When("I start the clock")
@@ -170,40 +171,38 @@ public class CucumberStepDefinitions {
 	 
 	 @Then("The game shall be running")
 	 public void theGameShallbeRunning() {
-		 assertEquals(GameStatus.Running, game.getGameStatus());
+		 assertEquals(GameStatus.Running, quoridor.getCurrentGame().getGameStatus());
 	 }
 	 
 	 @And("The board shall be initialized")
 	 public void theBoardShallBeInitialized() {
-		 theGameIsRunning();
+		 // Check if the board has tiles, if it has tiles then the board is initialized
+		 assertEquals(true, quoridor.getBoard().hasTiles());
 		 
 	 }
 	 
-	//---------------------------------------------------------------------//
-	//Feature 2 - Implemented by Ali Tapan - 260556540					   //
-	//---------------------------------------------------------------------//
+	//-----------------------------------------------------------------------------//
+	//Feature 2 - ProvideSelectUserName - Implemented by Ali Tapan - 260556540
+	//-----------------------------------------------------------------------------//
 	 
 	 @Given("A new game is initializing")
 	 public void aNewGameIsInitializing() {
 		 quoridor = QuoridorApplication.getQuoridor();
-		 game = new Game(GameStatus.Initializing, MoveMode.PlayerMove, player, player, quoridor);
-		 quoridor.setCurrentGame(game);
-		//game.setGameStatus(GameStatus.Initializing);
+		 quoridor.getCurrentGame().setGameStatus(GameStatus.Initializing);
 	 }
 	 
 	 @Given("Next player to set user name is {string}")
 	 public void nextPlayerToSetUserNameIs(String color) {
 		 if (color == "white")
 		 {
-			 player = game.getWhitePlayer();
+			 player.setGameAsWhite(quoridor.getCurrentGame());	 
 			 user = player.getUser();
 		 }
 		 else if(color == "black")
 		 {
-			 player = game.getBlackPlayer();
+			 player.setGameAsBlack(quoridor.getCurrentGame());
 			 user = player.getUser();
 		 }
-		 
 	 }
 	 
 	 @And("There is existing user {string}")
@@ -253,7 +252,7 @@ public class CucumberStepDefinitions {
 		 player.getNextPlayer();
 	 }
 	 
-	//---------------------------------------------------------------------//
+	//-----------------------------------------------------------------------------//
 	
 	
 
@@ -363,5 +362,6 @@ public class CucumberStepDefinitions {
 
 		game.setCurrentPosition(gamePosition);
 	}
+
 
 }
