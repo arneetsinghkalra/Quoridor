@@ -22,6 +22,10 @@ import ca.mcgill.ecse223.quoridor.model.WallMove;
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class CucumberStepDefinitions {
 
@@ -115,6 +119,145 @@ public class CucumberStepDefinitions {
 	 * are implemented
 	 * 
 	 */
+
+	
+	
+	//Global Variables for the features//
+	private User user;
+	private Player player1, player2;
+	private Quoridor quoridor;
+	private Game game;
+	
+	//---------------------------------------------------------------------//
+	//Feature 1 - Implemented by Ali Tapan - 260556540
+	//---------------------------------------------------------------------//
+	
+	 @When("A new game is being initialized")
+	 public void aNewGameIsBeingInitialized() { 
+		 quoridor = QuoridorApplication.getQuoridor();
+		 game = new Game(GameStatus.Initializing, MoveMode.PlayerMove, 
+				 		  player1, player2, quoridor);
+	 }
+	 
+	 @And("White player chooses a username")
+	 public void whitePlayerChoosesAUsername() throws Throwable {
+		 
+	 }
+	 
+	 @And("Black player chooses a username")
+	 public void blackPlayerChoosesAUsername() throws Throwable {
+		 
+	 } 
+	 
+	 @And("Total thinking time is set")
+	 public void totalThinkingTimeIsSet() throws Throwable {
+		
+	 } 
+		 
+	
+	 @Then("The game shall become ready to start")
+	 public void theGameIsReadyToStart() {
+		 //assertEquals();
+	 }
+	 
+		 
+	 @Given("The game is ready to start")
+	 public void theGameIsReadyToStart$() {
+	  
+	 }
+	 
+	 @When("I start the clock")
+	 public void iStartTheClock() {
+		 
+	 }
+	 
+	 @Then("The game shall be running")
+	 public void theGameShallbeRunning() {
+		 
+	 }
+	 
+	 @And("The board shall be initialized")
+	 public void theBoardShallBeInitialized() {
+		 
+	 }
+	 
+	//---------------------------------------------------------------------//
+	//Feature 2 - Implemented by Ali Tapan - 260556540					   //
+	//---------------------------------------------------------------------//
+	 
+	 @Given("A new game is initializing")
+	 public void aNewGameIsInitializing() {
+		 quoridor = QuoridorApplication.getQuoridor();
+		 game = new Game(GameStatus.Initializing, MoveMode.PlayerMove, 
+				 		  player1, player2, quoridor);
+	 }
+	 
+	 @Given("Next player to set user name is {string}")
+	 public void nextPlayerToSetUserNameIs(String color) {
+		 player2.setNextPlayer(player1);
+		 if (color == "black")
+		 {
+			 player1.setNextPlayer(player2);
+			 player1 = game.getBlackPlayer();
+			 user = player1.getUser();
+		 }
+		 else if(color == "white")
+		 {
+			 player2 = game.getWhitePlayer();
+			 user = player2.getUser();
+		 }
+	 }
+	 
+	 @And("There is existing user {string}")
+	 public void thereIsExistingUser(String username) {
+		 assertEquals(true, User.hasWithName(username));
+	 }
+	 
+	 @When("The player selects existing {string}")
+	 public void thePlayerSelectsExisting(String username) throws IllegalArgumentException {
+		 user.setName(username);
+		 try {
+			 user.setName(username);
+			 fail(); // We should not reach this statement
+		 } catch (IllegalArgumentException e){
+			 // OK, the expected exception was thrown
+		 }
+	 }
+	 
+	 @Then("The name of player {string} in the new game shall be {string}")
+	 public void theNameOfPlayerInTheNewGameShallBe(String color, String username) {
+		 assertEquals(username, user.getName());
+	 }
+	 
+	 @And("There is no existing user {string}")
+	 public void thereIsNoExistingUser(String username) {
+		 assertEquals(false, User.hasWithName(username));
+	 }
+	 
+	 @When("The player provides new user name: {string}")
+	 public void thePlayerProvidesNewUserName(String username) throws IllegalArgumentException {
+		 user.setName(username);
+		 try {
+			 user.setName(username);
+			 fail(); // We should not reach this statement
+		 } catch (IllegalArgumentException e){
+			 // OK, the expected exception was thrown
+		 }
+	 }
+	 
+	 @Then("The player shall be warned that {string} already exists")
+	 public void thePlayerShallBeWarnedThatAlreadyExists(String color, String username) {
+		 user.notify();
+	 }
+	 
+	 @And("Next player to set user name shall be {string}")
+	 public void nextPlayerToSetUserNameShallBe(String color){
+		 
+	 }
+	 
+	//---------------------------------------------------------------------//
+	
+	
 
 	// ***********************************************
 	// Clean up
