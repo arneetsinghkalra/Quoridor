@@ -126,8 +126,9 @@ public class CucumberStepDefinitions {
 	 * are implemented
 	 * 
 	 */
-	@Given("^A game position is supplied with pawn coordinate {int}:{int}")
+	@Given("A game position is supplied with pawn coordinate {int}:{int}")
 	public void gamePositionWithPawnCoordinate(int row,int column) {
+		
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		initQuoridorAndBoard();
 		ArrayList<Player> createUsersAndPlayers = createUsersAndPlayers("user1", "user2");
@@ -138,13 +139,13 @@ public class CucumberStepDefinitions {
 		gamePosition.getWhitePosition().setTile(playerCurrentPosition);
 	}
 	
-	@When("^validation of the position is initiated")
+	@When("validation of the position is initiated")
 	public void validationOfPositionIsInitialted() {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		validationResult = cotroller.validatePosition(quoridor.getCurrentGame().getCurrentPosition());
 	}
 	
-	@Then("^The position is {String}")
+	@Then("The position is {string}")
 	public void thePositionIs(String expectedResult) {
 		if(expectedResult.equals("OK")) {
 			assertTrue(validationResult);
