@@ -1,11 +1,16 @@
 package ca.mcgill.ecse223.quoridor.features;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
+import ca.mcgill.ecse223.quoridor.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Board;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
@@ -22,13 +27,18 @@ import ca.mcgill.ecse223.quoridor.model.WallMove;
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 
 public class CucumberStepDefinitions {
 
 	// ***********************************************
 	// Background step definitions
 	// ***********************************************
+	private QuoridorController quoridorController;
+	private boolean validationResult;
 
+	
 	@Given("^The game is not running$")
 	public void theGameIsNotRunning() {
 		initQuoridorAndBoard();
@@ -47,6 +57,7 @@ public class CucumberStepDefinitions {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Player currentPlayer = quoridor.getCurrentGame().getWhitePlayer();
 		QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().setPlayerToMove(currentPlayer);
+		
 	}
 
 	@Given("The following walls exist:")
@@ -115,7 +126,157 @@ public class CucumberStepDefinitions {
 	 * are implemented
 	 * 
 	 */
-
+	/**
+	 * Load the game from the file
+	 * @author Yin
+	 * @param fileName
+	 */
+	@When("^I initiate to load a saved game {String}")
+	public void iInitiateToLoadASavedGame(String fileName) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		quoridor=quoridorController.loadPosition(quoridor,fileName);
+	}
+	
+	/**
+	 * Checks whether the position is valid or not
+	 * @author Yin
+	 */
+	@And("^The position to load is valid$")
+	public void thePositionIsValid() {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game currentGame=quoridor.getCurrentGame();
+		GamePosition gamePosition= currentGame.getCurrentPosition();
+		validationResult = quoridorController.validatePosition(gamePosition);
+	}
+	
+	/**
+	 * checks whether the playerToMove is the same as expected
+	 * @author Yin
+	 * @param fileName
+	 */
+	@Then("^It is {String} turn")
+	public void itIsPlayersTurn(String playerToMove){
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game currentGame=quoridor.getCurrentGame();
+		GamePosition currentGamePosition = currentGame.getCurrentPosition();
+		Player playerToMove1 = currentGamePosition.getPlayerToMove();
+		assertEquals(playerToMove, playerToMove1.getUser().getName());
+	}
+	
+	/**
+	 * Checks whether the player is at the r
+	 * @author Yin
+	 * @param row, column
+	 */
+	@And("^{String} is at {int}:{int}$")
+	public void playerIsAt(int row, int column) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game currentGame=quoridor.getCurrentGame();
+		GamePosition currentGamePosition = currentGame.getCurrentPosition();
+		assertEquals(row, currentGamePosition.getBlackPosition().getTile().getRow());
+		assertEquals(column,currentGamePosition.getBlackPosition().getTile().getColumn());
+	}
+	
+	/**
+	 * Checks whether the opponent is in the right position
+	 * @author Yin
+	 * @param row, column
+	 */
+	@And("^{String} is at {int}:{int}$")
+	public void opponentIsAt(int row, int column) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game currentGame=quoridor.getCurrentGame();
+		GamePosition currentGamePosition = currentGame.getCurrentPosition();
+		assertEquals(row, currentGamePosition.getWhitePosition().getTile().getRow());
+		assertEquals(column,currentGamePosition.getWhitePosition().getTile().getColumn());
+	}
+	
+	/**
+	 * Checks whether the wall of the player is in the right position
+	 * @author Yin
+	 * @param player, direction, row, column
+	 */
+	@And("^{String} has a {Direction} wall at {int}:{int}$")
+	public void playerHasAPwOWallAt(String player,Direction direction, int row, int column) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game currentGame=quoridor.getCurrentGame();
+		List<Wall> wallsPlayer = currentGame.getBlackPlayer().getWalls();
+		assertEquals(wallsPlayer.get(0).getOwner().getUser().getName(),player);
+		assertEquals(wallsPlayer.get(0).getMove().getWallDirection(),direction);
+		assertEquals(wallsPlayer.get(0).getMove().getTargetTile().getRow(),row);
+		assertEquals(wallsPlayer.get(0).getMove().getTargetTile().getColumn(),column);
+	}
+	
+	/**
+	 * Checks whether the wall of the opponent is in the right position
+	 * @author Yin
+	 * @param player, direction, row, column
+	 */
+	@And("^{String} has a {Direction} wall at {int}:{int}$")
+	public void opponentHasAOwOWallAt(String opponent,Direction direction, int row, int column) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game currentGame=quoridor.getCurrentGame();
+		List<Wall> wallsOpponent = currentGame.getWhitePlayer().getWalls();
+		assertEquals(wallsOpponent.get(0).getOwner().getUser().getName(),opponent);
+		assertEquals(wallsOpponent.get(0).getMove().getWallDirection(),direction);
+		assertEquals(wallsOpponent.get(0).getMove().getTargetTile().getRow(),row);
+		assertEquals(wallsOpponent.get(0).getMove().getTargetTile().getColumn(),column);
+	}
+	
+	/**
+	 * Checks whether the number of the wall in the list is the right number
+	 * @author Yin
+	 * @param number
+	 */
+	@And("^Both players have {int} in their stacks$")
+	public void bothPlayersHaveRemainingWallsInTheirStacks(int number) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game currentGame=quoridor.getCurrentGame();
+		assertEquals(currentGame.getBlackPlayer().getWalls().size(),number);
+		assertEquals(currentGame.getWhitePlayer().getWalls().size(),number);
+	}
+	//SavePosition
+	/**
+	 * Checks whether the file is in the system or not
+	 * @author Yin
+	 * @param fileName
+	 */
+	@Given("^No file {String} exists in the filesystem$")
+  	public void noFileExistsInTheFilesystem(String fileName) {
+  		File f = new File(fileName);
+  		if(f.exists()) {
+  			throw new IllegalArgumentException("File name exists");
+  		}
+  	}
+	/**
+	 * save the game into the file with the fileName
+	 * @param fileName
+	 * @author Yin
+	 *
+	 * */
+  	@When("^The user initiates to save the game with name {Sting}$")
+  	public void theUserInitiatesToSaveTheGameWithName(String fileName) {
+  		quoridorController.savePosition(fileName);
+  	}
+  	
+  	/**
+  	 * @author Yin
+  	 * The user confirm whether to overwrite the existing file
+  	 * */
+  	@And("^The user confirms to overwrite existing file$")
+  	public void theUserConfirmsToOverwriteExistingFile() {
+  		quoridorController.confirmsToOverWrite();
+  	}
+  	/**
+  	 * @author Yin
+  	 * @param fileName
+  	 * Checks whether the file is created in the directory
+  	 * */
+  	@Then("^A file with {String} is created in the filesystem$")
+  	public void aFileWithIsCreatedInTheFilesystem(String fileName) {
+  		File f = new File(fileName);
+  		assertTrue(f.exists());
+  	}
 	// ***********************************************
 	// Clean up
 	// ***********************************************
