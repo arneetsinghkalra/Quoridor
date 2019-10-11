@@ -151,7 +151,7 @@ public class CucumberStepDefinitions {
 	 
 	 @And("Total thinking time is set")
 	 public void totalThinkingTimeIsSet() throws UnsupportedOperationException {
-		 Controller.setTimer(game);
+		 game = Controller.setTimer(game);
 	 } 
 		 
 	 @Then("The game shall become ready to start")
@@ -166,7 +166,7 @@ public class CucumberStepDefinitions {
 	 
 	 @When("I start the clock")
 	 public void iStartTheClock() throws Throwable {
-		 Controller.startClock(game);
+		 game = Controller.startClock(game);
 	 }
 	 
 	 @Then("The game shall be running")
