@@ -1,6 +1,7 @@
 package ca.mcgill.ecse223.quoridor.features;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -131,7 +132,7 @@ public class CucumberStepDefinitions {
 	 * @author Yin
 	 * @param fileName
 	 */
-	@When("^I initiate to load a saved game {String}")
+	@When("I initiate to load a saved game {string}")
 	public void iInitiateToLoadASavedGame(String fileName) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		quoridor=quoridorController.loadPosition(quoridor,fileName);
@@ -154,7 +155,7 @@ public class CucumberStepDefinitions {
 	 * @author Yin
 	 * @param fileName
 	 */
-	@Then("^It is {String} turn")
+	@Then("It is {string} turn")
 	public void itIsPlayersTurn(String playerToMove){
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame=quoridor.getCurrentGame();
@@ -164,31 +165,24 @@ public class CucumberStepDefinitions {
 	}
 	
 	/**
-	 * Checks whether the player is at the r
+	 * Checks whether the player/opponent is at the right position 
 	 * @author Yin
 	 * @param row, column
 	 */
-	@And("^{String} is at {int}:{int}$")
-	public void playerIsAt(int row, int column) {
+	@And("{string} is at {int}:{int}")
+	public void playerIsAt(String player, int row, int column) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame=quoridor.getCurrentGame();
-		GamePosition currentGamePosition = currentGame.getCurrentPosition();
-		assertEquals(row, currentGamePosition.getBlackPosition().getTile().getRow());
-		assertEquals(column,currentGamePosition.getBlackPosition().getTile().getColumn());
-	}
-	
-	/**
-	 * Checks whether the opponent is in the right position
-	 * @author Yin
-	 * @param row, column
-	 */
-	@And("^{String} is at {int}:{int}$")
-	public void opponentIsAt(int row, int column) {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		Game currentGame=quoridor.getCurrentGame();
-		GamePosition currentGamePosition = currentGame.getCurrentPosition();
-		assertEquals(row, currentGamePosition.getWhitePosition().getTile().getRow());
-		assertEquals(column,currentGamePosition.getWhitePosition().getTile().getColumn());
+		if (player.equals("player")) {
+			GamePosition currentGamePosition = currentGame.getCurrentPosition();
+			assertEquals(row, currentGamePosition.getBlackPosition().getTile().getRow());
+			assertEquals(column,currentGamePosition.getBlackPosition().getTile().getColumn());
+		}
+		if(player.equals("opponent")) {
+			GamePosition currentGamePosition = currentGame.getCurrentPosition();
+			assertEquals(row, currentGamePosition.getWhitePosition().getTile().getRow());
+			assertEquals(column,currentGamePosition.getWhitePosition().getTile().getColumn());
+		}
 	}
 	
 	/**
@@ -196,31 +190,24 @@ public class CucumberStepDefinitions {
 	 * @author Yin
 	 * @param player, direction, row, column
 	 */
-	@And("^{String} has a {Direction} wall at {int}:{int}$")
-	public void playerHasAPwOWallAt(String player,Direction direction, int row, int column) {
+	@And("{string} has a {string} wall at {int}:{int}")
+	public void playerHasAPwOWallAt(String player,String direction, int row, int column) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame=quoridor.getCurrentGame();
+		if(player.equals("player")) {
 		List<Wall> wallsPlayer = currentGame.getBlackPlayer().getWalls();
-		assertEquals(wallsPlayer.get(0).getOwner().getUser().getName(),player);
-		assertEquals(wallsPlayer.get(0).getMove().getWallDirection(),direction);
+		assertEquals(wallsPlayer.get(0).getOwner().getUser().getName(),"black");
+		assertEquals(wallsPlayer.get(0).getMove().getWallDirection().toString(),direction);
 		assertEquals(wallsPlayer.get(0).getMove().getTargetTile().getRow(),row);
 		assertEquals(wallsPlayer.get(0).getMove().getTargetTile().getColumn(),column);
-	}
-	
-	/**
-	 * Checks whether the wall of the opponent is in the right position
-	 * @author Yin
-	 * @param player, direction, row, column
-	 */
-	@And("^{String} has a {Direction} wall at {int}:{int}$")
-	public void opponentHasAOwOWallAt(String opponent,Direction direction, int row, int column) {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		Game currentGame=quoridor.getCurrentGame();
-		List<Wall> wallsOpponent = currentGame.getWhitePlayer().getWalls();
-		assertEquals(wallsOpponent.get(0).getOwner().getUser().getName(),opponent);
-		assertEquals(wallsOpponent.get(0).getMove().getWallDirection(),direction);
-		assertEquals(wallsOpponent.get(0).getMove().getTargetTile().getRow(),row);
-		assertEquals(wallsOpponent.get(0).getMove().getTargetTile().getColumn(),column);
+		}
+		if(player.equals("opponent")) {
+			List<Wall> wallsOpponent = currentGame.getWhitePlayer().getWalls();
+			assertEquals(wallsOpponent.get(0).getOwner().getUser().getName(),"white");
+			assertEquals(wallsOpponent.get(0).getMove().getWallDirection().toString(),direction);
+			assertEquals(wallsOpponent.get(0).getMove().getTargetTile().getRow(),row);
+			assertEquals(wallsOpponent.get(0).getMove().getTargetTile().getColumn(),column);
+		}
 	}
 	
 	/**
@@ -228,7 +215,7 @@ public class CucumberStepDefinitions {
 	 * @author Yin
 	 * @param number
 	 */
-	@And("^Both players have {int} in their stacks$")
+	@And("Both players have {int} in their stacks")
 	public void bothPlayersHaveRemainingWallsInTheirStacks(int number) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame=quoridor.getCurrentGame();
@@ -241,11 +228,11 @@ public class CucumberStepDefinitions {
 	 * @author Yin
 	 * @param fileName
 	 */
-	@Given("^No file {String} exists in the filesystem$")
+	@Given("No file {string} exists in the filesystem")
   	public void noFileExistsInTheFilesystem(String fileName) {
   		File f = new File(fileName);
-  		if(f.exists()) {
-  			throw new IllegalArgumentException("File name exists");
+  		if(!f.exists()) {
+  			throw new IllegalArgumentException("File name doesn't exist");
   		}
   	}
 	/**
@@ -254,29 +241,71 @@ public class CucumberStepDefinitions {
 	 * @author Yin
 	 *
 	 * */
-  	@When("^The user initiates to save the game with name {Sting}$")
+  	@When("The user initiates to save the game with name {string}")
   	public void theUserInitiatesToSaveTheGameWithName(String fileName) {
   		quoridorController.savePosition(fileName);
   	}
   	
-  	/**
-  	 * @author Yin
-  	 * The user confirm whether to overwrite the existing file
-  	 * */
-  	@And("^The user confirms to overwrite existing file$")
-  	public void theUserConfirmsToOverwriteExistingFile() {
-  		quoridorController.confirmsToOverWrite();
-  	}
-  	/**
-  	 * @author Yin
-  	 * @param fileName
-  	 * Checks whether the file is created in the directory
-  	 * */
-  	@Then("^A file with {String} is created in the filesystem$")
+  	@Then("A file with {string} is created in the filesystem")
   	public void aFileWithIsCreatedInTheFilesystem(String fileName) {
   		File f = new File(fileName);
   		assertTrue(f.exists());
   	}
+  	
+  	@Given("File {string} exists in the filesystem")
+  	public void fileExistsInTheFileSystem(String fileName) {
+  		File f = new File(fileName);
+  		if(f.exists()) {
+  			throw new IllegalArgumentException("File name exists");
+  		}
+  	}
+  	/**
+  	 * @author Yin
+  	 * The user confirm whether to overwrite the existing file
+  	 * */
+  	@And("The user confirms to overwrite existing file")
+  	public void theUserConfirmsToOverwriteExistingFile() {
+  		quoridorController.confirmsToOverWrite();
+  	}
+  	@Then("File with {string} shall be updated in the filesystem")
+  	public void fileWithNameShallBeUpdatedInTheFileSystem(String fileName){
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Quoridor quoridor1 = new Quoridor();
+		quoridor1 = quoridorController.loadPosition(quoridor1,fileName);
+		int quoridorBlackPlayerRow = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow();
+		int quoridorBlackPlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn();
+		int quoridor1BlackPlayerRow = quoridor1.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow();
+		int quoridor1BlackPlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn();
+		int quoridorWhitePlayerRow = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow();
+		int quoridorWhitePlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn();
+		int quoridor1WhitePlayerRow = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow();
+		int quoridor1WhitePlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn();
+		assertEquals(quoridorBlackPlayerRow,quoridor1BlackPlayerRow);
+		assertEquals(quoridorBlackPlayerColumn,quoridor1BlackPlayerColumn);
+		assertEquals(quoridorWhitePlayerRow,quoridor1WhitePlayerRow);
+		assertEquals(quoridorWhitePlayerColumn,quoridor1WhitePlayerColumn);
+  	}
+  	
+  	@Then("File with {string} shall not be changed in the filesystem")
+  	public void fileWithNameShallNotBeChangedInTheFileSystem(String fileName){
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Quoridor quoridor1 = new Quoridor();
+		quoridor1 = quoridorController.loadPosition(quoridor1,fileName);
+		int quoridorBlackPlayerRow = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow();
+		int quoridorBlackPlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn();
+		int quoridor1BlackPlayerRow = quoridor1.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow();
+		int quoridor1BlackPlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn();
+		int quoridorWhitePlayerRow = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow();
+		int quoridorWhitePlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn();
+		int quoridor1WhitePlayerRow = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow();
+		int quoridor1WhitePlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn();
+		assertFalse(quoridorBlackPlayerRow == quoridor1BlackPlayerRow);
+		assertFalse(quoridorBlackPlayerColumn== quoridor1BlackPlayerColumn);
+		assertFalse(quoridorWhitePlayerRow==quoridor1WhitePlayerRow);
+		assertFalse(quoridorWhitePlayerColumn==quoridor1WhitePlayerColumn);
+  	}
+  
+
 	// ***********************************************
 	// Clean up
 	// ***********************************************
