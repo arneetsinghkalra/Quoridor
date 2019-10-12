@@ -129,11 +129,12 @@ public class CucumberStepDefinitions {
 	@Given("A game position is supplied with pawn coordinate {int}:{int}")
 	public void gamePositionWithPawnCoordinate(int row,int column) {
 		
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		initQuoridorAndBoard();
 		ArrayList<Player> createUsersAndPlayers = createUsersAndPlayers("user1", "user2");
 		createAndStartGame(createUsersAndPlayers);
 		
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+
 		GamePosition gamePosition = quoridor.getCurrentGame().getCurrentPosition();
 		Tile playerCurrentPosition = quoridor.getBoard().getTile(row+9*column);
 		gamePosition.getWhitePosition().setTile(playerCurrentPosition);
@@ -154,6 +155,27 @@ public class CucumberStepDefinitions {
 			assertFalse(validationResult);
 		}
 	}
+	
+	@Given("A game position is supplied with wall coordinate {int}:{int}-\"{string}")
+	public void gamePositionWithWallCoordinate(int row,int column, String dir) {
+		
+		initQuoridorAndBoard();
+		ArrayList<Player> createUsersAndPlayers = createUsersAndPlayers("user1", "user2");
+		createAndStartGame(createUsersAndPlayers);
+		
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+
+		GamePosition gamePosition = quoridor.getCurrentGame().getCurrentPosition();
+		Tile wallCoordinate = quoridor.getBoard().getTile(row+9*column);
+		Wall wall = gamePosition.getWhiteWallsInStock(0);
+		Direction direction = Direction.Vertical;
+		if(dir.equals("horizontal")) {direction = Direction.Horizontal;}
+		WallMove wallMove = new WallMove(1,1,quoridor.getCurrentGame().getWhitePlayer(),wallCoordinate,quoridor.getCurrentGame(),direction,wall);
+		wall.setMove(wallMove);
+		gamePosition.removeWhiteWallsOnBoard(wall);
+		gamePosition.addWhiteWallsOnBoard(wall);
+	}
+	
 	// ***********************************************
 	// Clean up
 	// ***********************************************
