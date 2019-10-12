@@ -14,12 +14,6 @@ public class QuoridorController implements Controller {
 	}
 
 	@Override
-	public Tile getWallPostition(Wall wall) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not implemented!");
-	}
-
-	@Override
 	public void switchCurrentPlayer(Game game) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Not implemented!");
