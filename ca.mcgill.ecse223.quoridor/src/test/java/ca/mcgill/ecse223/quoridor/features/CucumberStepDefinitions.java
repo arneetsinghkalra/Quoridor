@@ -176,6 +176,90 @@ public class CucumberStepDefinitions {
 		gamePosition.addWhiteWallsOnBoard(wall);
 	}
 	
+	@Given("The player to move is {string}")
+	public void thePlayerToMoveIs(String player) {
+		initQuoridorAndBoard();
+		ArrayList<Player> createUsersAndPlayers = createUsersAndPlayers("white", "black");
+		createAndStartGame(createUsersAndPlayers);
+		
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		GamePosition gamePosition = quoridor.getCurrentGame().getCurrentPosition();
+		if(player.equals("white")) {
+			gamePosition.setPlayerToMove(quoridor.getCurrentGame().getWhitePlayer());
+		}
+		else {
+			gamePosition.setPlayerToMove(quoridor.getCurrentGame().getBlackPlayer());
+		}
+	}
+	
+	@And("The clock of {string} is running")
+	public void theClockIsRunning(String player){
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		if(player.equals("white")) {
+			quoridor.getCurrentGame().getWhitePlayer().setRemainingTime(new Time(180000));
+		}
+		else {
+			quoridor.getCurrentGame().getBlackPlayer().setRemainingTime(new Time(180000));
+		}
+		
+	}
+	
+	@And("The clock of {string} is stopped")
+	public void theClockIsStopped(String player){
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		if(player.equals("white")) {
+			quoridor.getCurrentGame().getWhitePlayer().setRemainingTime(new Time(0));
+		}
+		else {
+			quoridor.getCurrentGame().getBlackPlayer().setRemainingTime(new Time(0));
+		}
+		
+	}
+	
+	@When("Player {string} completes his move")
+	public void playerCompletesMove(String player){
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		cotroller.switchCurrentPlayer(quoridor.getCurrentGame());
+	}
+
+	@Then("The user interface shall be showing it is \"<other>\" turn")
+	public void userInterfaceChange(String player) {
+		throw new UnsupportedOperationException("GUI related");
+	}
+	
+	@Then("The clock of \"<player>\" shall be stopped")
+	public void clockShallBeStopped(String player) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		if(player.equals("white")) {
+			assertTrue(quoridor.getCurrentGame().getWhitePlayer().getRemainingTime().getTime()==0);
+		}
+		else {
+			assertTrue(quoridor.getCurrentGame().getBlackPlayer().getRemainingTime().getTime()==0);
+		}
+	}
+	
+	@Then("The clock of \"<player>\" shall be running")
+	public void clockShallBeRunning(String player) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		if(player.equals("white")) {
+			assertFalse(quoridor.getCurrentGame().getWhitePlayer().getRemainingTime().getTime()==0);
+		}
+		else {
+			assertFalse(quoridor.getCurrentGame().getBlackPlayer().getRemainingTime().getTime()==0);
+		}
+	}
+
+	@And("The next player to move shall be \"<other>\" ")
+	public void nextPlayToMoveShallBe(String player) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Player currentPlayer = 
+		if(player.equals("white")) {
+			assertTrue(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsWhite()!=null);
+		}
+		else {
+			assertTrue(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsBlack()!=null);
+		}
+	}
 	// ***********************************************
 	// Clean up
 	// ***********************************************
