@@ -252,7 +252,6 @@ public class CucumberStepDefinitions {
 	@And("The next player to move shall be \"<other>\" ")
 	public void nextPlayToMoveShallBe(String player) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		Player currentPlayer = 
 		if(player.equals("white")) {
 			assertTrue(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsWhite()!=null);
 		}
