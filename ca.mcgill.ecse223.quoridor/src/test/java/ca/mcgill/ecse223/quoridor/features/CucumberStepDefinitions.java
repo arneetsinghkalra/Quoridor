@@ -133,47 +133,83 @@ public class CucumberStepDefinitions {
 	//Feature 1 - StartNewGame - Implemented by Ali Tapan - 260556540
 	//-----------------------------------------------------------------------------//
 		
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
 	 @When("A new game is being initialized")
 	 public void aNewGameIsBeingInitialized() throws UnsupportedOperationException { 
 		 game = Controller.StartNewGame();
 		 
 	 }
 	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
 	 @And("White player chooses a username")
 	 public void whitePlayerChoosesAUsername() throws UnsupportedOperationException {
 		 Controller.whiteSelectUserName(game);
 	 }
 	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
 	 @And("Black player chooses a username")
 	 public void blackPlayerChoosesAUsername() throws UnsupportedOperationException {
 		 Controller.blackSelectUserName(game);
 	 } 
 	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
 	 @And("Total thinking time is set")
 	 public void totalThinkingTimeIsSet() throws UnsupportedOperationException {
 		 game = Controller.setTimer(game);
 	 } 
-		 
+	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
 	 @Then("The game shall become ready to start")
 	 public void theGameShallBecomeReadyToStart() {
 		 assertEquals(GameStatus.ReadyToStart, game.getGameStatus());
 	 }
-		 
+	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
 	 @Given("The game is ready to start")
 	 public void theGameIsReadyToStart() {
 		 game = createAndReadyGame();
 	 }
 	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
 	 @When("I start the clock")
 	 public void iStartTheClock() throws Throwable {
 		 game = Controller.startClock(game);
 	 }
 	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
 	 @Then("The game shall be running")
 	 public void theGameShallbeRunning() {
 		 assertEquals(GameStatus.Running, game.getGameStatus());
 	 }
 	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
 	 @And("The board shall be initialized")
 	 public void theBoardShallBeInitialized() {
 		 // Check if the board has tiles, if it has tiles then the board is initialized
@@ -184,12 +220,20 @@ public class CucumberStepDefinitions {
 	//Feature 2 - ProvideSelectUserName - Implemented by Ali Tapan - 260556540
 	//-----------------------------------------------------------------------------//
 	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
 	 @Given("A new game is initializing")
 	 public void aNewGameIsInitializing() {
 		 game = Controller.StartNewGame();
 		 
 	 }
 	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
 	 @Given("Next player to set user name is {string}")
 	 public void nextPlayerToSetUserNameIs(String color) {
 		 if (color == "white")
@@ -204,11 +248,19 @@ public class CucumberStepDefinitions {
 		 }
 	 }
 	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
 	 @And("There is existing user {string}")
 	 public void thereIsExistingUser(String username) {
 		 assertEquals(true, User.hasWithName(username));
 	 }
 	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
 	 @When("The player selects existing {string}")
 	 public void thePlayerSelectsExisting(String username) throws IllegalArgumentException {
 		 Controller.selectExistingUserName(player);
@@ -220,16 +272,28 @@ public class CucumberStepDefinitions {
 		 }
 	 }
 	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
 	 @Then("The name of player {string} in the new game shall be {string}")
 	 public void theNameOfPlayerInTheNewGameShallBe(String color, String username) {
 		 assertEquals(username, user.getName());
 	 }
 	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
 	 @And("There is no existing user {string}")
 	 public void thereIsNoExistingUser(String username) {
 		 assertEquals(false, User.hasWithName(username));
 	 }
 	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
 	 @When("The player provides new user name: {string}")
 	 public void thePlayerProvidesNewUserName(String username) throws IllegalArgumentException {
 		 Controller.enterNewUserName(username);
@@ -241,11 +305,19 @@ public class CucumberStepDefinitions {
 		 }
 	 }
 	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
 	 @Then("The player shall be warned that {string} already exists")
 	 public void thePlayerShallBeWarnedThatAlreadyExists(String color, String username) {
 		 user.notify();
 	 }
 	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
 	 @And("Next player to set user name shall be {string}")
 	 public void nextPlayerToSetUserNameShallBe(String color){
 		 player.getNextPlayer();
