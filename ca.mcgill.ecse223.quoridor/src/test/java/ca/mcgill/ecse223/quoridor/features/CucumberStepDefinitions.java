@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
-import ca.mcgill.ecse223.quoridor.controller.QuoridorControllerImplementation;
 import ca.mcgill.ecse223.quoridor.model.Board;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
@@ -20,15 +19,12 @@ import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.User;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 
 public class CucumberStepDefinitions {
 
-	private QuoridorControllerImplementation quoridorController = new QuoridorControllerImplementation();
 	// ***********************************************
 	// Background step definitions
 	// ***********************************************
@@ -119,104 +115,7 @@ public class CucumberStepDefinitions {
 	 * are implemented
 	 * 
 	 */
-	
-	
-	// ***********************************************
-	// Feature 1 - Grab Wall    @author Luke Barber - 260840096
-	// ***********************************************
 
-	
-	/** @author Luke Barber*/
-	@Given("I have more walls on stock")
-	public void iHaveMoreWallsOnStock() {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		assertTrue(quoridor.getCurrentGame().getCurrentPosition().hasWhiteWallsInStock());
-	}
-	
-	/** @author Luke Barber*/
-	@When("I try to grab a wall from my stock")
-	public void iTryToGrabAWallFromMyStock(Wall wall) {
-		quoridorController.grabWall(wall);
-	}
-	
-	/** @author Luke Barber*/
-	@Then("A wall move candidate shall be created at initial position")
-	public void aWallMoveCandidateShallBeCreatedAtInitialPosition(Wall wallInHand){
-		assertTrue(wallInHand.getMove() != null);
-	}
-	
-	/** @author Luke Barber*/
-	@And("I shall have a wall in my hand over the board")
-	public void iShallHaveAWallInMyHandOverTheBoard() throws Throwable {
-		// GUI related feature to be implemented later
-	}
-	
-	/** @author Luke Barber*/
-	@And("The wall in my hand shall disappear from my stock")
-	public void theWallInMyHandShallDisappearFromMyStock(Wall wallInHand) {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		assertEquals(-1, quoridor.getCurrentGame().getCurrentPosition().indexOfWhiteWallsInStock(wallInHand));
-	}
-	
-	/** @author Luke Barber*/
-	@Given("I have no more walls on stock")
-	public void iHaveNoMoreWallOnStock() {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		assertFalse(quoridor.getCurrentGame().getCurrentPosition().hasWhiteWallsInStock());
-	}
-	
-	/** @author Luke Barber*/
-	@Then("I shall be notified that I have no more walls")
-	public void iShallBeNotifiedThatIHaveNoMoreWalls() {
-		// GUI related feature to be implemented later
-	}
-	
-	/** @author Luke Barber*/
-	@And("I shall not have a wall in my hand")
-	public void iShallNotHaveAWallInMyHand() {
-		// GUI related feature to be implemented later
-	}
-
-	
-	// ***********************************************
-	// Feature 2 - Rotate Wall    @author Luke Barber - 260840096
-	// ***********************************************
-	
-	
-	/** @author Luke Barber*/
-	@Given("A wall move candidate exists with {String} at position ({int}, {int})")
-	public void aWallMoveCandidateExistsWithAtPosition(String dir, int row, int column) {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		WallMove wallMove = quoridor.getCurrentGame().getWallMoveCandidate();
-		Move move = wallMove;
-		assertEquals(stringToDirection(dir), wallmove.getWallDirection());
-		assertEquals(row, move.getTargetTile.getRow());
-		assertEquals(column, move.getTargetTile.getColumn());
-	}
-	
-	/** @author Luke Barber*/
-	@When("I try to flip the wall")
-	public void iTryToFlipTheWall(Wall wall) {
-		quoridorController.rotateWall(wall);
-	}
-	
-	/** @author Luke Barber*/
-	@Then("The wall shall be rotated over the board to {String}")
-	public void theWallShallBeRotatedOverTheBoardTo(String newdir, WallMove wall) {
-		assertEquals(stringToDirection(newdir), wall.getWallDirection());
-	}
-	/** @author Luke Barber*/
-	@And("A wall move candidate shall exist with {String} at position ({int}, {int})")
-	public void aWallMoveCandidateShallExistWithAtPosition(String newdir, int row, int column) {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		WallMove wallMove = quoridor.getCurrentGame().getWallMoveCandidate();
-		Move move = wallMove;
-		assertEquals(stringToDirection(newdir), wallmove.getWallDirection());
-		assertEquals(row, move.getTargetTile.getRow());
-		assertEquals(column, move.getTargetTile.getColumn());
-	}
-	
-	
 	// ***********************************************
 	// Clean up
 	// ***********************************************
