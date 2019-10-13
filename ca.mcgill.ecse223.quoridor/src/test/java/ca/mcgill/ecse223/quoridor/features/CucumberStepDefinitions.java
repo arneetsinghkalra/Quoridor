@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Assertions;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.Controller;
+import ca.mcgill.ecse223.quoridor.controller.ControllerImplementation;
 import ca.mcgill.ecse223.quoridor.model.Board;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
@@ -38,6 +39,8 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 public class CucumberStepDefinitions {
+	
+	private ControllerImplementation controller = new ControllerImplementation();
 
 	// ***********************************************
 	// Background step definitions
@@ -199,12 +202,13 @@ public void the_wall_candidate_is_not_at_the_edge_of_the_board(String side) {
 		assertFalse (currentGame.getWallMoveCandidate().getTargetTile().getRow() == 9);
 	}
 }
+
 /**
  * @author arneetkalra
  */
 @When("I try to move the wall {string}")
 public void i_try_to_move_the_wall(String side) {    
-    Controller.moveWall(wallMoveCandidate,side);
+    controller.moveWall(wallMoveCandidate, side);
 }
 
 /**
@@ -312,8 +316,8 @@ public void the_wall_move_candidate_with_at_position_is_valid(String dir, int ro
  * @author arneetkalra
  */
 @When("I release the wall in my hand")
-public void i_release_the_wall_in_my_hand(Wall aWall) {
-    Controller.dropWall(aWall);
+public void i_release_the_wall_in_my_hand(Wall aWall) throws Throwable {
+    controller.dropWall(wallMoveCandidate);
 }
 
 /**

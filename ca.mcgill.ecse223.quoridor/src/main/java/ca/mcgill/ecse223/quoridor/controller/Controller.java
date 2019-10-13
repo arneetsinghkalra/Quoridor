@@ -14,53 +14,42 @@ import ca.mcgill.ecse223.quoridor.model.WallMove;
 public interface Controller {
 
 	/**
-	 * moveWall method that allows a player to move the wall that they have in their hand over the board. 
-	 * It will be allowed to move over the rows and columns of the board and also give an error when it is placed in an incorrect position.
+	 * <p> 7. Move Wall <p>
+	 * <p>moveWall method that allows a player to move the wall that they have in their hand over the board. 
+	 * It will be allowed to move over the rows and columns of the board and also give an error when it is placed in an incorrect position.<p>
 	 *
 	 * @author arneetkalra
 	 * @param wallMoveCandidate 
 	 * @param side references the Wall that player will have in their hand
 	 * @return void method but allows player to manipulate wall over board 
-	 * @Version 1.0
 	 */
-	public static void moveWall(WallMove wallMoveCandidate, String side) {
-		throw new IllegalStateException(); 	}
+	public void moveWall(WallMove wallMoveCandidate, String side);
 	
 	/**
-	 * dropWall method that allows player to place the wall after navigating to the designated (and valid) area in order to register
-	 * the wall placement as a move for the player. 
+	 * <p> 8. Drop Wall <p>
+	 * <p>dropWall method that allows player to place the wall after navigating to the designated (and valid) area in order to register
+	 * the wall placement as a move for the player. <p>
 	 * @author arneetkalra
 	 * @param aWall references the Wall that player will have in their hand
 	 * @return void method but drops wall which prompts end of player turn
-	 * @Version 1.0
 	 */
-	public static void dropWall(Wall aWall) {
-		throw new IllegalStateException(); 
-	}
+	public void dropWall(WallMove wallMoveCandidate);
+	/**
+	 *<p> Boolean method that returns if a WallMove has been completed<p>
+	 * @author arneetkalra
+	 * @param moveWall
+	 * @return boolean
+	 */
+	public boolean isWallMoved(WallMove movedWall);
 	
 	/**
-	 * dropWall method that allows player to place the wall after navigating to the designated (and valid) area in order to register
-	 * the wall placement as a move for the player. 
+	 * <p>Boolean method that can check if a wall was moved to a certain row and column <p>
 	 * @author arneetkalra
-	 * @param aWall references the Wall that player will have in their hand
-	 * @return void method but drops wall which prompts end of player turn
-	 * @Version 1.0
+	 * @param row the reference of the row 
+	 * @param col the reference of the column
+	 * @return boolean
 	 */
-	public static boolean isWallMoved(WallMove movedWall)  {
-		throw new IllegalStateException(); 	
-	}
-	
-	/**
-	 * dropWall method that allows player to place the wall after navigating to the designated (and valid) area in order to register
-	 * the wall placement as a move for the player. 
-	 * @author arneetkalra
-	 * @param aWall references the Wall that player will have in their hand
-	 * @return void method but drops wall which prompts end of player turn
-	 * @Version 1.0
-	 */
-	public static boolean isWallMovedTo(WallMove movedWall, int row, int col) {
-		throw new IllegalStateException(); 
-	}
+	public boolean isWallMovedTo(int row, int col);
 }
 
 
