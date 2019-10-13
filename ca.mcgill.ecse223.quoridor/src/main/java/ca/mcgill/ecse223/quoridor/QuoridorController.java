@@ -27,7 +27,7 @@ public class QuoridorController implements Controller{
 	 * @param fileName
 	 * */
 	@Override
-	public void savePosition(String fileName) {
+	public void savePosition(String fileName, GamePosition gamePosition) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("not implemented");
 	}

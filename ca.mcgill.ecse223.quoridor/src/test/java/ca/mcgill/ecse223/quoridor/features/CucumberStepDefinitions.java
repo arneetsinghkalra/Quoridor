@@ -167,7 +167,9 @@ public class CucumberStepDefinitions {
 	/**
 	 * Checks whether the player/opponent is at the right position 
 	 * @author Yin
-	 * @param row, column
+	 * @param player
+	 * @param row
+	 * @param column
 	 */
 	@And("{string} is at {int}:{int}")
 	public void playerIsAt(String player, int row, int column) {
@@ -222,6 +224,8 @@ public class CucumberStepDefinitions {
 		assertEquals(currentGame.getBlackPlayer().getWalls().size(),number);
 		assertEquals(currentGame.getWhitePlayer().getWalls().size(),number);
 	}
+	
+	
 	//SavePosition
 	/**
 	 * Checks whether the file is in the system or not
@@ -243,7 +247,9 @@ public class CucumberStepDefinitions {
 	 * */
   	@When("The user initiates to save the game with name {string}")
   	public void theUserInitiatesToSaveTheGameWithName(String fileName) {
-  		quoridorController.savePosition(fileName);
+  		Quoridor quoridor = QuoridorApplication.getQuoridor();
+  		GamePosition gamePosition = quoridor.getCurrentGame().getCurrentPosition();
+  		quoridorController.savePosition(fileName,gamePosition);
   	}
   	
   	@Then("A file with {string} is created in the filesystem")
