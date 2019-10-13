@@ -129,7 +129,7 @@ public class CucumberStepDefinitions {
 	 */
 	/**
 	 * Load the game from the file
-	 * @author Yin
+	 * @author Yin Zhang 260726999
 	 * @param fileName
 	 */
 	@When("I initiate to load a saved game {string}")
@@ -152,8 +152,8 @@ public class CucumberStepDefinitions {
 	
 	/**
 	 * checks whether the playerToMove is the same as expected
-	 * @author Yin
-	 * @param fileName
+	 * @author Yin Zhang 260726999
+	 * @param  playerToMove
 	 */
 	@Then("It is {string} turn")
 	public void itIsPlayersTurn(String playerToMove){
@@ -166,7 +166,7 @@ public class CucumberStepDefinitions {
 	
 	/**
 	 * Checks whether the player/opponent is at the right position 
-	 * @author Yin
+	 * @author Yin Zhang 260726999
 	 * @param player
 	 * @param row
 	 * @param column
@@ -189,8 +189,11 @@ public class CucumberStepDefinitions {
 	
 	/**
 	 * Checks whether the wall of the player is in the right position
-	 * @author Yin
-	 * @param player, direction, row, column
+	 * @author Yin Zhang 260726999
+	 * @param player
+	 * @param direction
+	 * @param row
+	 * @param column
 	 */
 	@And("{string} has a {string} wall at {int}:{int}")
 	public void playerHasAPwOWallAt(String player,String direction, int row, int column) {
@@ -214,7 +217,7 @@ public class CucumberStepDefinitions {
 	
 	/**
 	 * Checks whether the number of the wall in the list is the right number
-	 * @author Yin
+	 * @author Yin Zhang 260726999
 	 * @param number
 	 */
 	@And("Both players have {int} in their stacks")
@@ -229,7 +232,7 @@ public class CucumberStepDefinitions {
 	//SavePosition
 	/**
 	 * Checks whether the file is in the system or not
-	 * @author Yin
+	 * @author Yin Zhang 260726999
 	 * @param fileName
 	 */
 	@Given("No file {string} exists in the filesystem")
@@ -251,13 +254,21 @@ public class CucumberStepDefinitions {
   		GamePosition gamePosition = quoridor.getCurrentGame().getCurrentPosition();
   		quoridorController.savePosition(fileName,gamePosition);
   	}
-  	
+	/**
+	 * @param fileName
+	 * @author Yin Zhang 260726999
+	 *
+	 * */
   	@Then("A file with {string} is created in the filesystem")
   	public void aFileWithIsCreatedInTheFilesystem(String fileName) {
   		File f = new File(fileName);
   		assertTrue(f.exists());
   	}
-  	
+	/**
+	 * @param fileName
+	 * @author Yin Zhang 260726999
+	 *
+	 * */
   	@Given("File {string} exists in the filesystem")
   	public void fileExistsInTheFileSystem(String fileName) {
   		File f = new File(fileName);
@@ -266,13 +277,17 @@ public class CucumberStepDefinitions {
   		}
   	}
   	/**
-  	 * @author Yin
+	 * @author Yin Zhang 260726999
   	 * The user confirm whether to overwrite the existing file
   	 * */
   	@And("The user confirms to overwrite existing file")
   	public void theUserConfirmsToOverwriteExistingFile() {
   		quoridorController.confirmsToOverWrite();
   	}
+  	/**
+	 * @author Yin Zhang 260726999
+  	 * check whether the file is updated
+  	 * */
   	@Then("File with {string} shall be updated in the filesystem")
   	public void fileWithNameShallBeUpdatedInTheFileSystem(String fileName){
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
@@ -286,12 +301,16 @@ public class CucumberStepDefinitions {
 		int quoridorWhitePlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn();
 		int quoridor1WhitePlayerRow = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow();
 		int quoridor1WhitePlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn();
-		assertEquals(quoridorBlackPlayerRow,quoridor1BlackPlayerRow);
-		assertEquals(quoridorBlackPlayerColumn,quoridor1BlackPlayerColumn);
-		assertEquals(quoridorWhitePlayerRow,quoridor1WhitePlayerRow);
-		assertEquals(quoridorWhitePlayerColumn,quoridor1WhitePlayerColumn);
+		assertFalse(quoridorBlackPlayerRow==quoridor1BlackPlayerRow);
+		assertFalse(quoridorBlackPlayerColumn==quoridor1BlackPlayerColumn);
+		assertFalse(quoridorWhitePlayerRow==quoridor1WhitePlayerRow);
+		assertFalse(quoridorWhitePlayerColumn==quoridor1WhitePlayerColumn);
   	}
   	
+  	/**
+	 * @author Yin Zhang 260726999
+  	 * check whether the file is updated
+  	 * */
   	@Then("File with {string} shall not be changed in the filesystem")
   	public void fileWithNameShallNotBeChangedInTheFileSystem(String fileName){
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
