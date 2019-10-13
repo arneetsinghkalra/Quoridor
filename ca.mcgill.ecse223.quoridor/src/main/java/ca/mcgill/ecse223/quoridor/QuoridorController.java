@@ -31,20 +31,16 @@ public class QuoridorController implements Controller{
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("not implemented");
 	}
+	
 	@Override
 	public boolean validatePosition(GamePosition gamePosition) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 	
-	public Game readFileGame(String fileName) {
-		
-		throw new UnsupportedOperationException("not implemented");
-	}
-	
-	public boolean ifPositionValid(GamePosition gamePosition) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-	
+	/**
+	 * User confirms to overwrite the file
+	 * @author Yin Zhang 260726999
+	 * */
 	public void confirmsToOverWrite() {
 		throw new UnsupportedOperationException("not implemented");
 	}
