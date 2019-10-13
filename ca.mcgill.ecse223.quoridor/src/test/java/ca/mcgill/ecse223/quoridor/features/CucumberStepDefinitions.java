@@ -187,7 +187,7 @@ public class CucumberStepDefinitions {
 	  */
 	 @Given("The game is ready to start")
 	 public void theGameIsReadyToStart() {
-		// this.initQuoridorAndBoard();
+		 //this.initQuoridorAndBoard();
 		 //this.createUsersAndPlayers("user_a", "user_b");
 		 this.createAndReadyGame();
 	 }

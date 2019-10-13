@@ -18,6 +18,7 @@ public interface Controller {
    * 
    * @author Ali Tapan
    * @version 1.0
+ * @throws Throwable 
    */
   public Game StartNewGame();
   
