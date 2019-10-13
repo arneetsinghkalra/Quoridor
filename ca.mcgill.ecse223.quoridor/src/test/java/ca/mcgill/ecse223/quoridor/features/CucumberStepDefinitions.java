@@ -21,7 +21,6 @@ import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.User;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
-import com.sun.org.apache.xpath.internal.operations.Quo;
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -339,12 +338,7 @@ public class CucumberStepDefinitions {
 	 }
 	 
 	//-----------------------------------------------------------------------------//
-	/** @author Sam Perreault */
-    @Given("A new game is initializing")
-    public void aNewGameIsInitializing() {
-        this.initQuoridorAndBoard();
-        this.createUsersAndPlayers("player1", "player2");
-    }
+
 
     /** @author Sam Perreault */
     @When("{int}:{int} is set as the thinking time")
