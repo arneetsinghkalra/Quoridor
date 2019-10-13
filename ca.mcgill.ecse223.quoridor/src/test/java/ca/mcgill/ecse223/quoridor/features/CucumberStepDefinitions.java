@@ -420,62 +420,6 @@ public class CucumberStepDefinitions {
     }
 	
 
-	// --------------------------feature 5-6------------
-	/** @author Luke Barber*/
-	@Given("I have more walls on stock")
-	public void iHaveMoreWallsOnStock() {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		assertTrue(quoridor.getCurrentGame().getCurrentPosition().hasWhiteWallsInStock());
-	}
-	
-	/** @author Luke Barber*/
-	@When("I try to grab a wall from my stock")
-	public void iTryToGrabAWallFromMyStock(Wall wall) {
-		quoridorController.grabWall(wall);
-	}
-	
-	/** @author Luke Barber*/
-	@Then("A wall move candidate shall be created at initial position")
-	public void aWallMoveCandidateShallBeCreatedAtInitialPosition(){
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		WallMove wallMove = quoridor.getCurrentGame().getWallMoveCandidate();
-		assertTrue(wallMove!=null);
-	}
-	
-	/** @author Luke Barber*/
-	@And("I shall have a wall in my hand over the board")
-	public void iShallHaveAWallInMyHandOverTheBoard() throws Throwable {
-		// GUI related feature to be implemented later
-	}
-	
-	/** @author Luke Barber*/
-	@And("The wall in my hand shall disappear from my stock")
-	public void theWallInMyHandShallDisappearFromMyStock() {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		Player player = quoridor.getCurrentPosition().getWhitePlayer();
-		int numberOfPlayerWalls = quordifor.getCurrentGame().getCurrentPosition().numberOfWhiteWallsOnBoard();
-		assertEquals((player.maximumNumberOfWalls - player.numberOfWalls()), numberOfPlayerWalls-1);
-	}
-	
-	/** @author Luke Barber*/
-	@Given("I have no more walls on stock")
-	public void iHaveNoMoreWallOnStock() {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		assertFalse(quoridor.getCurrentGame().getCurrentPosition().hasWhiteWallsInStock());
-	}
-	
-	/** @author Luke Barber*/
-	@Then("I shall be notified that I have no more walls")
-	public void iShallBeNotifiedThatIHaveNoMoreWalls() {
-		// GUI related feature to be implemented later
-	}
-	
-	/** @author Luke Barber*/
-	@And("I shall not have a wall in my hand")
-	public void iShallNotHaveAWallInMyHand() {
-		// GUI related feature to be implemented later
-	}
-	
 	// ***********************************************
 	// Clean up
 	// ***********************************************
