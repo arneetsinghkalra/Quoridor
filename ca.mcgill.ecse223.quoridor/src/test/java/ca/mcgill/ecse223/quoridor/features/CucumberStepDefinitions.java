@@ -223,12 +223,12 @@ public class CucumberStepDefinitions {
 		cotroller.switchCurrentPlayer(quoridor.getCurrentGame());
 	}
 
-	@Then("The user interface shall be showing it is \"<other>\" turn")
+	@Then("The user interface shall be showing it is {string} turn")
 	public void userInterfaceChange(String player) {
 		throw new UnsupportedOperationException("GUI related");
 	}
 	
-	@Then("The clock of \"<player>\" shall be stopped")
+	@Then("The clock of {string} shall be stopped")
 	public void clockShallBeStopped(String player) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		if(player.equals("white")) {
@@ -239,7 +239,7 @@ public class CucumberStepDefinitions {
 		}
 	}
 	
-	@Then("The clock of \"<player>\" shall be running")
+	@Then("The clock of {string} shall be running")
 	public void clockShallBeRunning(String player) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		if(player.equals("white")) {
@@ -250,7 +250,7 @@ public class CucumberStepDefinitions {
 		}
 	}
 
-	@And("The next player to move shall be \"<other>\" ")
+	@And("The next player to move shall be {string} ")
 	public void nextPlayToMoveShallBe(String player) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		if(player.equals("white")) {
