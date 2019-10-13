@@ -29,13 +29,14 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import ca.mcgill.ecse223.quoridor.controller.Controller;
+import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 
 public class CucumberStepDefinitions {
 
 	// ***********************************************
 	// Background step definitions
 	// ***********************************************
-	private Controller cotroller;
+	private Controller cotroller = new QuoridorController();
 	private boolean validationResult;
 
 	
