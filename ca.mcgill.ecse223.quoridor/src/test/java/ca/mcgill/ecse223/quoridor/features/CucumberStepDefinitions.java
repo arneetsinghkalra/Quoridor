@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
+import ca.mcgill.ecse223.quoridor.controller.Controller;
+import ca.mcgill.ecse223.quoridor.controller.QuoridorControllerImplementation;
 import ca.mcgill.ecse223.quoridor.model.Board;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
@@ -22,9 +24,16 @@ import ca.mcgill.ecse223.quoridor.model.WallMove;
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import ca.mcgill.ecse223.quoridor.controller.Controller;
+
 
 public class CucumberStepDefinitions {
 
+	private QuoridorControllerImplementation quoridorController = new QuoridorControllerImplementation();
 	// ***********************************************
 	// Background step definitions
 	// ***********************************************
@@ -115,6 +124,221 @@ public class CucumberStepDefinitions {
 	 * are implemented
 	 * 
 	 */
+
+	
+	//-----------------------------------------------------------------------------//
+	//Feature 1 - StartNewGame - Implemented by Ali Tapan - 260556540
+	//-----------------------------------------------------------------------------//
+		
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
+	 @When("A new game is being initialized")
+	 public void aNewGameIsBeingInitialized() throws Throwable { 
+		 quoridorController.StartNewGame();
+		 
+	 }
+	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
+	 @And("White player chooses a username")
+	 public void whitePlayerChoosesAUsername() throws Throwable {
+		 Quoridor quoridor = QuoridorApplication.getQuoridor();
+		 Player player = quoridor.getCurrentGame().getWhitePlayer();
+		 quoridorController.provideOrSelectUserName(player.getUser());
+	 }
+	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
+	 @And("Black player chooses a username")
+	 public void blackPlayerChoosesAUsername() throws UnsupportedOperationException {
+		 Quoridor quoridor = QuoridorApplication.getQuoridor();
+		 Player player = quoridor.getCurrentGame().getBlackPlayer();
+		 quoridorController.provideOrSelectUserName(player.getUser());
+	 } 
+	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
+	 @And("Total thinking time is set")
+	 public void totalThinkingTimeIsSet() throws UnsupportedOperationException {
+		 quoridorController.setTotalThinkingTime();
+	 } 
+	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
+	 @Then("The game shall become ready to start")
+	 public void theGameShallBecomeReadyToStart() {
+		 Quoridor quoridor = QuoridorApplication.getQuoridor();
+		 assertEquals(GameStatus.ReadyToStart, quoridor.getCurrentGame().getGameStatus());
+	 }
+	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
+	 @Given("The game is ready to start")
+	 public void theGameIsReadyToStart() {
+		 //this.initQuoridorAndBoard();
+		 //this.createUsersAndPlayers("user_a", "user_b");
+		 this.createAndReadyGame();
+	 }
+	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
+	 @When("I start the clock")
+	 public void iStartTheClock() throws Throwable {
+		 quoridorController.startClock();
+	 }
+	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
+	 @Then("The game shall be running")
+	 public void theGameShallbeRunning() {
+		 Quoridor quoridor = QuoridorApplication.getQuoridor();
+		 assertEquals(GameStatus.Running, quoridor.getCurrentGame().getGameStatus());
+	 }
+	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
+	 @And("The board shall be initialized")
+	 public void theBoardShallBeInitialized() {
+		 // Check if the board has tiles, if it has tiles then the board is initialized
+		 Quoridor quoridor = QuoridorApplication.getQuoridor();
+		 assertEquals(true, quoridor.getBoard().hasTiles());
+	 }
+	 
+	//-----------------------------------------------------------------------------//
+	//Feature 2 - ProvideSelectUserName - Implemented by Ali Tapan - 260556540
+	//-----------------------------------------------------------------------------//
+	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
+	 @Given("A new game is initializing")
+	 public void aNewGameIsInitializing() {
+		 this.initQuoridorAndBoard();
+		 this.createUsersAndPlayers("player_white", "player_black");
+	 }
+	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
+	 @Given("Next player to set user name is {string}")
+	 public void nextPlayerToSetUserNameIs(String color) {
+		 Quoridor quoridor = QuoridorApplication.getQuoridor();
+		 
+		 if (color == "white")
+		 {
+			 Player player = quoridor.getCurrentGame().getWhitePlayer();
+			 User user = player.getUser();
+		 }
+		 else if(color == "black")
+		 {
+			 Player player = quoridor.getCurrentGame().getBlackPlayer();
+			 User user = player.getUser();
+		 }
+	 }
+	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
+	 @And("There is existing user {string}")
+	 public void thereIsExistingUser(String username) {
+		 assertEquals(true, User.hasWithName(username));
+	 }
+	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
+	 @When("The player selects existing {string}")
+	 public void thePlayerSelectsExisting(String username) throws Throwable {
+		 quoridorController.selectExistingUsername(username);
+	 }
+	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
+	 @Then("The name of player {string} in the new game shall be {string}")
+	 public void theNameOfPlayerInTheNewGameShallBe(String color, String username) {
+		 Quoridor quoridor = QuoridorApplication.getQuoridor();
+		 if(color == "black")
+		 {
+			 assertEquals(username, quoridor.getCurrentGame().getBlackPlayer().getUser().getName());
+		 }
+		 else
+		 {
+			 assertEquals(username, quoridor.getCurrentGame().getWhitePlayer().getUser().getName());
+		 }
+	 }
+	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
+	 @And("There is no existing user {string}")
+	 public void thereIsNoExistingUser(String username) {
+		 assertEquals(false, User.hasWithName(username));
+	 }
+	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
+	 @When("The player provides new user name: {string}")
+	 public void thePlayerProvidesNewUserName(String username) throws Throwable {
+		 quoridorController.provideNewUsername(username);
+	 }
+	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
+	 @Then("The player shall be warned that {string} already exists")
+	 public void thePlayerShallBeWarnedThatAlreadyExists(String color, String username) {
+		 Quoridor quoridor = QuoridorApplication.getQuoridor();
+		 quoridor.notifyAll();
+	 }
+	 
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
+	 @And("Next player to set user name shall be {string}")
+	 public void nextPlayerToSetUserNameShallBe(String color){
+		 Quoridor quoridor = QuoridorApplication.getQuoridor();
+		 if(color == "black")
+		 {
+			 Player nextPlayer = quoridor.getCurrentGame().getBlackPlayer().getNextPlayer();
+		 }
+		 else
+		 {
+			 Player nextPlayer = quoridor.getCurrentGame().getWhitePlayer().getNextPlayer();
+		 }
+	 }
+	 
+	//-----------------------------------------------------------------------------//
+	
+	
 
 	// ***********************************************
 	// Clean up
@@ -222,5 +446,19 @@ public class CucumberStepDefinitions {
 
 		game.setCurrentPosition(gamePosition);
 	}
-
+	
+	private Game createAndReadyGame() {
+		
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		
+		User user1 = quoridor.addUser("userWhite");
+		User user2 = quoridor.addUser("userBlack");
+		int thinkingTime = 180;
+		
+		Player player1 = new Player(new Time(thinkingTime), user1, 9, Direction.Horizontal);
+		Player player2 = new Player(new Time(thinkingTime), user2, 1, Direction.Horizontal);
+		
+		Game game = new Game(GameStatus.ReadyToStart, MoveMode.PlayerMove, player1, player2, quoridor);
+		return game;
+	}
 }
