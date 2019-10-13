@@ -141,8 +141,10 @@ public class CucumberStepDefinitions {
 	
 	/** @author Luke Barber*/
 	@Then("A wall move candidate shall be created at initial position")
-	public void aWallMoveCandidateShallBeCreatedAtInitialPosition(Wall wallInHand){
-		assertTrue(wallInHand.getMove() != null);
+	public void aWallMoveCandidateShallBeCreatedAtInitialPosition(){
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		WallMove wallMove = quoridor.getCurrentGame().getWallMoveCandidate();
+		assertTrue(wallMove!=null);
 	}
 	
 	/** @author Luke Barber*/
@@ -153,9 +155,11 @@ public class CucumberStepDefinitions {
 	
 	/** @author Luke Barber*/
 	@And("The wall in my hand shall disappear from my stock")
-	public void theWallInMyHandShallDisappearFromMyStock(Wall wallInHand) {
+	public void theWallInMyHandShallDisappearFromMyStock() {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		assertEquals(-1, quoridor.getCurrentGame().getCurrentPosition().indexOfWhiteWallsInStock(wallInHand));
+		Player player = quoridor.getCurrentPosition().getWhitePlayer();
+		int numberOfPlayerWalls = quordifor.getCurrentGame().getCurrentPosition().numberOfWhiteWallsOnBoard();
+		assertEquals((player.maximumNumberOfWalls - player.numberOfWalls()), numberOfPlayerWalls-1);
 	}
 	
 	/** @author Luke Barber*/
