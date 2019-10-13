@@ -3,6 +3,7 @@ package ca.mcgill.ecse223.quoridor.controller;
 import ca.mcgill.ecse223.quoridor.model.Game;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
 import ca.mcgill.ecse223.quoridor.model.User;
+import ca.mcgill.ecse223.quoridor.model.Wall;
 
 public class QuoridorControllerImplementation implements Controller{
 
@@ -53,4 +54,14 @@ public class QuoridorControllerImplementation implements Controller{
     public void initializeBoard() {
         throw new UnsupportedOperationException();
     }
+    
+    @Override
+	public void grabWall(Wall wall) {
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public void rotateWall(Wall wall) {
+		throw new UnsupportedOperationException();
+	}
 }

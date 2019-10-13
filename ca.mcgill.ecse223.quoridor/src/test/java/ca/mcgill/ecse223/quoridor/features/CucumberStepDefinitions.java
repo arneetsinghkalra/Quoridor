@@ -21,13 +21,13 @@ import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.User;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
-import com.sun.org.apache.xpath.internal.operations.Quo;
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import ca.mcgill.ecse223.quoridor.controller.Controller;
 import static org.junit.Assert.assertNotEquals;
@@ -340,12 +340,6 @@ public class CucumberStepDefinitions {
 	 }
 	 
 	//-----------------------------------------------------------------------------//
-	/** @author Sam Perreault */
-    @Given("A new game is initializing")
-    public void aNewGameIsInitializing() {
-        this.initQuoridorAndBoard();
-        this.createUsersAndPlayers("player1", "player2");
-    }
 
     /** @author Sam Perreault */
     @When("{int}:{int} is set as the thinking time")
@@ -453,9 +447,9 @@ public class CucumberStepDefinitions {
 	@And("The wall in my hand shall disappear from my stock")
 	public void theWallInMyHandShallDisappearFromMyStock() {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		Player player = quoridor.getCurrentPosition().getWhitePlayer();
-		int numberOfPlayerWalls = quordifor.getCurrentGame().getCurrentPosition().numberOfWhiteWallsOnBoard();
-		assertEquals((player.maximumNumberOfWalls - player.numberOfWalls()), numberOfPlayerWalls-1);
+		Player player = quoridor.getCurrentGame().getWhitePlayer();
+		int numberOfPlayerWalls = quoridor.getCurrentGame().getCurrentPosition().numberOfWhiteWallsOnBoard();
+		assertEquals((player.maximumNumberOfWalls() - player.numberOfWalls()), numberOfPlayerWalls-1);
 	}
 	
 	/** @author Luke Barber*/
