@@ -43,4 +43,14 @@ public class QuoridorControllerImplementation implements Controller{
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Not implemented!");
 	}
+
+	@Override
+    public void setPlayerThinkingTime(int minute, int second) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void initializeBoard() {
+        throw new UnsupportedOperationException();
+    }
 }
