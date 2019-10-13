@@ -442,52 +442,7 @@ public void no_wall_move_shall_be_registered_with_at_position(String dir, int ro
 		assertEquals(allMoves.size(), 0);
 	}
 
- //_-------_______-----__---__----___-----__-__-_-__-____-_-_--_-__-_-_--_-__-_--_----------__________________--------__
-//Move wall
 
-/*
-	@When("I try to move the wall {string}")
-	public void iTryToMoveTheWallSide(String side) {
-		Game game = ModelQuery.getCurrentGame();
-		WallMove move = game.getWallMoveCandidate();
-		try {
-			WallController.shiftWall(side, move);
-		} catch (UnsupportedOperationException e) {
-			throw new PendingException();
-		}
-	}
-
-
-	@When("I release the wall in my hand")
-	public void iReleaseTheWallInMyHand() {
-		WallMove move = ModelQuery.getWallMoveCandidate();
-		try{
-			WallController.dropWall(move);
-		} catch (UnsupportedOperationException e) {
-			throw new PendingException();
-		}
-	}
-
-	@Then("A wall move shall be registered with {string} at position \\({int}, {int})")
-	public void aWallMoveIsRegisteredWithDirAtPositionRowCol(String direction, int row, int col) {
-		Game game = ModelQuery.getCurrentGame();
-		Direction dir = this.stringToDirection(direction);
-		int move_size = game.getMoves().size();
-
-//		Check if at least one move has been registered
-		assertTrue( move_size > 0);
-		Move move = game.getMoves().get(move_size-1);
-
-//		Check if the most recent move was a wall move
-		assert move instanceof WallMove;
-		WallMove wall_move = (WallMove) move;
-
-//		Verify that the wall move is the same as the one just played
-		assertEquals(wall_move.getWallDirection(),dir);
-		assertEquals(wall_move.getTargetTile().getColumn(), col);
-		assertEquals(wall_move.getTargetTile().getRow(), row);
-	}
-	*/
 	// ***********************************************
 	// Clean up
 	// ***********************************************
