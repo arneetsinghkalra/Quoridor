@@ -448,12 +448,16 @@ public class CucumberStepDefinitions {
 	}
 	
 	private Game createAndReadyGame() {
+		
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		
 		User user1 = quoridor.addUser("userWhite");
 		User user2 = quoridor.addUser("userBlack");
 		int thinkingTime = 180;
+		
 		Player player1 = new Player(new Time(thinkingTime), user1, 9, Direction.Horizontal);
 		Player player2 = new Player(new Time(thinkingTime), user2, 1, Direction.Horizontal);
+		
 		Game game = new Game(GameStatus.ReadyToStart, MoveMode.PlayerMove, player1, player2, quoridor);
 		return game;
 	}
