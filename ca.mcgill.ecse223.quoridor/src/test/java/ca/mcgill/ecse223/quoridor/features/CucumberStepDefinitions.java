@@ -141,6 +141,17 @@ public class CucumberStepDefinitions {
 	 * are implemented
 	 * 
 	 */
+//Quoridor Class
+	private Quoridor quoridor = QuoridorApplication.getQuoridor();
+	// Current Game Object
+	private Game currentGame = quoridor.getCurrentGame();
+		
+	//Parameters required for WallMove Object
+	//Parameters for running game --ignore for now
+	/*
+	private int moveNum = quoridor.getCurrentGame().numberOfMoves() + 1;
+	private int roundNum = (moveNum + 1) / 2 ;
+	*/
 	
 	//-----------------------------------------------------------------------------//
 	//Feature 1 - StartNewGame - Implemented by Ali Tapan - 260556540
@@ -425,7 +436,97 @@ public class CucumberStepDefinitions {
     @And("It shall be shown that this is White's turn")
     public void itShallBeShownThatThisIsWhiteSTurn() {
         // GUI method to be implemented later
-    }
+	}
+	
+	//--------------------------------------------------5-6--------------------------------------------------
+	//New game hard coded parameters
+	private int moveNum = 1;
+	private int roundNum = 1;
+	//Current Player object
+	private Player currentPlayer = currentGame.getWhitePlayer();
+		
+	//Gets this Board for the Tile
+	Board currentBoard = quoridor.getBoard();
+	Tile targetTile;
+	WallMove wallMoveCandidate;
+	int wallId = currentPlayer.numberOfWalls();
+	Wall currentWall = currentPlayer.getWall(0);
+
+	/** @author Luke Barber*/
+	@Given("I have more walls on stock")
+	public void iHaveMoreWallsOnStock() {
+		assertTrue(quoridor.getCurrentGame().getCurrentPosition().hasWhiteWallsInStock());
+	}
+
+	/** @author Luke Barber*/
+	@Then("A wall move candidate shall be created at initial position")
+	public void aWallMoveCandidateShallBeCreatedAtInitialPosition(){
+		Direction direction = Direction.Horizontal;
+		int initialRow = 0;
+		int initialColumn = 0;
+		wallMoveCandidate = createWallMoveCandidate(direction, initialRow, initialColumn);
+		assertTrue(wallMoveCandidate!=null);
+	}
+
+	/** @author Luke Barber*/
+	@And("The wall in my hand shall disappear from my stock")
+	public void theWallInMyHandShallDisappearFromMyStock() {
+		int numberOfPlayerWalls = quoridor.getCurrentGame().getCurrentPosition().numberOfWhiteWallsOnBoard();
+		assertEquals((currentPlayer.maximumNumberOfWalls() - currentPlayer.numberOfWalls()), numberOfPlayerWalls-1);
+	}
+	
+	/** @author Luke Barber*/
+	@Given("I have no more walls on stock")
+	public void iHaveNoMoreWallOnStock() {
+		assertFalse(quoridor.getCurrentGame().getCurrentPosition().hasWhiteWallsInStock());
+	}
+
+	/** @author Luke Barber and Arneet Kalra*/
+	@Given("A wall move candidate exists with {String} at position ({int}, {int})")
+	public void aWallMoveCandidateExistsWithAtPosition(String dir, int row, int column) {
+		//Convert string into Direction type
+		Direction direction = this.stringToDirection(dir);	
+		//Create wallMoveCandidate using helper method below
+		WallMove wallMoveCandidate = createWallMoveCandidate(direction,row,column);
+		currentGame.setWallMoveCandidate(wallMoveCandidate);
+	}
+
+	/** @author Luke Barber*/
+	@Then("The wall shall be rotated over the board to {String}")
+	public void theWallShallBeRotatedOverTheBoardTo(String newdir, WallMove wall) {
+		Direction newDirection = this.stringToDirection(newdir);
+		assertEquals(newDirection, wall.getWallDirection());
+	}
+	/** @author Luke Barber and Arneet Kalra*/
+	@And("A wall move candidate shall exist with {String} at position ({int}, {int})")
+	public void aWallMoveCandidateShallExistWithAtPosition(String newdir, int row, int column) {
+		Direction newDirection = this.stringToDirection(newdir);
+		WallMove wallMoveCandidate = createWallMoveCandidate(newDirection,row,column);
+		currentGame.setWallMoveCandidate(wallMoveCandidate);
+		assertEquals(currentGame.getWallMoveCandidate().getWallDirection(), newDirection);
+		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getRow(), row);
+		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getColumn(), column);
+	}	
+		
+	/** @author Luke Barber and Arneet Kalra */
+	//Method to convert String input data type into respective Direction type
+	private Direction stringToDirection(String direction){
+		if (direction == "horizontal") {
+			return Direction.Horizontal;
+		}
+		else if (direction == "vertical") {
+			return Direction.Vertical;
+		}
+		else return null;
+	}
+	
+		/** @author Luke Barber and Arneet Kalra */
+	//Method that makes WallMove Candidate from the given 3 parameters
+	private WallMove createWallMoveCandidate(Direction dir,int row, int col) {
+		Tile targetTile = new Tile(row, col, currentBoard);	
+		WallMove wallMoveCandidate = new WallMove(moveNum, roundNum, currentPlayer, targetTile, currentGame, dir, currentWall);
+		return wallMoveCandidate;
+	}
 	
 	// ***********************************************
 	// M O V E  W A L L  F E A T U R E (7) 
