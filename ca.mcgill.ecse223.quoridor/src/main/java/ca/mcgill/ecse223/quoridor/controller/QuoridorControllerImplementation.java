@@ -1,14 +1,16 @@
 package ca.mcgill.ecse223.quoridor.controller;
 
+import ca.mcgill.ecse223.quoridor.model.Wall;
+
 public class QuoridorControllerImplementation implements QuoridorController{
 
 	@Override
-	void grabWall(Wall wall) {
+	public void grabWall(Wall wall) {
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	void rotateWall(Wall wall) {
+	public void rotateWall(Wall wall) {
 		throw new UnsupportedOperationException();
 	}
 	

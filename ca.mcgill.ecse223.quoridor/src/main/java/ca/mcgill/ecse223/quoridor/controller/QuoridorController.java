@@ -1,5 +1,7 @@
 package ca.mcgill.ecse223.quoridor.controller;
 
+import ca.mcgill.ecse223.quoridor.model.Wall;
+
 public interface QuoridorController{
 
 	/**
@@ -7,13 +9,16 @@ public interface QuoridorController{
      * Grabs a given wall and holds it so that it is ready for use. 
      * @param wall The wall that will be grabbed
      */
-	void grabWall(Wall wall);
+	public void grabWall(Wall wall);
+		// TODO Auto-generated method stub
+
 	
 	/**
      * @author Luke Barber
      * Rotates a given wall that is on the board. 
      * @param wall The wall that will be rotated
      */
-	void rotateWall(Wall wall);
+	public void rotateWall(Wall wall);
+
 
 }
