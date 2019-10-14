@@ -15,8 +15,8 @@ import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
-import ca.mcgill.ecse223.quoridor.controller.Controller;
-import ca.mcgill.ecse223.quoridor.controller.ControllerImplementation;
+import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
+import ca.mcgill.ecse223.quoridor.controller.QuoridorControllerImplementation;
 import ca.mcgill.ecse223.quoridor.model.Board;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
@@ -40,7 +40,7 @@ import io.cucumber.java.en.When;
 
 public class CucumberStepDefinitions {
 	
-	private ControllerImplementation controller = new ControllerImplementation();
+	private QuoridorControllerImplementation controller = new QuoridorControllerImplementation();
 
 	// ***********************************************
 	// Background step definitions

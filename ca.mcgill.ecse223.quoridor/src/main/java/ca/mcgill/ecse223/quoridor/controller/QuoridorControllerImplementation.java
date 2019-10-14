@@ -8,7 +8,7 @@ import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
 
-public class ControllerImplementation {
+public class QuoridorControllerImplementation {
 	
 	public void moveWall(WallMove wallMoveCandidate, String side) {
 		throw new UnsupportedOperationException("Not implemented!");
