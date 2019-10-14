@@ -3,7 +3,6 @@ package ca.mcgill.ecse223.quoridor.controller;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.model.*;
-import ca.mcgill.ecse223.quoridor.model.Game;
 import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
 import ca.mcgill.ecse223.quoridor.model.Game.MoveMode;
 
@@ -92,23 +91,48 @@ public interface Controller {
   void initializeBoard();
 
   /**
-     * <p>11 Validate Position<p>
-     * <p>validate if the player positions and wall positions are valid 
-     * e.g. overlapping walls or outof-track pawn or wall positions. <p>
-     * 
-     * @author William Wang
-     * @param position the currentPosition object of the game
-     * @return the validation result, true for pass, false for error
-     */
+	 * 
+	 * Load the game from the game file. 
+	 * load the correct player position and wall position
+	 * @author Yin
+	 * @param quoridor This is the quoridor you want to load the game into
+	 * @param fileName This is the name of the file which stores the game
+	 * 
+	 * */
+	public Quoridor loadPosition(Quoridor quoridor, String fileName);
+	
+	
+	/**
+	 * Save the game into a game file
+	 * @author Yin
+	 * @param fileName
+	 * */
+	public void savePosition(String fileName, GamePosition gamePosition);
+	
+	/**
+	 * @author Yin Zhang 260726999
+  	 * The user confirm whether to overwrite the existing file
+  	 * */
+	public void confirmsToOverWrite();
+	
+	  /**
+	 * <p>11 Validate Position<p>
+	 * <p>validate if the player positions and wall positions are valid 
+	 * e.g. overlapping walls or outof-track pawn or wall positions. <p>
+	 * 
+	 * @author William Wang
+	 * @param position the currentPosition object of the game
+	 * @return the validation result, true for pass, false for error
+	 */
 	public boolean validatePosition(GamePosition position);
 		
 	/**
-     * <p>12. Switch player (aka. Update board)<p>
-     * <p>Switch current player and update clock <p>
-     * 
-     * @author William Wang
-     * @param game the current quoridor game
-     */
+	 * <p>12. Switch player (aka. Update board)<p>
+	 * <p>Switch current player and update clock <p>
+	 * 
+	 * @author William Wang
+	 * @param game the current quoridor game
+	 */
 	public void switchCurrentPlayer(Game game);
 }
 

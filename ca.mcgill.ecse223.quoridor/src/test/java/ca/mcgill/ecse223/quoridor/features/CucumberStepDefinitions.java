@@ -40,11 +40,11 @@ import static org.junit.Assert.assertNotEquals;
 public class CucumberStepDefinitions {
 
 	private QuoridorControllerImplementation quoridorController = new QuoridorControllerImplementation();
+	private boolean validationResult;
 	// ***********************************************
 	// Background step definitions
 	// ***********************************************
-	private QuoridorController quoridorController;
-	private boolean validationResult;
+
 
 	
 	@Given("^The game is not running$")
@@ -344,7 +344,7 @@ public class CucumberStepDefinitions {
 		 }
 	 }
 	 
-	//-----------------------------------------------------------------------------//
+	//------------------------------3-4----------------------------------------------//
 
 
     /** @author Sam Perreault */
@@ -626,8 +626,11 @@ public class CucumberStepDefinitions {
   	}
   
 
-	
-	
+	//-------------11-12-------------------------
+  	/**
+  	 * feature 11
+	 * @author William Wang
+  	 * */
 	  @Given("A game position is supplied with pawn coordinate {int}:{int}")
 	  public void gamePositionWithPawnCoordinate(int row,int column) {
 		  
@@ -642,12 +645,20 @@ public class CucumberStepDefinitions {
 		  gamePosition.getWhitePosition().setTile(playerCurrentPosition);
 	  }
 	  
+	  /**
+	  	 * feature 11
+		 * @author William Wang
+	  	 * */
 	  @When("validation of the position is initiated")
 	  public void validationOfPositionIsInitialted() {
 		  Quoridor quoridor = QuoridorApplication.getQuoridor();
-		  validationResult = cotroller.validatePosition(quoridor.getCurrentGame().getCurrentPosition());
+		  validationResult = quoridorController.validatePosition(quoridor.getCurrentGame().getCurrentPosition());
 	  }
 	  
+	  /**
+	  	 * feature 11
+		 * @author William Wang
+	  	 * */
 	  @Then("The position is {string}")
 	  public void thePositionIs(String expectedResult) {
 		  if(expectedResult.equals("OK")) {
@@ -658,6 +669,10 @@ public class CucumberStepDefinitions {
 		  }
 	  }
 	  
+	  /**
+	  	 * feature 11
+		 * @author William Wang
+	  	 * */
 	  @Given("A game position is supplied with wall coordinate {int}:{int}-\"{string}")
 	  public void gamePositionWithWallCoordinate(int row,int column, String dir) {
 		  
@@ -678,6 +693,10 @@ public class CucumberStepDefinitions {
 		gamePosition.addWhiteWallsOnBoard(wall);
 	}
 	
+	/**
+	 * feature 12
+	 * @author William Wang
+	 * */
 	@Given("The player to move is {string}")
 	public void thePlayerToMoveIs(String player) {
 		initQuoridorAndBoard();
@@ -694,6 +713,10 @@ public class CucumberStepDefinitions {
 		}
 	}
 	
+	/**
+  	 * feature 12
+	 * @author William Wang
+  	 * */
 	@And("The clock of {string} is running")
 	public void theClockIsRunning(String player){
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
@@ -706,6 +729,10 @@ public class CucumberStepDefinitions {
 		
 	}
 	
+	/**
+  	 * feature 12
+	 * @author William Wang
+  	 * */
 	@And("The clock of {string} is stopped")
 	public void theClockIsStopped(String player){
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
@@ -718,17 +745,29 @@ public class CucumberStepDefinitions {
 		
 	}
 	
+	/**
+  	 * feature 12
+	 * @author William Wang
+  	 * */
 	@When("Player {string} completes his move")
 	public void playerCompletesMove(String player){
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		cotroller.switchCurrentPlayer(quoridor.getCurrentGame());
+		quoridorController.switchCurrentPlayer(quoridor.getCurrentGame());
 	}
 
+	/**
+  	 * feature 12
+	 * @author William Wang
+  	 * */
 	@Then("The user interface shall be showing it is {string} turn")
 	public void userInterfaceChange(String player) {
 		throw new UnsupportedOperationException("GUI related");
 	}
 	
+	/**
+  	 * feature 12
+	 * @author William Wang
+  	 * */
 	@Then("The clock of {string} shall be stopped")
 	public void clockShallBeStopped(String player) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
@@ -740,6 +779,10 @@ public class CucumberStepDefinitions {
 		}
 	}
 	
+	/**
+  	 * feature 12
+	 * @author William Wang
+  	 * */
 	@Then("The clock of {string} shall be running")
 	public void clockShallBeRunning(String player) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
@@ -751,6 +794,10 @@ public class CucumberStepDefinitions {
 		}
 	}
 
+	/**
+  	 * feature 12
+	 * @author William Wang
+  	 * */
 	@And("The next player to move shall be {string} ")
 	public void nextPlayToMoveShallBe(String player) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
