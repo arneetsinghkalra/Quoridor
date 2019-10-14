@@ -1,5 +1,10 @@
 package ca.mcgill.ecse223.quoridor.features;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +43,10 @@ public class CucumberStepDefinitions {
 	// ***********************************************
 	// Background step definitions
 	// ***********************************************
+	private QuoridorController quoridorController;
+	private boolean validationResult;
 
+	
 	@Given("^The game is not running$")
 	public void theGameIsNotRunning() {
 		initQuoridorAndBoard();
@@ -57,6 +65,7 @@ public class CucumberStepDefinitions {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Player currentPlayer = quoridor.getCurrentGame().getWhitePlayer();
 		QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().setPlayerToMove(currentPlayer);
+		
 	}
 
 	@Given("The following walls exist:")
@@ -125,22 +134,7 @@ public class CucumberStepDefinitions {
 	 * are implemented
 	 * 
 	 */
-
 	
-	//-----------------------------------------------------------------------------//
-	//Feature 1 - StartNewGame - Implemented by Ali Tapan - 260556540
-	//-----------------------------------------------------------------------------//
-		
-	 /**
-	  * 
-	  * @author Ali Tapan
-	  */
-	 @When("A new game is being initialized")
-	 public void aNewGameIsBeingInitialized() throws Throwable { 
-		 quoridorController.StartNewGame();
-		 
-	 }
-	 
 	 /**
 	  * 
 	  * @author Ali Tapan
@@ -413,6 +407,227 @@ public class CucumberStepDefinitions {
         // GUI method to be implemented later
     }
 	
+
+	//-----------------------------9-10---------------------------
+	/**
+	 * Load the game from the file
+	 * @author Yin Zhang 260726999
+	 * @param fileName
+	 */
+	@When("I initiate to load a saved game {string}")
+	public void iInitiateToLoadASavedGame(String fileName) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		quoridor=quoridorController.loadPosition(quoridor,fileName);
+	}
+	
+	/**
+	 * Checks whether the position is valid or not
+	 * @author Yin
+	 */
+	@And("^The position to load is valid$")
+	public void thePositionIsValid() {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game currentGame=quoridor.getCurrentGame();
+		GamePosition gamePosition= currentGame.getCurrentPosition();
+		validationResult = quoridorController.validatePosition(gamePosition);
+	}
+	
+	/**
+	 * checks whether the playerToMove is the same as expected
+	 * @author Yin Zhang 260726999
+	 * @param  playerToMove
+	 */
+	@Then("It is {string} turn")
+	public void itIsPlayersTurn(String playerToMove){
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game currentGame=quoridor.getCurrentGame();
+		GamePosition currentGamePosition = currentGame.getCurrentPosition();
+		Player playerToMove1 = currentGamePosition.getPlayerToMove();
+		assertEquals(playerToMove, playerToMove1.getUser().getName());
+	}
+	
+	/**
+	 * Checks whether the player/opponent is at the right position 
+	 * @author Yin Zhang 260726999
+	 * @param player
+	 * @param row
+	 * @param column
+	 */
+	@And("{string} is at {int}:{int}")
+	public void playerIsAt(String player, int row, int column) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game currentGame=quoridor.getCurrentGame();
+		if (player.equals("player")) {
+			GamePosition currentGamePosition = currentGame.getCurrentPosition();
+			assertEquals(row, currentGamePosition.getBlackPosition().getTile().getRow());
+			assertEquals(column,currentGamePosition.getBlackPosition().getTile().getColumn());
+		}
+		if(player.equals("opponent")) {
+			GamePosition currentGamePosition = currentGame.getCurrentPosition();
+			assertEquals(row, currentGamePosition.getWhitePosition().getTile().getRow());
+			assertEquals(column,currentGamePosition.getWhitePosition().getTile().getColumn());
+		}
+	}
+	
+	/**
+	 * Checks whether the wall of the player is in the right position
+	 * @author Yin Zhang 260726999
+	 * @param player
+	 * @param direction
+	 * @param row
+	 * @param column
+	 */
+	@And("{string} has a {string} wall at {int}:{int}")
+	public void playerHasAPwOWallAt(String player,String direction, int row, int column) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game currentGame=quoridor.getCurrentGame();
+		if(player.equals("player")) {
+		List<Wall> wallsPlayer = currentGame.getBlackPlayer().getWalls();
+		assertEquals(wallsPlayer.get(0).getOwner().getUser().getName(),"black");
+		assertEquals(wallsPlayer.get(0).getMove().getWallDirection().toString(),direction);
+		assertEquals(wallsPlayer.get(0).getMove().getTargetTile().getRow(),row);
+		assertEquals(wallsPlayer.get(0).getMove().getTargetTile().getColumn(),column);
+		}
+		if(player.equals("opponent")) {
+			List<Wall> wallsOpponent = currentGame.getWhitePlayer().getWalls();
+			assertEquals(wallsOpponent.get(0).getOwner().getUser().getName(),"white");
+			assertEquals(wallsOpponent.get(0).getMove().getWallDirection().toString(),direction);
+			assertEquals(wallsOpponent.get(0).getMove().getTargetTile().getRow(),row);
+			assertEquals(wallsOpponent.get(0).getMove().getTargetTile().getColumn(),column);
+		}
+	}
+	
+	/**
+	 * Checks whether the number of the wall in the list is the right number
+	 * @author Yin Zhang 260726999
+	 * @param number
+	 */
+	@And("Both players have {int} in their stacks")
+	public void bothPlayersHaveRemainingWallsInTheirStacks(int number) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game currentGame=quoridor.getCurrentGame();
+		assertEquals(currentGame.getBlackPlayer().getWalls().size(),number);
+		assertEquals(currentGame.getWhitePlayer().getWalls().size(),number);
+	}
+	
+	
+	//SavePosition
+	/**
+	 * Checks whether the file is in the system or not
+	 * @author Yin Zhang 260726999
+	 * @param fileName
+	 */
+	@Given("No file {string} exists in the filesystem")
+  	public void noFileExistsInTheFilesystem(String fileName) {
+  		File f = new File(fileName);
+  		if(!f.exists()) {
+  			throw new IllegalArgumentException("File name doesn't exist");
+  		}
+  	}
+	/**
+	 * save the game into the file with the fileName
+	 * @param fileName
+	 * @author Yin
+	 *
+	 * */
+  	@When("The user initiates to save the game with name {string}")
+  	public void theUserInitiatesToSaveTheGameWithName(String fileName) {
+  		Quoridor quoridor = QuoridorApplication.getQuoridor();
+  		GamePosition gamePosition = quoridor.getCurrentGame().getCurrentPosition();
+  		quoridorController.savePosition(fileName,gamePosition);
+  	}
+	/**
+	 * @param fileName
+	 * @author Yin Zhang 260726999
+	 *
+	 * */
+  	@Then("A file with {string} is created in the filesystem")
+  	public void aFileWithIsCreatedInTheFilesystem(String fileName) {
+  		File f = new File(fileName);
+  		assertTrue(f.exists());
+  	}
+	/**
+	 * @param fileName
+	 * @author Yin Zhang 260726999
+	 *
+	 * */
+  	@Given("File {string} exists in the filesystem")
+  	public void fileExistsInTheFileSystem(String fileName) {
+  		File f = new File(fileName);
+  		if(f.exists()) {
+  			throw new IllegalArgumentException("File name exists");
+  		}
+  	}
+  	/**
+	 * @author Yin Zhang 260726999
+  	 * The user confirm whether to overwrite the existing file
+  	 * */
+  	@And("The user confirms to overwrite existing file")
+  	public void theUserConfirmsToOverwriteExistingFile() {
+  		quoridorController.confirmsToOverWrite();
+  	}
+  	/**
+	 * @author Yin Zhang 260726999
+  	 * check whether the file is updated
+  	 * */
+  	@Then("File with {string} shall be updated in the filesystem")
+  	public void fileWithNameShallBeUpdatedInTheFileSystem(String fileName){
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Quoridor quoridor1 = new Quoridor();
+		quoridor1 = quoridorController.loadPosition(quoridor1,fileName);
+		int quoridorBlackPlayerRow = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow();
+		int quoridorBlackPlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn();
+		int quoridor1BlackPlayerRow = quoridor1.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow();
+		int quoridor1BlackPlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn();
+		int quoridorWhitePlayerRow = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow();
+		int quoridorWhitePlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn();
+		int quoridor1WhitePlayerRow = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow();
+		int quoridor1WhitePlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn();
+		assertFalse(quoridorBlackPlayerRow==quoridor1BlackPlayerRow);
+		assertFalse(quoridorBlackPlayerColumn==quoridor1BlackPlayerColumn);
+		assertFalse(quoridorWhitePlayerRow==quoridor1WhitePlayerRow);
+		assertFalse(quoridorWhitePlayerColumn==quoridor1WhitePlayerColumn);
+  	}
+  	
+  	/**
+	 * @author Yin Zhang 260726999
+  	 * check whether the file is updated
+  	 * */
+  	@Then("File with {string} shall not be changed in the filesystem")
+  	public void fileWithNameShallNotBeChangedInTheFileSystem(String fileName){
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Quoridor quoridor1 = new Quoridor();
+		quoridor1 = quoridorController.loadPosition(quoridor1,fileName);
+		int quoridorBlackPlayerRow = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow();
+		int quoridorBlackPlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn();
+		int quoridor1BlackPlayerRow = quoridor1.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow();
+		int quoridor1BlackPlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn();
+		int quoridorWhitePlayerRow = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow();
+		int quoridorWhitePlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn();
+		int quoridor1WhitePlayerRow = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow();
+		int quoridor1WhitePlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn();
+		assertFalse(quoridorBlackPlayerRow == quoridor1BlackPlayerRow);
+		assertFalse(quoridorBlackPlayerColumn== quoridor1BlackPlayerColumn);
+		assertFalse(quoridorWhitePlayerRow==quoridor1WhitePlayerRow);
+		assertFalse(quoridorWhitePlayerColumn==quoridor1WhitePlayerColumn);
+  	}
+  
+
+	
+	//-----------------------------------------------------------------------------//
+	//Feature 1 - StartNewGame - Implemented by Ali Tapan - 260556540
+	//-----------------------------------------------------------------------------//
+		
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
+	 @When("A new game is being initialized")
+	 public void aNewGameIsBeingInitialized() throws Throwable { 
+		 quoridorController.StartNewGame();
+		 
+	 }
+	 
 
 	// ***********************************************
 	// Clean up
