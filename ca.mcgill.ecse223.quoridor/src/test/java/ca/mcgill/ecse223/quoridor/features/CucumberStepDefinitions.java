@@ -135,6 +135,19 @@ public class CucumberStepDefinitions {
 	 * 
 	 */
 	
+	//-----------------------------------------------------------------------------//
+	//Feature 1 - StartNewGame - Implemented by Ali Tapan - 260556540
+	//-----------------------------------------------------------------------------//
+		
+	 /**
+	  * 
+	  * @author Ali Tapan
+	  */
+	  @When("A new game is being initialized")
+	  public void aNewGameIsBeingInitialized() throws Throwable { 
+		  quoridorController.StartNewGame();
+		  
+	  }
 	 /**
 	  * 
 	  * @author Ali Tapan
@@ -614,21 +627,140 @@ public class CucumberStepDefinitions {
   
 
 	
-	//-----------------------------------------------------------------------------//
-	//Feature 1 - StartNewGame - Implemented by Ali Tapan - 260556540
-	//-----------------------------------------------------------------------------//
-		
-	 /**
-	  * 
-	  * @author Ali Tapan
-	  */
-	 @When("A new game is being initialized")
-	 public void aNewGameIsBeingInitialized() throws Throwable { 
-		 quoridorController.StartNewGame();
-		 
-	 }
-	 
+	
+	  @Given("A game position is supplied with pawn coordinate {int}:{int}")
+	  public void gamePositionWithPawnCoordinate(int row,int column) {
+		  
+		  initQuoridorAndBoard();
+		  ArrayList<Player> createUsersAndPlayers = createUsersAndPlayers("user1", "user2");
+		  createAndStartGame(createUsersAndPlayers);
+		  
+		  Quoridor quoridor = QuoridorApplication.getQuoridor();
+  
+		  GamePosition gamePosition = quoridor.getCurrentGame().getCurrentPosition();
+		  Tile playerCurrentPosition = quoridor.getBoard().getTile(row+9*column);
+		  gamePosition.getWhitePosition().setTile(playerCurrentPosition);
+	  }
+	  
+	  @When("validation of the position is initiated")
+	  public void validationOfPositionIsInitialted() {
+		  Quoridor quoridor = QuoridorApplication.getQuoridor();
+		  validationResult = cotroller.validatePosition(quoridor.getCurrentGame().getCurrentPosition());
+	  }
+	  
+	  @Then("The position is {string}")
+	  public void thePositionIs(String expectedResult) {
+		  if(expectedResult.equals("OK")) {
+			  assertTrue(validationResult);
+		  }
+		  else if(expectedResult.equals("error")){
+			  assertFalse(validationResult);
+		  }
+	  }
+	  
+	  @Given("A game position is supplied with wall coordinate {int}:{int}-\"{string}")
+	  public void gamePositionWithWallCoordinate(int row,int column, String dir) {
+		  
+		  initQuoridorAndBoard();
+		  ArrayList<Player> createUsersAndPlayers = createUsersAndPlayers("user1", "user2");
+		  createAndStartGame(createUsersAndPlayers);
+		  
+		  Quoridor quoridor = QuoridorApplication.getQuoridor();
 
+		GamePosition gamePosition = quoridor.getCurrentGame().getCurrentPosition();
+		Tile wallCoordinate = quoridor.getBoard().getTile(row+9*column);
+		Wall wall = gamePosition.getWhiteWallsInStock(0);
+		Direction direction = Direction.Vertical;
+		if(dir.equals("horizontal")) {direction = Direction.Horizontal;}
+		WallMove wallMove = new WallMove(1,1,quoridor.getCurrentGame().getWhitePlayer(),wallCoordinate,quoridor.getCurrentGame(),direction,wall);
+		wall.setMove(wallMove);
+		gamePosition.removeWhiteWallsOnBoard(wall);
+		gamePosition.addWhiteWallsOnBoard(wall);
+	}
+	
+	@Given("The player to move is {string}")
+	public void thePlayerToMoveIs(String player) {
+		initQuoridorAndBoard();
+		ArrayList<Player> createUsersAndPlayers = createUsersAndPlayers("white", "black");
+		createAndStartGame(createUsersAndPlayers);
+		
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		GamePosition gamePosition = quoridor.getCurrentGame().getCurrentPosition();
+		if(player.equals("white")) {
+			gamePosition.setPlayerToMove(quoridor.getCurrentGame().getWhitePlayer());
+		}
+		else {
+			gamePosition.setPlayerToMove(quoridor.getCurrentGame().getBlackPlayer());
+		}
+	}
+	
+	@And("The clock of {string} is running")
+	public void theClockIsRunning(String player){
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		if(player.equals("white")) {
+			quoridor.getCurrentGame().getWhitePlayer().setRemainingTime(new Time(180000));
+		}
+		else {
+			quoridor.getCurrentGame().getBlackPlayer().setRemainingTime(new Time(180000));
+		}
+		
+	}
+	
+	@And("The clock of {string} is stopped")
+	public void theClockIsStopped(String player){
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		if(player.equals("white")) {
+			quoridor.getCurrentGame().getWhitePlayer().setRemainingTime(new Time(0));
+		}
+		else {
+			quoridor.getCurrentGame().getBlackPlayer().setRemainingTime(new Time(0));
+		}
+		
+	}
+	
+	@When("Player {string} completes his move")
+	public void playerCompletesMove(String player){
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		cotroller.switchCurrentPlayer(quoridor.getCurrentGame());
+	}
+
+	@Then("The user interface shall be showing it is {string} turn")
+	public void userInterfaceChange(String player) {
+		throw new UnsupportedOperationException("GUI related");
+	}
+	
+	@Then("The clock of {string} shall be stopped")
+	public void clockShallBeStopped(String player) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		if(player.equals("white")) {
+			assertTrue(quoridor.getCurrentGame().getWhitePlayer().getRemainingTime().getTime()==0);
+		}
+		else {
+			assertTrue(quoridor.getCurrentGame().getBlackPlayer().getRemainingTime().getTime()==0);
+		}
+	}
+	
+	@Then("The clock of {string} shall be running")
+	public void clockShallBeRunning(String player) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		if(player.equals("white")) {
+			assertFalse(quoridor.getCurrentGame().getWhitePlayer().getRemainingTime().getTime()==0);
+		}
+		else {
+			assertFalse(quoridor.getCurrentGame().getBlackPlayer().getRemainingTime().getTime()==0);
+		}
+	}
+
+	@And("The next player to move shall be {string} ")
+	public void nextPlayToMoveShallBe(String player) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		if(player.equals("white")) {
+			assertTrue(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsWhite()!=null);
+		}
+		else {
+			assertTrue(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsBlack()!=null);
+		}
+	}
 	// ***********************************************
 	// Clean up
 	// ***********************************************
