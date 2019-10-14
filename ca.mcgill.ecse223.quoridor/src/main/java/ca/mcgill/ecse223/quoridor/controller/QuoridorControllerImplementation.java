@@ -4,6 +4,7 @@ import ca.mcgill.ecse223.quoridor.model.Game;
 import ca.mcgill.ecse223.quoridor.model.GamePosition;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
 import ca.mcgill.ecse223.quoridor.model.User;
+import ca.mcgill.ecse223.quoridor.model.WallMove;
 
 public class QuoridorControllerImplementation implements Controller{
 
@@ -53,7 +54,27 @@ public class QuoridorControllerImplementation implements Controller{
     @Override
     public void initializeBoard() {
         throw new UnsupportedOperationException();
-    }
+	}
+	
+    @Override
+	public void moveWall(WallMove wallMoveCandidate, String side) {
+		throw new UnsupportedOperationException("Not implemented!");
+	}
+    
+    @Override
+	public void dropWall(WallMove wallMoveCandidate) {
+		throw new UnsupportedOperationException("Not implemented!");	
+	}
+	 
+    @Override
+	public boolean isWallMoved(WallMove movedWall)  {
+		throw new UnsupportedOperationException("Not implemented!");	
+	}
+		
+    @Override
+	public boolean isWallMovedTo(int row, int col) {
+		throw new UnsupportedOperationException("Not implemented!");	
+	}
     
     @Override
 	public Quoridor loadPosition(Quoridor quoridor, String fileName) {
