@@ -45,7 +45,6 @@ import static org.junit.Assert.assertTrue;
 public class CucumberStepDefinitions {
 	
 	private QuoridorControllerImplementation controller = new QuoridorControllerImplementation();
-
 	private QuoridorControllerImplementation quoridorController = new QuoridorControllerImplementation();
 	private boolean validationResult;
 	// ***********************************************
@@ -439,7 +438,7 @@ public class CucumberStepDefinitions {
 	}
 	
 	//--------------------------------------------------5-6--------------------------------------------------
-	//New game hard coded parameters
+	//New game hard coded parameters for 5-8
 	private int moveNum = 1;
 	private int roundNum = 1;
 	//Current Player object
@@ -508,61 +507,12 @@ public class CucumberStepDefinitions {
 		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getColumn(), column);
 	}	
 		
-	/** @author Luke Barber and Arneet Kalra */
-	//Method to convert String input data type into respective Direction type
-	private Direction stringToDirection(String direction){
-		if (direction == "horizontal") {
-			return Direction.Horizontal;
-		}
-		else if (direction == "vertical") {
-			return Direction.Vertical;
-		}
-		else return null;
-	}
-	
-		/** @author Luke Barber and Arneet Kalra */
-	//Method that makes WallMove Candidate from the given 3 parameters
-	private WallMove createWallMoveCandidate(Direction dir,int row, int col) {
-		Tile targetTile = new Tile(row, col, currentBoard);	
-		WallMove wallMoveCandidate = new WallMove(moveNum, roundNum, currentPlayer, targetTile, currentGame, dir, currentWall);
-		return wallMoveCandidate;
-	}
 	
 	// ***********************************************
 	// M O V E  W A L L  F E A T U R E (7) 
 	// ***********************************************
 	
-	/**
-	 * @author arneetkalra
-	 */
-	
-	
-//Global Variables for the features
-	//Quoridor Class
-	private Quoridor quoridor = QuoridorApplication.getQuoridor();
-	// Current Game Object
-	private Game currentGame = quoridor.getCurrentGame();
-	
-	//Parameters required for WallMove Object
-	//Parameters for running game --ignore for now
-	/*
-	private int moveNum = quoridor.getCurrentGame().numberOfMoves() + 1;
-	private int roundNum = (moveNum + 1) / 2 ;
-	*/
-	
-	//New game hard coded parameters
-	private int moveNum = 1;
-	private int roundNum = 1;
-	//Current Player object
-	private Player currentPlayer = currentGame.getWhitePlayer();
 
-	
-	//Gets this Board for the Tile
-	Board currentBoard = quoridor.getBoard();
-	Tile targetTile;
-	WallMove wallMoveCandidate;
-	int wallId = currentPlayer.numberOfWalls();
-	Wall currentWall = currentPlayer.getWall(0);
 
 	/**
 	 * @author arneetkalra
@@ -1350,6 +1300,9 @@ public void no_wall_move_shall_be_registered_with_at_position(String dir, int ro
 		return game;
 	}
 
+	
+	
+	/** @author Luke Barber and Arneet Kalra */
 	//Method to convert String input data type into respective Direction type
 	private Direction stringToDirection(String direction){
 		if (direction == "horizontal") {
@@ -1361,6 +1314,7 @@ public void no_wall_move_shall_be_registered_with_at_position(String dir, int ro
 		else return null;
 	}
 	
+		/** @author Luke Barber and Arneet Kalra */
 	//Method that makes WallMove Candidate from the given 3 parameters
 	private WallMove createWallMoveCandidate(Direction dir,int row, int col) {
 		targetTile = new Tile(row, col, currentBoard);	
