@@ -98,8 +98,7 @@ public class CucumberStepDefinitions {
 			default:
 				throw new IllegalArgumentException("Unsupported wall direction was provided");
 			}
-			new WallMove(0, 1, players[playerIdx], quoridor.getBoard().getTile((wrow - 1) * 9 + wcol - 1),
-					quoridor.getCurrentGame(), direction, wall);
+			new WallMove(0, 1, players[playerIdx], quoridor.getBoard().getTile((wrow - 1) * 9 + wcol - 1), quoridor.getCurrentGame(), direction, wall);
 			if (playerIdx == 0) {
 				quoridor.getCurrentGame().getCurrentPosition().removeWhiteWallsInStock(wall);
 				quoridor.getCurrentGame().getCurrentPosition().addWhiteWallsOnBoard(wall);
@@ -123,6 +122,13 @@ public class CucumberStepDefinitions {
 	@And("^I have a wall in my hand over the board$")
 	public void iHaveAWallInMyHandOverTheBoard() throws Throwable {
 		// GUI-related feature -- TODO for later
+	}
+
+	@Given("^A new game is initializing$")
+	public void aNewGameIsInitializing() throws Throwable {
+		initQuoridorAndBoard();
+		ArrayList<Player> players = createUsersAndPlayers("user1", "user2");
+		new Game(GameStatus.Initializing, MoveMode.PlayerMove, QuoridorApplication.getQuoridor());
 	}
 
 	// ***********************************************
@@ -153,7 +159,7 @@ public class CucumberStepDefinitions {
 	// -----------------------------------------------------------------------------//
 
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 */
 	@When("A new game is being initialized")
@@ -163,7 +169,7 @@ public class CucumberStepDefinitions {
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 */
 	@And("White player chooses a username")
@@ -174,7 +180,7 @@ public class CucumberStepDefinitions {
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 */
 	@And("Black player chooses a username")
@@ -185,7 +191,7 @@ public class CucumberStepDefinitions {
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 */
 	@And("Total thinking time is set")
@@ -194,7 +200,7 @@ public class CucumberStepDefinitions {
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 */
 	@Then("The game shall become ready to start")
@@ -204,7 +210,7 @@ public class CucumberStepDefinitions {
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 */
 	@Given("The game is ready to start")
@@ -215,7 +221,7 @@ public class CucumberStepDefinitions {
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 */
 	@When("I start the clock")
@@ -224,7 +230,7 @@ public class CucumberStepDefinitions {
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 */
 	@Then("The game shall be running")
@@ -234,7 +240,7 @@ public class CucumberStepDefinitions {
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 */
 	@And("The board shall be initialized")
@@ -249,7 +255,7 @@ public class CucumberStepDefinitions {
 	// -----------------------------------------------------------------------------//
 
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 */
 	@Given("A new game is initializing")
@@ -259,7 +265,7 @@ public class CucumberStepDefinitions {
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 */
 	@Given("Next player to set user name is {string}")
@@ -276,7 +282,7 @@ public class CucumberStepDefinitions {
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 */
 	@And("There is existing user {string}")
@@ -285,7 +291,7 @@ public class CucumberStepDefinitions {
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 */
 	@When("The player selects existing {string}")
@@ -294,7 +300,7 @@ public class CucumberStepDefinitions {
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 */
 	@Then("The name of player {string} in the new game shall be {string}")
@@ -308,7 +314,7 @@ public class CucumberStepDefinitions {
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 */
 	@And("There is no existing user {string}")
@@ -317,7 +323,7 @@ public class CucumberStepDefinitions {
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 */
 	@When("The player provides new user name: {string}")
@@ -326,7 +332,7 @@ public class CucumberStepDefinitions {
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 */
 	@Then("The player shall be warned that {string} already exists")
@@ -336,7 +342,7 @@ public class CucumberStepDefinitions {
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 */
 	@And("Next player to set user name shall be {string}")
@@ -769,7 +775,7 @@ public class CucumberStepDefinitions {
 	// -----------------------------9-10---------------------------
 	/**
 	 * Load the game from the file
-	 * 
+	 *
 	 * @author Yin Zhang 260726999
 	 * @param fileName
 	 */
@@ -781,7 +787,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * Checks whether the position is valid or not
-	 * 
+	 *
 	 * @author Yin
 	 */
 	@And("^The position to load is valid$")
@@ -794,7 +800,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * checks whether the playerToMove is the same as expected
-	 * 
+	 *
 	 * @author Yin Zhang 260726999
 	 * @param playerToMove
 	 */
@@ -809,7 +815,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * Checks whether the player/opponent is at the right position
-	 * 
+	 *
 	 * @author Yin Zhang 260726999
 	 * @param player
 	 * @param row
@@ -833,7 +839,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * Checks whether the wall of the player is in the right position
-	 * 
+	 *
 	 * @author Yin Zhang 260726999
 	 * @param player
 	 * @param direction
@@ -862,7 +868,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * Checks whether the number of the wall in the list is the right number
-	 * 
+	 *
 	 * @author Yin Zhang 260726999
 	 * @param number
 	 */
@@ -877,7 +883,7 @@ public class CucumberStepDefinitions {
 	// SavePosition
 	/**
 	 * Checks whether the file is in the system or not
-	 * 
+	 *
 	 * @author Yin Zhang 260726999
 	 * @param fileName
 	 */
@@ -891,7 +897,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * save the game into the file with the fileName
-	 * 
+	 *
 	 * @param fileName
 	 * @author Yin
 	 *
@@ -999,7 +1005,7 @@ public class CucumberStepDefinitions {
 	// -------------11-12-------------------------
 	/**
 	 * feature 11
-	 * 
+	 *
 	 * @author William Wang
 	 */
 	@Given("A game position is supplied with pawn coordinate {int}:{int}")
@@ -1018,7 +1024,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * feature 11
-	 * 
+	 *
 	 * @author William Wang
 	 */
 	@When("validation of the position is initiated")
@@ -1029,7 +1035,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * feature 11
-	 * 
+	 *
 	 * @author William Wang
 	 */
 	@Then("The position is {string}")
@@ -1043,7 +1049,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * feature 11
-	 * 
+	 *
 	 * @author William Wang
 	 */
 	@Given("A game position is supplied with wall coordinate {int}:{int}-\"{string}")
@@ -1071,7 +1077,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * feature 12
-	 * 
+	 *
 	 * @author William Wang
 	 */
 	@Given("The player to move is {string}")
@@ -1091,7 +1097,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * feature 12
-	 * 
+	 *
 	 * @author William Wang
 	 */
 	@And("The clock of {string} is running")
@@ -1107,7 +1113,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * feature 12
-	 * 
+	 *
 	 * @author William Wang
 	 */
 	@And("The clock of {string} is stopped")
@@ -1123,7 +1129,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * feature 12
-	 * 
+	 *
 	 * @author William Wang
 	 */
 	@When("Player {string} completes his move")
@@ -1134,7 +1140,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * feature 12
-	 * 
+	 *
 	 * @author William Wang
 	 */
 	@Then("The user interface shall be showing it is {string} turn")
@@ -1144,7 +1150,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * feature 12
-	 * 
+	 *
 	 * @author William Wang
 	 */
 	@Then("The clock of {string} shall be stopped")
@@ -1159,7 +1165,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * feature 12
-	 * 
+	 *
 	 * @author William Wang
 	 */
 	@Then("The clock of {string} shall be running")
@@ -1174,7 +1180,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * feature 12
-	 * 
+	 *
 	 * @author William Wang
 	 */
 	@And("The next player to move shall be {string} ")
@@ -1236,7 +1242,12 @@ public class CucumberStepDefinitions {
 		// horizontally to get to the other side
 		// @formatter:off
 		/*
-		 * __________ | | | | |x-> <-x| | | |__________|
+		 *  __________
+		 * |          |
+		 * |          |
+		 * |x->    <-x|
+		 * |          |
+		 * |__________|
 		 * 
 		 */
 		// @formatter:on
@@ -1267,13 +1278,13 @@ public class CucumberStepDefinitions {
 		// positions
 		Tile player1StartPos = quoridor.getBoard().getTile(36);
 		Tile player2StartPos = quoridor.getBoard().getTile(44);
+		
+		Game game = new Game(GameStatus.Running, MoveMode.PlayerMove, quoridor);
+		game.setWhitePlayer(players.get(0));
+		game.setBlackPlayer(players.get(1));
 
-		Game game = new Game(GameStatus.Running, MoveMode.PlayerMove, players.get(0), players.get(1), quoridor);
-
-		PlayerPosition player1Position = new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(),
-				player1StartPos);
-		PlayerPosition player2Position = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(),
-				player2StartPos);
+		PlayerPosition player1Position = new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(), player1StartPos);
+		PlayerPosition player2Position = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), player2StartPos);
 
 		GamePosition gamePosition = new GamePosition(0, player1Position, player2Position, players.get(0), game);
 
