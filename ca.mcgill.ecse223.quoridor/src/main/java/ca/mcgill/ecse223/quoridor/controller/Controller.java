@@ -19,7 +19,9 @@ public interface Controller {
    * @version 1.0
  * @throws Throwable 
    */
-  public Game StartNewGame();
+  public static Game StartNewGame() {
+	return null;
+}
   
   /**
    * <p> Provide or Select User Name <p>
@@ -30,7 +32,8 @@ public interface Controller {
    * @author Ali Tapan
    * @version 1.0
    */
-  public void provideOrSelectUserName(User user);
+  public static void provideOrSelectUserName(User user) {
+}
   	
   /**
    * <p> Set Total Thinking Time <p>
@@ -39,7 +42,8 @@ public interface Controller {
    * @author Ali Tapan
    * @version 1.0
    */
-  public void setTotalThinkingTime();
+  public static void setTotalThinkingTime() {
+}
   
   
   /**
@@ -49,7 +53,8 @@ public interface Controller {
    * @author Ali Tapan
    * @version 1.0
    */
-  public void startClock();
+  public static void startClock() {
+}
   
   /**
    * <p> Select an Existing Username <p>
@@ -59,7 +64,8 @@ public interface Controller {
    * @author Ali Tapan
    * @version 1.0
    */
-  public void selectExistingUsername(String username);
+  public static void selectExistingUsername(String username) {
+}
   
   
   /**
@@ -70,7 +76,8 @@ public interface Controller {
    * @author Ali Tapan
    * @verison 1.0
    */
-  public void provideNewUsername(String username);
+  public static void provideNewUsername(String username) {
+}
   
   
   /**
@@ -80,7 +87,8 @@ public interface Controller {
    * @param minute The number of minutes allowed to each player
    * @param second The number of seconds allowed to each player
    */
-  void setPlayerThinkingTime(int minute, int second);
+  public static void  setPlayerThinkingTime(int minute, int second) {
+}
 
   /**
    * @author Sam Perreault
@@ -88,14 +96,16 @@ public interface Controller {
    * In addition, sets white/player 1 as the player to move, and starts counting down
    * the white player's thinking time.
    */
-  void initializeBoard();
+  public static void initializeBoard() {
+}
 
   /**
    * @author Luke Barber
    * Grabs a given wall and holds it so that it is ready for use. 
    * @param wall The wall that will be grabbed
    */
-	public void grabWall(Wall wall);
+	public static void grabWall(Wall wall) {
+}
 		// TODO Auto-generated method stub
 
 	
@@ -104,7 +114,8 @@ public interface Controller {
    * Rotates a given wall that is on the board. 
    * @param wall The wall that will be rotated
    */
-	public void rotateWall(Wall wall);
+	public static void rotateWall(Wall wall) {
+		}
 	
   /**
 	 * <p> 7. Move Wall <p>
@@ -116,7 +127,8 @@ public interface Controller {
 	 * @param side references the Wall that player will have in their hand
 	 * @return void method but allows player to manipulate wall over board 
 	 */
-	public void moveWall(WallMove wallMoveCandidate, String side);
+	public static void moveWall(WallMove wallMoveCandidate, String side) {
+}
 	
 	/**
 	 * <p> 8. Drop Wall <p>
@@ -126,14 +138,17 @@ public interface Controller {
 	 * @param aWall references the Wall that player will have in their hand
 	 * @return void method but drops wall which prompts end of player turn
 	 */
-	public void dropWall(WallMove wallMoveCandidate);
+	public static void dropWall(WallMove wallMoveCandidate) {
+	}
 	/**
 	 *<p> Boolean method that returns if a WallMove has been completed<p>
 	 * @author arneetkalra
 	 * @param moveWall
 	 * @return boolean
 	 */
-	public boolean isWallMoved(WallMove movedWall);
+	public static boolean isWallMoved(WallMove movedWall) {
+		return false;
+	}
 	
 	/**
 	 * <p>Boolean method that can check if a wall was moved to a certain row and column <p>
@@ -142,7 +157,9 @@ public interface Controller {
 	 * @param col the reference of the column
 	 * @return boolean
 	 */
-	public boolean isWallMovedTo(int row, int col);
+	public static boolean isWallMovedTo(int row, int col) {
+		return false;
+	}
   /**
 	 * 
 	 * Load the game from the game file. 
@@ -152,7 +169,9 @@ public interface Controller {
 	 * @param fileName This is the name of the file which stores the game
 	 * 
 	 * */
-	public Quoridor loadPosition(Quoridor quoridor, String fileName);
+	public static Quoridor loadPosition(Quoridor quoridor, String fileName) {
+	return null;
+}
 	
 	
 	/**
@@ -160,13 +179,15 @@ public interface Controller {
 	 * @author Yin
 	 * @param fileName
 	 * */
-	public void savePosition(String fileName, GamePosition gamePosition);
+	public static void savePosition(String fileName, GamePosition gamePosition) {
+	}
 	
 	/**
 	 * @author Yin Zhang 260726999
   	 * The user confirm whether to overwrite the existing file
   	 * */
-	public void confirmsToOverWrite();
+	public static void confirmsToOverWrite() {
+	}
 	
 	  /**
 	 * <p>11 Validate Position<p>
@@ -177,7 +198,9 @@ public interface Controller {
 	 * @param position the currentPosition object of the game
 	 * @return the validation result, true for pass, false for error
 	 */
-	public boolean validatePosition(GamePosition position);
+	public static boolean validatePosition(GamePosition position) {
+		return false;
+	}
 		
 	/**
 	 * <p>12. Switch player (aka. Update board)<p>
@@ -186,7 +209,8 @@ public interface Controller {
 	 * @author William Wang
 	 * @param game the current quoridor game
 	 */
-	public void switchCurrentPlayer(Game game);
+	public static void switchCurrentPlayer(Game game) {
+	}
 }
 
 
