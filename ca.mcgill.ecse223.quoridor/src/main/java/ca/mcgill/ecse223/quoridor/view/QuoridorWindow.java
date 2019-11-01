@@ -4,6 +4,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class QuoridorWindow extends JFrame {
 
@@ -46,6 +48,12 @@ public class QuoridorWindow extends JFrame {
 		titleScreenPanel.setLayout(sl_titleScreenPanel);
 		
 		JButton newGameButton = new JButton("New Game");
+		newGameButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CardLayout layout = (CardLayout) (contentPane.getLayout());
+				layout.show(contentPane, "setupPanel");
+			}
+		});
 		sl_titleScreenPanel.putConstraint(SpringLayout.NORTH, newGameButton, 131, SpringLayout.NORTH, titleScreenPanel);
 		sl_titleScreenPanel.putConstraint(SpringLayout.WEST, newGameButton, 74, SpringLayout.WEST, titleScreenPanel);
 		newGameButton.setFont(new Font("Cooper Black", Font.PLAIN, 20));
@@ -68,7 +76,7 @@ public class QuoridorWindow extends JFrame {
 		titleScreenPanel.add(titleLabel);
 		
 		JPanel setupPanel = new JPanel();
-		contentPane.add(setupPanel, "name_1049638087186600");
+		contentPane.add(setupPanel, "setupPanel");
 		SpringLayout sl_setupPanel = new SpringLayout();
 		setupPanel.setLayout(sl_setupPanel);
 		
@@ -162,6 +170,30 @@ public class QuoridorWindow extends JFrame {
 		setupPanel.add(startGameButton);
 		
 		JPanel activeGamePanel = new JPanel();
-		contentPane.add(activeGamePanel, "name_1058009816937499");
+		contentPane.add(activeGamePanel, "activeGamePanel");
+		activeGamePanel.setLayout(new BorderLayout(0, 0));
+		
+		JLabel lblNewLabel = new JLabel("New label");
+		activeGamePanel.add(lblNewLabel, BorderLayout.WEST);
+		
+		JLabel lblNewLabel_1 = new JLabel("New label");
+		activeGamePanel.add(lblNewLabel_1, BorderLayout.EAST);
+		
+		Box gameOptionBox = Box.createVerticalBox();
+		activeGamePanel.add(gameOptionBox, BorderLayout.SOUTH);
+		
+		Box titleTimeBox = Box.createVerticalBox();
+		activeGamePanel.add(titleTimeBox, BorderLayout.NORTH);
+		
+		JLabel gameTitleLabel = new JLabel("QUORIDOR");
+		gameTitleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		gameTitleLabel.setFont(new Font("Cooper Black", Font.PLAIN, 40));
+		titleTimeBox.add(gameTitleLabel);
+		
+		JPanel gameBoardPanel = new JPanel();
+		activeGamePanel.add(gameBoardPanel, BorderLayout.CENTER);
+		gameBoardPanel.setLayout(new GridLayout(9, 9, 5, 5));
 	}
+
+	// TODO add action/listener methods to actually progress the game and all that
 }

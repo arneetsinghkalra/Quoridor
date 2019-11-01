@@ -92,7 +92,7 @@ public class WallMove extends Move
     }
     wasSet = true;
     return wasSet;
-  } 
+  }
   /* Code from template association_SetOptionalOneToOptionalOne */
   public boolean setGame(Game aNewGame)
   {
