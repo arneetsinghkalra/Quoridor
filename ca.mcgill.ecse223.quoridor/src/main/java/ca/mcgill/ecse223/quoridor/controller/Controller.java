@@ -8,7 +8,7 @@ import ca.mcgill.ecse223.quoridor.model.Game.MoveMode;
 
 
 
-public interface Controller {
+public class Controller {
 	
   /**
    * <p> Start New Game <p>
