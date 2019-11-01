@@ -497,20 +497,6 @@ public class CucumberStepDefinitions {
 	 * @author arneetkalra
 	 */
 
-	@Given("A wall move candidate exists with {string} at position \\({int}, {int})")
-	public void a_wall_move_candidate_exists_with_at_position(String dir, int row, int col) {
-		// Convert string into Direction type
-		Direction direction = this.stringToDirection(dir);
-
-		// Create wallMoveCandidate using helper method below
-		WallMove wallMoveCandidate = createWallMoveCandidate(direction, row, col);
-		currentGame.setWallMoveCandidate(wallMoveCandidate);
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-
 	@And("The wall candidate is not at the {string} edge of the board")
 	public void the_wall_candidate_is_not_at_the_edge_of_the_board(String side) {
 		if (side == "left") {
@@ -546,23 +532,6 @@ public class CucumberStepDefinitions {
 		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getColumn(), ncol);
 	}
 
-	/**
-	 * @author arneetkalra
-	 */
-	@And("A wall move candidate shall exist with {string} at position \\({int}, {int})")
-	public void a_wall_move_candidate_shall_exist_with_at_position(String dir, int nrow, int ncol) {
-
-		Direction direction = this.stringToDirection(dir);
-
-		// Checks to see if direction is correct
-		assertEquals(currentGame.getWallMoveCandidate().getWallDirection(), direction);
-
-		// Checks to see if row is correct
-		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getRow(), nrow);
-
-		// Checks to see if column is correct
-		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getColumn(), ncol);
-	}
 
 	/**
 	 * @author arneetkalra
