@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Assertions;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.Controller;
-import ca.mcgill.ecse223.quoridor.controller.QuoridorControllerImplementation;
 import ca.mcgill.ecse223.quoridor.model.Board;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
@@ -34,15 +33,14 @@ import io.cucumber.java.en.When;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
-import ca.mcgill.ecse223.quoridor.controller.Controller;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class CucumberStepDefinitions {
 
-	private QuoridorControllerImplementation controller = new QuoridorControllerImplementation();
-	private QuoridorControllerImplementation quoridorController = new QuoridorControllerImplementation();
+	private Controller controller = new Controller();
+	private Controller quoridorController = new Controller();
 	private boolean validationResult;
 	// ***********************************************
 	// Background step definitions
@@ -254,15 +252,6 @@ public class CucumberStepDefinitions {
 	// Feature 2 - ProvideSelectUserName - Implemented by Ali Tapan - 260556540
 	// -----------------------------------------------------------------------------//
 
-	/**
-	 *
-	 * @author Ali Tapan
-	 */
-	@Given("A new game is initializing")
-	public void aNewGameIsInitializing() {
-		this.initQuoridorAndBoard();
-		this.createUsersAndPlayers("player_white", "player_black");
-	}
 
 	/**
 	 *
@@ -1312,7 +1301,7 @@ public class CucumberStepDefinitions {
 		Player player1 = new Player(new Time(thinkingTime), user1, 9, Direction.Horizontal);
 		Player player2 = new Player(new Time(thinkingTime), user2, 1, Direction.Horizontal);
 
-		Game game = new Game(GameStatus.ReadyToStart, MoveMode.PlayerMove, player1, player2, quoridor);
+		Game game = new Game(GameStatus.ReadyToStart, MoveMode.PlayerMove, quoridor);
 		return game;
 	}
 
