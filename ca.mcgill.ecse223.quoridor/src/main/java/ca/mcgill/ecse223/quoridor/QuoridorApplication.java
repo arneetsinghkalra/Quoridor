@@ -1,5 +1,6 @@
 package ca.mcgill.ecse223.quoridor;
 
+import ca.mcgill.ecse223.quoridor.view.QuoridorWindow;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
 
 public class QuoridorApplication {
@@ -13,4 +14,12 @@ public class QuoridorApplication {
  		return quoridor;
 	}
 
+	// TODO add main method here
+	public static void main(String[] args) {
+	java.awt.EventQueue.invokeLater(new Runnable() {
+        public void run() {
+            new QuoridorWindow().setVisible(true);
+        }
+    });
+	}
 }
