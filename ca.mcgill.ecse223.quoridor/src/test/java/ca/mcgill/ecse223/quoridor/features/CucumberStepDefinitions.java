@@ -895,7 +895,8 @@ public class CucumberStepDefinitions {
 	public void theUserInitiatesToSaveTheGameWithName(String fileName) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		GamePosition gamePosition = quoridor.getCurrentGame().getCurrentPosition();
-		quoridorController.savePosition(fileName, gamePosition);
+		boolean confirms=false;
+		Controller.savePosition(fileName, gamePosition,confirms);
 	}
 
 	/**
@@ -928,7 +929,7 @@ public class CucumberStepDefinitions {
 	 */
 	@And("The user confirms to overwrite existing file")
 	public void theUserConfirmsToOverwriteExistingFile() {
-		quoridorController.confirmsToOverWrite();
+		Controller.confirmsToOverWrite();
 	}
 
 	/**
@@ -938,7 +939,7 @@ public class CucumberStepDefinitions {
 	public void fileWithNameShallBeUpdatedInTheFileSystem(String fileName) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Quoridor quoridor1 = new Quoridor();
-		quoridor1 = quoridorController.loadPosition(quoridor1, fileName);
+		quoridor1 = Controller.loadPosition(quoridor1, fileName);
 		int quoridorBlackPlayerRow = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile()
 				.getRow();
 		int quoridorBlackPlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile()
@@ -968,7 +969,7 @@ public class CucumberStepDefinitions {
 	public void fileWithNameShallNotBeChangedInTheFileSystem(String fileName) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Quoridor quoridor1 = new Quoridor();
-		quoridor1 = quoridorController.loadPosition(quoridor1, fileName);
+		quoridor1 = Controller.loadPosition(quoridor1, fileName);
 		int quoridorBlackPlayerRow = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile()
 				.getRow();
 		int quoridorBlackPlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile()

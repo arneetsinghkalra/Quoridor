@@ -1,6 +1,11 @@
 package ca.mcgill.ecse223.quoridor.controller;
 
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.model.*;
 import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
@@ -170,6 +175,9 @@ public class Controller {
 	 * 
 	 * */
 	public static Quoridor loadPosition(Quoridor quoridor, String fileName) {
+		
+		
+		
 	return null;
 }
 	
@@ -179,7 +187,62 @@ public class Controller {
 	 * @author Yin
 	 * @param fileName
 	 * */
-	public static void savePosition(String fileName, GamePosition gamePosition) {
+	public static void savePosition(String fileName, GamePosition gamePosition, boolean confirms) {
+
+        File file = new File("/Users/pankaj/"+fileName+".txt");
+        FileWriter fr = null;
+        BufferedWriter br = null;
+        String data = "";
+        if (file.exists() && !file.isDirectory()) {
+        		if(confirms) {
+	        		if(gamePosition.getPlayerToMove().getUser().getName()==gamePosition.getBlackPosition().getPlayer().getUser().getName()) {
+	        			data += blackPlayerData(gamePosition)+"\n";
+	        			data += whitePlayerData(gamePosition);
+		        }
+		        else {
+			        	data += whitePlayerData(gamePosition)+"\n";
+		    			data += blackPlayerData(gamePosition);
+		        }
+                try{
+                    fr = new FileWriter(file);
+                    br = new BufferedWriter(fr);
+                    	br.write(data);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }finally{
+                    try {
+                        br.close();
+                        fr.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+        		}
+        }else {
+	        	if(gamePosition.getPlayerToMove().getUser().getName()==gamePosition.getBlackPosition().getPlayer().getUser().getName()) {
+	    			data += blackPlayerData(gamePosition)+"\n";
+	    			data += whitePlayerData(gamePosition);
+	        }
+	        else {
+		        	data += whitePlayerData(gamePosition)+"\n";
+	    			data += blackPlayerData(gamePosition);
+	        }
+	        try{
+	            fr = new FileWriter(file);
+	            br = new BufferedWriter(fr);
+	            	br.write(data);
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }finally{
+	            try {
+	                br.close();
+	                fr.close();
+	            } catch (IOException e) {
+	                e.printStackTrace();
+	            }
+	        }
+        }
+		
 	}
 	
 	/**
@@ -210,6 +273,41 @@ public class Controller {
 	 * @param game the current quoridor game
 	 */
 	public static void switchCurrentPlayer(Game game) {
+	}
+	
+	private static String blackPlayerData(GamePosition gamePosition) {
+		String data ="";
+		data += "B:"+gamePosition.getBlackPosition().getTile().toString();
+		for(int i = 0; i<gamePosition.getBlackWallsOnBoard().size(); i++) {
+	        data += ","+gamePosition.getBlackWallsOnBoard().get(i).getMove().getTargetTile().toString();
+	        data += convertWallDir(gamePosition.getBlackWallsOnBoard().get(i).getMove().getWallDirection());
+	        }
+		String blackWallRemaining = String.valueOf(gamePosition.getBlackWallsInStock().size());
+		data += blackWallRemaining;
+		return data;
+	}
+	
+	private static String whitePlayerData(GamePosition gamePosition) {
+		String data ="";
+		data += "W:"+gamePosition.getWhitePosition().getTile().toString();
+		for(int i = 0; i<gamePosition.getWhiteWallsOnBoard().size(); i++) {
+	        data += ","+gamePosition.getWhiteWallsOnBoard().get(i).getMove().getTargetTile().toString();
+	        data += convertWallDir(gamePosition.getWhiteWallsOnBoard().get(i).getMove().getWallDirection());
+	        }
+		String whiteWallRemaining = String.valueOf(gamePosition.getWhiteWallsInStock().size());
+		data += whiteWallRemaining;
+		return data;
+	}
+	
+	private static String convertWallDir(Direction direction){
+		switch(direction){
+			case Horizontal:
+				return "h";
+			case Vertical:
+				return "v";
+			default:
+				return null;
+		}
 	}
 }
 
