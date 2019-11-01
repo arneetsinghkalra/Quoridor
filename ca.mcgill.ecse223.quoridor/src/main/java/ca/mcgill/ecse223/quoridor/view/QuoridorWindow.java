@@ -35,6 +35,7 @@ public class QuoridorWindow extends JFrame {
 	 * Create the frame.
 	 */
 	public QuoridorWindow() {
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 600, 450);
 		contentPane = new JPanel();
