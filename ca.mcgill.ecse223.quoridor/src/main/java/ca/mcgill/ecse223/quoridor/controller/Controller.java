@@ -1,6 +1,9 @@
 package ca.mcgill.ecse223.quoridor.controller;
 
 
+import java.sql.Time;
+import java.util.List;
+
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.model.*;
 import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
@@ -20,8 +23,10 @@ public class Controller {
  * @throws Throwable 
    */
   public static Game StartNewGame() {
-	return null;
-}
+	 Quoridor quoridor = QuoridorApplication.getQuoridor();
+	 Game game = new Game(GameStatus.Initializing, MoveMode.PlayerMove, quoridor);
+	 return game;
+  }
   
   /**
    * <p> Provide or Select User Name <p>
@@ -33,7 +38,8 @@ public class Controller {
    * @version 1.0
    */
   public static void provideOrSelectUserName(User user) {
-}
+	  user.
+  }
   	
   /**
    * <p> Set Total Thinking Time <p>
@@ -42,8 +48,11 @@ public class Controller {
    * @author Ali Tapan
    * @version 1.0
    */
-  public static void setTotalThinkingTime() {
-}
+  public static void setTotalThinkingTime(Quoridor quoridor, String timeInSeconds) {
+	  Time remaining = Time.valueOf(timeInSeconds);
+	  quoridor.getCurrentGame().getBlackPlayer().setRemainingTime(remaining);
+	  quoridor.getCurrentGame().getWhitePlayer().setRemainingTime(remaining);
+  }
   
   
   /**
@@ -53,7 +62,8 @@ public class Controller {
    * @author Ali Tapan
    * @version 1.0
    */
-  public static void startClock() {
+  public static void startClock(Quoridor quoridor) {
+	  quoridor.getCurrentGame().setGameStatus(GameStatus.Running);
 }
   
   /**
@@ -64,7 +74,18 @@ public class Controller {
    * @author Ali Tapan
    * @version 1.0
    */
-  public static void selectExistingUsername(String username) {
+  public static void selectExistingUsername(String username, Quoridor quoridor, Player player) {
+	  
+	  //Iterate through the users to see if they match the user name provided
+	  for(int i = 0; i< quoridor.numberOfUsers(); i++)
+	  {
+		  User user = quoridor.getUser(i);
+		  if(user.getName() == username)
+		  {
+			 player.setUser(user);
+			 return;
+		  }
+	  }	  
 }
   
   
@@ -76,7 +97,9 @@ public class Controller {
    * @author Ali Tapan
    * @verison 1.0
    */
-  public static void provideNewUsername(String username) {
+  public static void provideNewUsername(String username, Quoridor quoridor, Player player) {
+	  User user = quoridor.addUser(username);
+	  player.setUser(user);
 }
   
   
@@ -211,6 +234,7 @@ public class Controller {
 	 */
 	public static void switchCurrentPlayer(Game game) {
 	}
+
 }
 
 

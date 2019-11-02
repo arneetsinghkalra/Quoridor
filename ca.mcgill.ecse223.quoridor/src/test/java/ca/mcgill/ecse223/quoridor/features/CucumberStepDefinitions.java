@@ -153,7 +153,8 @@ public class CucumberStepDefinitions {
 	// -----------------------------------------------------------------------------//
 	// Feature 1 - StartNewGame - Implemented by Ali Tapan - 260556540
 	// -----------------------------------------------------------------------------//
-
+	
+	
 	/**
 	 *
 	 * @author Ali Tapan
@@ -192,7 +193,9 @@ public class CucumberStepDefinitions {
 	 */
 	@And("Total thinking time is set")
 	public void totalThinkingTimeIsSet() throws UnsupportedOperationException {
-		Controller.setTotalThinkingTime();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		String time = "180";
+		Controller.setTotalThinkingTime(quoridor, time);
 	}
 
 	/**
@@ -222,7 +225,8 @@ public class CucumberStepDefinitions {
 	 */
 	@When("I start the clock")
 	public void iStartTheClock() throws Throwable {
-		Controller.startClock();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Controller.startClock(quoridor);
 	}
 
 	/**
@@ -250,7 +254,9 @@ public class CucumberStepDefinitions {
 	// Feature 2 - ProvideSelectUserName - Implemented by Ali Tapan - 260556540
 	// -----------------------------------------------------------------------------//
 
-
+	//Global Variables for Feature 2//
+	Player player;
+	
 	/**
 	 *
 	 * @author Ali Tapan
@@ -260,10 +266,10 @@ public class CucumberStepDefinitions {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 
 		if (color == "white") {
-			Player player = quoridor.getCurrentGame().getWhitePlayer();
+			player = quoridor.getCurrentGame().getWhitePlayer();
 			player.getUser();
 		} else if (color == "black") {
-			Player player = quoridor.getCurrentGame().getBlackPlayer();
+			player = quoridor.getCurrentGame().getBlackPlayer();
 			player.getUser();
 		}
 	}
@@ -283,7 +289,8 @@ public class CucumberStepDefinitions {
 	 */
 	@When("The player selects existing {string}")
 	public void thePlayerSelectsExisting(String username) throws Throwable {
-		Controller.selectExistingUsername(username);
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Controller.selectExistingUsername(username, quoridor, player);
 	}
 
 	/**
@@ -315,7 +322,8 @@ public class CucumberStepDefinitions {
 	 */
 	@When("The player provides new user name: {string}")
 	public void thePlayerProvidesNewUserName(String username) throws Throwable {
-		Controller.provideNewUsername(username);
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Controller.provideNewUsername(username, quoridor, player);
 	}
 
 	/**
@@ -336,9 +344,9 @@ public class CucumberStepDefinitions {
 	public void nextPlayerToSetUserNameShallBe(String color) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		if (color == "black") {
-			quoridor.getCurrentGame().getBlackPlayer().getNextPlayer();
+			player = quoridor.getCurrentGame().getBlackPlayer().getNextPlayer();
 		} else {
-			quoridor.getCurrentGame().getWhitePlayer().getNextPlayer();
+			player = quoridor.getCurrentGame().getWhitePlayer().getNextPlayer();
 		}
 	}
 
