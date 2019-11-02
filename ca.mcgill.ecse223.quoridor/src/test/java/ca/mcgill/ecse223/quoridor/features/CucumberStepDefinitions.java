@@ -435,7 +435,7 @@ public class CucumberStepDefinitions {
 	/** @author Luke Barber */
 	@Given("I have more walls on stock")
 	public void iHaveMoreWallsOnStock() {
-		assertTrue(quoridor.getCurrentGame().getCurrentPosition().hasWhiteWallsInStock());
+		assertTrue(currentGame.getCurrentPosition().hasWhiteWallsInStock());
 	}
 
 	/** @author Luke Barber */
@@ -517,7 +517,26 @@ public class CucumberStepDefinitions {
 	 */
 	@When("I try to move the wall {string}")
 	public void i_try_to_move_the_wall(String side) {
-		Controller.moveWall(wallMoveCandidate, side);
+		/*
+		int row = currentGame.getWallMoveCandidate().getTargetTile().getRow();
+		int col = currentGame.getWallMoveCandidate().getTargetTile().getColumn();
+		int nrow = row;
+		int ncol = col;
+		if (side == "left") {
+			 ncol = col - 1;
+		} 
+		if (side == "right") {
+			 ncol = col + 1;
+		} 
+		if (side == "up") {
+			 nrow = row + 1;
+		} 
+		else if (side == "down") {
+			 nrow = row - 1;
+		} 
+		*/
+		
+		Controller.moveWall(side);
 	}
 
 	/**
@@ -542,12 +561,12 @@ public class CucumberStepDefinitions {
 			assertTrue(currentGame.getWallMoveCandidate().getTargetTile().getColumn() == 1);
 		}
 		if (side == "right") {
-			assertTrue(currentGame.getWallMoveCandidate().getTargetTile().getColumn() == 9);
+			assertTrue(currentGame.getWallMoveCandidate().getTargetTile().getColumn() == 8);
 		}
 		if (side == "up") {
 			assertTrue(currentGame.getWallMoveCandidate().getTargetTile().getRow() == 1);
 		} else if (side == "down") {
-			assertTrue(currentGame.getWallMoveCandidate().getTargetTile().getRow() == 9);
+			assertTrue(currentGame.getWallMoveCandidate().getTargetTile().getRow() == 8);
 		}
 	}
 
