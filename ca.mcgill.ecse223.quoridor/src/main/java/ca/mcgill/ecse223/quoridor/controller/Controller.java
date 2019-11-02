@@ -235,7 +235,7 @@ public class Controller {
 	 * @return void method but drops wall which prompts end of player turn
 	 */
 	public static Boolean dropWall(WallMove wallMoveCandidate) {
-		WallMove move = currentWallMoveCandidate;
+		WallMove wallMove = currentWallMoveCandidate;
 
 		// Get a list of all walls on board
 		List<Wall> blackWallsOnBoard = currentGamePosition.getBlackWallsOnBoard();
@@ -250,7 +250,7 @@ public class Controller {
 
 		// Check black walls on board
 		for (Wall wall : blackWallsOnBoard) {
-			if (isWallAlreadyPresent(move, wall.getMove())) {
+			if (isWallAlreadyPresent(wallMove, wall.getMove())) {
 				cancelWallMove();
 				return false;
 			}
@@ -258,7 +258,7 @@ public class Controller {
 
 		// Check white walls on board
 		for (Wall wall : whiteWallsOnBoard) {
-			if (isWallAlreadyPresent(move, wall.getMove())) {
+			if (isWallAlreadyPresent(wallMove, wall.getMove())) {
 				cancelWallMove();
 				return false;
 			}
@@ -266,15 +266,15 @@ public class Controller {
 
 		// Update parameters of game:
 
-		currentGame.addMove(move); // Stores move
+		currentGame.addMove(wallMove); // Stores move
 		currentGame.setWallMoveCandidate(null); // Refreshes wall move candidate
 
 		// Update player info
 		if (player.equals(currentGame.getWhitePlayer())) {
-			currentGamePosition.addWhiteWallsOnBoard(move.getWallPlaced());
+			currentGamePosition.addWhiteWallsOnBoard(wallMove.getWallPlaced());
 			currentGamePosition.setPlayerToMove(currentGame.getBlackPlayer()); // Update player to black player
 		} else if (player.equals(currentGame.getBlackPlayer())) {
-			currentGamePosition.addBlackWallsOnBoard(move.getWallPlaced());
+			currentGamePosition.addBlackWallsOnBoard(wallMove.getWallPlaced());
 			currentGamePosition.setPlayerToMove(currentGame.getWhitePlayer()); // Update player to white player
 		} else {
 			return false;
