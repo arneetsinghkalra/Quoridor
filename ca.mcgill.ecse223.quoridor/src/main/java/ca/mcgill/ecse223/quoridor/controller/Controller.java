@@ -17,6 +17,8 @@ import ca.mcgill.ecse223.quoridor.model.*;
 import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
 import ca.mcgill.ecse223.quoridor.model.Game.MoveMode;
 
+import static ca.mcgill.ecse223.quoridor.model.Direction.Horizontal;
+import static ca.mcgill.ecse223.quoridor.model.Direction.Vertical;
 
 
 public class Controller {
@@ -191,8 +193,8 @@ public class Controller {
 	      // do something 
 	      e.printStackTrace(); 
 	    }
-	    String firstLine;
-	    String secondLine;
+	    String firstLine = null;
+	    String secondLine = null;
 	    try {
 		    firstLine = lines.get(0);
 		    secondLine = lines.get(1);
@@ -203,22 +205,41 @@ public class Controller {
         StringTokenizer second = new StringTokenizer(secondLine, ",");
         
 
-	    Player blackPlayer;
-	    Player whitePlayer;
+	    Player blackPlayer = null;
+	    Player whitePlayer = null;
+		String direction = null;
+		WallMove move = null;
+		int column;
+		int row;
 	    blackPlayer.setGameAsBlack(quoridor.getCurrentGame());
 	    whitePlayer.setGameAsWhite(quoridor.getCurrentGame());
-	    first.nextToken();
+	    String nextPlayer = first.nextToken();
 	    while(first.hasMoreTokens()) {
-		    Wall wall;
-		    Tile tile = new Tile();
+		    Wall wall = null;
+			String wallPosition = first.nextToken();
+			try{
+				column =;
+				row = Integer.parseInt(wallPosition.substring(1));
+				direction = wallPosition.substring(2);
+			}
+			catch(IndexOutOfBoundsException e){
+				e.printStackTrace();
+			}
+
+			Tile tile = new Tile(row,column,quoridor.getBoard());
+			move.setGame(quoridor.getCurrentGame());
+			move.setPlayer(blackPlayer);
+			move.setTargetTile(tile);
+			wall.setMove(move);
 		    first.nextToken();
-		    wall.getMove().setTargetTile(aNewTargetTile);
+		    wall.getMove().setTargetTile(tile);
+		    wall.getMove().setWallDirection(converToDir(direction));
 		    wall.setOwner(blackPlayer);
-		    wall.getMove().setWallDirection(aWallDirection);
 		    quoridor.getCurrentGame().getCurrentPosition().getBlackWallsOnBoard().add(wall);
 	    }
-	    for() {
-	    		Wall wall;
+	    second.nextToken();
+		while(second.hasMoreTokens()) {
+			Wall wall = null;
 		    wall.getMove().setTargetTile(aNewTargetTile);
 		    wall.setOwner(whitePlayer);
 		    wall.getMove().setWallDirection(aWallDirection);
@@ -226,7 +247,13 @@ public class Controller {
 	    }
 	    quoridor.getCurrentGame().getCurrentPosition().setBlackPosition(aNewBlackPosition);
 	    quoridor.getCurrentGame().getCurrentPosition().setWhitePosition(aNewBlackPosition);
-	    quoridor.getCurrentGame().getCurrentPosition().setPlayerToMove(aNewPlayerToMove);
+	    if(nextPlayer.substring(0).equals("B")){
+	    	quoridor.getCurrentGame().getCurrentPosition().setPlayerToMove(blackPlayer);
+	    }else if(nextPlayer.substring(0).equals("W")){
+			quoridor.getCurrentGame().getCurrentPosition().setPlayerToMove(whitePlayer);
+		}else{
+	    	//throws exception
+		}
 
 
 
@@ -250,7 +277,7 @@ public class Controller {
         BufferedWriter br = null;
         String data = "";
         if (file.exists() && !file.isDirectory()) {
-        		if(gamePosition.getPlayerToMove().getUser().getName()==gamePosition.getBlackPosition().getPlayer().getUser().getName()) {
+        		if(gamePosition.getPlayerToMove().getUser().getName().equals(gamePosition.getBlackPosition().getPlayer().getUser().getName())) {
         			data += blackPlayerData(gamePosition)+"\n";
         			data += whitePlayerData(gamePosition);
 	        }
@@ -273,7 +300,7 @@ public class Controller {
                 }
             }
     		}else {
-	        	if(gamePosition.getPlayerToMove().getUser().getName()==gamePosition.getBlackPosition().getPlayer().getUser().getName()) {
+	        	if(gamePosition.getPlayerToMove().getUser().getName().equals(gamePosition.getBlackPosition().getPlayer().getUser().getName())) {
 	    			data += blackPlayerData(gamePosition)+"\n";
 	    			data += whitePlayerData(gamePosition);
 	        }
@@ -359,6 +386,17 @@ public class Controller {
 				return "h";
 			case Vertical:
 				return "v";
+			default:
+				return null;
+		}
+	}
+
+	private static Direction converToDir(String direction){
+		switch (direction){
+			case "v":
+				return Vertical;
+			case "h":
+				return Horizontal;
 			default:
 				return null;
 		}
