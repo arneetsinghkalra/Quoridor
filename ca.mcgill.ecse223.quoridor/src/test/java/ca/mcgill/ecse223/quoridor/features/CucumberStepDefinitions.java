@@ -896,7 +896,7 @@ public class CucumberStepDefinitions {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		GamePosition gamePosition = quoridor.getCurrentGame().getCurrentPosition();
 		boolean confirms=false;
-		Controller.savePosition(fileName, gamePosition,confirms);
+		Controller.savePosition(fileName, gamePosition);
 	}
 
 	/**

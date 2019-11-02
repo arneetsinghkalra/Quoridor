@@ -5,6 +5,12 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.List;
+import java.util.StringTokenizer;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.model.*;
@@ -175,7 +181,57 @@ public class Controller {
 	 * 
 	 * */
 	public static Quoridor loadPosition(Quoridor quoridor, String fileName) {
-		
+		List<String> lines = Collections.emptyList(); 
+	    try
+	    { 
+	      lines = Files.readAllLines(Paths.get(fileName), StandardCharsets.UTF_8); 
+	    } 
+	    catch (IOException e) 
+	    { 
+	      // do something 
+	      e.printStackTrace(); 
+	    }
+	    String firstLine;
+	    String secondLine;
+	    try {
+		    firstLine = lines.get(0);
+		    secondLine = lines.get(1);
+	    }catch(IndexOutOfBoundsException e){
+            e.printStackTrace();
+	    }
+        StringTokenizer first = new StringTokenizer(firstLine, ",");
+        StringTokenizer second = new StringTokenizer(secondLine, ",");
+        
+
+	    Player blackPlayer;
+	    Player whitePlayer;
+	    blackPlayer.setGameAsBlack(quoridor.getCurrentGame());
+	    whitePlayer.setGameAsWhite(quoridor.getCurrentGame());
+	    first.nextToken();
+	    while(first.hasMoreTokens()) {
+		    Wall wall;
+		    Tile tile = new Tile();
+		    first.nextToken();
+		    wall.getMove().setTargetTile(aNewTargetTile);
+		    wall.setOwner(blackPlayer);
+		    wall.getMove().setWallDirection(aWallDirection);
+		    quoridor.getCurrentGame().getCurrentPosition().getBlackWallsOnBoard().add(wall);
+	    }
+	    for() {
+	    		Wall wall;
+		    wall.getMove().setTargetTile(aNewTargetTile);
+		    wall.setOwner(whitePlayer);
+		    wall.getMove().setWallDirection(aWallDirection);
+		    quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsOnBoard().add(wall);
+	    }
+	    quoridor.getCurrentGame().getCurrentPosition().setBlackPosition(aNewBlackPosition);
+	    quoridor.getCurrentGame().getCurrentPosition().setWhitePosition(aNewBlackPosition);
+	    quoridor.getCurrentGame().getCurrentPosition().setPlayerToMove(aNewPlayerToMove);
+
+
+
+		    
+		return quoridor;
 		
 		
 	return null;
@@ -187,38 +243,36 @@ public class Controller {
 	 * @author Yin
 	 * @param fileName
 	 * */
-	public static void savePosition(String fileName, GamePosition gamePosition, boolean confirms) {
+	public static void savePosition(String fileName, GamePosition gamePosition) {
 
         File file = new File("/Users/pankaj/"+fileName+".txt");
         FileWriter fr = null;
         BufferedWriter br = null;
         String data = "";
         if (file.exists() && !file.isDirectory()) {
-        		if(confirms) {
-	        		if(gamePosition.getPlayerToMove().getUser().getName()==gamePosition.getBlackPosition().getPlayer().getUser().getName()) {
-	        			data += blackPlayerData(gamePosition)+"\n";
-	        			data += whitePlayerData(gamePosition);
-		        }
-		        else {
-			        	data += whitePlayerData(gamePosition)+"\n";
-		    			data += blackPlayerData(gamePosition);
-		        }
-                try{
-                    fr = new FileWriter(file);
-                    br = new BufferedWriter(fr);
-                    	br.write(data);
+        		if(gamePosition.getPlayerToMove().getUser().getName()==gamePosition.getBlackPosition().getPlayer().getUser().getName()) {
+        			data += blackPlayerData(gamePosition)+"\n";
+        			data += whitePlayerData(gamePosition);
+	        }
+	        else {
+		        	data += whitePlayerData(gamePosition)+"\n";
+	    			data += blackPlayerData(gamePosition);
+	        }
+            try{
+                fr = new FileWriter(file);
+                br = new BufferedWriter(fr);
+                	br.write(data);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }finally{
+                try {
+                    br.close();
+                    fr.close();
                 } catch (IOException e) {
                     e.printStackTrace();
-                }finally{
-                    try {
-                        br.close();
-                        fr.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                 }
-        		}
-        }else {
+            }
+    		}else {
 	        	if(gamePosition.getPlayerToMove().getUser().getName()==gamePosition.getBlackPosition().getPlayer().getUser().getName()) {
 	    			data += blackPlayerData(gamePosition)+"\n";
 	    			data += whitePlayerData(gamePosition);
