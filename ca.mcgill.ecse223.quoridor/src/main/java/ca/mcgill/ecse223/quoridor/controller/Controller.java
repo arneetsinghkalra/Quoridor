@@ -344,7 +344,7 @@ public class Controller {
 				//throws exception
 			}
 	    boolean sameRemainingWall = (quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock().size()==quoridor.getCurrentGame().getCurrentPosition().getBlackWallsInStock().size());
-	    if(validatePosition(quoridor.getCurrentGame().getCurrentPosition())&&sameRemainingWall) {
+	    if(validatePosition()&&sameRemainingWall) {
 	    		return quoridor;
 	    		}else {
 	    			throw new UnsupportedOperationException("Invalid position");
