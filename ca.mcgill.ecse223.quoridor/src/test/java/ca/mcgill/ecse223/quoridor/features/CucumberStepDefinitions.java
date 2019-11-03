@@ -896,7 +896,7 @@ public class CucumberStepDefinitions {
 	 */
 	@Given("No file {string} exists in the filesystem")
 	public void noFileExistsInTheFilesystem(String fileName) {
-		Path path = Paths.get("src/test/resources/savePosition/"+fileName+".txt");
+		Path path = Paths.get("src/test/resources/savePosition/"+fileName);
 		if(Files.exists(path)) {
 			try {
 				Files.delete(path);
@@ -935,7 +935,7 @@ public class CucumberStepDefinitions {
 	 */
 	@Then("A file with {string} shall be created in the filesystem")
 	public void aFileWithIsCreatedInTheFilesystem(String fileName) throws IOException {
-		Path path = Paths.get("src/test/resources/savePosition/"+fileName+".txt");
+		Path path = Paths.get("src/test/resources/savePosition/"+fileName);
         assertTrue(Files.exists(path));
 	}
 
@@ -947,7 +947,7 @@ public class CucumberStepDefinitions {
 	 */
 	@Given("File {string} exists in the filesystem")
 	public void fileExistsInTheFileSystem(String fileName) throws IOException{
-		Path path = Paths.get("src/test/resources/savePosition/"+fileName+".txt");
+		Path path = Paths.get("src/test/resources/savePosition/"+fileName);
 		if(Files.exists(path)) {
 			Files.delete(path);
 		}
