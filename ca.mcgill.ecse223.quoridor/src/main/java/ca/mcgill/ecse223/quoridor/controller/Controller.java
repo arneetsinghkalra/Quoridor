@@ -161,10 +161,10 @@ public class Controller {
 	 * @param side
 	 * @return
 	 */
-	public static boolean moveWall(String side) {
+	public static boolean moveWall(String side) throws UnsupportedOperationException {
 		// Fetch initial Wall Move Candidate
 		WallMove wallMove = currentWallMoveCandidate;
-
+		
 		// Store position of target tile
 		int row = wallMove.getTargetTile().getRow();
 		int col = wallMove.getTargetTile().getColumn();
@@ -213,8 +213,8 @@ public class Controller {
 					newTargetTile, currentGame, currentWallDirection, currentWallPlaced);
 			// Update the Wall Move Candidate with new Target Positions
 			currentWallMoveCandidate = updatedWallMoveCandidate;
-			
-			//Return wallMoved if works
+
+			// Return wallMoved if works
 			boolean wallMoved = true;
 			return wallMoved;
 		}
@@ -330,7 +330,7 @@ public class Controller {
 	/**
 	 * Part of Feature 8: Drop Wall
 	 * 
-	 * cancelWallMove runs when there is an invalid wallMoveCandidate. 
+	 * cancelWallMove runs when there is an invalid wallMoveCandidate.
 	 * 
 	 * @author arneetkalra
 	 * @return boolean true if wall move was successfully cancelled
@@ -347,11 +347,13 @@ public class Controller {
 
 		// If it is white players move
 		if (player.equals(currentGame.getWhitePlayer())) {
-			currentGamePosition.addWhiteWallsInStock(move.getWallPlaced()); //Puts wall attempted to be placed back in their stock
+			currentGamePosition.addWhiteWallsInStock(move.getWallPlaced()); // Puts wall attempted to be placed back in
+																			// their stock
 		}
 		// Black player move
 		else if (player.equals(currentGame.getBlackPlayer())) {
-			currentGamePosition.addBlackWallsInStock(move.getWallPlaced()); //Puts wall attempted to be placed back in their stock
+			currentGamePosition.addBlackWallsInStock(move.getWallPlaced()); // Puts wall attempted to be placed back in
+																			// their stock
 		} else {
 			return false; // Some unexpected error
 		}
