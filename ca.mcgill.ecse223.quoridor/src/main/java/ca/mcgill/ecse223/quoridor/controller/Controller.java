@@ -37,8 +37,11 @@ public class Controller {
    * @author Ali Tapan
    * @version 1.0
    */
-  public static void provideOrSelectUserName(User user) {
-	  user.
+  public static void provideOrSelectUserName(Player player, Quoridor quoridor, String name) {
+	  Boolean check = selectExistingUsername(name, player);
+	  if(check == false) {
+		  provideNewUsername(name, player);
+	  }
   }
   	
   /**
@@ -48,10 +51,12 @@ public class Controller {
    * @author Ali Tapan
    * @version 1.0
    */
-  public static void setTotalThinkingTime(Quoridor quoridor, String timeInSeconds) {
+  public static void setTotalThinkingTime(String timeInSeconds) {
+	  Quoridor quoridor = QuoridorApplication.getQuoridor();
 	  Time remaining = Time.valueOf(timeInSeconds);
 	  quoridor.getCurrentGame().getBlackPlayer().setRemainingTime(remaining);
 	  quoridor.getCurrentGame().getWhitePlayer().setRemainingTime(remaining);
+	  quoridor.getCurrentGame().setGameStatus(GameStatus.ReadyToStart);
   }
   
   
@@ -62,7 +67,9 @@ public class Controller {
    * @author Ali Tapan
    * @version 1.0
    */
-  public static void startClock(Quoridor quoridor) {
+  public static void startClock() {
+	  
+	  Quoridor quoridor = QuoridorApplication.getQuoridor();
 	  quoridor.getCurrentGame().setGameStatus(GameStatus.Running);
 }
   
@@ -74,8 +81,17 @@ public class Controller {
    * @author Ali Tapan
    * @version 1.0
    */
-  public static void selectExistingUsername(String username, Quoridor quoridor, Player player) {
+  public static Boolean selectExistingUsername(String username, Player player) {
 	  
+	  if(username == null)
+	  {
+		 return false;
+	  }
+	  if(player == null)
+	  {
+		  return false;
+	  }
+	  Quoridor quoridor = QuoridorApplication.getQuoridor();
 	  //Iterate through the users to see if they match the user name provided
 	  for(int i = 0; i< quoridor.numberOfUsers(); i++)
 	  {
@@ -83,9 +99,10 @@ public class Controller {
 		  if(user.getName() == username)
 		  {
 			 player.setUser(user);
-			 return;
+			 return true;
 		  }
-	  }	  
+	  }
+	  return false;
 }
   
   
@@ -97,7 +114,8 @@ public class Controller {
    * @author Ali Tapan
    * @verison 1.0
    */
-  public static void provideNewUsername(String username, Quoridor quoridor, Player player) {
+  public static void provideNewUsername(String username, Player player) {
+	  Quoridor quoridor = QuoridorApplication.getQuoridor();
 	  User user = quoridor.addUser(username);
 	  player.setUser(user);
 }
