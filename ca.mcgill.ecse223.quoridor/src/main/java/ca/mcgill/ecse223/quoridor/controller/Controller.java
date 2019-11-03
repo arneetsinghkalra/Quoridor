@@ -2,13 +2,25 @@ package ca.mcgill.ecse223.quoridor.controller;
 
 
 import java.sql.Time;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.model.*;
 import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
 import ca.mcgill.ecse223.quoridor.model.Game.MoveMode;
 
+import static ca.mcgill.ecse223.quoridor.model.Direction.Horizontal;
+import static ca.mcgill.ecse223.quoridor.model.Direction.Vertical;
 
 
 public class Controller {
@@ -172,8 +184,171 @@ public class Controller {
 	 * @param fileName This is the name of the file which stores the game
 	 * 
 	 * */
-	public static Quoridor loadPosition(Quoridor quoridor, String fileName) {
-	return null;
+	public static Quoridor loadPosition(String fileName) {
+		
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		
+		List<String> lines = Collections.emptyList(); 
+	    try
+	    { 
+	      lines = Files.readAllLines(Paths.get("src/test/resources/savePosition/"+fileName+".txt"), StandardCharsets.UTF_8); 
+	    } 
+	    catch (IOException e) 
+	    { 
+	      // do something 
+	      e.printStackTrace(); 
+	    }
+	    String firstLine = null;
+	    String secondLine = null;
+	    try {
+		    firstLine = lines.get(0);
+		    secondLine = lines.get(1);
+	    }catch(IndexOutOfBoundsException e){
+            e.printStackTrace();
+	    }
+        StringTokenizer first = new StringTokenizer(firstLine, ",");
+        StringTokenizer second = new StringTokenizer(secondLine, ",");
+        
+        	String nextPlayer = first.nextToken();
+	    String opponent = second.nextToken();
+		int nextPlayerColumn = 0;
+		int nextPlayerRow = 0;
+		try{
+			nextPlayerColumn =convertToInt(nextPlayer.substring(2,3));
+			nextPlayerRow = Integer.parseInt(nextPlayer.substring(3));
+		}
+		catch(IndexOutOfBoundsException e){
+			e.printStackTrace();
+		}
+		Tile nextPlayerTile = quoridor.getBoard().getTile((nextPlayerRow-1)*9+nextPlayerColumn-1);
+		int opponentColumn = 0;
+		int opponentRow = 0;
+		try{
+			opponentColumn =convertToInt(opponent.substring(2,3));
+			opponentRow = Integer.parseInt(opponent.substring(3));
+		}
+		catch(IndexOutOfBoundsException e){
+			e.printStackTrace();
+		}
+		Tile opponentTile = quoridor.getBoard().getTile((opponentRow-1)*9+opponentColumn-1);
+		
+	    if(nextPlayer.substring(0,1).equals("B")){
+    			quoridor.getCurrentGame().getCurrentPosition().setPlayerToMove(quoridor.getCurrentGame().getBlackPlayer());
+		    quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().setTile(nextPlayerTile);
+		    quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().setTile(opponentTile);
+		    while(first.hasMoreTokens()) {
+		    		int i = 0;
+		    		Wall wall = quoridor.getCurrentGame().getCurrentPosition().getBlackWallsInStock(i);
+		    		System.out.println(wall);
+				String direction = null;
+				int column = 0;
+				int row = 0;
+				String wallPosition = first.nextToken();
+				try{
+					column =convertToInt(wallPosition.substring(0,1));
+					row = Integer.parseInt(wallPosition.substring(1,2));
+					direction = wallPosition.substring(2);
+				}
+				catch(IndexOutOfBoundsException e){
+					e.printStackTrace();
+				}
+				
+				Tile tile = quoridor.getBoard().getTile((row-1)*9+column-1);
+	    			WallMove move = new WallMove(0,1,quoridor.getCurrentGame().getBlackPlayer(),tile,quoridor.getCurrentGame(),converToDir(direction),wall);
+				wall.setMove(move);
+			    quoridor.getCurrentGame().getCurrentPosition().addBlackWallsOnBoard(wall);
+			    quoridor.getCurrentGame().getCurrentPosition().removeBlackWallsInStock(wall);
+			    i++;
+		    }
+		    while(second.hasMoreTokens()) {
+				int i = 0;
+				Wall wall = quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock(i+1);
+				System.out.println(quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock(9));
+				int column = 0;
+				int row = 0;
+				String direction = null;
+				String wallPosition = second.nextToken();
+				try{
+					column =convertToInt(wallPosition.substring(0,1));
+					row = Integer.parseInt(wallPosition.substring(1,2));
+					direction = wallPosition.substring(2);
+				}
+				catch(IndexOutOfBoundsException e){
+					e.printStackTrace();
+				}
+				Tile tile = quoridor.getBoard().getTile((row-1)*9+column-1);
+				
+				WallMove move = new WallMove(0,1,quoridor.getCurrentGame().getWhitePlayer(),tile,quoridor.getCurrentGame(),converToDir(direction),wall);
+				wall.setMove(move);
+			    wall.setOwner(quoridor.getCurrentGame().getWhitePlayer());
+			    wall.getMove().setWallDirection(converToDir(direction));
+			    quoridor.getCurrentGame().getCurrentPosition().addWhiteWallsOnBoard(wall);
+			    quoridor.getCurrentGame().getCurrentPosition().removeWhiteWallsInStock(wall);
+			    i++;
+		    }
+
+	    }else if(nextPlayer.substring(0,1).equals("W")){
+			quoridor.getCurrentGame().getCurrentPosition().setPlayerToMove(quoridor.getCurrentGame().getWhitePlayer());
+		    quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().setTile(nextPlayerTile);
+		    quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().setTile(opponentTile);
+		    while(first.hasMoreTokens()) {
+		    		int i = 0;
+		    		Wall wall = quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock(i);
+				String direction = null;
+				int column = 0;
+				int row = 0;
+				String wallPosition = first.nextToken();
+				try{
+					column =convertToInt(wallPosition.substring(0));
+					row = Integer.parseInt(wallPosition.substring(1));
+					direction = wallPosition.substring(2);
+				}
+				catch(IndexOutOfBoundsException e){
+					e.printStackTrace();
+				}
+				Tile tile = quoridor.getBoard().getTile(row*column);
+				WallMove move = new WallMove(0,1,quoridor.getCurrentGame().getWhitePlayer(),tile,quoridor.getCurrentGame(),converToDir(direction),wall);
+				wall.setMove(move);
+			    first.nextToken();
+			    wall.getMove().setWallDirection(converToDir(direction));
+			    wall.setOwner(quoridor.getCurrentGame().getBlackPlayer());
+			    quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsOnBoard().add(wall);
+			    quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock().remove(i);
+			    i++;
+		    }
+			while(second.hasMoreTokens()) {
+		    		int i = 0;
+		    		Wall wall = quoridor.getCurrentGame().getCurrentPosition().getBlackWallsInStock(i);
+				int column = 0;
+				int row = 0;
+				String direction = null;
+				String wallPosition = second.nextToken();
+				try{
+					column =convertToInt(wallPosition.substring(0));
+					row = Integer.parseInt(wallPosition.substring(1));
+					direction = wallPosition.substring(2);
+				}
+				catch(IndexOutOfBoundsException e){
+					e.printStackTrace();
+				}
+				Tile tile = quoridor.getBoard().getTile(row*column);
+				WallMove move = new WallMove(0,1,quoridor.getCurrentGame().getBlackPlayer(),tile,quoridor.getCurrentGame(),converToDir(direction),wall);
+			    second.nextToken();
+				wall.setMove(move);
+			    quoridor.getCurrentGame().getCurrentPosition().getBlackWallsOnBoard().add(wall);
+			    quoridor.getCurrentGame().getCurrentPosition().getBlackWallsInStock().remove(i);
+			    i++;
+		    }
+	
+			}else{
+				//throws exception
+			}
+	    boolean sameRemainingWall = (quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock().size()==quoridor.getCurrentGame().getCurrentPosition().getBlackWallsInStock().size());
+	    if(validatePosition(quoridor.getCurrentGame().getCurrentPosition())&&sameRemainingWall) {
+	    		return quoridor;
+	    		}else {
+	    			throw new UnsupportedOperationException("Invalid position");
+	    }
 }
 	
 	
@@ -182,15 +357,58 @@ public class Controller {
 	 * @author Yin
 	 * @param fileName
 	 * */
-	public static void savePosition(String fileName, GamePosition gamePosition) {
+	public static void savePosition(String fileName, GamePosition gamePosition, boolean confirms)throws IOException {
+		String data = "";
+		if(gamePosition.getPlayerToMove().getUser().getName().equals(gamePosition.getBlackPosition().getPlayer().getUser().getName())) {
+			data += blackPlayerData(gamePosition)+"\n";
+			data += whitePlayerData(gamePosition);
+			System.out.println(data);
+		}
+		else {
+			data += whitePlayerData(gamePosition)+"\n";
+			data += blackPlayerData(gamePosition);
+			System.out.println(data);
+		}
+		Path path = Paths.get("src/test/resources/savePosition/"+fileName+".txt");
+		if(Files.exists(path)) {
+			if(confirms) {
+				Files.delete(path);
+				Files.createFile(path);
+	            Files.write(path, data.getBytes());
+
+			}
+		}else {
+			Files.createDirectories(path.getParent());
+			Files.createFile(path);
+            Files.write(path, data.getBytes());
+		}
+//        FileWriter fr = null;
+//        BufferedWriter br = null;
+//        String data = "";
+//    		if(gamePosition.getPlayerToMove().getUser().getName().equals(gamePosition.getBlackPosition().getPlayer().getUser().getName())) {
+//    			data += blackPlayerData(gamePosition)+"\n";
+//    			data += whitePlayerData(gamePosition);
+//        }
+//        else {
+//	        	data += whitePlayerData(gamePosition)+"\n";
+//    			data += blackPlayerData(gamePosition);
+//        }
+//        try{
+//            fr = new FileWriter(file);
+//            br = new BufferedWriter(fr);
+//            	br.write(data);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }finally{
+//            try {
+//                br.close();
+//                fr.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
 	}
-	
-	/**
-	 * @author Yin Zhang 260726999
-  	 * The user confirm whether to overwrite the existing file
-  	 * */
-	public static void confirmsToOverWrite() {
-	}
+
 	
 	  /**
 	 * <p>11 Validate Position<p>
@@ -331,6 +549,59 @@ public class Controller {
 		game.addPosition(currentPosition);
 		game.setCurrentPosition(newPosition);
 		
+		
+	}
+	
+	private static String blackPlayerData(GamePosition gamePosition) {
+		String data ="";
+		data += "B:"+(char)(gamePosition.getBlackPosition().getTile().getColumn()+96);
+		data += String.valueOf((gamePosition.getBlackPosition().getTile().getRow()));
+		System.out.println(data);
+		for(int i = 0; i<gamePosition.getBlackWallsOnBoard().size(); i++) {
+	        data += ","+(char)(gamePosition.getBlackWallsOnBoard().get(i).getMove().getTargetTile().getColumn()+96);
+	        data += ","+(gamePosition.getBlackWallsOnBoard().get(i).getMove().getTargetTile().getRow());
+	        data += convertWallDir(gamePosition.getBlackWallsOnBoard().get(i).getMove().getWallDirection());
+	        }
+		return data;
+	}
+	
+	private static String whitePlayerData(GamePosition gamePosition) {
+		String data ="";
+		data += "W:"+(char)(gamePosition.getWhitePosition().getTile().getColumn()+96);
+		data += String.valueOf((gamePosition.getWhitePosition().getTile().getRow()));
+		for(int i = 0; i<gamePosition.getWhiteWallsOnBoard().size(); i++) {
+	        data += ","+(char)(gamePosition.getWhiteWallsOnBoard().get(i).getMove().getTargetTile().getColumn()+96);
+	        data += ","+(gamePosition.getWhiteWallsOnBoard().get(i).getMove().getTargetTile().getRow());
+	        data += convertWallDir(gamePosition.getWhiteWallsOnBoard().get(i).getMove().getWallDirection());
+	        }
+		return data;
+	}
+	
+	private static String convertWallDir(Direction direction){
+		switch(direction){
+			case Horizontal:
+				return "h";
+			case Vertical:
+				return "v";
+			default:
+				return null;
+		}
+	}
+
+	private static Direction converToDir(String direction){
+		switch (direction){
+			case "v":
+				return Vertical;
+			case "h":
+				return Horizontal;
+			default:
+				return null;
+		}
+	}
+	
+	private static int convertToInt(String letter) {
+		int number = (int)letter.charAt(0)-96;
+		return number;
 		
 	}
 }
