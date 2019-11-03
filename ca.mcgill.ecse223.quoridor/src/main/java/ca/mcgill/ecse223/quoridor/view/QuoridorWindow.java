@@ -3,17 +3,24 @@ package ca.mcgill.ecse223.quoridor.view;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.filechooser.FileSystemView;
+
+import ca.mcgill.ecse223.quoridor.controller.Controller;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.awt.event.ActionEvent;
 
 public class QuoridorWindow extends JFrame {
 
-	private JPanel contentPane;
+	private static JPanel contentPane;
 	private JTextField player1NameField;
 	private JTextField textField_1;
 	private JTextField minuteField;
 	private JTextField secondField;
+    private static JFrame f; 
+
 
 	/**
 	 * Launch the application.
@@ -59,6 +66,7 @@ public class QuoridorWindow extends JFrame {
 		newGameButton.setFont(new Font("Cooper Black", Font.PLAIN, 20));
 		titleScreenPanel.add(newGameButton);
 		
+		
 		JButton loadGameButton = new JButton("Load Game");
 		sl_titleScreenPanel.putConstraint(SpringLayout.NORTH, loadGameButton, 207, SpringLayout.NORTH, titleScreenPanel);
 		sl_titleScreenPanel.putConstraint(SpringLayout.WEST, loadGameButton, 74, SpringLayout.WEST, titleScreenPanel);
@@ -66,6 +74,25 @@ public class QuoridorWindow extends JFrame {
 		sl_titleScreenPanel.putConstraint(SpringLayout.SOUTH, newGameButton, -6, SpringLayout.NORTH, loadGameButton);
 		sl_titleScreenPanel.putConstraint(SpringLayout.EAST, newGameButton, 0, SpringLayout.EAST, loadGameButton);
 		loadGameButton.setFont(new Font("Cooper Black", Font.PLAIN, 20));
+		loadGameButton.addActionListener(new ActionListener()
+	    {
+		      public void actionPerformed(ActionEvent a)
+		      {
+		    	  	Controller.StartNewGame();
+		    	  	JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+		    		int returnValue = jfc.showOpenDialog(null);
+		    		
+		    		if (returnValue == JFileChooser.APPROVE_OPTION) {
+		    			File selectedFile = jfc.getSelectedFile();
+		    			try {
+		    				Controller.loadPosition(selectedFile.getName());
+		    			}catch (UnsupportedOperationException e) {
+		    	            JDialog d = new JDialog(f, "Cannot load game due to invalid position"); 
+		    		        d.setVisible(true);
+		    			}
+		    		}
+		      }
+	    });
 		titleScreenPanel.add(loadGameButton);
 		
 		JLabel titleLabel = new JLabel("QUORIDOR");

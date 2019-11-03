@@ -186,11 +186,10 @@ public class Controller {
 	public static Quoridor loadPosition(String fileName) {
 		
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		
 		List<String> lines = Collections.emptyList(); 
 	    try
 	    { 
-	      lines = Files.readAllLines(Paths.get("src/test/resources/savePosition/"+fileName+".txt"), StandardCharsets.UTF_8); 
+	      lines = Files.readAllLines(Paths.get("src/test/resources/savePosition/"+fileName), StandardCharsets.UTF_8); 
 	    } 
 	    catch (IOException e) 
 	    { 
@@ -368,7 +367,7 @@ public class Controller {
 			data += blackPlayerData(gamePosition);
 			System.out.println(data);
 		}
-		Path path = Paths.get("src/test/resources/savePosition/"+fileName+".txt");
+		Path path = Paths.get("src/test/resources/savePosition/"+fileName);
 		if(Files.exists(path)) {
 			if(confirms) {
 				Files.delete(path);
