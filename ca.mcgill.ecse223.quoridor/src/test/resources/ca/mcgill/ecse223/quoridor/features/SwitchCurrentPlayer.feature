@@ -1,3 +1,4 @@
+@William
 Feature: Switch Current Player
   As a player, I wish to know when it is my turn to move. 
   My clock shall be counting down then. Once my move is finished,

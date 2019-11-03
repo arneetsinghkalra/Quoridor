@@ -1,6 +1,8 @@
 package ca.mcgill.ecse223.quoridor.controller;
 
 
+import java.util.List;
+
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.model.*;
 import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
@@ -195,11 +197,109 @@ public class Controller {
 	 * e.g. overlapping walls or outof-track pawn or wall positions. <p>
 	 * 
 	 * @author William Wang
-	 * @param position the currentPosition object of the game
 	 * @return the validation result, true for pass, false for error
 	 */
-	public static boolean validatePosition(GamePosition position) {
-		return false;
+	public static boolean validatePosition() {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		GamePosition gamePosition = quoridor.getCurrentGame().getCurrentPosition();
+		PlayerPosition whitePosition = gamePosition.getWhitePosition();
+		PlayerPosition blackPosition = gamePosition.getBlackPosition();
+		
+		////validate player position
+		Tile whiteTile = whitePosition.getTile();
+		Tile blackTile = blackPosition.getTile();
+		
+		//check out of bound
+		if((whiteTile.getRow()>9)||(whiteTile.getColumn()<1)) {
+			return false;
+		}
+		if((blackTile.getRow()>9)||(whiteTile.getColumn()<1)) {
+			return false;
+		}
+		
+		//check overlapping
+		if((whiteTile.getRow()==blackTile.getRow())&&(whiteTile.getColumn()==blackTile.getColumn())) {
+			return false;
+		}
+		
+		////validate wall position
+		List<Wall> whiteWallsOnBoard = gamePosition.getWhiteWallsOnBoard();
+		List<Wall> blackWallsOnBoard = gamePosition.getBlackWallsOnBoard();
+		//validate white wall on board
+		for(int i=0;i<whiteWallsOnBoard.size();i++) {
+			//check overlapping with white walls
+			for(int j=i+1;j<whiteWallsOnBoard.size();j++) {				
+				if(!noOverlappingWalls(whiteWallsOnBoard.get(i).getMove(),whiteWallsOnBoard.get(j).getMove())) return false;
+			}
+			//check overlapping with black walls
+			for(int j=0;j<blackWallsOnBoard.size();j++) {
+				if(!noOverlappingWalls(whiteWallsOnBoard.get(i).getMove(),blackWallsOnBoard.get(j).getMove())) return false;
+			}
+		
+			if((whiteWallsOnBoard.get(i).getMove().getTargetTile().getRow()<1)||
+					(whiteWallsOnBoard.get(i).getMove().getTargetTile().getRow()>8))return false;
+			if((whiteWallsOnBoard.get(i).getMove().getTargetTile().getColumn()<1)||
+					(whiteWallsOnBoard.get(i).getMove().getTargetTile().getColumn()>8))return false;
+			
+		}
+		//validate black wall on board
+		for(int i=0;i<blackWallsOnBoard.size();i++) {
+			//dont need check overlapping with white walls--checked while validating white walls
+
+			//check overlapping with black walls
+			for(int j=i+1;j<blackWallsOnBoard.size();j++) {
+				if(!noOverlappingWalls(blackWallsOnBoard.get(i).getMove(),blackWallsOnBoard.get(j).getMove())) return false;
+			}
+			if((blackWallsOnBoard.get(i).getMove().getTargetTile().getRow()<1)||
+					(blackWallsOnBoard.get(i).getMove().getTargetTile().getRow()>8))return false;
+			if((blackWallsOnBoard.get(i).getMove().getTargetTile().getColumn()<1)||
+					(blackWallsOnBoard.get(i).getMove().getTargetTile().getColumn()>8))return false;
+		}
+		
+		return true;
+	}
+	
+	 /**
+		 * <p>Helper for validate move<p>
+		 * <p>validate if two walls are overlapping<p>
+		 * 
+		 * @author William Wang
+		 * @return the validation result, true for not overlapping, false for overlapping
+		 */
+	private static boolean noOverlappingWalls(WallMove imove,WallMove jmove) {
+		System.out.print(imove.getTargetTile().getRow()+","+imove.getTargetTile().getColumn());
+		System.out.print(jmove.getTargetTile().getRow()+","+jmove.getTargetTile().getColumn());
+		if(imove.getWallDirection()==Direction.Horizontal) {
+			//
+			if(jmove.getWallDirection()==Direction.Horizontal) {
+				if(		(imove.getTargetTile().getRow()==jmove.getTargetTile().getRow())&&
+						(Math.abs(imove.getTargetTile().getColumn()-jmove.getTargetTile().getColumn())<=1)){
+					return false;
+				}
+			}
+			else {
+				if(		(imove.getTargetTile().getRow()==jmove.getTargetTile().getRow())&&
+						(imove.getTargetTile().getColumn()==jmove.getTargetTile().getColumn())){
+					return false;
+				}
+			}
+		}
+		else {
+			if(jmove.getWallDirection()==Direction.Horizontal) {
+				if(		(imove.getTargetTile().getRow()==jmove.getTargetTile().getRow())&&
+						(imove.getTargetTile().getColumn()==jmove.getTargetTile().getColumn())){
+					return false;
+				}
+			}
+			else {
+				if(		(Math.abs(imove.getTargetTile().getRow()-jmove.getTargetTile().getRow())<=1)&&
+						(imove.getTargetTile().getColumn()==jmove.getTargetTile().getColumn())){
+					return false;
+				}
+			}
+		}
+		return true;
+		
 	}
 		
 	/**
@@ -209,7 +309,22 @@ public class Controller {
 	 * @author William Wang
 	 * @param game the current quoridor game
 	 */
-	public static void switchCurrentPlayer(Game game) {
+	public static void switchCurrentPlayer() {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game game = quoridor.getCurrentGame();
+		GamePosition currentPosition = quoridor.getCurrentGame().getCurrentPosition();
+		List<GamePosition> positions = quoridor.getCurrentGame().getPositions();
+		GamePosition newPosition;
+		PlayerPosition player1Position = new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(), currentPosition.getWhitePosition().getTile());
+		PlayerPosition player2Position = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), currentPosition.getBlackPosition().getTile());
+		if(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsBlack()==null) {
+			newPosition = new GamePosition(currentPosition.getId()+1, player1Position, player2Position, game.getBlackPlayer(), game);	
+		}
+		else {
+			newPosition = new GamePosition(currentPosition.getId()+1, player1Position, player2Position, game.getWhitePlayer(), game);	
+		}
+		game.addPosition(currentPosition);
+		game.setCurrentPosition(newPosition);
 	}
 }
 

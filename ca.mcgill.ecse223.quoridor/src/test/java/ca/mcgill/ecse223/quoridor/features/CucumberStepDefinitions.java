@@ -418,315 +418,315 @@ public class CucumberStepDefinitions {
 		// GUI method to be implemented later
 	}
 
-	// --------------------------------------------------5-6--------------------------------------------------
-	// New game hard coded parameters for 5-8
-	private int moveNum = 1;
-	private int roundNum = 1;
-	// Current Player object
-	private Player currentPlayer = currentGame.getWhitePlayer();
-
-	// Gets this Board for the Tile
-	Board currentBoard = quoridor.getBoard();
-	Tile targetTile;
-	WallMove wallMoveCandidate;
-	int wallId = currentPlayer.numberOfWalls();
-	Wall currentWall = currentPlayer.getWall(0);
-
-	/** @author Luke Barber */
-	@Given("I have more walls on stock")
-	public void iHaveMoreWallsOnStock() {
-		assertTrue(quoridor.getCurrentGame().getCurrentPosition().hasWhiteWallsInStock());
-	}
-
-	/** @author Luke Barber */
-	@Then("A wall move candidate shall be created at initial position")
-	public void aWallMoveCandidateShallBeCreatedAtInitialPosition() {
-		Direction direction = Direction.Horizontal;
-		int initialRow = 0;
-		int initialColumn = 0;
-		wallMoveCandidate = createWallMoveCandidate(direction, initialRow, initialColumn);
-		assertTrue(wallMoveCandidate != null);
-	}
-
-	/** @author Luke Barber */
-	@And("The wall in my hand shall disappear from my stock")
-	public void theWallInMyHandShallDisappearFromMyStock() {
-		int numberOfPlayerWalls = quoridor.getCurrentGame().getCurrentPosition().numberOfWhiteWallsOnBoard();
-		assertEquals((Player.maximumNumberOfWalls() - currentPlayer.numberOfWalls()), numberOfPlayerWalls - 1);
-	}
-
-	/** @author Luke Barber */
-	@Given("I have no more walls on stock")
-	public void iHaveNoMoreWallOnStock() {
-		assertFalse(quoridor.getCurrentGame().getCurrentPosition().hasWhiteWallsInStock());
-	}
-
-	/** @author Luke Barber and Arneet Kalra */
-	@Given("A wall move candidate exists with {string} at position \\({int}, {int})")
-	public void aWallMoveCandidateExistsWithAtPosition(String dir, int row, int column) {
-		// Convert string into Direction type
-		Direction direction = this.stringToDirection(dir);
-		// Create wallMoveCandidate using helper method below
-		WallMove wallMoveCandidate = createWallMoveCandidate(direction, row, column);
-		currentGame.setWallMoveCandidate(wallMoveCandidate);
-	}
-
-	/** @author Luke Barber */
-	@Then("The wall shall be rotated over the board to {string}")
-	public void theWallShallBeRotatedOverTheBoardTo(String newdir, WallMove wall) {
-		Direction newDirection = this.stringToDirection(newdir);
-		assertEquals(newDirection, wall.getWallDirection());
-	}
-
-	/** @author Luke Barber and Arneet Kalra */
-	@And("A wall move candidate shall exist with {string} at position \\({int}, {int})")
-	public void aWallMoveCandidateShallExistWithAtPosition(String newdir, int row, int column) {
-		Direction newDirection = this.stringToDirection(newdir);
-		WallMove wallMoveCandidate = createWallMoveCandidate(newDirection, row, column);
-		currentGame.setWallMoveCandidate(wallMoveCandidate);
-		assertEquals(currentGame.getWallMoveCandidate().getWallDirection(), newDirection);
-		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getRow(), row);
-		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getColumn(), column);
-	}
-
-	// ***********************************************
-	// M O V E W A L L F E A T U R E (7)
-	// ***********************************************
-
-	/**
-	 * @author arneetkalra
-	 */
-
-	@And("The wall candidate is not at the {string} edge of the board")
-	public void the_wall_candidate_is_not_at_the_edge_of_the_board(String side) {
-		if (side == "left") {
-			assertFalse(currentGame.getWallMoveCandidate().getTargetTile().getColumn() == 1);
-		}
-		if (side == "right") {
-			assertFalse(currentGame.getWallMoveCandidate().getTargetTile().getColumn() == 9);
-		}
-		if (side == "up") {
-			assertFalse(currentGame.getWallMoveCandidate().getTargetTile().getRow() == 1);
-		} else if (side == "down") {
-			assertFalse(currentGame.getWallMoveCandidate().getTargetTile().getRow() == 9);
-		}
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@When("I try to move the wall {string}")
-	public void i_try_to_move_the_wall(String side) {
-		Controller.moveWall(wallMoveCandidate, side);
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@Then("The wall shall be moved over the board to position \\({int}, {int})")
-	public void the_wall_shall_be_moved_over_the_board_to_position(int nrow, int ncol) {
-		// Verify row condition
-		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getRow(), nrow);
-
-		// Verify Column condition
-		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getColumn(), ncol);
-	}
-
-
-	/**
-	 * @author arneetkalra
-	 */
-	@And("The wall candidate is at the {string} edge of the board")
-	public void the_wall_candidate_is_at_the_edge_of_the_board(String side) {
-		if (side == "left") {
-			assertTrue(currentGame.getWallMoveCandidate().getTargetTile().getColumn() == 1);
-		}
-		if (side == "right") {
-			assertTrue(currentGame.getWallMoveCandidate().getTargetTile().getColumn() == 9);
-		}
-		if (side == "up") {
-			assertTrue(currentGame.getWallMoveCandidate().getTargetTile().getRow() == 1);
-		} else if (side == "down") {
-			assertTrue(currentGame.getWallMoveCandidate().getTargetTile().getRow() == 9);
-		}
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@Then("I shall be notified that my move is illegal")
-	public void i_shall_be_notified_that_my_move_is_illegal() {
-
-		throw new cucumber.api.PendingException();
-
-		// GUI-related feature -- TODO for later
-
-	}
-
-	// ***********************************************
-	// D R O P W A L L F E A T U R E
-	// ***********************************************
-
-	/**
-	 * @author arneetkalra
-	 */
-	@Given("The wall move candidate with {string} at position \\({int}, {int}) is valid")
-	public void the_wall_move_candidate_with_at_position_is_valid(String dir, int row, int col) {
-
-		// Checks to see if any walls are on the board
-		boolean anyWhiteWallsOnBoard = currentGame.getCurrentPosition().getWhiteWallsOnBoard().isEmpty();
-		boolean anyBlackWallsOnBoard = currentGame.getCurrentPosition().getBlackWallsOnBoard().isEmpty();
-
-		boolean noWallsOnBoard = (anyWhiteWallsOnBoard && anyBlackWallsOnBoard);
-
-		if (noWallsOnBoard) {
-			// Then there are no walls on the board so position will be valid, thus make the
-			// object
-			Direction direction = this.stringToDirection(dir);
-
-			// Create wallMoveCandidate using helper method below
-			WallMove wallMoveCandidate = createWallMoveCandidate(direction, row, col);
-			currentGame.setWallMoveCandidate(wallMoveCandidate);
-		}
-
-		/*
-		 * Tile targetTile = wallMoveCandidate.getTargetTile(); int targetRow =
-		 * targetTile.getRow(); int targetCol = targetTile.getColumn();
-		 */
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@When("I release the wall in my hand")
-	public void i_release_the_wall_in_my_hand(Wall aWall) throws Throwable {
-		Controller.dropWall(wallMoveCandidate);
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@Then("A wall move shall be registered with {string} at position \\({int}, {int})")
-	public void a_wall_move_shall_be_registered_with_at_position(String dir, int row, int col) {
-
-		// Verify properties of vallMoveCandidate
-		assertEquals(wallMoveCandidate.getWallDirection(), dir);
-		assertEquals(wallMoveCandidate.getTargetTile().getRow(), row);
-		assertEquals(wallMoveCandidate.getTargetTile().getColumn(), col);
-
-		// Verifies owner of wall placed from wall move was white player
-		assertEquals(wallMoveCandidate.getWallPlaced().getOwner(), currentPlayer);
-
-		// Verify number of moves in game increase to 1
-		List<Move> numberOfMoves = currentGame.getMoves();
-		assertEquals(numberOfMoves.size(), 1);
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@And("I shall not have a wall in my hand")
-	public void i_shall_not_have_a_wall_in_my_hand() {
-
-		throw new cucumber.api.PendingException();
-
-		// GUI-related feature -- TODO for later
-
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@Then("My move shall be completed")
-	public void my_move_shall_be_completed() {
-		// Make sure moveWallCandidate does not exist anymore
-		assertNull(currentGame.getWallMoveCandidate());
-
-		// Number of white walls on the board increases to 1
-		assertEquals(currentGame.getCurrentPosition().numberOfWhiteWallsOnBoard(), 1);
-
-		// Number of white walls in stock decreases to 9
-		assertEquals(currentGame.getCurrentPosition().numberOfWhiteWallsInStock(), 9);
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@Then("It shall not be my turn to move")
-	public void it_shall_not_be_my_turn_to_move() {
-		// Verifies game got updated so that last move was made by White Player
-		assertEquals(currentGame.getMove(moveNum + 1).getPrevMove().getPlayer(), currentPlayer);
-
-		// Verifies that current move is supposed to be Black Player not White
-		assertEquals(currentGame.getMove(moveNum + 1).getPlayer(), currentGame.getBlackPlayer());
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@Given("The wall move candidate with {string} at position \\({int}, {int}) is invalid")
-	public void the_wall_move_candidate_with_at_position_is_invalid(String dir, int row, int col) {
-
-		// Checks to see if any walls are on the board
-		boolean anyWhiteWallsOnBoard = currentGame.getCurrentPosition().getWhiteWallsOnBoard().isEmpty();
-		boolean anyBlackWallsOnBoard = currentGame.getCurrentPosition().getBlackWallsOnBoard().isEmpty();
-		assertFalse(anyWhiteWallsOnBoard || anyBlackWallsOnBoard);
-
-		Direction direction = this.stringToDirection(dir);
-
-		// Create wallMoveCandidate using helper method below
-		WallMove wallMoveCandidate = createWallMoveCandidate(direction, row, col);
-		currentGame.setWallMoveCandidate(wallMoveCandidate);
-
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@Then("I shall be notified that my wall move is invalid")
-	public void i_shall_be_notified_that_my_wall_move_is_invalid() {
-
-		throw new cucumber.api.PendingException();
-
-		// GUI-related feature -- TODO for later
-
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@And("I shall have a wall in my hand over the board")
-	public void i_shall_have_a_wall_in_my_hand_over_the_board() {
-
-		throw new cucumber.api.PendingException();
-
-		// GUI-related feature -- TODO for later
-
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@And("It shall be my turn to move")
-	public void it_shall_be_my_turn_to_move() {
-		// Verifies that current move is supposed to be Black Player not White
-		assertEquals(currentGame.getMove(moveNum).getPlayer(), currentPlayer);
-
-		// Verifies that it is still first move so no previous Player exists
-		assertNull(currentGame.getMove(moveNum).getPrevMove().getPlayer());
-
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@But("No wall move shall be registered with {string} at position \\({int}, {int})")
-	public void no_wall_move_shall_be_registered_with_at_position(String dir, int row, int col) {
-		// Only need to verify that no moves exist, wall move position/direction
-		// unnecessary
-		List<Move> allMoves = currentGame.getMoves();
-		assertEquals(allMoves.size(), 0);
-	}
+//	// --------------------------------------------------5-6--------------------------------------------------
+//	// New game hard coded parameters for 5-8
+//	private int moveNum = 1;
+//	private int roundNum = 1;
+//	// Current Player object
+//	private Player currentPlayer = currentGame.getWhitePlayer();
+//
+//	// Gets this Board for the Tile
+//	Board currentBoard = quoridor.getBoard();
+//	Tile targetTile;
+//	WallMove wallMoveCandidate;
+//	int wallId = currentPlayer.numberOfWalls();
+//	Wall currentWall = currentPlayer.getWall(0);
+//
+//	/** @author Luke Barber */
+//	@Given("I have more walls on stock")
+//	public void iHaveMoreWallsOnStock() {
+//		assertTrue(quoridor.getCurrentGame().getCurrentPosition().hasWhiteWallsInStock());
+//	}
+//
+//	/** @author Luke Barber */
+//	@Then("A wall move candidate shall be created at initial position")
+//	public void aWallMoveCandidateShallBeCreatedAtInitialPosition() {
+//		Direction direction = Direction.Horizontal;
+//		int initialRow = 0;
+//		int initialColumn = 0;
+//		wallMoveCandidate = createWallMoveCandidate(direction, initialRow, initialColumn);
+//		assertTrue(wallMoveCandidate != null);
+//	}
+//
+//	/** @author Luke Barber */
+//	@And("The wall in my hand shall disappear from my stock")
+//	public void theWallInMyHandShallDisappearFromMyStock() {
+//		int numberOfPlayerWalls = quoridor.getCurrentGame().getCurrentPosition().numberOfWhiteWallsOnBoard();
+//		assertEquals((Player.maximumNumberOfWalls() - currentPlayer.numberOfWalls()), numberOfPlayerWalls - 1);
+//	}
+//
+//	/** @author Luke Barber */
+//	@Given("I have no more walls on stock")
+//	public void iHaveNoMoreWallOnStock() {
+//		assertFalse(quoridor.getCurrentGame().getCurrentPosition().hasWhiteWallsInStock());
+//	}
+//
+//	/** @author Luke Barber and Arneet Kalra */
+//	@Given("A wall move candidate exists with {string} at position \\({int}, {int})")
+//	public void aWallMoveCandidateExistsWithAtPosition(String dir, int row, int column) {
+//		// Convert string into Direction type
+//		Direction direction = this.stringToDirection(dir);
+//		// Create wallMoveCandidate using helper method below
+//		WallMove wallMoveCandidate = createWallMoveCandidate(direction, row, column);
+//		currentGame.setWallMoveCandidate(wallMoveCandidate);
+//	}
+//
+//	/** @author Luke Barber */
+//	@Then("The wall shall be rotated over the board to {string}")
+//	public void theWallShallBeRotatedOverTheBoardTo(String newdir, WallMove wall) {
+//		Direction newDirection = this.stringToDirection(newdir);
+//		assertEquals(newDirection, wall.getWallDirection());
+//	}
+//
+//	/** @author Luke Barber and Arneet Kalra */
+//	@And("A wall move candidate shall exist with {string} at position \\({int}, {int})")
+//	public void aWallMoveCandidateShallExistWithAtPosition(String newdir, int row, int column) {
+//		Direction newDirection = this.stringToDirection(newdir);
+//		WallMove wallMoveCandidate = createWallMoveCandidate(newDirection, row, column);
+//		currentGame.setWallMoveCandidate(wallMoveCandidate);
+//		assertEquals(currentGame.getWallMoveCandidate().getWallDirection(), newDirection);
+//		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getRow(), row);
+//		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getColumn(), column);
+//	}
+//
+//	// ***********************************************
+//	// M O V E W A L L F E A T U R E (7)
+//	// ***********************************************
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//
+//	@And("The wall candidate is not at the {string} edge of the board")
+//	public void the_wall_candidate_is_not_at_the_edge_of_the_board(String side) {
+//		if (side == "left") {
+//			assertFalse(currentGame.getWallMoveCandidate().getTargetTile().getColumn() == 1);
+//		}
+//		if (side == "right") {
+//			assertFalse(currentGame.getWallMoveCandidate().getTargetTile().getColumn() == 9);
+//		}
+//		if (side == "up") {
+//			assertFalse(currentGame.getWallMoveCandidate().getTargetTile().getRow() == 1);
+//		} else if (side == "down") {
+//			assertFalse(currentGame.getWallMoveCandidate().getTargetTile().getRow() == 9);
+//		}
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@When("I try to move the wall {string}")
+//	public void i_try_to_move_the_wall(String side) {
+//		Controller.moveWall(wallMoveCandidate, side);
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@Then("The wall shall be moved over the board to position \\({int}, {int})")
+//	public void the_wall_shall_be_moved_over_the_board_to_position(int nrow, int ncol) {
+//		// Verify row condition
+//		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getRow(), nrow);
+//
+//		// Verify Column condition
+//		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getColumn(), ncol);
+//	}
+//
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@And("The wall candidate is at the {string} edge of the board")
+//	public void the_wall_candidate_is_at_the_edge_of_the_board(String side) {
+//		if (side == "left") {
+//			assertTrue(currentGame.getWallMoveCandidate().getTargetTile().getColumn() == 1);
+//		}
+//		if (side == "right") {
+//			assertTrue(currentGame.getWallMoveCandidate().getTargetTile().getColumn() == 9);
+//		}
+//		if (side == "up") {
+//			assertTrue(currentGame.getWallMoveCandidate().getTargetTile().getRow() == 1);
+//		} else if (side == "down") {
+//			assertTrue(currentGame.getWallMoveCandidate().getTargetTile().getRow() == 9);
+//		}
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@Then("I shall be notified that my move is illegal")
+//	public void i_shall_be_notified_that_my_move_is_illegal() {
+//
+//		throw new cucumber.api.PendingException();
+//
+//		// GUI-related feature -- TODO for later
+//
+//	}
+//
+//	// ***********************************************
+//	// D R O P W A L L F E A T U R E
+//	// ***********************************************
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@Given("The wall move candidate with {string} at position \\({int}, {int}) is valid")
+//	public void the_wall_move_candidate_with_at_position_is_valid(String dir, int row, int col) {
+//
+//		// Checks to see if any walls are on the board
+//		boolean anyWhiteWallsOnBoard = currentGame.getCurrentPosition().getWhiteWallsOnBoard().isEmpty();
+//		boolean anyBlackWallsOnBoard = currentGame.getCurrentPosition().getBlackWallsOnBoard().isEmpty();
+//
+//		boolean noWallsOnBoard = (anyWhiteWallsOnBoard && anyBlackWallsOnBoard);
+//
+//		if (noWallsOnBoard) {
+//			// Then there are no walls on the board so position will be valid, thus make the
+//			// object
+//			Direction direction = this.stringToDirection(dir);
+//
+//			// Create wallMoveCandidate using helper method below
+//			WallMove wallMoveCandidate = createWallMoveCandidate(direction, row, col);
+//			currentGame.setWallMoveCandidate(wallMoveCandidate);
+//		}
+//
+//		/*
+//		 * Tile targetTile = wallMoveCandidate.getTargetTile(); int targetRow =
+//		 * targetTile.getRow(); int targetCol = targetTile.getColumn();
+//		 */
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@When("I release the wall in my hand")
+//	public void i_release_the_wall_in_my_hand(Wall aWall) throws Throwable {
+//		Controller.dropWall(wallMoveCandidate);
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@Then("A wall move shall be registered with {string} at position \\({int}, {int})")
+//	public void a_wall_move_shall_be_registered_with_at_position(String dir, int row, int col) {
+//
+//		// Verify properties of vallMoveCandidate
+//		assertEquals(wallMoveCandidate.getWallDirection(), dir);
+//		assertEquals(wallMoveCandidate.getTargetTile().getRow(), row);
+//		assertEquals(wallMoveCandidate.getTargetTile().getColumn(), col);
+//
+//		// Verifies owner of wall placed from wall move was white player
+//		assertEquals(wallMoveCandidate.getWallPlaced().getOwner(), currentPlayer);
+//
+//		// Verify number of moves in game increase to 1
+//		List<Move> numberOfMoves = currentGame.getMoves();
+//		assertEquals(numberOfMoves.size(), 1);
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@And("I shall not have a wall in my hand")
+//	public void i_shall_not_have_a_wall_in_my_hand() {
+//
+//		throw new cucumber.api.PendingException();
+//
+//		// GUI-related feature -- TODO for later
+//
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@Then("My move shall be completed")
+//	public void my_move_shall_be_completed() {
+//		// Make sure moveWallCandidate does not exist anymore
+//		assertNull(currentGame.getWallMoveCandidate());
+//
+//		// Number of white walls on the board increases to 1
+//		assertEquals(currentGame.getCurrentPosition().numberOfWhiteWallsOnBoard(), 1);
+//
+//		// Number of white walls in stock decreases to 9
+//		assertEquals(currentGame.getCurrentPosition().numberOfWhiteWallsInStock(), 9);
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@Then("It shall not be my turn to move")
+//	public void it_shall_not_be_my_turn_to_move() {
+//		// Verifies game got updated so that last move was made by White Player
+//		assertEquals(currentGame.getMove(moveNum + 1).getPrevMove().getPlayer(), currentPlayer);
+//
+//		// Verifies that current move is supposed to be Black Player not White
+//		assertEquals(currentGame.getMove(moveNum + 1).getPlayer(), currentGame.getBlackPlayer());
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@Given("The wall move candidate with {string} at position \\({int}, {int}) is invalid")
+//	public void the_wall_move_candidate_with_at_position_is_invalid(String dir, int row, int col) {
+//
+//		// Checks to see if any walls are on the board
+//		boolean anyWhiteWallsOnBoard = currentGame.getCurrentPosition().getWhiteWallsOnBoard().isEmpty();
+//		boolean anyBlackWallsOnBoard = currentGame.getCurrentPosition().getBlackWallsOnBoard().isEmpty();
+//		assertFalse(anyWhiteWallsOnBoard || anyBlackWallsOnBoard);
+//
+//		Direction direction = this.stringToDirection(dir);
+//
+//		// Create wallMoveCandidate using helper method below
+//		WallMove wallMoveCandidate = createWallMoveCandidate(direction, row, col);
+//		currentGame.setWallMoveCandidate(wallMoveCandidate);
+//
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@Then("I shall be notified that my wall move is invalid")
+//	public void i_shall_be_notified_that_my_wall_move_is_invalid() {
+//
+//		throw new cucumber.api.PendingException();
+//
+//		// GUI-related feature -- TODO for later
+//
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@And("I shall have a wall in my hand over the board")
+//	public void i_shall_have_a_wall_in_my_hand_over_the_board() {
+//
+//		throw new cucumber.api.PendingException();
+//
+//		// GUI-related feature -- TODO for later
+//
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@And("It shall be my turn to move")
+//	public void it_shall_be_my_turn_to_move() {
+//		// Verifies that current move is supposed to be Black Player not White
+//		assertEquals(currentGame.getMove(moveNum).getPlayer(), currentPlayer);
+//
+//		// Verifies that it is still first move so no previous Player exists
+//		assertNull(currentGame.getMove(moveNum).getPrevMove().getPlayer());
+//
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@But("No wall move shall be registered with {string} at position \\({int}, {int})")
+//	public void no_wall_move_shall_be_registered_with_at_position(String dir, int row, int col) {
+//		// Only need to verify that no moves exist, wall move position/direction
+//		// unnecessary
+//		List<Move> allMoves = currentGame.getMoves();
+//		assertEquals(allMoves.size(), 0);
+//	}
 
 	// -----------------------------9-10---------------------------
 	/**
@@ -751,7 +751,7 @@ public class CucumberStepDefinitions {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
 		GamePosition gamePosition = currentGame.getCurrentPosition();
-		validationResult = Controller.validatePosition(gamePosition);
+		validationResult = Controller.validatePosition();
 	}
 
 	/**
@@ -967,14 +967,12 @@ public class CucumberStepDefinitions {
 	@Given("A game position is supplied with pawn coordinate {int}:{int}")
 	public void gamePositionWithPawnCoordinate(int row, int column) {
 
-		initQuoridorAndBoard();
-		ArrayList<Player> createUsersAndPlayers = createUsersAndPlayers("user1", "user2");
-		createAndStartGame(createUsersAndPlayers);
+
 
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 
 		GamePosition gamePosition = quoridor.getCurrentGame().getCurrentPosition();
-		Tile playerCurrentPosition = quoridor.getBoard().getTile(row + 9 * column);
+		Tile playerCurrentPosition = quoridor.getBoard().getTile((row-1) + 9 * (column-1));
 		gamePosition.getWhitePosition().setTile(playerCurrentPosition);
 	}
 
@@ -983,10 +981,10 @@ public class CucumberStepDefinitions {
 	 *
 	 * @author William Wang
 	 */
-	@When("validation of the position is initiated")
+	@When("Validation of the position is initiated")
 	public void validationOfPositionIsInitialted() {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		validationResult = Controller.validatePosition(quoridor.getCurrentGame().getCurrentPosition());
+		validationResult = Controller.validatePosition();
 	}
 
 	/**
@@ -994,7 +992,7 @@ public class CucumberStepDefinitions {
 	 *
 	 * @author William Wang
 	 */
-	@Then("The position is {string}")
+	@Then("The position shall be {string}")
 	public void thePositionIs(String expectedResult) {
 		if (expectedResult.equals("OK")) {
 			assertTrue(validationResult);
@@ -1008,29 +1006,32 @@ public class CucumberStepDefinitions {
 	 *
 	 * @author William Wang
 	 */
-	@Given("A game position is supplied with wall coordinate {int}:{int}-\"{string}")
+	@Given("A game position is supplied with wall coordinate {int}:{int}-{string}")
 	public void gamePositionWithWallCoordinate(int row, int column, String dir) {
 
-		initQuoridorAndBoard();
-		ArrayList<Player> createUsersAndPlayers = createUsersAndPlayers("user1", "user2");
-		createAndStartGame(createUsersAndPlayers);
-
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
-
-		GamePosition gamePosition = quoridor.getCurrentGame().getCurrentPosition();
-		Tile wallCoordinate = quoridor.getBoard().getTile(row + 9 * column);
-		Wall wall = gamePosition.getWhiteWallsInStock(0);
+		Player whitePlayer = quoridor.getCurrentGame().getWhitePlayer();
+		Wall wall = whitePlayer.getWall(0);
 		Direction direction = Direction.Vertical;
 		if (dir.equals("horizontal")) {
 			direction = Direction.Horizontal;
 		}
-		WallMove wallMove = new WallMove(1, 1, quoridor.getCurrentGame().getWhitePlayer(), wallCoordinate,
-				quoridor.getCurrentGame(), direction, wall);
-		wall.setMove(wallMove);
-		gamePosition.removeWhiteWallsOnBoard(wall);
-		gamePosition.addWhiteWallsOnBoard(wall);
+		new WallMove(0,1,whitePlayer,quoridor.getBoard().getTile((row-1)*9+column-1),quoridor.getCurrentGame(), direction, wall);
+		quoridor.getCurrentGame().getCurrentPosition().removeWhiteWallsInStock(wall);
+		quoridor.getCurrentGame().getCurrentPosition().addWhiteWallsOnBoard(wall);
 	}
 
+	@Then("The position shall be valid")
+	public void the_position_shall_be_valid() {
+	    // Write code here that turns the phrase above into concrete actions
+		assertTrue(validationResult);
+	}
+
+	@Then("The position shall be invalid")
+	public void the_position_shall_be_invalid() {
+	    // Write code here that turns the phrase above into concrete actions
+		assertFalse(validationResult);
+	}
 	/**
 	 * feature 12
 	 *
@@ -1038,9 +1039,6 @@ public class CucumberStepDefinitions {
 	 */
 	@Given("The player to move is {string}")
 	public void thePlayerToMoveIs(String player) {
-		initQuoridorAndBoard();
-		ArrayList<Player> createUsersAndPlayers = createUsersAndPlayers("white", "black");
-		createAndStartGame(createUsersAndPlayers);
 
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		GamePosition gamePosition = quoridor.getCurrentGame().getCurrentPosition();
@@ -1090,8 +1088,7 @@ public class CucumberStepDefinitions {
 	 */
 	@When("Player {string} completes his move")
 	public void playerCompletesMove(String player) {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		Controller.switchCurrentPlayer(quoridor.getCurrentGame());
+		Controller.switchCurrentPlayer();
 	}
 
 	/**
@@ -1101,7 +1098,12 @@ public class CucumberStepDefinitions {
 	 */
 	@Then("The user interface shall be showing it is {string} turn")
 	public void userInterfaceChange(String player) {
-		throw new UnsupportedOperationException("GUI related");
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		if (player.equals("white")) {
+			assertTrue(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsBlack()==null);
+		} else {
+			assertTrue(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsWhite()==null);
+		}
 	}
 
 	/**
@@ -1139,7 +1141,7 @@ public class CucumberStepDefinitions {
 	 *
 	 * @author William Wang
 	 */
-	@And("The next player to move shall be {string} ")
+	@And("The next player to move shall be {string}")
 	public void nextPlayToMoveShallBe(String player) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		if (player.equals("white")) {
@@ -1272,23 +1274,23 @@ public class CucumberStepDefinitions {
 		return game;
 	}
 
-	/** @author Luke Barber and Arneet Kalra */
-	// Method to convert String input data type into respective Direction type
-	private Direction stringToDirection(String direction) {
-		if (direction == "horizontal") {
-			return Direction.Horizontal;
-		} else if (direction == "vertical") {
-			return Direction.Vertical;
-		} else
-			return null;
-	}
-
-	/** @author Luke Barber and Arneet Kalra */
-	// Method that makes WallMove Candidate from the given 3 parameters
-	private WallMove createWallMoveCandidate(Direction dir, int row, int col) {
-		targetTile = new Tile(row, col, currentBoard);
-		WallMove wallMoveCandidate = new WallMove(moveNum, roundNum, currentPlayer, targetTile, currentGame, dir,
-				currentWall);
-		return wallMoveCandidate;
-	}
+//	/** @author Luke Barber and Arneet Kalra */
+//	// Method to convert String input data type into respective Direction type
+//	private Direction stringToDirection(String direction) {
+//		if (direction == "horizontal") {
+//			return Direction.Horizontal;
+//		} else if (direction == "vertical") {
+//			return Direction.Vertical;
+//		} else
+//			return null;
+//	}
+//
+//	/** @author Luke Barber and Arneet Kalra */
+//	// Method that makes WallMove Candidate from the given 3 parameters
+//	private WallMove createWallMoveCandidate(Direction dir, int row, int col) {
+//		targetTile = new Tile(row, col, currentBoard);
+//		WallMove wallMoveCandidate = new WallMove(moveNum, roundNum, currentPlayer, targetTile, currentGame, dir,
+//				currentWall);
+//		return wallMoveCandidate;
+//	}
 }
