@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
@@ -182,11 +183,14 @@ public class Controller {
 	 * @param fileName This is the name of the file which stores the game
 	 * 
 	 * */
-	public static Quoridor loadPosition(Quoridor quoridor, String fileName) {
+	public static Quoridor loadPosition(String fileName) {
+		
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		
 		List<String> lines = Collections.emptyList(); 
 	    try
 	    { 
-	      lines = Files.readAllLines(Paths.get(fileName), StandardCharsets.UTF_8); 
+	      lines = Files.readAllLines(Paths.get("src/test/resources/savePosition/"+fileName+".txt"), StandardCharsets.UTF_8); 
 	    } 
 	    catch (IOException e) 
 	    { 
@@ -204,64 +208,142 @@ public class Controller {
         StringTokenizer first = new StringTokenizer(firstLine, ",");
         StringTokenizer second = new StringTokenizer(secondLine, ",");
         
-
-	    Player blackPlayer = null;
-	    Player whitePlayer = null;
-		String direction = null;
-		WallMove move = null;
-		int column;
-		int row;
-	    blackPlayer.setGameAsBlack(quoridor.getCurrentGame());
-	    whitePlayer.setGameAsWhite(quoridor.getCurrentGame());
-	    String nextPlayer = first.nextToken();
-	    while(first.hasMoreTokens()) {
-		    Wall wall = null;
-			String wallPosition = first.nextToken();
-			try{
-				column =;
-				row = Integer.parseInt(wallPosition.substring(1));
-				direction = wallPosition.substring(2);
-			}
-			catch(IndexOutOfBoundsException e){
-				e.printStackTrace();
-			}
-
-			Tile tile = new Tile(row,column,quoridor.getBoard());
-			move.setGame(quoridor.getCurrentGame());
-			move.setPlayer(blackPlayer);
-			move.setTargetTile(tile);
-			wall.setMove(move);
-		    first.nextToken();
-		    wall.getMove().setTargetTile(tile);
-		    wall.getMove().setWallDirection(converToDir(direction));
-		    wall.setOwner(blackPlayer);
-		    quoridor.getCurrentGame().getCurrentPosition().getBlackWallsOnBoard().add(wall);
-	    }
-	    second.nextToken();
-		while(second.hasMoreTokens()) {
-			Wall wall = null;
-		    wall.getMove().setTargetTile(aNewTargetTile);
-		    wall.setOwner(whitePlayer);
-		    wall.getMove().setWallDirection(aWallDirection);
-		    quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsOnBoard().add(wall);
-	    }
-	    quoridor.getCurrentGame().getCurrentPosition().setBlackPosition(aNewBlackPosition);
-	    quoridor.getCurrentGame().getCurrentPosition().setWhitePosition(aNewBlackPosition);
-	    if(nextPlayer.substring(0).equals("B")){
-	    	quoridor.getCurrentGame().getCurrentPosition().setPlayerToMove(blackPlayer);
-	    }else if(nextPlayer.substring(0).equals("W")){
-			quoridor.getCurrentGame().getCurrentPosition().setPlayerToMove(whitePlayer);
-		}else{
-	    	//throws exception
+        	String nextPlayer = first.nextToken();
+	    String opponent = second.nextToken();
+		int nextPlayerColumn = 0;
+		int nextPlayerRow = 0;
+		try{
+			nextPlayerColumn =convertToInt(nextPlayer.substring(2,3));
+			nextPlayerRow = Integer.parseInt(nextPlayer.substring(3));
 		}
+		catch(IndexOutOfBoundsException e){
+			e.printStackTrace();
+		}
+		Tile nextPlayerTile = quoridor.getBoard().getTile(nextPlayerRow*nextPlayerColumn);
+		int opponentColumn = 0;
+		int opponentRow = 0;
+		try{
+			opponentColumn =convertToInt(opponent.substring(2,3));
+			opponentRow = Integer.parseInt(opponent.substring(3));
+		}
+		catch(IndexOutOfBoundsException e){
+			e.printStackTrace();
+		}
+		Tile opponentTile = quoridor.getBoard().getTile(opponentRow*opponentColumn);
+		
+	    if(nextPlayer.substring(0).equals("B")){
+    			quoridor.getCurrentGame().getCurrentPosition().setPlayerToMove(quoridor.getCurrentGame().getBlackPlayer());
+		    quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().setTile(nextPlayerTile);
+		    quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().setTile(opponentTile);
+		    while(first.hasMoreTokens()) {
+		    		int i = 0;
+		    		Wall wall = quoridor.getCurrentGame().getCurrentPosition().getBlackWallsInStock(i);
+				String direction = null;
+				int column = 0;
+				int row = 0;
+				String wallPosition = first.nextToken();
+				try{
+					column =convertToInt(wallPosition.substring(0));
+					row = Integer.parseInt(wallPosition.substring(1));
+					direction = wallPosition.substring(2);
+				}
+				catch(IndexOutOfBoundsException e){
+					e.printStackTrace();
+				}
+				
+				Tile tile = quoridor.getBoard().getTile(row*column);
+	    			WallMove move = new WallMove(0,1,quoridor.getCurrentGame().getBlackPlayer(),tile,quoridor.getCurrentGame(),converToDir(direction),wall);
+				wall.setMove(move);
+			    first.nextToken();
+			    quoridor.getCurrentGame().getCurrentPosition().getBlackWallsOnBoard().add(wall);
+			    quoridor.getCurrentGame().getCurrentPosition().getBlackWallsInStock().remove(i);
+			    i++;
+		    }
+		    while(second.hasMoreTokens()) {
+				int i = 0;
+				Wall wall = quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock(i);
+				int column = 0;
+				int row = 0;
+				String direction = null;
+				String wallPosition = second.nextToken();
+				try{
+					column =convertToInt(wallPosition.substring(0));
+					row = Integer.parseInt(wallPosition.substring(1));
+					direction = wallPosition.substring(2);
+				}
+				catch(IndexOutOfBoundsException e){
+					e.printStackTrace();
+				}
+				Tile tile = quoridor.getBoard().getTile(row*column);
+				WallMove move = new WallMove(0,1,quoridor.getCurrentGame().getWhitePlayer(),tile,quoridor.getCurrentGame(),converToDir(direction),wall);
+			    second.nextToken();
+				wall.setMove(move);
+			    wall.setOwner(quoridor.getCurrentGame().getWhitePlayer());
+			    wall.getMove().setWallDirection(converToDir(direction));
+			    quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsOnBoard().add(wall);
+			    quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock().remove(i);
+			    i++;
+		    }
 
-
-
-		    
+	    }else if(nextPlayer.substring(0).equals("W")){
+			quoridor.getCurrentGame().getCurrentPosition().setPlayerToMove(quoridor.getCurrentGame().getWhitePlayer());
+			PlayerPosition whitePlayerPosition = new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(),nextPlayerTile);
+			PlayerPosition blackPlayerPosition = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(),opponentTile);
+		    quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().setTile(nextPlayerTile);
+		    quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().setTile(opponentTile);
+		    while(first.hasMoreTokens()) {
+		    		int i = 0;
+		    		Wall wall = quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock(i);
+				String direction = null;
+				int column = 0;
+				int row = 0;
+				String wallPosition = first.nextToken();
+				try{
+					column =convertToInt(wallPosition.substring(0));
+					row = Integer.parseInt(wallPosition.substring(1));
+					direction = wallPosition.substring(2);
+				}
+				catch(IndexOutOfBoundsException e){
+					e.printStackTrace();
+				}
+				Tile tile = quoridor.getBoard().getTile(row*column);
+				WallMove move = new WallMove(0,1,quoridor.getCurrentGame().getWhitePlayer(),tile,quoridor.getCurrentGame(),converToDir(direction),wall);
+				wall.setMove(move);
+			    first.nextToken();
+			    wall.getMove().setWallDirection(converToDir(direction));
+			    wall.setOwner(quoridor.getCurrentGame().getBlackPlayer());
+			    quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsOnBoard().add(wall);
+			    quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock().remove(i);
+			    i++;
+		    }
+			while(second.hasMoreTokens()) {
+		    		int i = 0;
+		    		Wall wall = quoridor.getCurrentGame().getCurrentPosition().getBlackWallsInStock(i);
+				int column = 0;
+				int row = 0;
+				String direction = null;
+				String wallPosition = second.nextToken();
+				try{
+					column =convertToInt(wallPosition.substring(0));
+					row = Integer.parseInt(wallPosition.substring(1));
+					direction = wallPosition.substring(2);
+				}
+				catch(IndexOutOfBoundsException e){
+					e.printStackTrace();
+				}
+				Tile tile = quoridor.getBoard().getTile(row*column);
+				WallMove move = new WallMove(0,1,quoridor.getCurrentGame().getBlackPlayer(),tile,quoridor.getCurrentGame(),converToDir(direction),wall);
+			    second.nextToken();
+				wall.setMove(move);
+			    quoridor.getCurrentGame().getCurrentPosition().getBlackWallsOnBoard().add(wall);
+			    quoridor.getCurrentGame().getCurrentPosition().getBlackWallsInStock().remove(i);
+			    i++;
+		    }
+	
+			}else{
+		    	//throws exception
+			}   
 		return quoridor;
-		
-		
-	return null;
 }
 	
 	
@@ -270,68 +352,58 @@ public class Controller {
 	 * @author Yin
 	 * @param fileName
 	 * */
-	public static void savePosition(String fileName, GamePosition gamePosition) {
+	public static void savePosition(String fileName, GamePosition gamePosition, boolean confirms)throws IOException {
+		String data = "";
+		if(gamePosition.getPlayerToMove().getUser().getName().equals(gamePosition.getBlackPosition().getPlayer().getUser().getName())) {
+			data += blackPlayerData(gamePosition)+"\n";
+			data += whitePlayerData(gamePosition);
+			System.out.println(data);
+		}
+		else {
+			data += whitePlayerData(gamePosition)+"\n";
+			data += blackPlayerData(gamePosition);
+			System.out.println(data);
+		}
+		Path path = Paths.get("src/test/resources/savePosition/"+fileName+".txt");
+		if(Files.exists(path)) {
+			if(confirms) {
+				Files.delete(path);
+				Files.createFile(path);
+	            Files.write(path, data.getBytes());
 
-        File file = new File("/Users/pankaj/"+fileName+".txt");
-        FileWriter fr = null;
-        BufferedWriter br = null;
-        String data = "";
-        if (file.exists() && !file.isDirectory()) {
-        		if(gamePosition.getPlayerToMove().getUser().getName().equals(gamePosition.getBlackPosition().getPlayer().getUser().getName())) {
-        			data += blackPlayerData(gamePosition)+"\n";
-        			data += whitePlayerData(gamePosition);
-	        }
-	        else {
-		        	data += whitePlayerData(gamePosition)+"\n";
-	    			data += blackPlayerData(gamePosition);
-	        }
-            try{
-                fr = new FileWriter(file);
-                br = new BufferedWriter(fr);
-                	br.write(data);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }finally{
-                try {
-                    br.close();
-                    fr.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-    		}else {
-	        	if(gamePosition.getPlayerToMove().getUser().getName().equals(gamePosition.getBlackPosition().getPlayer().getUser().getName())) {
-	    			data += blackPlayerData(gamePosition)+"\n";
-	    			data += whitePlayerData(gamePosition);
-	        }
-	        else {
-		        	data += whitePlayerData(gamePosition)+"\n";
-	    			data += blackPlayerData(gamePosition);
-	        }
-	        try{
-	            fr = new FileWriter(file);
-	            br = new BufferedWriter(fr);
-	            	br.write(data);
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }finally{
-	            try {
-	                br.close();
-	                fr.close();
-	            } catch (IOException e) {
-	                e.printStackTrace();
-	            }
-	        }
-        }
-		
+			}
+		}else {
+			Files.createDirectories(path.getParent());
+			Files.createFile(path);
+            Files.write(path, data.getBytes());
+		}
+//        FileWriter fr = null;
+//        BufferedWriter br = null;
+//        String data = "";
+//    		if(gamePosition.getPlayerToMove().getUser().getName().equals(gamePosition.getBlackPosition().getPlayer().getUser().getName())) {
+//    			data += blackPlayerData(gamePosition)+"\n";
+//    			data += whitePlayerData(gamePosition);
+//        }
+//        else {
+//	        	data += whitePlayerData(gamePosition)+"\n";
+//    			data += blackPlayerData(gamePosition);
+//        }
+//        try{
+//            fr = new FileWriter(file);
+//            br = new BufferedWriter(fr);
+//            	br.write(data);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }finally{
+//            try {
+//                br.close();
+//                fr.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
 	}
-	
-	/**
-	 * @author Yin Zhang 260726999
-  	 * The user confirm whether to overwrite the existing file
-  	 * */
-	public static void confirmsToOverWrite() {
-	}
+
 	
 	  /**
 	 * <p>11 Validate Position<p>
@@ -358,25 +430,26 @@ public class Controller {
 	
 	private static String blackPlayerData(GamePosition gamePosition) {
 		String data ="";
-		data += "B:"+gamePosition.getBlackPosition().getTile().toString();
+		data += "B:"+(char)(gamePosition.getBlackPosition().getTile().getColumn()+96);
+		data += String.valueOf((gamePosition.getBlackPosition().getTile().getRow()));
+		System.out.println(data);
 		for(int i = 0; i<gamePosition.getBlackWallsOnBoard().size(); i++) {
-	        data += ","+gamePosition.getBlackWallsOnBoard().get(i).getMove().getTargetTile().toString();
+	        data += ","+(char)(gamePosition.getBlackWallsOnBoard().get(i).getMove().getTargetTile().getColumn()+96);
+	        data += ","+(gamePosition.getBlackWallsOnBoard().get(i).getMove().getTargetTile().getRow());
 	        data += convertWallDir(gamePosition.getBlackWallsOnBoard().get(i).getMove().getWallDirection());
 	        }
-		String blackWallRemaining = String.valueOf(gamePosition.getBlackWallsInStock().size());
-		data += blackWallRemaining;
 		return data;
 	}
 	
 	private static String whitePlayerData(GamePosition gamePosition) {
 		String data ="";
-		data += "W:"+gamePosition.getWhitePosition().getTile().toString();
+		data += "W:"+(char)(gamePosition.getWhitePosition().getTile().getColumn()+96);
+		data += String.valueOf((gamePosition.getWhitePosition().getTile().getRow()));
 		for(int i = 0; i<gamePosition.getWhiteWallsOnBoard().size(); i++) {
-	        data += ","+gamePosition.getWhiteWallsOnBoard().get(i).getMove().getTargetTile().toString();
+	        data += ","+(char)(gamePosition.getWhiteWallsOnBoard().get(i).getMove().getTargetTile().getColumn()+96);
+	        data += ","+(gamePosition.getWhiteWallsOnBoard().get(i).getMove().getTargetTile().getRow());
 	        data += convertWallDir(gamePosition.getWhiteWallsOnBoard().get(i).getMove().getWallDirection());
 	        }
-		String whiteWallRemaining = String.valueOf(gamePosition.getWhiteWallsInStock().size());
-		data += whiteWallRemaining;
 		return data;
 	}
 	
@@ -400,6 +473,12 @@ public class Controller {
 			default:
 				return null;
 		}
+	}
+	
+	private static int convertToInt(String letter) {
+		int number = (int)letter.charAt(0)-96;
+		return number;
+		
 	}
 }
 

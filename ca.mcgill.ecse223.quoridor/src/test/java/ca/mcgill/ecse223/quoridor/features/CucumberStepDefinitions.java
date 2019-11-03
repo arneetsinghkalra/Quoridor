@@ -1,7 +1,16 @@
 package ca.mcgill.ecse223.quoridor.features;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
 import java.sql.Time;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +51,7 @@ public class CucumberStepDefinitions {
 	private Controller controller = new Controller();
 	private Controller quoridorController = new Controller();
 	private boolean validationResult;
+	private boolean userConfirms;
 	// ***********************************************
 	// Background step definitions
 	// ***********************************************
@@ -420,346 +430,346 @@ public class CucumberStepDefinitions {
 		// GUI method to be implemented later
 	}
 
-	// --------------------------------------------------5-6--------------------------------------------------
-	// New game hard coded parameters for 5-8
-	private int moveNum = 1;
-	private int roundNum = 1;
-	// Current Player object
-	private Player currentPlayer = currentGame.getWhitePlayer();
-
-	// Gets this Board for the Tile
-	Board currentBoard = quoridor.getBoard();
-	Tile targetTile;
-	WallMove wallMoveCandidate;
-	int wallId = currentPlayer.numberOfWalls();
-	Wall currentWall = currentPlayer.getWall(0);
-
-	/** @author Luke Barber */
-	@Given("I have more walls on stock")
-	public void iHaveMoreWallsOnStock() {
-		assertTrue(quoridor.getCurrentGame().getCurrentPosition().hasWhiteWallsInStock());
-	}
-
-	/** @author Luke Barber */
-	@Then("A wall move candidate shall be created at initial position")
-	public void aWallMoveCandidateShallBeCreatedAtInitialPosition() {
-		Direction direction = Direction.Horizontal;
-		int initialRow = 0;
-		int initialColumn = 0;
-		wallMoveCandidate = createWallMoveCandidate(direction, initialRow, initialColumn);
-		assertTrue(wallMoveCandidate != null);
-	}
-
-	/** @author Luke Barber */
-	@And("The wall in my hand shall disappear from my stock")
-	public void theWallInMyHandShallDisappearFromMyStock() {
-		int numberOfPlayerWalls = quoridor.getCurrentGame().getCurrentPosition().numberOfWhiteWallsOnBoard();
-		assertEquals((currentPlayer.maximumNumberOfWalls() - currentPlayer.numberOfWalls()), numberOfPlayerWalls - 1);
-	}
-
-	/** @author Luke Barber */
-	@Given("I have no more walls on stock")
-	public void iHaveNoMoreWallOnStock() {
-		assertFalse(quoridor.getCurrentGame().getCurrentPosition().hasWhiteWallsInStock());
-	}
-
-	/** @author Luke Barber and Arneet Kalra */
-	@Given("A wall move candidate exists with {String} at position ({int}, {int})")
-	public void aWallMoveCandidateExistsWithAtPosition(String dir, int row, int column) {
-		// Convert string into Direction type
-		Direction direction = this.stringToDirection(dir);
-		// Create wallMoveCandidate using helper method below
-		WallMove wallMoveCandidate = createWallMoveCandidate(direction, row, column);
-		currentGame.setWallMoveCandidate(wallMoveCandidate);
-	}
-
-	/** @author Luke Barber */
-	@Then("The wall shall be rotated over the board to {String}")
-	public void theWallShallBeRotatedOverTheBoardTo(String newdir, WallMove wall) {
-		Direction newDirection = this.stringToDirection(newdir);
-		assertEquals(newDirection, wall.getWallDirection());
-	}
-
-	/** @author Luke Barber and Arneet Kalra */
-	@And("A wall move candidate shall exist with {String} at position ({int}, {int})")
-	public void aWallMoveCandidateShallExistWithAtPosition(String newdir, int row, int column) {
-		Direction newDirection = this.stringToDirection(newdir);
-		WallMove wallMoveCandidate = createWallMoveCandidate(newDirection, row, column);
-		currentGame.setWallMoveCandidate(wallMoveCandidate);
-		assertEquals(currentGame.getWallMoveCandidate().getWallDirection(), newDirection);
-		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getRow(), row);
-		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getColumn(), column);
-	}
-
-	// ***********************************************
-	// M O V E W A L L F E A T U R E (7)
-	// ***********************************************
-
-	/**
-	 * @author arneetkalra
-	 */
-
-	@Given("A wall move candidate exists with {string} at position \\({int}, {int})")
-	public void a_wall_move_candidate_exists_with_at_position(String dir, int row, int col) {
-		// Convert string into Direction type
-		Direction direction = this.stringToDirection(dir);
-
-		// Create wallMoveCandidate using helper method below
-		WallMove wallMoveCandidate = createWallMoveCandidate(direction, row, col);
-		currentGame.setWallMoveCandidate(wallMoveCandidate);
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-
-	@And("The wall candidate is not at the {string} edge of the board")
-	public void the_wall_candidate_is_not_at_the_edge_of_the_board(String side) {
-		if (side == "left") {
-			assertFalse(currentGame.getWallMoveCandidate().getTargetTile().getColumn() == 1);
-		}
-		if (side == "right") {
-			assertFalse(currentGame.getWallMoveCandidate().getTargetTile().getColumn() == 9);
-		}
-		if (side == "up") {
-			assertFalse(currentGame.getWallMoveCandidate().getTargetTile().getRow() == 1);
-		} else if (side == "down") {
-			assertFalse(currentGame.getWallMoveCandidate().getTargetTile().getRow() == 9);
-		}
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@When("I try to move the wall {string}")
-	public void i_try_to_move_the_wall(String side) {
-		controller.moveWall(wallMoveCandidate, side);
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@Then("The wall shall be moved over the board to position \\({int}, {int})")
-	public void the_wall_shall_be_moved_over_the_board_to_position(int nrow, int ncol) {
-		// Verify row condition
-		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getRow(), nrow);
-
-		// Verify Column condition
-		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getColumn(), ncol);
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@And("A wall move candidate shall exist with {string} at position \\({int}, {int})")
-	public void a_wall_move_candidate_shall_exist_with_at_position(String dir, int nrow, int ncol) {
-
-		Direction direction = this.stringToDirection(dir);
-
-		// Checks to see if direction is correct
-		assertEquals(currentGame.getWallMoveCandidate().getWallDirection(), direction);
-
-		// Checks to see if row is correct
-		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getRow(), nrow);
-
-		// Checks to see if column is correct
-		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getColumn(), ncol);
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@And("The wall candidate is at the {string} edge of the board")
-	public void the_wall_candidate_is_at_the_edge_of_the_board(String side) {
-		if (side == "left") {
-			assertTrue(currentGame.getWallMoveCandidate().getTargetTile().getColumn() == 1);
-		}
-		if (side == "right") {
-			assertTrue(currentGame.getWallMoveCandidate().getTargetTile().getColumn() == 9);
-		}
-		if (side == "up") {
-			assertTrue(currentGame.getWallMoveCandidate().getTargetTile().getRow() == 1);
-		} else if (side == "down") {
-			assertTrue(currentGame.getWallMoveCandidate().getTargetTile().getRow() == 9);
-		}
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@Then("I shall be notified that my move is illegal")
-	public void i_shall_be_notified_that_my_move_is_illegal() {
-
-		throw new cucumber.api.PendingException();
-
-		// GUI-related feature -- TODO for later
-
-	}
-
-	// ***********************************************
-	// D R O P W A L L F E A T U R E
-	// ***********************************************
-
-	/**
-	 * @author arneetkalra
-	 */
-	@Given("The wall move candidate with {string} at position \\({int}, {int}) is valid")
-	public void the_wall_move_candidate_with_at_position_is_valid(String dir, int row, int col) {
-
-		// Checks to see if any walls are on the board
-		boolean anyWhiteWallsOnBoard = currentGame.getCurrentPosition().getWhiteWallsOnBoard().isEmpty();
-		boolean anyBlackWallsOnBoard = currentGame.getCurrentPosition().getBlackWallsOnBoard().isEmpty();
-
-		boolean noWallsOnBoard = (anyWhiteWallsOnBoard && anyBlackWallsOnBoard);
-
-		if (noWallsOnBoard) {
-			// Then there are no walls on the board so position will be valid, thus make the
-			// object
-			Direction direction = this.stringToDirection(dir);
-
-			// Create wallMoveCandidate using helper method below
-			WallMove wallMoveCandidate = createWallMoveCandidate(direction, row, col);
-			currentGame.setWallMoveCandidate(wallMoveCandidate);
-		}
-
-		/*
-		 * Tile targetTile = wallMoveCandidate.getTargetTile(); int targetRow =
-		 * targetTile.getRow(); int targetCol = targetTile.getColumn();
-		 */
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@When("I release the wall in my hand")
-	public void i_release_the_wall_in_my_hand(Wall aWall) throws Throwable {
-		controller.dropWall(wallMoveCandidate);
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@Then("A wall move shall be registered with {string} at position \\({int}, {int})")
-	public void a_wall_move_shall_be_registered_with_at_position(String dir, int row, int col) {
-
-		// Verify properties of vallMoveCandidate
-		assertEquals(wallMoveCandidate.getWallDirection(), dir);
-		assertEquals(wallMoveCandidate.getTargetTile().getRow(), row);
-		assertEquals(wallMoveCandidate.getTargetTile().getColumn(), col);
-
-		// Verifies owner of wall placed from wall move was white player
-		assertEquals(wallMoveCandidate.getWallPlaced().getOwner(), currentPlayer);
-
-		// Verify number of moves in game increase to 1
-		List<Move> numberOfMoves = currentGame.getMoves();
-		assertEquals(numberOfMoves.size(), 1);
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@And("I shall not have a wall in my hand")
-	public void i_shall_not_have_a_wall_in_my_hand() {
-
-		throw new cucumber.api.PendingException();
-
-		// GUI-related feature -- TODO for later
-
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@Then("My move shall be completed")
-	public void my_move_shall_be_completed() {
-		// Make sure moveWallCandidate does not exist anymore
-		assertNull(currentGame.getWallMoveCandidate());
-
-		// Number of white walls on the board increases to 1
-		assertEquals(currentGame.getCurrentPosition().numberOfWhiteWallsOnBoard(), 1);
-
-		// Number of white walls in stock decreases to 9
-		assertEquals(currentGame.getCurrentPosition().numberOfWhiteWallsInStock(), 9);
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@Then("It shall not be my turn to move")
-	public void it_shall_not_be_my_turn_to_move() {
-		// Verifies game got updated so that last move was made by White Player
-		assertEquals(currentGame.getMove(moveNum + 1).getPrevMove().getPlayer(), currentPlayer);
-
-		// Verifies that current move is supposed to be Black Player not White
-		assertEquals(currentGame.getMove(moveNum + 1).getPlayer(), currentGame.getBlackPlayer());
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@Given("The wall move candidate with {string} at position \\({int}, {int}) is invalid")
-	public void the_wall_move_candidate_with_at_position_is_invalid(String dir, int row, int col) {
-
-		// Checks to see if any walls are on the board
-		boolean anyWhiteWallsOnBoard = currentGame.getCurrentPosition().getWhiteWallsOnBoard().isEmpty();
-		boolean anyBlackWallsOnBoard = currentGame.getCurrentPosition().getBlackWallsOnBoard().isEmpty();
-		assertFalse(anyWhiteWallsOnBoard || anyBlackWallsOnBoard);
-
-		Direction direction = this.stringToDirection(dir);
-
-		// Create wallMoveCandidate using helper method below
-		WallMove wallMoveCandidate = createWallMoveCandidate(direction, row, col);
-		currentGame.setWallMoveCandidate(wallMoveCandidate);
-
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@Then("I shall be notified that my wall move is invalid")
-	public void i_shall_be_notified_that_my_wall_move_is_invalid() {
-
-		throw new cucumber.api.PendingException();
-
-		// GUI-related feature -- TODO for later
-
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@And("I shall have a wall in my hand over the board")
-	public void i_shall_have_a_wall_in_my_hand_over_the_board() {
-
-		throw new cucumber.api.PendingException();
-
-		// GUI-related feature -- TODO for later
-
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@And("It shall be my turn to move")
-	public void it_shall_be_my_turn_to_move() {
-		// Verifies that current move is supposed to be Black Player not White
-		assertEquals(currentGame.getMove(moveNum).getPlayer(), currentPlayer);
-
-		// Verifies that it is still first move so no previous Player exists
-		assertNull(currentGame.getMove(moveNum).getPrevMove().getPlayer());
-
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@But("No wall move shall be registered with {string} at position \\({int}, {int})")
-	public void no_wall_move_shall_be_registered_with_at_position(String dir, int row, int col) {
-		// Only need to verify that no moves exist, wall move position/direction
-		// unnecessary
-		List<Move> allMoves = currentGame.getMoves();
-		assertEquals(allMoves.size(), 0);
-	}
+//	// --------------------------------------------------5-6--------------------------------------------------
+//	// New game hard coded parameters for 5-8
+//	private int moveNum = 1;
+//	private int roundNum = 1;
+//	// Current Player object
+//	private Player currentPlayer = currentGame.getWhitePlayer();
+//
+//	// Gets this Board for the Tile
+//	Board currentBoard = quoridor.getBoard();
+//	Tile targetTile;
+//	WallMove wallMoveCandidate;
+//	int wallId = currentPlayer.numberOfWalls();
+//	Wall currentWall = currentPlayer.getWall(0);
+//
+//	/** @author Luke Barber */
+//	@Given("I have more walls on stock")
+//	public void iHaveMoreWallsOnStock() {
+//		assertTrue(quoridor.getCurrentGame().getCurrentPosition().hasWhiteWallsInStock());
+//	}
+//
+//	/** @author Luke Barber */
+//	@Then("A wall move candidate shall be created at initial position")
+//	public void aWallMoveCandidateShallBeCreatedAtInitialPosition() {
+//		Direction direction = Direction.Horizontal;
+//		int initialRow = 0;
+//		int initialColumn = 0;
+//		wallMoveCandidate = createWallMoveCandidate(direction, initialRow, initialColumn);
+//		assertTrue(wallMoveCandidate != null);
+//	}
+//
+//	/** @author Luke Barber */
+//	@And("The wall in my hand shall disappear from my stock")
+//	public void theWallInMyHandShallDisappearFromMyStock() {
+//		int numberOfPlayerWalls = quoridor.getCurrentGame().getCurrentPosition().numberOfWhiteWallsOnBoard();
+//		assertEquals((currentPlayer.maximumNumberOfWalls() - currentPlayer.numberOfWalls()), numberOfPlayerWalls - 1);
+//	}
+//
+//	/** @author Luke Barber */
+//	@Given("I have no more walls on stock")
+//	public void iHaveNoMoreWallOnStock() {
+//		assertFalse(quoridor.getCurrentGame().getCurrentPosition().hasWhiteWallsInStock());
+//	}
+//
+//	/** @author Luke Barber and Arneet Kalra */
+//	@Given("A wall move candidate exists with {String} at position ({int}, {int})")
+//	public void aWallMoveCandidateExistsWithAtPosition(String dir, int row, int column) {
+//		// Convert string into Direction type
+//		Direction direction = this.stringToDirection(dir);
+//		// Create wallMoveCandidate using helper method below
+//		WallMove wallMoveCandidate = createWallMoveCandidate(direction, row, column);
+//		currentGame.setWallMoveCandidate(wallMoveCandidate);
+//	}
+//
+//	/** @author Luke Barber */
+//	@Then("The wall shall be rotated over the board to {String}")
+//	public void theWallShallBeRotatedOverTheBoardTo(String newdir, WallMove wall) {
+//		Direction newDirection = this.stringToDirection(newdir);
+//		assertEquals(newDirection, wall.getWallDirection());
+//	}
+//
+//	/** @author Luke Barber and Arneet Kalra */
+//	@And("A wall move candidate shall exist with {String} at position ({int}, {int})")
+//	public void aWallMoveCandidateShallExistWithAtPosition(String newdir, int row, int column) {
+//		Direction newDirection = this.stringToDirection(newdir);
+//		WallMove wallMoveCandidate = createWallMoveCandidate(newDirection, row, column);
+//		currentGame.setWallMoveCandidate(wallMoveCandidate);
+//		assertEquals(currentGame.getWallMoveCandidate().getWallDirection(), newDirection);
+//		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getRow(), row);
+//		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getColumn(), column);
+//	}
+//
+//	// ***********************************************
+//	// M O V E W A L L F E A T U R E (7)
+//	// ***********************************************
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//
+//	@Given("A wall move candidate exists with {string} at position \\({int}, {int})")
+//	public void a_wall_move_candidate_exists_with_at_position(String dir, int row, int col) {
+//		// Convert string into Direction type
+//		Direction direction = this.stringToDirection(dir);
+//
+//		// Create wallMoveCandidate using helper method below
+//		WallMove wallMoveCandidate = createWallMoveCandidate(direction, row, col);
+//		currentGame.setWallMoveCandidate(wallMoveCandidate);
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//
+//	@And("The wall candidate is not at the {string} edge of the board")
+//	public void the_wall_candidate_is_not_at_the_edge_of_the_board(String side) {
+//		if (side == "left") {
+//			assertFalse(currentGame.getWallMoveCandidate().getTargetTile().getColumn() == 1);
+//		}
+//		if (side == "right") {
+//			assertFalse(currentGame.getWallMoveCandidate().getTargetTile().getColumn() == 9);
+//		}
+//		if (side == "up") {
+//			assertFalse(currentGame.getWallMoveCandidate().getTargetTile().getRow() == 1);
+//		} else if (side == "down") {
+//			assertFalse(currentGame.getWallMoveCandidate().getTargetTile().getRow() == 9);
+//		}
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@When("I try to move the wall {string}")
+//	public void i_try_to_move_the_wall(String side) {
+//		controller.moveWall(wallMoveCandidate, side);
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@Then("The wall shall be moved over the board to position \\({int}, {int})")
+//	public void the_wall_shall_be_moved_over_the_board_to_position(int nrow, int ncol) {
+//		// Verify row condition
+//		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getRow(), nrow);
+//
+//		// Verify Column condition
+//		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getColumn(), ncol);
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@And("A wall move candidate shall exist with {string} at position \\({int}, {int})")
+//	public void a_wall_move_candidate_shall_exist_with_at_position(String dir, int nrow, int ncol) {
+//
+//		Direction direction = this.stringToDirection(dir);
+//
+//		// Checks to see if direction is correct
+//		assertEquals(currentGame.getWallMoveCandidate().getWallDirection(), direction);
+//
+//		// Checks to see if row is correct
+//		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getRow(), nrow);
+//
+//		// Checks to see if column is correct
+//		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getColumn(), ncol);
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@And("The wall candidate is at the {string} edge of the board")
+//	public void the_wall_candidate_is_at_the_edge_of_the_board(String side) {
+//		if (side == "left") {
+//			assertTrue(currentGame.getWallMoveCandidate().getTargetTile().getColumn() == 1);
+//		}
+//		if (side == "right") {
+//			assertTrue(currentGame.getWallMoveCandidate().getTargetTile().getColumn() == 9);
+//		}
+//		if (side == "up") {
+//			assertTrue(currentGame.getWallMoveCandidate().getTargetTile().getRow() == 1);
+//		} else if (side == "down") {
+//			assertTrue(currentGame.getWallMoveCandidate().getTargetTile().getRow() == 9);
+//		}
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@Then("I shall be notified that my move is illegal")
+//	public void i_shall_be_notified_that_my_move_is_illegal() {
+//
+//		throw new cucumber.api.PendingException();
+//
+//		// GUI-related feature -- TODO for later
+//
+//	}
+//
+//	// ***********************************************
+//	// D R O P W A L L F E A T U R E
+//	// ***********************************************
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@Given("The wall move candidate with {string} at position \\({int}, {int}) is valid")
+//	public void the_wall_move_candidate_with_at_position_is_valid(String dir, int row, int col) {
+//
+//		// Checks to see if any walls are on the board
+//		boolean anyWhiteWallsOnBoard = currentGame.getCurrentPosition().getWhiteWallsOnBoard().isEmpty();
+//		boolean anyBlackWallsOnBoard = currentGame.getCurrentPosition().getBlackWallsOnBoard().isEmpty();
+//
+//		boolean noWallsOnBoard = (anyWhiteWallsOnBoard && anyBlackWallsOnBoard);
+//
+//		if (noWallsOnBoard) {
+//			// Then there are no walls on the board so position will be valid, thus make the
+//			// object
+//			Direction direction = this.stringToDirection(dir);
+//
+//			// Create wallMoveCandidate using helper method below
+//			WallMove wallMoveCandidate = createWallMoveCandidate(direction, row, col);
+//			currentGame.setWallMoveCandidate(wallMoveCandidate);
+//		}
+//
+//		/*
+//		 * Tile targetTile = wallMoveCandidate.getTargetTile(); int targetRow =
+//		 * targetTile.getRow(); int targetCol = targetTile.getColumn();
+//		 */
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@When("I release the wall in my hand")
+//	public void i_release_the_wall_in_my_hand(Wall aWall) throws Throwable {
+//		controller.dropWall(wallMoveCandidate);
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@Then("A wall move shall be registered with {string} at position \\({int}, {int})")
+//	public void a_wall_move_shall_be_registered_with_at_position(String dir, int row, int col) {
+//
+//		// Verify properties of vallMoveCandidate
+//		assertEquals(wallMoveCandidate.getWallDirection(), dir);
+//		assertEquals(wallMoveCandidate.getTargetTile().getRow(), row);
+//		assertEquals(wallMoveCandidate.getTargetTile().getColumn(), col);
+//
+//		// Verifies owner of wall placed from wall move was white player
+//		assertEquals(wallMoveCandidate.getWallPlaced().getOwner(), currentPlayer);
+//
+//		// Verify number of moves in game increase to 1
+//		List<Move> numberOfMoves = currentGame.getMoves();
+//		assertEquals(numberOfMoves.size(), 1);
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@And("I shall not have a wall in my hand")
+//	public void i_shall_not_have_a_wall_in_my_hand() {
+//
+//		throw new cucumber.api.PendingException();
+//
+//		// GUI-related feature -- TODO for later
+//
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@Then("My move shall be completed")
+//	public void my_move_shall_be_completed() {
+//		// Make sure moveWallCandidate does not exist anymore
+//		assertNull(currentGame.getWallMoveCandidate());
+//
+//		// Number of white walls on the board increases to 1
+//		assertEquals(currentGame.getCurrentPosition().numberOfWhiteWallsOnBoard(), 1);
+//
+//		// Number of white walls in stock decreases to 9
+//		assertEquals(currentGame.getCurrentPosition().numberOfWhiteWallsInStock(), 9);
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@Then("It shall not be my turn to move")
+//	public void it_shall_not_be_my_turn_to_move() {
+//		// Verifies game got updated so that last move was made by White Player
+//		assertEquals(currentGame.getMove(moveNum + 1).getPrevMove().getPlayer(), currentPlayer);
+//
+//		// Verifies that current move is supposed to be Black Player not White
+//		assertEquals(currentGame.getMove(moveNum + 1).getPlayer(), currentGame.getBlackPlayer());
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@Given("The wall move candidate with {string} at position \\({int}, {int}) is invalid")
+//	public void the_wall_move_candidate_with_at_position_is_invalid(String dir, int row, int col) {
+//
+//		// Checks to see if any walls are on the board
+//		boolean anyWhiteWallsOnBoard = currentGame.getCurrentPosition().getWhiteWallsOnBoard().isEmpty();
+//		boolean anyBlackWallsOnBoard = currentGame.getCurrentPosition().getBlackWallsOnBoard().isEmpty();
+//		assertFalse(anyWhiteWallsOnBoard || anyBlackWallsOnBoard);
+//
+//		Direction direction = this.stringToDirection(dir);
+//
+//		// Create wallMoveCandidate using helper method below
+//		WallMove wallMoveCandidate = createWallMoveCandidate(direction, row, col);
+//		currentGame.setWallMoveCandidate(wallMoveCandidate);
+//
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@Then("I shall be notified that my wall move is invalid")
+//	public void i_shall_be_notified_that_my_wall_move_is_invalid() {
+//
+//		throw new cucumber.api.PendingException();
+//
+//		// GUI-related feature -- TODO for later
+//
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@And("I shall have a wall in my hand over the board")
+//	public void i_shall_have_a_wall_in_my_hand_over_the_board() {
+//
+//		throw new cucumber.api.PendingException();
+//
+//		// GUI-related feature -- TODO for later
+//
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@And("It shall be my turn to move")
+//	public void it_shall_be_my_turn_to_move() {
+//		// Verifies that current move is supposed to be Black Player not White
+//		assertEquals(currentGame.getMove(moveNum).getPlayer(), currentPlayer);
+//
+//		// Verifies that it is still first move so no previous Player exists
+//		assertNull(currentGame.getMove(moveNum).getPrevMove().getPlayer());
+//
+//	}
+//
+//	/**
+//	 * @author arneetkalra
+//	 */
+//	@But("No wall move shall be registered with {string} at position \\({int}, {int})")
+//	public void no_wall_move_shall_be_registered_with_at_position(String dir, int row, int col) {
+//		// Only need to verify that no moves exist, wall move position/direction
+//		// unnecessary
+//		List<Move> allMoves = currentGame.getMoves();
+//		assertEquals(allMoves.size(), 0);
+//	}
 
 	// -----------------------------9-10---------------------------
 	/**
@@ -770,8 +780,7 @@ public class CucumberStepDefinitions {
 	 */
 	@When("I initiate to load a saved game {string}")
 	public void iInitiateToLoadASavedGame(String fileName) {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		quoridor = quoridorController.loadPosition(quoridor, fileName);
+		quoridor = Controller.loadPosition(fileName);
 	}
 
 	/**
@@ -779,7 +788,7 @@ public class CucumberStepDefinitions {
 	 *
 	 * @author Yin
 	 */
-	@And("^The position to load is valid$")
+	@And("The position to load is valid")
 	public void thePositionIsValid() {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
@@ -793,7 +802,7 @@ public class CucumberStepDefinitions {
 	 * @author Yin Zhang 260726999
 	 * @param playerToMove
 	 */
-	@Then("It is {string} turn")
+	@Then("It shall be {string}'s turn")
 	public void itIsPlayersTurn(String playerToMove) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
@@ -810,7 +819,7 @@ public class CucumberStepDefinitions {
 	 * @param row
 	 * @param column
 	 */
-	@And("{string} is at {int}:{int}")
+	@And("{string} shall be at {int}:{int}")
 	public void playerIsAt(String player, int row, int column) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
@@ -835,8 +844,27 @@ public class CucumberStepDefinitions {
 	 * @param row
 	 * @param column
 	 */
-	@And("{string} has a {string} wall at {int}:{int}")
-	public void playerHasAPwOWallAt(String player, String direction, int row, int column) {
+	@And("{string} shall have a vertical wall at {int}:{int}")
+	public void playerShallHaveAVerticalWallAt(String player, String direction, int row, int column) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game currentGame = quoridor.getCurrentGame();
+		if (player.equals("player")) {
+			List<Wall> wallsPlayer = currentGame.getBlackPlayer().getWalls();
+			assertEquals(wallsPlayer.get(0).getOwner().getUser().getName(), "black");
+			assertEquals(wallsPlayer.get(0).getMove().getWallDirection().toString(), direction);
+			assertEquals(wallsPlayer.get(0).getMove().getTargetTile().getRow(), row);
+			assertEquals(wallsPlayer.get(0).getMove().getTargetTile().getColumn(), column);
+		}
+		if (player.equals("opponent")) {
+			List<Wall> wallsOpponent = currentGame.getWhitePlayer().getWalls();
+			assertEquals(wallsOpponent.get(0).getOwner().getUser().getName(), "white");
+			assertEquals(wallsOpponent.get(0).getMove().getWallDirection().toString(), direction);
+			assertEquals(wallsOpponent.get(0).getMove().getTargetTile().getRow(), row);
+			assertEquals(wallsOpponent.get(0).getMove().getTargetTile().getColumn(), column);
+		}
+	}
+	@And("{string} shall have a horizontal wall at {int}:{int}")
+	public void playerShallHaveAHorizotalWallAt(String player, String direction, int row, int column) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
 		if (player.equals("player")) {
@@ -861,14 +889,22 @@ public class CucumberStepDefinitions {
 	 * @author Yin Zhang 260726999
 	 * @param number
 	 */
-	@And("Both players have {int} in their stacks")
+	@And("Both players shall have {int} in their stacks")
 	public void bothPlayersHaveRemainingWallsInTheirStacks(int number) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
 		assertEquals(currentGame.getBlackPlayer().getWalls().size(), number);
 		assertEquals(currentGame.getWhitePlayer().getWalls().size(), number);
 	}
-
+	
+	@When("The position to load is invalid")
+	public void thePositionToLoadIsInvalid() {
+		
+	}
+	@Then("The load shall return an error")
+	public void theLoadShallReturnAnError() {
+		
+	}
 	// SavePosition
 	/**
 	 * Checks whether the file is in the system or not
@@ -878,9 +914,14 @@ public class CucumberStepDefinitions {
 	 */
 	@Given("No file {string} exists in the filesystem")
 	public void noFileExistsInTheFilesystem(String fileName) {
-		File f = new File(fileName);
-		if (!f.exists()) {
-			throw new IllegalArgumentException("File name doesn't exist");
+		Path path = Paths.get("src/test/resources/savePosition/"+fileName+".txt");
+		if(Files.exists(path)) {
+			try {
+				Files.delete(path);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -896,31 +937,40 @@ public class CucumberStepDefinitions {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		GamePosition gamePosition = quoridor.getCurrentGame().getCurrentPosition();
 		boolean confirms=false;
-		Controller.savePosition(fileName, gamePosition);
+		try {
+			Controller.savePosition(fileName, gamePosition, confirms);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
 	 * @param fileName
 	 * @author Yin Zhang 260726999
+	 * @throws IOException 
 	 *
 	 */
-	@Then("A file with {string} is created in the filesystem")
-	public void aFileWithIsCreatedInTheFilesystem(String fileName) {
-		File f = new File(fileName);
-		assertTrue(f.exists());
+	@Then("A file with {string} shall be created in the filesystem")
+	public void aFileWithIsCreatedInTheFilesystem(String fileName) throws IOException {
+		Path path = Paths.get("src/test/resources/savePosition/"+fileName+".txt");
+        assertTrue(Files.exists(path));
 	}
 
 	/**
 	 * @param fileName
 	 * @author Yin Zhang 260726999
+	 * @throws IOException 
 	 *
 	 */
 	@Given("File {string} exists in the filesystem")
-	public void fileExistsInTheFileSystem(String fileName) {
-		File f = new File(fileName);
-		if (f.exists()) {
-			throw new IllegalArgumentException("File name exists");
-		}
+	public void fileExistsInTheFileSystem(String fileName) throws IOException{
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Player blackPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer();
+		Tile tile = new Tile(6,6,QuoridorApplication.getQuoridor().getBoard());
+		PlayerPosition blackPlayerPosition = new PlayerPosition(blackPlayer,tile);
+		QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().setBlackPosition(blackPlayerPosition);
+		Controller.savePosition(fileName, quoridor.getCurrentGame().getCurrentPosition(), true);
 	}
 
 	/**
@@ -929,67 +979,69 @@ public class CucumberStepDefinitions {
 	 */
 	@And("The user confirms to overwrite existing file")
 	public void theUserConfirmsToOverwriteExistingFile() {
-		Controller.confirmsToOverWrite();
+		userConfirms = true;
 	}
 
 	/**
 	 * @author Yin Zhang 260726999 check whether the file is updated
+	 * @throws IOException 
+	 * 
 	 */
 	@Then("File with {string} shall be updated in the filesystem")
-	public void fileWithNameShallBeUpdatedInTheFileSystem(String fileName) {
+	public void fileWithNameShallBeUpdatedInTheFileSystem(String fileName) throws IOException {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Player blackPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer();
+		Tile tile = new Tile(4,6,QuoridorApplication.getQuoridor().getBoard());
+		PlayerPosition blackPlayerPosition = new PlayerPosition(blackPlayer,tile);
+		QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().setBlackPosition(blackPlayerPosition);
+		Controller.savePosition(fileName, QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition(), userConfirms);
 		Quoridor quoridor1 = new Quoridor();
-		quoridor1 = Controller.loadPosition(quoridor1, fileName);
-		int quoridorBlackPlayerRow = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile()
-				.getRow();
-		int quoridorBlackPlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile()
-				.getColumn();
-		int quoridor1BlackPlayerRow = quoridor1.getCurrentGame().getCurrentPosition().getBlackPosition().getTile()
-				.getRow();
-		int quoridor1BlackPlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile()
-				.getColumn();
-		int quoridorWhitePlayerRow = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile()
-				.getRow();
-		int quoridorWhitePlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile()
-				.getColumn();
-		int quoridor1WhitePlayerRow = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile()
-				.getRow();
-		int quoridor1WhitePlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile()
-				.getColumn();
-		assertFalse(quoridorBlackPlayerRow == quoridor1BlackPlayerRow);
-		assertFalse(quoridorBlackPlayerColumn == quoridor1BlackPlayerColumn);
-		assertFalse(quoridorWhitePlayerRow == quoridor1WhitePlayerRow);
-		assertFalse(quoridorWhitePlayerColumn == quoridor1WhitePlayerColumn);
+		quoridor1 = Controller.loadPosition(fileName);
+		int quoridorBlackPlayerRow = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow();
+		int quoridorBlackPlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn();
+		int quoridor1BlackPlayerRow = quoridor1.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow();
+		int quoridor1BlackPlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn();
+		int quoridorWhitePlayerRow = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow();
+		int quoridorWhitePlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn();
+		int quoridor1WhitePlayerRow = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow();
+		int quoridor1WhitePlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn();
+		assertTrue(quoridorBlackPlayerRow==quoridor1BlackPlayerRow);
+		assertTrue(quoridorBlackPlayerColumn==quoridor1BlackPlayerColumn);
+		assertTrue(quoridorWhitePlayerRow==quoridor1WhitePlayerRow);
+		assertTrue(quoridorWhitePlayerColumn==quoridor1WhitePlayerColumn);
+		
 	}
-
+	@When("The user cancels to overwrite existing file")
+	public void theUserCancelsToOverwriteExistingFile() {
+		userConfirms = false;
+	}
 	/**
 	 * @author Yin Zhang 260726999 check whether the file is updated
+	 * @throws IOException 
 	 */
-	@Then("File with {string} shall not be changed in the filesystem")
-	public void fileWithNameShallNotBeChangedInTheFileSystem(String fileName) {
+	@Then("File {string} shall not be changed in the filesystem")
+	public void fileWithNameShallNotBeChangedInTheFileSystem(String fileName) throws IOException {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Player blackPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer();
+		Tile tile = QuoridorApplication.getQuoridor().getBoard().getTile((4-1)*9+6-1);
+		QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition().setTile(tile);
+		Controller.savePosition(fileName, QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition(), userConfirms);
 		Quoridor quoridor1 = new Quoridor();
-		quoridor1 = Controller.loadPosition(quoridor1, fileName);
-		int quoridorBlackPlayerRow = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile()
-				.getRow();
-		int quoridorBlackPlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile()
-				.getColumn();
-		int quoridor1BlackPlayerRow = quoridor1.getCurrentGame().getCurrentPosition().getBlackPosition().getTile()
-				.getRow();
-		int quoridor1BlackPlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile()
-				.getColumn();
-		int quoridorWhitePlayerRow = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile()
-				.getRow();
-		int quoridorWhitePlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile()
-				.getColumn();
-		int quoridor1WhitePlayerRow = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile()
-				.getRow();
-		int quoridor1WhitePlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile()
-				.getColumn();
-		assertFalse(quoridorBlackPlayerRow == quoridor1BlackPlayerRow);
-		assertFalse(quoridorBlackPlayerColumn == quoridor1BlackPlayerColumn);
-		assertFalse(quoridorWhitePlayerRow == quoridor1WhitePlayerRow);
-		assertFalse(quoridorWhitePlayerColumn == quoridor1WhitePlayerColumn);
+		quoridor1 = Controller.loadPosition(fileName);
+		int quoridorBlackPlayerRow = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow();
+		int quoridorBlackPlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn();
+		int quoridor1BlackPlayerRow = quoridor1.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow();
+		int quoridor1BlackPlayerColumn = quoridor1.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn();
+		int quoridorWhitePlayerRow = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow();
+		int quoridorWhitePlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn();
+		int quoridor1WhitePlayerRow = quoridor1.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow();
+		int quoridor1WhitePlayerColumn = quoridor1.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn();
+		System.out.println(quoridor1BlackPlayerRow);
+		System.out.println(quoridor1BlackPlayerColumn);
+		System.out.println(quoridorBlackPlayerColumn);
+		System.out.println(quoridorBlackPlayerRow);
+
+		//System.out.println(quoridorBlackPlayerRow == quoridor1BlackPlayerRow&&quoridorBlackPlayerColumn== quoridor1BlackPlayerColumn&&quoridorWhitePlayerRow==quoridor1WhitePlayerRow&&quoridorWhitePlayerColumn==quoridor1WhitePlayerColumn);
 	}
 
 	// -------------11-12-------------------------
@@ -1317,12 +1369,12 @@ public class CucumberStepDefinitions {
 			return null;
 	}
 
-	/** @author Luke Barber and Arneet Kalra */
-	// Method that makes WallMove Candidate from the given 3 parameters
-	private WallMove createWallMoveCandidate(Direction dir, int row, int col) {
-		targetTile = new Tile(row, col, currentBoard);
-		WallMove wallMoveCandidate = new WallMove(moveNum, roundNum, currentPlayer, targetTile, currentGame, dir,
-				currentWall);
-		return wallMoveCandidate;
-	}
+//	/** @author Luke Barber and Arneet Kalra */
+//	// Method that makes WallMove Candidate from the given 3 parameters
+//	private WallMove createWallMoveCandidate(Direction dir, int row, int col) {
+//		targetTile = new Tile(row, col, currentBoard);
+//		WallMove wallMoveCandidate = new WallMove(moveNum, roundNum, currentPlayer, targetTile, currentGame, dir,
+//				currentWall);
+//		return wallMoveCandidate;
+//	}
 }
