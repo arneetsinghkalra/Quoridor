@@ -1,4 +1,3 @@
-@google
 Feature: Load Position
   As a player, I want to continue a game from a given position as if this position were the current (starting) position of a new game.
 
