@@ -972,7 +972,7 @@ public class CucumberStepDefinitions {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 
 		GamePosition gamePosition = quoridor.getCurrentGame().getCurrentPosition();
-		Tile playerCurrentPosition = quoridor.getBoard().getTile((row-1) + 9 * (column-1));
+		Tile playerCurrentPosition = quoridor.getBoard().getTile((row-1)*9+ (column-1));
 		gamePosition.getWhitePosition().setTile(playerCurrentPosition);
 	}
 
