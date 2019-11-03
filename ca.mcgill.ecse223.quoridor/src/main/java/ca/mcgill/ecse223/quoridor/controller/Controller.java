@@ -51,9 +51,9 @@ public class Controller {
    * @author Ali Tapan
    * @version 1.0
    */
-  public static void setTotalThinkingTime(String timeInSeconds) {
+  public static void setTotalThinkingTime(String time) {
 	  Quoridor quoridor = QuoridorApplication.getQuoridor();
-	  Time remaining = Time.valueOf(timeInSeconds);
+	  Time remaining = Time.valueOf(time);
 	  quoridor.getCurrentGame().getBlackPlayer().setRemainingTime(remaining);
 	  quoridor.getCurrentGame().getWhitePlayer().setRemainingTime(remaining);
 	  quoridor.getCurrentGame().setGameStatus(GameStatus.ReadyToStart);

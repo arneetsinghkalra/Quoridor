@@ -196,8 +196,8 @@ public class CucumberStepDefinitions {
 	@And("Total thinking time is set")
 	public void totalThinkingTimeIsSet() throws UnsupportedOperationException {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		String time = "180";
-		Controller.setTotalThinkingTime(quoridor, time);
+		String time = "00:01:00";
+		Controller.setTotalThinkingTime(time);
 	}
 
 	/**
@@ -227,8 +227,7 @@ public class CucumberStepDefinitions {
 	 */
 	@When("I start the clock")
 	public void iStartTheClock() throws Throwable {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		Controller.startClock(quoridor);
+		Controller.startClock();
 	}
 
 	/**
@@ -291,8 +290,7 @@ public class CucumberStepDefinitions {
 	 */
 	@When("The player selects existing {string}")
 	public void thePlayerSelectsExisting(String username) throws Throwable {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		Controller.selectExistingUsername(username, quoridor, player);
+		Controller.selectExistingUsername(username, player);
 	}
 
 	/**
@@ -324,8 +322,7 @@ public class CucumberStepDefinitions {
 	 */
 	@When("The player provides new user name: {string}")
 	public void thePlayerProvidesNewUserName(String username) throws Throwable {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		Controller.provideNewUsername(username, quoridor, player);
+		Controller.provideNewUsername(username, player);
 	}
 
 	/**
