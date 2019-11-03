@@ -9,23 +9,6 @@ import ca.mcgill.ecse223.quoridor.model.Game.MoveMode;
 
 public class Controller {
 
-	// Global variables to make life easier
-
-	// Gets the Current game
-	static Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
-	// Gets the current wall move candidate in play
-	static WallMove currentWallMoveCandidate = currentGame.getWallMoveCandidate();
-	// Gets current Game position
-	static GamePosition currentGamePosition = currentGame.getCurrentPosition();
-	// Gets current player to move
-	static Player currentPlayer = currentGame.getCurrentPosition().getPlayerToMove();
-	// Gets Current board
-	static Board currentBoard = QuoridorApplication.getQuoridor().getBoard();
-	// Gets move number
-	static int currentMoveNumber = currentGame.numberOfMoves();
-	// Gets round number
-	static int currentRoundNumber = (currentGame.numberOfMoves() + 1) / 2; // Ex: move 5 and 6 are round 3
-
 	// ------------------------------------------------------------------------------
 	/**
 	 * <p>
@@ -162,12 +145,31 @@ public class Controller {
 	 * @return
 	 */
 	public static boolean moveWall(String side) throws UnsupportedOperationException {
+		// Global variables to make life easier
+
+		// Gets the Current game
+		Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
+		// Gets the current wall move candidate in play
+		WallMove currentWallMoveCandidate = currentGame.getWallMoveCandidate();
+		
+		GamePosition currentPosition = currentGame.getCurrentPosition();
+		// Gets current player to move
+		Player currentPlayer = currentPosition.getPlayerToMove();
+		// Gets Current board
+		Board currentBoard = QuoridorApplication.getQuoridor().getBoard();
+		// Gets move number
+		int currentMoveNumber = currentGame.numberOfMoves();
+		// Gets round number
+		int currentRoundNumber = (currentGame.numberOfMoves() + 1) / 2; // Ex: move 5 and 6 are round 3
 		// Fetch initial Wall Move Candidate
 		WallMove wallMove = currentWallMoveCandidate;
-		
+
 		// Store position of target tile
 		int row = wallMove.getTargetTile().getRow();
 		int col = wallMove.getTargetTile().getColumn();
+
+		// Get index of current tile
+		Tile currentTile = currentBoard.getTile((row - 1) * 9 + col - 1);
 
 		// Initialize new targets as old ones for now
 		int targetRow = row;
@@ -193,8 +195,8 @@ public class Controller {
 		}
 		}
 
-		// Store Tile with updated target row/col
-		Tile newTargetTile = new Tile(targetRow, targetCol, currentBoard);
+		// Make a new updated target tile with new parameters
+		Tile updatedTile = currentBoard.getTile((targetRow - 1) * 9 + targetCol - 1);
 
 		// Give error if wall is not on board
 		if (row < 1 || row > 8 || col < 1 || col > 8) { // Row, col cannot be bigger than 8 since reference point is NW
@@ -205,14 +207,16 @@ public class Controller {
 
 		// Else, update wall move candidate with new target tile
 		else {
-			// Other parameters for wall candidate required that do not change
-			Direction currentWallDirection = currentWallMoveCandidate.getWallDirection();
-			Wall currentWallPlaced = currentWallMoveCandidate.getWallPlaced();
 
-			WallMove updatedWallMoveCandidate = new WallMove(currentMoveNumber, currentRoundNumber, currentPlayer,
-					newTargetTile, currentGame, currentWallDirection, currentWallPlaced);
-			// Update the Wall Move Candidate with new Target Positions
-			currentWallMoveCandidate = updatedWallMoveCandidate;
+			currentWallMoveCandidate.setTargetTile(updatedTile);
+
+			/*
+			 * WallMove updatedWallMoveCandidate = new WallMove(currentMoveNumber,
+			 * currentRoundNumber, currentPlayer, newTargetTile, currentGame,
+			 * currentWallDirection, currentWallPlaced); // Update the Wall Move Candidate
+			 * with new Target Positions currentWallMoveCandidate =
+			 * updatedWallMoveCandidate;
+			 */
 
 			// Return wallMoved if works
 			boolean wallMoved = true;
@@ -235,6 +239,18 @@ public class Controller {
 	 * @return void method but drops wall which prompts end of player turn
 	 */
 	public static Boolean dropWall(WallMove wallMoveCandidate) {
+
+		// Gets the Current game
+		Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
+		// Gets the current wall move candidate in play
+		WallMove currentWallMoveCandidate = currentGame.getWallMoveCandidate();
+		// Gets current Game position
+		GamePosition currentGamePosition = currentGame.getCurrentPosition();
+		currentGame.getCurrentPosition().getPlayerToMove();
+		QuoridorApplication.getQuoridor().getBoard();
+		currentGame.numberOfMoves();
+		currentGame.numberOfMoves();
+
 		WallMove wallMove = currentWallMoveCandidate;
 
 		// Get a list of all walls on board
@@ -336,6 +352,14 @@ public class Controller {
 	 * @return boolean true if wall move was successfully cancelled
 	 */
 	public static boolean cancelWallMove() {
+		// Gets the Current game
+		Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
+		// Gets current Game position
+		GamePosition currentGamePosition = currentGame.getCurrentPosition();
+		currentGame.getCurrentPosition().getPlayerToMove();
+		QuoridorApplication.getQuoridor().getBoard();
+		currentGame.numberOfMoves();
+		currentGame.numberOfMoves();
 		// Get current Wall Move and it's player
 		WallMove move = currentGame.getWallMoveCandidate();
 		Player player = currentGamePosition.getPlayerToMove();
