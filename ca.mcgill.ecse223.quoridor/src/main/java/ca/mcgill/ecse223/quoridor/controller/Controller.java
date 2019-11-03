@@ -203,7 +203,7 @@ public class Controller {
 		    firstLine = lines.get(0);
 		    secondLine = lines.get(1);
 	    }catch(IndexOutOfBoundsException e){
-            e.printStackTrace();
+			throw new UnsupportedOperationException("Invalid position");
 	    }
         StringTokenizer first = new StringTokenizer(firstLine, ",");
         StringTokenizer second = new StringTokenizer(secondLine, ",");
@@ -212,12 +212,18 @@ public class Controller {
 	    String opponent = second.nextToken();
 		int nextPlayerColumn = 0;
 		int nextPlayerRow = 0;
+		if(nextPlayer.toCharArray().length!=4||opponent.toCharArray().length!=4) {
+			throw new UnsupportedOperationException("Invalid position");
+		}
 		try{
 			nextPlayerColumn =convertToInt(nextPlayer.substring(2,3));
 			nextPlayerRow = Integer.parseInt(nextPlayer.substring(3));
 		}
 		catch(IndexOutOfBoundsException e){
-			e.printStackTrace();
+			throw new UnsupportedOperationException("Invalid position");
+		}
+		if(nextPlayerRow>9||nextPlayerColumn>9) {
+			throw new UnsupportedOperationException("Invalid position");
 		}
 		Tile nextPlayerTile = quoridor.getBoard().getTile((nextPlayerRow-1)*9+nextPlayerColumn-1);
 		int opponentColumn = 0;
@@ -227,10 +233,12 @@ public class Controller {
 			opponentRow = Integer.parseInt(opponent.substring(3));
 		}
 		catch(IndexOutOfBoundsException e){
-			e.printStackTrace();
+			throw new UnsupportedOperationException("Invalid position");
+		}
+		if(opponentRow>9||opponentColumn>9) {
+			throw new UnsupportedOperationException("Invalid position");
 		}
 		Tile opponentTile = quoridor.getBoard().getTile((opponentRow-1)*9+opponentColumn-1);
-		
 	    if(nextPlayer.substring(0,1).equals("B")){
     			quoridor.getCurrentGame().getCurrentPosition().setPlayerToMove(quoridor.getCurrentGame().getBlackPlayer());
 		    quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().setTile(nextPlayerTile);
@@ -243,13 +251,19 @@ public class Controller {
 				int column = 0;
 				int row = 0;
 				String wallPosition = first.nextToken();
+				if(wallPosition.toCharArray().length!=3) {
+					throw new UnsupportedOperationException("Invalid position");
+				}
 				try{
 					column =convertToInt(wallPosition.substring(0,1));
 					row = Integer.parseInt(wallPosition.substring(1,2));
 					direction = wallPosition.substring(2);
 				}
 				catch(IndexOutOfBoundsException e){
-					e.printStackTrace();
+					throw new UnsupportedOperationException("Invalid position");
+				}
+				if(row>9||column>9) {
+					throw new UnsupportedOperationException("Invalid position");
 				}
 				
 				Tile tile = quoridor.getBoard().getTile((row-1)*9+column-1);
@@ -267,16 +281,21 @@ public class Controller {
 				int row = 0;
 				String direction = null;
 				String wallPosition = second.nextToken();
+				if(wallPosition.toCharArray().length!=3) {
+					throw new UnsupportedOperationException("Invalid position");
+				}
 				try{
 					column =convertToInt(wallPosition.substring(0,1));
 					row = Integer.parseInt(wallPosition.substring(1,2));
 					direction = wallPosition.substring(2);
 				}
 				catch(IndexOutOfBoundsException e){
-					e.printStackTrace();
+					throw new UnsupportedOperationException("Invalid position");
+				}
+				if(row>9||column>9) {
+					throw new UnsupportedOperationException("Invalid position");
 				}
 				Tile tile = quoridor.getBoard().getTile((row-1)*9+column-1);
-				
 				WallMove move = new WallMove(0,1,quoridor.getCurrentGame().getWhitePlayer(),tile,quoridor.getCurrentGame(),converToDir(direction),wall);
 				wall.setMove(move);
 			    wall.setOwner(quoridor.getCurrentGame().getWhitePlayer());
@@ -297,13 +316,19 @@ public class Controller {
 				int column = 0;
 				int row = 0;
 				String wallPosition = first.nextToken();
+				if(wallPosition.toCharArray().length!=3) {
+					throw new UnsupportedOperationException("Invalid position");
+				}
 				try{
-					column =convertToInt(wallPosition.substring(0));
-					row = Integer.parseInt(wallPosition.substring(1));
+					column =convertToInt(wallPosition.substring(0,1));
+					row = Integer.parseInt(wallPosition.substring(1,2));
 					direction = wallPosition.substring(2);
 				}
 				catch(IndexOutOfBoundsException e){
-					e.printStackTrace();
+					throw new UnsupportedOperationException("Invalid position");
+				}
+				if(row>9||column>9) {
+					throw new UnsupportedOperationException("Invalid position");
 				}
 				Tile tile = quoridor.getBoard().getTile(row*column);
 				WallMove move = new WallMove(0,1,quoridor.getCurrentGame().getWhitePlayer(),tile,quoridor.getCurrentGame(),converToDir(direction),wall);
@@ -322,13 +347,19 @@ public class Controller {
 				int row = 0;
 				String direction = null;
 				String wallPosition = second.nextToken();
+				if(wallPosition.toCharArray().length!=3) {
+					throw new UnsupportedOperationException("Invalid position");
+				}
 				try{
 					column =convertToInt(wallPosition.substring(0));
 					row = Integer.parseInt(wallPosition.substring(1));
 					direction = wallPosition.substring(2);
 				}
 				catch(IndexOutOfBoundsException e){
-					e.printStackTrace();
+					throw new UnsupportedOperationException("Invalid position");
+				}
+				if(row>9||column>9) {
+					throw new UnsupportedOperationException("Invalid position");
 				}
 				Tile tile = quoridor.getBoard().getTile(row*column);
 				WallMove move = new WallMove(0,1,quoridor.getCurrentGame().getBlackPlayer(),tile,quoridor.getCurrentGame(),converToDir(direction),wall);
@@ -340,7 +371,7 @@ public class Controller {
 		    }
 	
 			}else{
-				//throws exception
+    				throw new UnsupportedOperationException("Invalid position");
 			}
 	    boolean sameRemainingWall = (quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock().size()==quoridor.getCurrentGame().getCurrentPosition().getBlackWallsInStock().size());
 	    if(validatePosition()&&sameRemainingWall) {
@@ -381,31 +412,6 @@ public class Controller {
 			Files.createFile(path);
             Files.write(path, data.getBytes());
 		}
-//        FileWriter fr = null;
-//        BufferedWriter br = null;
-//        String data = "";
-//    		if(gamePosition.getPlayerToMove().getUser().getName().equals(gamePosition.getBlackPosition().getPlayer().getUser().getName())) {
-//    			data += blackPlayerData(gamePosition)+"\n";
-//    			data += whitePlayerData(gamePosition);
-//        }
-//        else {
-//	        	data += whitePlayerData(gamePosition)+"\n";
-//    			data += blackPlayerData(gamePosition);
-//        }
-//        try{
-//            fr = new FileWriter(file);
-//            br = new BufferedWriter(fr);
-//            	br.write(data);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }finally{
-//            try {
-//                br.close();
-//                fr.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
 	}
 
 	
