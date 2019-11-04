@@ -195,18 +195,27 @@ public class Controller {
 		}
 		}
 
+		// Give error if wall is not on board
+				if (targetRow < 1 || targetRow > 8 || targetCol < 1 || targetCol > 8) { // Row, col cannot be bigger than 8 since reference point is NW
+					// tile
+					
+					//Keep Same Target tile
+					currentWallMoveCandidate.setTargetTile(currentTile);
+					
+					boolean wallNotMoved = false;
+					return wallNotMoved; // Not a valid wall placement
+					
+					
+				}
+				else {
 		// Make a new updated target tile with new parameters
 		Tile updatedTile = currentBoard.getTile((targetRow - 1) * 9 + targetCol - 1);
+		System.out.println(updatedTile);
 
-		// Give error if wall is not on board
-		if (row < 1 || row > 8 || col < 1 || col > 8) { // Row, col cannot be bigger than 8 since reference point is NW
-			// tile
-			boolean wallNotMoved = false;
-			return wallNotMoved; // Not a valid wall placement
-		}
+		
 
 		// Else, update wall move candidate with new target tile
-		else {
+		
 
 			currentWallMoveCandidate.setTargetTile(updatedTile);
 
@@ -251,7 +260,7 @@ public class Controller {
 		currentGame.numberOfMoves();
 		currentGame.numberOfMoves();
 
-		WallMove wallMove = currentWallMoveCandidate;
+		wallMoveCandidate = currentWallMoveCandidate;
 
 		// Get a list of all walls on board
 		List<Wall> blackWallsOnBoard = currentGamePosition.getBlackWallsOnBoard();
@@ -266,7 +275,7 @@ public class Controller {
 
 		// Check black walls on board
 		for (Wall wall : blackWallsOnBoard) {
-			if (isWallAlreadyPresent(wallMove, wall.getMove())) {
+			if (isWallAlreadyPresent(wallMoveCandidate, wall.getMove())) {
 				cancelWallMove();
 				return false;
 			}
@@ -274,7 +283,7 @@ public class Controller {
 
 		// Check white walls on board
 		for (Wall wall : whiteWallsOnBoard) {
-			if (isWallAlreadyPresent(wallMove, wall.getMove())) {
+			if (isWallAlreadyPresent(wallMoveCandidate, wall.getMove())) {
 				cancelWallMove();
 				return false;
 			}
@@ -282,20 +291,19 @@ public class Controller {
 
 		// Update parameters of game:
 
-		currentGame.addMove(wallMove); // Stores move
-		currentGame.setWallMoveCandidate(null); // Refreshes wall move candidate
+		currentGame.addMove(wallMoveCandidate); // Stores move
+		//currentGame.setWallMoveCandidate(null);// Refreshes wall move candidate
 
 		// Update player info
 		if (player.equals(currentGame.getWhitePlayer())) {
-			currentGamePosition.addWhiteWallsOnBoard(wallMove.getWallPlaced());
+			currentGamePosition.addWhiteWallsOnBoard(wallMoveCandidate.getWallPlaced()); //Also increments number of walls on board
 			currentGamePosition.setPlayerToMove(currentGame.getBlackPlayer()); // Update player to black player
 		} else if (player.equals(currentGame.getBlackPlayer())) {
-			currentGamePosition.addBlackWallsOnBoard(wallMove.getWallPlaced());
+			currentGamePosition.addBlackWallsOnBoard(wallMoveCandidate.getWallPlaced());
 			currentGamePosition.setPlayerToMove(currentGame.getWhitePlayer()); // Update player to white player
 		} else {
 			return false;
-		}
-
+		}		
 		return true;
 	}
 

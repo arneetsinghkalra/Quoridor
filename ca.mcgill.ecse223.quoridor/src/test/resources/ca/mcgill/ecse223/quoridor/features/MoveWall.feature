@@ -1,4 +1,3 @@
-@arneet
 Feature: Move Wall
   As a player who grabbed a wall, I wish to move the wall between possible rows and columns of the board 
   so that I could move it to its designated target position. 
@@ -27,7 +26,7 @@ Feature: Move Wall
     Given A wall move candidate exists with "<dir>" at position (<row>, <col>)
     And The wall candidate is at the "<side>" edge of the board
     When I try to move the wall "<side>"
-    Then I shall be notified that my move is illegal 
+    Then I shall be notified that my move is illegal
     And A wall move candidate shall exist with "<dir>" at position (<nrow>, <ncol>)
 
     Examples: 
@@ -36,4 +35,3 @@ Feature: Move Wall
       | horizontal |   2 |   8 | right |    2 |    8 |
       | vertical   |   1 |   6 | up    |    1 |    6 |
       | horizontal |   8 |   6 | down  |    8 |    6 |
-      
