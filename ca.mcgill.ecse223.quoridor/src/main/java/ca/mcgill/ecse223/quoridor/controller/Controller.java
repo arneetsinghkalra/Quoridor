@@ -130,6 +130,25 @@ public class Controller {
 	  return false;
 }
   
+  /**
+   * <p> List of All Existing Usernames from the previous games <p>
+   * 
+   * @return Array of Usernames that were previosuly used
+   * 
+   * @author Ali Tapan
+   * @version 1.0
+   */
+  public static String[] listExistingUsernames()
+  {
+	  Quoridor quoridor = QuoridorApplication.getQuoridor();
+	  String[] usernames = new String[quoridor.getUsers().size() + 1];
+	  usernames[0] = "or select existing username...";
+	  for(int i = 1; i < usernames.length ; i++)
+	  {
+		  usernames[i] = quoridor.getUser(i).getName();
+	  }
+	  return usernames;
+  }
   
   /**
    * <p> Provide a New Username <p>
@@ -146,7 +165,7 @@ public class Controller {
 	  }
 	  Quoridor quoridor = QuoridorApplication.getQuoridor();
 	  player.getUser().setName(username);
-	 // User user = quoridor.addUser(username);
+	  //User user = quoridor.addUser(username);
 	  //player.setUser(user);
 	  return true;
 }

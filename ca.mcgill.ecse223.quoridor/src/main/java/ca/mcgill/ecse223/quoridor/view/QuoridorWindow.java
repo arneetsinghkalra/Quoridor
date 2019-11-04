@@ -13,8 +13,8 @@ import java.awt.event.ActionEvent;
 public class QuoridorWindow extends JFrame {
 
 	private JPanel contentPane;
-	private JTextField player1NameField;
-	private JTextField textField_1;
+	private JTextField player1Field;
+	private JTextField player2Field;
 	private JTextField minuteField;
 	private JTextField secondField;
 
@@ -106,9 +106,9 @@ public class QuoridorWindow extends JFrame {
 		Component player1NamesStrut = Box.createHorizontalStrut(20);
 		player1HorBox.add(player1NamesStrut);
 		
-		player1NameField = new JTextField();
-		player1HorBox.add(player1NameField);
-		player1NameField.setColumns(10);
+		player1Field = new JTextField();
+		player1HorBox.add(player1Field);
+		player1Field.setColumns(10);
 		
 		Component nameP1RightRigid = Box.createRigidArea(new Dimension(10, 10));
 		player1HorBox.add(nameP1RightRigid);
@@ -126,9 +126,9 @@ public class QuoridorWindow extends JFrame {
 		Component horizontalStrut_1 = Box.createHorizontalStrut(20);
 		player2HorBox.add(horizontalStrut_1);
 		
-		textField_1 = new JTextField();
-		player2HorBox.add(textField_1);
-		textField_1.setColumns(10);
+		player2Field = new JTextField();
+		player2HorBox.add(player2Field);
+		player2Field.setColumns(10);
 		
 		Component rigidArea_2 = Box.createRigidArea(new Dimension(10, 10));
 		player2HorBox.add(rigidArea_2);
@@ -158,19 +158,34 @@ public class QuoridorWindow extends JFrame {
 		timefieldBox.add(secondField);
 		secondField.setColumns(2);
 		
-		JComboBox defaultNamesComboBox = new JComboBox();
-		sl_setupPanel.putConstraint(SpringLayout.NORTH, defaultNamesComboBox, 121, SpringLayout.NORTH, setupPanel);
-		sl_setupPanel.putConstraint(SpringLayout.WEST, defaultNamesComboBox, 33, SpringLayout.EAST, player1NameBox);
-		sl_setupPanel.putConstraint(SpringLayout.SOUTH, defaultNamesComboBox, 158, SpringLayout.NORTH, setupPanel);
-		sl_setupPanel.putConstraint(SpringLayout.EAST, defaultNamesComboBox, 193, SpringLayout.EAST, player1NameBox);
-		defaultNamesComboBox.setFont(new Font("Cooper Black", Font.PLAIN, 14));
-		defaultNamesComboBox.setModel(new DefaultComboBoxModel(new String[] {"or Choose a Player"}));
-		setupPanel.add(defaultNamesComboBox);
+		
+		//Combo Boxes to list the user names that were previously used in a game
+		JComboBox existingUsernames1 = new JComboBox();
+		sl_setupPanel.putConstraint(SpringLayout.NORTH, existingUsernames1, 121, SpringLayout.NORTH, setupPanel);
+		sl_setupPanel.putConstraint(SpringLayout.WEST, existingUsernames1, 33, SpringLayout.EAST, player1NameBox);
+		sl_setupPanel.putConstraint(SpringLayout.SOUTH, existingUsernames1, 158, SpringLayout.NORTH, setupPanel);
+		sl_setupPanel.putConstraint(SpringLayout.EAST, existingUsernames1, 193, SpringLayout.EAST, player1NameBox);
+		existingUsernames1.setFont(new Font("Cooper Black", Font.PLAIN, 14));
+		existingUsernames1.setModel(new DefaultComboBoxModel(Controller.listExistingUsernames()));
+		setupPanel.add(existingUsernames1);
+		
 		
 		JButton startGameButton = new JButton("Start Game");
 		sl_setupPanel.putConstraint(SpringLayout.SOUTH, startGameButton, 0, SpringLayout.SOUTH, thinkingTimeBox);
-		sl_setupPanel.putConstraint(SpringLayout.EAST, startGameButton, 0, SpringLayout.EAST, defaultNamesComboBox);
+		sl_setupPanel.putConstraint(SpringLayout.EAST, startGameButton, 0, SpringLayout.EAST, existingUsernames1);
 		startGameButton.setFont(new Font("Cooper Black", Font.PLAIN, 20));
+		
+		
+		JComboBox existingUsernames2 = new JComboBox();
+		sl_setupPanel.putConstraint(SpringLayout.NORTH, existingUsernames2, 150, SpringLayout.NORTH, setupPanel);
+		sl_setupPanel.putConstraint(SpringLayout.WEST, existingUsernames2, 33, SpringLayout.EAST, player1NameBox);
+		sl_setupPanel.putConstraint(SpringLayout.SOUTH, existingUsernames2, -66, SpringLayout.NORTH, startGameButton);
+		sl_setupPanel.putConstraint(SpringLayout.EAST, existingUsernames2, -75, SpringLayout.EAST, setupPanel);
+		sl_setupPanel.putConstraint(SpringLayout.SOUTH, existingUsernames2, -6, SpringLayout.NORTH, existingUsernames2);
+		existingUsernames2.setFont(new Font("Cooper Black", Font.PLAIN, 14));
+		existingUsernames2.setModel(new DefaultComboBoxModel(Controller.listExistingUsernames()));
+		setupPanel.add(existingUsernames2);
+		
 		
 		startGameButton.addActionListener(new ActionListener() {
 			
@@ -180,30 +195,67 @@ public class QuoridorWindow extends JFrame {
 			 */
 			public void actionPerformed(ActionEvent e) {
 				CardLayout layout = (CardLayout) (contentPane.getLayout());
-				layout.show(contentPane, "activeGamePanel");
-				Controller.startNewGame();
-				
-				//Checks if the user has entered a valid user name
-				//Shows a dialog box if the user name already exists from the previous games
-				if(player1NameField.getText().length() > 0)
-				{
-					if(!Controller.provideNewUsername(player1NameField.getText(), Controller.initWhitePlayer("user1")))
-					{
-						JOptionPane.showMessageDialog(null, "This user name already exists!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
-					}
-				}
-				if(textField_1.getText().length() > 0)
-				{
-					if(!Controller.provideNewUsername(textField_1.getText(), Controller.initBlackPlayer("user2")))
-					{
-						JOptionPane.showMessageDialog(null, "This user name already exists!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
-					}
-				}
 				
 				
 				String time = "";
 				String seconds = "";
 				String minutes = "";
+				
+				
+				if((player1Field.getText().length() == 0 && existingUsernames1.getSelectedItem().equals("or select existing username..."))
+					&& player2Field.getText().length() == 0 && existingUsernames2.getSelectedItem().equals("or select existing username..."))
+				{
+					JOptionPane.showMessageDialog(null, "This user name already exists!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
+					
+				}
+				
+				
+				Controller.startNewGame();
+				
+				//Checks if the user has entered a valid user name
+				//Shows a dialog box if the user name already exists from the previous games
+				
+				if(player1Field.getText().length() > 0 && existingUsernames1.getSelectedItem().equals("or select existing username..."))
+				{
+					if(!Controller.provideNewUsername(player1Field.getText(), Controller.initWhitePlayer("user1")))
+					{
+						JOptionPane.showMessageDialog(null, "This user name already exists!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
+					}
+				}
+				if(player2Field.getText().length() > 0 && existingUsernames2.getSelectedItem().equals("or select existing username..."))
+				{
+					if(!Controller.provideNewUsername(player2Field.getText(), Controller.initBlackPlayer("user2")))
+					{
+						JOptionPane.showMessageDialog(null, "This user name already exists!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
+					}
+				}
+				
+				
+				//Checks if the player enters an input and also selects an existing user name, if true will show a dialog box
+				if(player1Field.getText().length() > 0 && !existingUsernames1.getSelectedItem().equals("or select existing username..."))
+				{
+					JOptionPane.showMessageDialog(null, "Cannot enter new user name and select an existing username at the same time!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
+				}
+				
+				if(player2Field.getText().length() > 0 && existingUsernames2.getSelectedItem().equals("or select existing username..."))
+				{
+					JOptionPane.showMessageDialog(null, "Cannot enter new user name and select an existing username at the same time!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
+				}
+				
+				
+				//Checks if the player selected an existing user name
+				if(!existingUsernames1.getSelectedItem().equals("or select existing username..."))
+				{
+					Controller.provideNewUsername(existingUsernames1.getSelectedItem().toString(), Controller.initWhitePlayer("user1"));
+				}
+				
+				//Checks if the player selected an existing user name
+				if(!existingUsernames2.getSelectedItem().equals("or select existing username..."))
+				{
+					Controller.provideNewUsername(existingUsernames2.getSelectedItem().toString(), Controller.initBlackPlayer("user2"));
+				}
+				
+				//Checks if the user has selected
 				
 				if(minuteField.getText().length() < 2)
 				{
@@ -226,6 +278,7 @@ public class QuoridorWindow extends JFrame {
 				
 				Controller.setTotalThinkingTime(time);
 				Controller.startClock();
+				layout.show(contentPane, "activeGamePanel");
 			}
 		});
 		setupPanel.add(startGameButton);
