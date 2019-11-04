@@ -543,13 +543,9 @@ public class Controller {
 		PlayerPosition player2Position = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), currentPosition.getBlackPosition().getTile());
 		if(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsBlack()==null) {
 			newPosition = new GamePosition(currentPosition.getId()+1, player1Position, player2Position, game.getBlackPlayer(), game);
-			game.getWhitePlayer().setRemainingTime(new Time(0));
-			game.getBlackPlayer().setRemainingTime(new Time(180000));
 		}
 		else {
 			newPosition = new GamePosition(currentPosition.getId()+1, player1Position, player2Position, game.getWhitePlayer(), game);	
-			game.getWhitePlayer().setRemainingTime(new Time(180000));
-			game.getBlackPlayer().setRemainingTime(new Time(0));
 		}
 		game.addPosition(currentPosition);
 		game.setCurrentPosition(newPosition);

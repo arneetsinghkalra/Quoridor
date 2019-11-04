@@ -1164,10 +1164,10 @@ public class CucumberStepDefinitions {
 	@Then("The clock of {string} shall be stopped")
 	public void clockShallBeStopped(String player) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		if (player.equals("white")) {
-			assertTrue(quoridor.getCurrentGame().getWhitePlayer().getRemainingTime().getTime() == 0);
+		if (player.equals("black")) {
+			assertTrue(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsWhite() != null);
 		} else {
-			assertTrue(quoridor.getCurrentGame().getBlackPlayer().getRemainingTime().getTime() == 0);
+			assertTrue(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsBlack() != null);
 		}
 	}
 
@@ -1180,9 +1180,9 @@ public class CucumberStepDefinitions {
 	public void clockShallBeRunning(String player) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		if (player.equals("white")) {
-			assertFalse(quoridor.getCurrentGame().getWhitePlayer().getRemainingTime().getTime() == 0);
+			assertTrue(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsWhite() != null);
 		} else {
-			assertFalse(quoridor.getCurrentGame().getBlackPlayer().getRemainingTime().getTime() == 0);
+			assertTrue(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsBlack() != null);
 		}
 	}
 
