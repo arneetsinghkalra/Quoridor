@@ -181,7 +181,6 @@ public class QuoridorWindow extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				CardLayout layout = (CardLayout) (contentPane.getLayout());
 				layout.show(contentPane, "activeGamePanel");
-				
 				Controller.startNewGame();
 				
 				//Checks if the user has entered a valid user name
