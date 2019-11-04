@@ -5,36 +5,54 @@ import ca.mcgill.ecse223.quoridor.controller.Controller;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.filechooser.FileSystemView;
+
+import ca.mcgill.ecse223.quoridor.QuoridorApplication;
+import ca.mcgill.ecse223.quoridor.controller.Controller;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.awt.event.ActionEvent;
 
 public class QuoridorWindow extends JFrame {
 
-    private JPanel contentPane;
-    private JTextField player1NameField;
-    private JTextField textField_1;
-    private JTextField minuteField;
-    private JTextField secondField;
-    private Timer secondTimer;
-    private JLabel turnLabel;
-    private JLabel timeRemLabel;
+	private static JPanel contentPane;
+	private JTextField player1NameField;
+	private JTextField textField_1;
+	private JTextField minuteField;
+	private JTextField secondField;
+	private Timer secondTimer;
+	private JLabel turnLabel;
+	private JLabel timeRemLabel;
+	private static boolean confirms = true;
 
-    /**
-     * Launch the application.
-     */
-    public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    QuoridorWindow frame = new QuoridorWindow();
-                    frame.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
+    private static JFrame f;
+
+    //for the boards,tiles, and walls
+    private JButton[][] tiles = new JButton[9][9];
+    private JButton[][] wallCenters =  new JButton[8][8];
+    private Box[][] hWalls = new Box[9][9];
+    private Box[][] vWalls = new Box[9][9];
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					QuoridorWindow frame = new QuoridorWindow();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
     /**
      * Create the frame.
@@ -72,7 +90,25 @@ public class QuoridorWindow extends JFrame {
         sl_titleScreenPanel.putConstraint(SpringLayout.SOUTH, newGameButton, -6, SpringLayout.NORTH, loadGameButton);
         sl_titleScreenPanel.putConstraint(SpringLayout.EAST, newGameButton, 0, SpringLayout.EAST, loadGameButton);
         loadGameButton.setFont(new Font("Cooper Black", Font.PLAIN, 20));
+        loadGameButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent a) {
+                Controller.initializeBoard();
+                JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+                int returnValue = jfc.showOpenDialog(null);
+
+                if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = jfc.getSelectedFile();
+                    try {
+                        Controller.loadPosition(selectedFile.getName());
+                    } catch (UnsupportedOperationException e) {
+                        JDialog d = new JDialog(f, "Cannot load game due to invalid position");
+                        d.setVisible(true);
+                    }
+                }
+            }
+        });
         titleScreenPanel.add(loadGameButton);
+
 
         JLabel titleLabel = new JLabel("QUORIDOR");
         sl_titleScreenPanel.putConstraint(SpringLayout.EAST, loadGameButton, -57, SpringLayout.WEST, titleLabel);
@@ -161,10 +197,12 @@ public class QuoridorWindow extends JFrame {
         secondField.setColumns(2);
 
         JComboBox defaultNamesComboBox = new JComboBox();
-        sl_setupPanel.putConstraint(SpringLayout.NORTH, defaultNamesComboBox, 0, SpringLayout.NORTH, player1NameBox);
+        sl_setupPanel.putConstraint(SpringLayout.NORTH, defaultNamesComboBox, 121, SpringLayout.NORTH, setupPanel);
         sl_setupPanel.putConstraint(SpringLayout.WEST, defaultNamesComboBox, 33, SpringLayout.EAST, player1NameBox);
+        sl_setupPanel.putConstraint(SpringLayout.SOUTH, defaultNamesComboBox, 158, SpringLayout.NORTH, setupPanel);
+        sl_setupPanel.putConstraint(SpringLayout.EAST, defaultNamesComboBox, 193, SpringLayout.EAST, player1NameBox);
         defaultNamesComboBox.setFont(new Font("Cooper Black", Font.PLAIN, 14));
-        defaultNamesComboBox.setModel(new DefaultComboBoxModel(new String[] {"or Choose a Player"}));
+        defaultNamesComboBox.setModel(new DefaultComboBoxModel(new String[]{"or Choose a Player"}));
         setupPanel.add(defaultNamesComboBox);
 
         JButton startGameButton = new JButton("Start Game");
@@ -189,7 +227,7 @@ public class QuoridorWindow extends JFrame {
         sl_setupPanel.putConstraint(SpringLayout.EAST, comboBox, -75, SpringLayout.EAST, setupPanel);
         sl_setupPanel.putConstraint(SpringLayout.SOUTH, defaultNamesComboBox, -6, SpringLayout.NORTH, comboBox);
         comboBox.setFont(new Font("Cooper Black", Font.PLAIN, 14));
-        comboBox.setModel(new DefaultComboBoxModel(new String[] {"or Choose a Player"}));
+        comboBox.setModel(new DefaultComboBoxModel(new String[]{"or Choose a Player"}));
         setupPanel.add(comboBox);
 
         JPanel activeGamePanel = new JPanel();
@@ -209,6 +247,72 @@ public class QuoridorWindow extends JFrame {
         JButton btnSaveGame = new JButton("Save Game");
         btnSaveGame.setAlignmentX(Component.CENTER_ALIGNMENT);
         gameOptionBox.add(btnSaveGame);
+        btnSaveGame.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent a) {
+                JFrame f = new JFrame();
+                JTextField tf1;
+                JButton b1;
+                tf1 = new JTextField();
+                tf1.setBounds(50, 50, 150, 20);
+                tf1.setEditable(true);
+                b1 = new JButton("create");
+                b1.setBounds(50, 200, 50, 50);
+                f.add(tf1);
+                f.add(b1);
+                f.setSize(300, 300);
+                f.setLayout(null);
+                f.setVisible(true);
+                b1.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent b) {
+                        f.setVisible(false);
+                        Path path = Paths.get("src/test/resources/savePosition/" + tf1.getText());
+                        if (Files.exists(path)) {
+                            JFrame f = new JFrame();
+                            JTextField tf1;
+                            JButton b1;
+                            JButton b2;
+                            tf1 = new JTextField();
+                            tf1.setText("confirms to overwrite");
+                            tf1.setBounds(50, 50, 150, 20);
+                            tf1.setEditable(false);
+                            b1 = new JButton("Yes");
+                            b1.setBounds(50, 200, 100, 50);
+                            b2 = new JButton("No");
+                            b2.setBounds(150, 200, 100, 50);
+                            f.add(tf1);
+                            f.add(b1);
+                            f.add(b2);
+                            f.setSize(300, 300);
+                            f.setLayout(null);
+                            f.setVisible(true);
+                            b1.addActionListener(new ActionListener() {
+                                public void actionPerformed(ActionEvent b) {
+                                    confirms = true;
+                                    f.setVisible(false);
+                                    try {
+                                        Controller.savePosition(tf1.getText(), QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition(), confirms);
+                                    } catch (IOException e) {
+                                        // TODO Auto-generated catch block
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                            b2.addActionListener(new ActionListener() {
+                                public void actionPerformed(ActionEvent b) {
+                                    f.setVisible(false);
+                                }
+                            });
+                        } else {
+                            try {
+                                Controller.savePosition(tf1.getText(), QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition(), confirms);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+            }
+        });
 
         JButton btnNewGame = new JButton("New Game");
         btnNewGame.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -217,6 +321,38 @@ public class QuoridorWindow extends JFrame {
         JButton btnLoadGame = new JButton("Load Game");
         btnLoadGame.setAlignmentX(Component.CENTER_ALIGNMENT);
         gameOptionBox.add(btnLoadGame);
+        btnLoadGame.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent a) {
+                Controller.initializeBoard();
+                JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+                int returnValue = jfc.showOpenDialog(null);
+
+                if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = jfc.getSelectedFile();
+                    try {
+                        Controller.loadPosition(selectedFile.getName());
+                    } catch (UnsupportedOperationException e) {
+                        JFrame f = new JFrame();
+                        JTextField tf1;
+                        JButton b1;
+                        tf1 = new JTextField();
+                        tf1.setText("Cannot load game due to invalid position");
+                        tf1.setEditable(false);
+                        b1 = new JButton("OK");
+                        b1.setBounds(100, 200, 100, 50);
+                        f.add(tf1);
+                        f.add(b1);
+                        f.setSize(300, 300);
+                        f.setLayout(null);
+                        b1.addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent b) {
+                                f.setVisible(false);
+                            }
+                        });
+                    }
+                }
+            }
+        });
 
         Box titleTimeBox = Box.createVerticalBox();
         activeGamePanel.add(titleTimeBox, BorderLayout.NORTH);
@@ -227,6 +363,84 @@ public class QuoridorWindow extends JFrame {
         gameTitleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         gameTitleLabel.setFont(new Font("Cooper Black", Font.PLAIN, 40));
         titleTimeBox.add(gameTitleLabel);
+
+        //board
+        JPanel gameBoardPanel = new JPanel();
+        activeGamePanel.add(gameBoardPanel, BorderLayout.CENTER);
+        gameBoardPanel.setLayout(new GridBagLayout());
+
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+
+                tiles[i][j] = new JButton();
+                tiles[i][j].setBackground(Color.white);
+                GridBagConstraints c = new GridBagConstraints();
+                c.gridx = j * 2;
+                c.gridy = i * 2;
+                c.weightx = 1;
+                c.weighty = 1;
+                c.ipadx = 10;
+                c.ipady = 10;
+                c.fill = GridBagConstraints.BOTH;
+                //set click event for tiles here(eg.movepawn)
+                gameBoardPanel.add(tiles[i][j], c);
+
+
+                if (j < 8) {
+                    vWalls[i][j] = Box.createVerticalBox();
+                    vWalls[i][j].setOpaque(false);
+                    vWalls[i][j].setBackground(Color.black);
+                    c = new GridBagConstraints();
+                    c.gridx = j * 2 + 1;
+                    c.gridy = i * 2;
+                    c.weightx = 1;
+                    c.weighty = 1;
+                    c.ipady = 10;
+                    c.ipadx = -5;
+                    c.fill = GridBagConstraints.BOTH;
+                    gameBoardPanel.add(vWalls[i][j], c);
+                }
+
+                if (i < 8) {
+                    hWalls[i][j] = Box.createHorizontalBox();
+                    hWalls[i][j].setOpaque(false);
+                    hWalls[i][j].setBackground(Color.black);
+                    c = new GridBagConstraints();
+                    c.gridx = j * 2;
+                    c.gridy = i * 2 + 1;
+                    c.weightx = 1;
+                    c.weighty = 1;
+                    c.ipadx = 10;
+                    c.ipady = -5;
+                    c.fill = GridBagConstraints.BOTH;
+                    gameBoardPanel.add(hWalls[i][j], c);
+                }
+
+                if (i < 8 && j < 8) {
+                    wallCenters[i][j] = new JButton();
+                    wallCenters[i][j].setBackground(Color.lightGray);
+                    c = new GridBagConstraints();
+                    c.gridx = j * 2 + 1;
+                    c.gridy = i * 2 + 1;
+                    c.weightx = 1;
+                    c.weighty = 1;
+                    c.ipadx = -5;
+                    c.ipady = -5;
+                    c.fill = GridBagConstraints.BOTH;
+                    //TODO: set click event for walls here--eg.dropwall
+                    gameBoardPanel.add(wallCenters[i][j], c);
+                }
+
+            }
+
+
+        }
+        //create a vertical wall at (3,3)
+        //by setting opaque of box and color of the wall center, we can create walls
+        //vWalls[2][2].setOpaque(true);
+        //wallCenters[2][2].setBackground(Color.black);
+        //vWalls[3][2].setOpaque(true);
 
         Box horizontalBox = Box.createHorizontalBox();
         titleTimeBox.add(horizontalBox);
@@ -245,9 +459,6 @@ public class QuoridorWindow extends JFrame {
         timeRemLabel.setHorizontalAlignment(SwingConstants.CENTER);
         horizontalBox.add(timeRemLabel);
 
-        JPanel gameBoardPanel = new JPanel();
-        activeGamePanel.add(gameBoardPanel, BorderLayout.CENTER);
-        gameBoardPanel.setLayout(new GridLayout(9, 9, 5, 5));
     }
 
     public String getTurnLabel()
@@ -258,8 +469,6 @@ public class QuoridorWindow extends JFrame {
     public boolean getIsTimerActive() {
         return secondTimer.isRunning();
     }
-
-
     public void setTimeRemaining(int timeRemaining)
     {
         timeRemaining /= 1000;

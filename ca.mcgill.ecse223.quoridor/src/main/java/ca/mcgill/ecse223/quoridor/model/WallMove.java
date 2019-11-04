@@ -79,7 +79,8 @@ public class WallMove extends Move
     if (existingMove != null && !equals(existingMove))
     {
       //Unable to setWallPlaced, the current wallPlaced already has a move, which would be orphaned if it were re-assigned
-      return wasSet;
+    	  System.out.println(existingMove.getWallDirection());
+    	return wasSet;
     }
     
     Wall anOldWallPlaced = wallPlaced;
