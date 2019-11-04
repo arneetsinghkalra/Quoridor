@@ -8,7 +8,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileSystemView;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
-import ca.mcgill.ecse223.quoridor.controller.Controller;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -323,7 +322,6 @@ public class QuoridorWindow extends JFrame {
         gameOptionBox.add(btnLoadGame);
         btnLoadGame.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent a) {
-                Controller.initializeBoard();
                 JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
                 int returnValue = jfc.showOpenDialog(null);
 
@@ -351,6 +349,7 @@ public class QuoridorWindow extends JFrame {
                         });
                     }
                 }
+                Controller.initializeBoard();
             }
         });
 

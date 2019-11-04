@@ -863,22 +863,4 @@ public class Controller {
 	        }
 		return data;
 	}
-
-	public static void subtractSecond()
-	{
-		Quoridor q = QuoridorApplication.getQuoridor();
-		Player curPlayer = q.getCurrentGame().getCurrentPosition().getPlayerToMove();
-		long remaining = curPlayer.getRemainingTime().getTime();
-		remaining -= 1000L;
-		if(remaining == 0)
-		{
-			if(curPlayer.equals(q.getCurrentGame().getWhitePlayer()))
-				q.getCurrentGame().setGameStatus(GameStatus.BlackWon);
-			else
-				q.getCurrentGame().setGameStatus(GameStatus.WhiteWon);
-			return;
-		}
-		curPlayer.setRemainingTime(new Time(remaining));
-	}
-
 }
