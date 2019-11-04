@@ -21,12 +21,27 @@ public class Controller {
    * @author Ali Tapan
    * @version 2.0
    */
-  public static Game StartNewGame() {
+  public static Game startNewGame() {
 	 Quoridor quoridor = QuoridorApplication.getQuoridor();
 	 Game game = new Game(GameStatus.Initializing, MoveMode.PlayerMove, quoridor);
 	 return game;
   }
   	
+  public static Player initWhitePlayer(String username) {
+	  Quoridor quoridor = QuoridorApplication.getQuoridor();
+	  User user = quoridor.addUser(username);
+	  Player p = new Player(Time.valueOf("00:01:00"), user, 1, Direction.Vertical);
+	  quoridor.getCurrentGame().setWhitePlayer(p);
+	  return p;
+  }
+  
+  public static Player initBlackPlayer(String username) {
+	  Quoridor quoridor = QuoridorApplication.getQuoridor();
+	  User user = quoridor.addUser(username);
+	  Player p = new Player(Time.valueOf("00:01:00"), user, 9, Direction.Vertical);
+	  quoridor.getCurrentGame().setBlackPlayer(p);
+	  return p;
+  }
   /**
    * <p> Set Total Thinking Time <p>
    * <p> Set the total thinking time for player.

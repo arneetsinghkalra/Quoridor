@@ -160,8 +160,8 @@ public class CucumberStepDefinitions {
 	 * @author Ali Tapan
 	 */
 	@When("A new game is being initialized")
-	public void aNewGameIsBeingInitialized() throws Throwable {
-		Controller.StartNewGame();
+	public void aNewGameIsBeingInitialized() {
+		Controller.startNewGame();
 
 	}
 
@@ -170,12 +170,9 @@ public class CucumberStepDefinitions {
 	 * @author Ali Tapan
 	 */
 	@And("White player chooses a username")
-	public void whitePlayerChoosesAUsername() throws Throwable {
+	public void whitePlayerChoosesAUsername() {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		String username = "John";
-		User user = quoridor.addUser(username);
-		Player player = new Player(null, user, 9, Direction.Vertical);
-		quoridor.getCurrentGame().setWhitePlayer(player);
+		Player p = Controller.initWhitePlayer("John");
 	}
 
 	/**
@@ -183,12 +180,9 @@ public class CucumberStepDefinitions {
 	 * @author Ali Tapan
 	 */
 	@And("Black player chooses a username")
-	public void blackPlayerChoosesAUsername() throws UnsupportedOperationException {
+	public void blackPlayerChoosesAUsername() {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		String username = "Mel";
-		User user = quoridor.addUser(username);
-		Player player = new Player(null, user, 1, Direction.Vertical);
-		quoridor.getCurrentGame().setBlackPlayer(player);
+		Player p = Controller.initBlackPlayer("Mel");
 	}
 
 	/**
@@ -196,7 +190,7 @@ public class CucumberStepDefinitions {
 	 * @author Ali Tapan
 	 */
 	@And("Total thinking time is set")
-	public void totalThinkingTimeIsSet() throws UnsupportedOperationException {
+	public void totalThinkingTimeIsSet() {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		String time = "00:01:00";
 		Controller.setTotalThinkingTime(time);
@@ -226,7 +220,7 @@ public class CucumberStepDefinitions {
 	 * @author Ali Tapan
 	 */
 	@When("I start the clock")
-	public void iStartTheClock() throws Throwable {
+	public void iStartTheClock() {
 		Controller.startClock();
 	}
 
