@@ -15,77 +15,112 @@ import static ca.mcgill.ecse223.quoridor.QuoridorApplication.*;
 
 
 public class Controller {
-	
-  /**
-   * <p> Start New Game <p>
-   * <p> Initialize a new Game object.
-   * @return the created initialized Game object
-   * 
-   * @author Ali Tapan
-   * @version 1.0
- * @throws Throwable 
-   */
-  public static Game StartNewGame() {
-	return null;
-}
-  
-  /**
-   * <p> Provide or Select User Name <p>
-   * <p> Lets the user select an existing user name that was used in a previous game or
-   * enter a new one.
-   * @param user 
-   * 
-   * @author Ali Tapan
-   * @version 1.0
-   */
-  public static void provideOrSelectUserName(User user) {
-}
-  	
-  /**
-   * <p> Set Total Thinking Time <p>
-   * <p> Set the total thinking time for player.
-   * 
-   * @author Ali Tapan
-   * @version 1.0
-   */
-  public static void setTotalThinkingTime() {
 
-  }
-  
-  
-  /**
-   * <p> Start the Clock <p>
-   * <p> Initiates the game timer which starts when the game is running.
-   * 
-   * @author Ali Tapan
-   * @version 1.0
-   */
-  public static void startClock() {
+		/**
+		 * <p> Start New Game <p>
+		 * <p> Initialize a new Game object.
+		 * @return the created initialized Game object
+		 *
+		 * @author Ali Tapan
+		 * @version 2.0
+		 */
+		public static Game StartNewGame() {
+			Quoridor quoridor = QuoridorApplication.getQuoridor();
+			Game game = new Game(GameStatus.Initializing, MoveMode.PlayerMove, quoridor);
+			return game;
+		}
 
-}
-  
-  /**
-   * <p> Select an Existing Username <p>
-   * <p> The user selects an existing user name that was previously used in a game
-   * @param username is a String that is the existing user name
-   * 
-   * @author Ali Tapan
-   * @version 1.0
-   */
-  public static void selectExistingUsername(String username) {
-}
-  
-  
-  /**
-   * <p> Provide a New Username <p>
-   * <p> The user selects/enters a new user name that was not previously used in a game
-   * @param username is a String that is the new user name
-   * 
-   * @author Ali Tapan
-   * @verison 1.0
-   */
-  public static void provideNewUsername(String username) {
-}
+		/**
+		 * <p> Set Total Thinking Time <p>
+		 * <p> Set the total thinking time for player.
+		 *
+		 * @author Ali Tapan
+		 * @version 2.0
+		 */
+		public static void setTotalThinkingTime(String time) {
+			Quoridor quoridor = QuoridorApplication.getQuoridor();
+			String error = "";
+			Time remaining = null;
+
+			try {
+				remaining = Time.valueOf(time);
+				remaining = new Time(remaining.getTime()-5*1000*3600);
+			}catch (IllegalArgumentException e) {
+				error=e.getMessage();
+			}
+
+			quoridor.getCurrentGame().getBlackPlayer().setRemainingTime(remaining);
+			quoridor.getCurrentGame().getWhitePlayer().setRemainingTime(remaining);
+			quoridor.getCurrentGame().setGameStatus(GameStatus.ReadyToStart);
+		}
+
+
+		/**
+		 * <p> Start the Clock <p>
+		 * <p> Initiates the game timer which starts when the game is running.
+		 *
+		 * @author Ali Tapan
+		 * @version 2.0
+		 */
+		public static void startClock() {
+
+			Quoridor quoridor = QuoridorApplication.getQuoridor();
+			quoridor.getCurrentGame().setGameStatus(GameStatus.Running);
+		}
+
+		/**
+		 * <p> Select an Existing Username <p>
+		 * <p> The user selects an existing user name that was previously used in a game
+		 * @param username is a String that is the existing user name
+		 * @returns a Boolean, true if it successfully sets the username, false otherwise
+		 * @author Ali Tapan
+		 * @version 2.0
+		 */
+		public static Boolean selectExistingUsername(String username, Player player) {
+
+			if(username.equals(null))
+			{
+				return false;
+			}
+			if(User.hasWithName(username) == false)
+			{
+				return false;
+			}
+
+			Quoridor quoridor = QuoridorApplication.getQuoridor();
+			//Iterate through the users to see if they match the user name provided
+			for(int i = 0; i < quoridor.numberOfUsers(); i++)
+			{
+				User user = quoridor.getUser(i);
+				if(user.getName().equals(username))
+				{
+					player.setUser(user);
+					return true;
+				}
+			}
+			return false;
+		}
+
+
+		/**
+		 * <p> Provide a New Username <p>
+		 * <p> The user selects/enters a new user name that was not previously used in a game
+		 * @param username is a String that is the new user name
+		 * @return returns a Boolean, true if it successfully sets the username, false otherwise
+		 * @author Ali Tapan
+		 * @verison 2.0
+		 */
+		public static Boolean provideNewUsername(String username, Player player) {
+			if(User.hasWithName(username) == true)
+			{
+
+				return false;
+			}
+			Quoridor quoridor = QuoridorApplication.getQuoridor();
+			User user = quoridor.addUser(username);
+			player.setUser(user);
+			return true;
+		}
 
   /**
    * @author Sam Perreault
@@ -94,21 +129,14 @@ public class Controller {
    * the white player's thinking time.
    */
   public static void initializeBoard() {
-  	// white to move
-	  // white in spot top middle
-	  // black in spot bottom middle
-	  // white has walls in stock
-	  // black has walls in stock
-	  // white's clock starts
-	  // white's turn is shown
 	  Quoridor q = getQuoridor();
 	Board board = new Board(q);
 	Tile t;
-	for(int i=0;i<9;i++)
-		for(int j=0; j<9; j++)
+	for(int i=1;i<10;i++)
+		for(int j=1; j<10; j++)
 			t= new Tile(i,j,board);
-	PlayerPosition whitePlayerPosition = new PlayerPosition(q.getCurrentGame().getWhitePlayer(), board.getTile(4));
-	PlayerPosition blackPlayerPosition = new PlayerPosition(q.getCurrentGame().getWhitePlayer(), board.getTile(76));
+	PlayerPosition whitePlayerPosition = new PlayerPosition(q.getCurrentGame().getWhitePlayer(), board.getTile(76));
+	PlayerPosition blackPlayerPosition = new PlayerPosition(q.getCurrentGame().getBlackPlayer(), board.getTile(4));
 	GamePosition gp = new GamePosition(0,whitePlayerPosition,blackPlayerPosition
 			, q.getCurrentGame().getWhitePlayer(), q.getCurrentGame());
 	q.getCurrentGame().setCurrentPosition(gp);
@@ -181,7 +209,6 @@ public class Controller {
 	 * <p>dropWall method that allows player to place the wall after navigating to the designated (and valid) area in order to register
 	 * the wall placement as a move for the player. <p>
 	 * @author arneetkalra
-	 * @param aWall references the Wall that player will have in their hand
 	 * @return void method but drops wall which prompts end of player turn
 	 */
 	public static void dropWall(WallMove wallMoveCandidate) {
@@ -189,7 +216,6 @@ public class Controller {
 	/**
 	 *<p> Boolean method that returns if a WallMove has been completed<p>
 	 * @author arneetkalra
-	 * @param moveWall
 	 * @return boolean
 	 */
 	public static boolean isWallMoved(WallMove movedWall) {

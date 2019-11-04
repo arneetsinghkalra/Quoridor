@@ -176,6 +176,8 @@ public class QuoridorWindow extends JFrame {
 		startGameButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				CardLayout layout = (CardLayout) (contentPane.getLayout());
+				Controller.StartNewGame();
+				Controller.initializeBoard();
 				layout.show(contentPane, "activeGamePanel");
 			}
 		});
@@ -239,6 +241,16 @@ public class QuoridorWindow extends JFrame {
 		gameBoardPanel.setLayout(new GridLayout(9, 9, 5, 5));
 	}
 
+	public String getTurnLabel()
+    {
+        return turnLabel.getText();
+    }
+
+    public boolean getIsTimerActive() {
+	    return secondTimer.isRunning();
+    }
+
+
     public void setTimeRemaining(int timeRemaining)
     {
         timeRemaining /= 1000;
@@ -297,6 +309,6 @@ public class QuoridorWindow extends JFrame {
         };
         secondTimer = new Timer(1000,listener);
         secondTimer.setRepeats(true);
+        secondTimer.start();
     }
-	// TODO add action/listener methods to actually progress the game and all that
 }
