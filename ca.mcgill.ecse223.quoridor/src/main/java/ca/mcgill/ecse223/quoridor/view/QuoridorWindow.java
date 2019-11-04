@@ -161,17 +161,16 @@ public class QuoridorWindow extends JFrame {
 		secondField.setColumns(2);
 		
 		JComboBox defaultNamesComboBox = new JComboBox();
-		sl_setupPanel.putConstraint(SpringLayout.NORTH, defaultNamesComboBox, 121, SpringLayout.NORTH, setupPanel);
+		sl_setupPanel.putConstraint(SpringLayout.NORTH, defaultNamesComboBox, 0, SpringLayout.NORTH, player1NameBox);
 		sl_setupPanel.putConstraint(SpringLayout.WEST, defaultNamesComboBox, 33, SpringLayout.EAST, player1NameBox);
-		sl_setupPanel.putConstraint(SpringLayout.SOUTH, defaultNamesComboBox, 158, SpringLayout.NORTH, setupPanel);
-		sl_setupPanel.putConstraint(SpringLayout.EAST, defaultNamesComboBox, 193, SpringLayout.EAST, player1NameBox);
 		defaultNamesComboBox.setFont(new Font("Cooper Black", Font.PLAIN, 14));
 		defaultNamesComboBox.setModel(new DefaultComboBoxModel(new String[] {"or Choose a Player"}));
 		setupPanel.add(defaultNamesComboBox);
 		
 		JButton startGameButton = new JButton("Start Game");
+		sl_setupPanel.putConstraint(SpringLayout.EAST, defaultNamesComboBox, 0, SpringLayout.EAST, startGameButton);
+		sl_setupPanel.putConstraint(SpringLayout.EAST, startGameButton, -75, SpringLayout.EAST, setupPanel);
 		sl_setupPanel.putConstraint(SpringLayout.SOUTH, startGameButton, 0, SpringLayout.SOUTH, thinkingTimeBox);
-		sl_setupPanel.putConstraint(SpringLayout.EAST, startGameButton, 0, SpringLayout.EAST, defaultNamesComboBox);
 		startGameButton.setFont(new Font("Cooper Black", Font.PLAIN, 20));
 		startGameButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -182,6 +181,16 @@ public class QuoridorWindow extends JFrame {
 			}
 		});
 		setupPanel.add(startGameButton);
+		
+		JComboBox comboBox = new JComboBox();
+		sl_setupPanel.putConstraint(SpringLayout.NORTH, comboBox, 150, SpringLayout.NORTH, setupPanel);
+		sl_setupPanel.putConstraint(SpringLayout.WEST, comboBox, 33, SpringLayout.EAST, player1NameBox);
+		sl_setupPanel.putConstraint(SpringLayout.SOUTH, comboBox, -66, SpringLayout.NORTH, startGameButton);
+		sl_setupPanel.putConstraint(SpringLayout.EAST, comboBox, -75, SpringLayout.EAST, setupPanel);
+		sl_setupPanel.putConstraint(SpringLayout.SOUTH, defaultNamesComboBox, -6, SpringLayout.NORTH, comboBox);
+		comboBox.setFont(new Font("Cooper Black", Font.PLAIN, 14));
+		comboBox.setModel(new DefaultComboBoxModel(new String[] {"or Choose a Player"}));
+		setupPanel.add(comboBox);
 		
 		JPanel activeGamePanel = new JPanel();
 		contentPane.add(activeGamePanel, "activeGamePanel");
@@ -228,7 +237,7 @@ public class QuoridorWindow extends JFrame {
 		turnLabel.setFont(new Font("Cooper Black", Font.PLAIN, 14));
 		horizontalBox.add(turnLabel);
 		
-		Component horizontalStrut = Box.createHorizontalStrut(150);
+		Component horizontalStrut = Box.createHorizontalStrut(100);
 		horizontalBox.add(horizontalStrut);
 		
 		timeRemLabel = new JLabel("Time remaining: 99:99");
