@@ -222,7 +222,7 @@ public class Controller {
 		catch(IndexOutOfBoundsException e){
 			throw new UnsupportedOperationException("Invalid position");
 		}
-		if(nextPlayerRow>9||nextPlayerColumn>9) {
+		if(nextPlayerRow>9||nextPlayerRow<1||nextPlayerColumn>9||nextPlayerColumn<1) {
 			throw new UnsupportedOperationException("Invalid position");
 		}
 		Tile nextPlayerTile = quoridor.getBoard().getTile((nextPlayerRow-1)*9+nextPlayerColumn-1);
@@ -235,7 +235,7 @@ public class Controller {
 		catch(IndexOutOfBoundsException e){
 			throw new UnsupportedOperationException("Invalid position");
 		}
-		if(opponentRow>9||opponentColumn>9) {
+		if(opponentRow>9||opponentRow<1||opponentColumn>9||opponentColumn<1) {
 			throw new UnsupportedOperationException("Invalid position");
 		}
 		Tile opponentTile = quoridor.getBoard().getTile((opponentRow-1)*9+opponentColumn-1);
@@ -262,7 +262,7 @@ public class Controller {
 				catch(IndexOutOfBoundsException e){
 					throw new UnsupportedOperationException("Invalid position");
 				}
-				if(row>9||column>9) {
+				if(row>8||row<1||column>8||column<1) {
 					throw new UnsupportedOperationException("Invalid position");
 				}
 				
@@ -292,7 +292,7 @@ public class Controller {
 				catch(IndexOutOfBoundsException e){
 					throw new UnsupportedOperationException("Invalid position");
 				}
-				if(row>9||column>9) {
+				if(row>8||row<1||column>8||column<1) {
 					throw new UnsupportedOperationException("Invalid position");
 				}
 				Tile tile = quoridor.getBoard().getTile((row-1)*9+column-1);
@@ -327,7 +327,7 @@ public class Controller {
 				catch(IndexOutOfBoundsException e){
 					throw new UnsupportedOperationException("Invalid position");
 				}
-				if(row>9||column>9) {
+				if(row>8||row<1||column>8||column<1) {
 					throw new UnsupportedOperationException("Invalid position");
 				}
 				Tile tile = quoridor.getBoard().getTile(row*column);
@@ -358,7 +358,7 @@ public class Controller {
 				catch(IndexOutOfBoundsException e){
 					throw new UnsupportedOperationException("Invalid position");
 				}
-				if(row>9||column>9) {
+				if(row>8||row<1||column>8||column<1) {
 					throw new UnsupportedOperationException("Invalid position");
 				}
 				Tile tile = quoridor.getBoard().getTile(row*column);
