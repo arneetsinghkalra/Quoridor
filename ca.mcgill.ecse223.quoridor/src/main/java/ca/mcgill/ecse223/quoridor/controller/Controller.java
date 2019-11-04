@@ -151,16 +151,8 @@ public class Controller {
 		Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
 		// Gets the current wall move candidate in play
 		WallMove currentWallMoveCandidate = currentGame.getWallMoveCandidate();
-
-		GamePosition currentPosition = currentGame.getCurrentPosition();
-		// Gets current player to move
-		Player currentPlayer = currentPosition.getPlayerToMove();
 		// Gets Current board
 		Board currentBoard = QuoridorApplication.getQuoridor().getBoard();
-		// Gets move number
-		int currentMoveNumber = currentGame.numberOfMoves();
-		// Gets round number
-		int currentRoundNumber = (currentGame.numberOfMoves() + 1) / 2; // Ex: move 5 and 6 are round 3
 		// Fetch initial Wall Move Candidate
 		WallMove wallMove = currentWallMoveCandidate;
 
