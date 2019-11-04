@@ -428,9 +428,9 @@ public class QuoridorWindow extends JFrame {
 		}
 		//create a vertical wall at (3,3)
 		//by setting opaque of box and color of the wall center, we can create walls
-		vWalls[2][2].setOpaque(true);
-		wallCenters[2][2].setBackground(Color.black);
-		vWalls[3][2].setOpaque(true);
+		//vWalls[2][2].setOpaque(true);
+		//wallCenters[2][2].setBackground(Color.black);
+		//vWalls[3][2].setOpaque(true);
 	}
     public void setTimeRemaining(int timeRemaining)
     {
