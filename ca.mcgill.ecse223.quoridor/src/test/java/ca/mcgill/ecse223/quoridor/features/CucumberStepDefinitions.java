@@ -766,10 +766,7 @@ public class CucumberStepDefinitions {
 	 */
 	@And("The position to load is valid")
 	public void thePositionIsValid() {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		Game currentGame = quoridor.getCurrentGame();
-		GamePosition gamePosition = currentGame.getCurrentPosition();
-		validationResult = Controller.validatePosition();
+		boolean isValid = Controller.validatePosition();
 	}
 
 	/**
@@ -881,7 +878,7 @@ public class CucumberStepDefinitions {
 	
 	@When("The position to load is invalid")
 	public void thePositionToLoadIsInvalid() {
-		
+		boolean isInvalid = Controller.validatePosition();
 	}
 	@Then("The load shall return an error")
 	public void theLoadShallReturnAnError() {
