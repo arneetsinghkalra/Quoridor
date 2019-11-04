@@ -21,7 +21,11 @@ public class QuoridorWindow extends JFrame {
 	private JTextField secondField;
     private static JFrame f; 
 
-
+    //for the boards,tiles, and walls
+    private JButton[][] tiles = new JButton[9][9];
+    private JButton[][] wallCenters =  new JButton[8][8];
+    private Box[][] hWalls = new Box[9][9];
+    private Box[][] vWalls = new Box[9][9];
 	/**
 	 * Launch the application.
 	 */
@@ -226,14 +230,12 @@ public class QuoridorWindow extends JFrame {
 		
 	
 		
+		//board
 		JPanel gameBoardPanel = new JPanel();
 		activeGamePanel.add(gameBoardPanel, BorderLayout.CENTER);
 		gameBoardPanel.setLayout(new GridBagLayout());
 		
-		JButton[][] tiles = new JButton[9][9];
-		JButton[][] wallCenters =  new JButton[8][8];
-		Box[][] hWalls = new Box[9][9];
-		Box[][] vWalls = new Box[9][9];
+		
 		for(int i=0;i<9;i++) {
 			for(int j=0;j<9;j++) {
 				
@@ -247,7 +249,7 @@ public class QuoridorWindow extends JFrame {
 				c.ipadx = 10;
 				c.ipady = 10;
 				c.fill = GridBagConstraints.BOTH;
-				//set click event for tiles here
+				//set click event for tiles here(eg.movepawn)
 				gameBoardPanel.add(tiles[i][j],c);
 				
 				
@@ -292,7 +294,7 @@ public class QuoridorWindow extends JFrame {
 					c.ipadx = -5;
 					c.ipady = -5;
 					c.fill = GridBagConstraints.BOTH;
-					//set click event for walls here
+					//TODO: set click event for walls here--eg.dropwall
 					gameBoardPanel.add(wallCenters[i][j],c);
 				}
 				
@@ -301,6 +303,7 @@ public class QuoridorWindow extends JFrame {
 			
 		}
 		//create a vertical wall at (3,3)
+		//by setting opaque of box and color of the wall center, we can create walls
 		vWalls[2][2].setOpaque(true);
 		wallCenters[2][2].setBackground(Color.black);
 		vWalls[3][2].setOpaque(true);
