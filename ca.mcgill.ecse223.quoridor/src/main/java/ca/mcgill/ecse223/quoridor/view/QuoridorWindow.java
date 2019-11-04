@@ -177,12 +177,12 @@ public class QuoridorWindow extends JFrame {
 		
 		
 		JComboBox existingUsernames2 = new JComboBox();
-		sl_setupPanel.putConstraint(SpringLayout.NORTH, existingUsernames2, 150, SpringLayout.NORTH, setupPanel);
-		sl_setupPanel.putConstraint(SpringLayout.WEST, existingUsernames2, 33, SpringLayout.EAST, player1NameBox);
-		sl_setupPanel.putConstraint(SpringLayout.SOUTH, existingUsernames2, -66, SpringLayout.NORTH, startGameButton);
-		sl_setupPanel.putConstraint(SpringLayout.EAST, existingUsernames2, -75, SpringLayout.EAST, setupPanel);
-		sl_setupPanel.putConstraint(SpringLayout.SOUTH, existingUsernames2, -6, SpringLayout.NORTH, existingUsernames2);
-		existingUsernames2.setFont(new Font("Cooper Black", Font.PLAIN, 14));
+        sl_setupPanel.putConstraint(SpringLayout.NORTH, existingUsernames2, 150, SpringLayout.NORTH, setupPanel);
+        sl_setupPanel.putConstraint(SpringLayout.WEST, existingUsernames2, -160, SpringLayout.EAST, existingUsernames1);
+        sl_setupPanel.putConstraint(SpringLayout.SOUTH, existingUsernames2, -80, SpringLayout.NORTH, startGameButton);
+        sl_setupPanel.putConstraint(SpringLayout.EAST, existingUsernames2, 0, SpringLayout.EAST, existingUsernames1);
+        sl_setupPanel.putConstraint(SpringLayout.SOUTH, existingUsernames1, -6, SpringLayout.NORTH, existingUsernames2);
+        existingUsernames2.setFont(new Font("Cooper Black", Font.PLAIN, 14));
 		existingUsernames2.setModel(new DefaultComboBoxModel(Controller.listExistingUsernames()));
 		setupPanel.add(existingUsernames2);
 		
