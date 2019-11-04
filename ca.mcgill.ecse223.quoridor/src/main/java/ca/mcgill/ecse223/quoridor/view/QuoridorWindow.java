@@ -3,6 +3,9 @@ package ca.mcgill.ecse223.quoridor.view;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+
+import ca.mcgill.ecse223.quoridor.controller.Controller;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -168,6 +171,59 @@ public class QuoridorWindow extends JFrame {
 		sl_setupPanel.putConstraint(SpringLayout.SOUTH, startGameButton, 0, SpringLayout.SOUTH, thinkingTimeBox);
 		sl_setupPanel.putConstraint(SpringLayout.EAST, startGameButton, 0, SpringLayout.EAST, defaultNamesComboBox);
 		startGameButton.setFont(new Font("Cooper Black", Font.PLAIN, 20));
+		
+		startGameButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CardLayout layout = (CardLayout) (contentPane.getLayout());
+				layout.show(contentPane, "activeGamePanel");
+				
+				Controller.startNewGame();
+				
+				//Checks if the user has entered a valid user name
+				//Shows a dialog box if the user name already exists from the previous games
+				if(player1NameField.getText().length() > 0)
+				{
+					if(!Controller.provideNewUsername(player1NameField.getText(), Controller.initWhitePlayer("user1")))
+					{
+						JOptionPane.showMessageDialog(null, "This user name already exists!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
+					}
+				}
+				if(textField_1.getText().length() > 0)
+				{
+					if(!Controller.provideNewUsername(textField_1.getText(), Controller.initBlackPlayer("user2")))
+					{
+						JOptionPane.showMessageDialog(null, "This user name already exists!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
+					}
+				}
+				
+				
+				String time = "";
+				String seconds = "";
+				String minutes = "";
+				
+				if(minuteField.getText().length() < 2)
+				{
+					minutes =  minutes + "0" + minuteField.getText();
+				}
+				else
+				{
+					minutes = minuteField.getText();
+				}
+				if(secondField.getText().length() < 2)
+				{
+					seconds = seconds + "0" + secondField.getText();
+				}
+				else
+				{
+					seconds = secondField.getText();
+				}
+			
+				time = "00:" + minutes + ":" + seconds;
+				
+				Controller.setTotalThinkingTime(time);
+				Controller.startClock();
+			}
+		});
 		setupPanel.add(startGameButton);
 		
 		JPanel activeGamePanel = new JPanel();

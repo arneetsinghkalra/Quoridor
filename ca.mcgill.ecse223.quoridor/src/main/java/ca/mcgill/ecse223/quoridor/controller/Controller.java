@@ -142,12 +142,12 @@ public class Controller {
   public static Boolean provideNewUsername(String username, Player player) {
 	  if(User.hasWithName(username) == true)
 	  {
-		  
 		  return false;
 	  }
 	  Quoridor quoridor = QuoridorApplication.getQuoridor();
-	  User user = quoridor.addUser(username);
-	  player.setUser(user);
+	  player.getUser().setName(username);
+	 // User user = quoridor.addUser(username);
+	  //player.setUser(user);
 	  return true;
 }
   
