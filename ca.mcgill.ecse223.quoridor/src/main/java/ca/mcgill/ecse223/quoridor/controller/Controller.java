@@ -151,7 +151,7 @@ public class Controller {
 		Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
 		// Gets the current wall move candidate in play
 		WallMove currentWallMoveCandidate = currentGame.getWallMoveCandidate();
-		
+
 		GamePosition currentPosition = currentGame.getCurrentPosition();
 		// Gets current player to move
 		Player currentPlayer = currentPosition.getPlayerToMove();
@@ -196,26 +196,21 @@ public class Controller {
 		}
 
 		// Give error if wall is not on board
-				if (targetRow < 1 || targetRow > 8 || targetCol < 1 || targetCol > 8) { // Row, col cannot be bigger than 8 since reference point is NW
-					// tile
-					
-					//Keep Same Target tile
-					currentWallMoveCandidate.setTargetTile(currentTile);
-					
-					boolean wallNotMoved = false;
-					return wallNotMoved; // Not a valid wall placement
-					
-					
-				}
-				else {
-		// Make a new updated target tile with new parameters
-		Tile updatedTile = currentBoard.getTile((targetRow - 1) * 9 + targetCol - 1);
-		System.out.println(updatedTile);
+		if (targetRow < 1 || targetRow > 8 || targetCol < 1 || targetCol > 8) { // Row, col cannot be bigger than 8
+																				// since reference point is NW
+			// tile
 
-		
+			// Keep Same Target tile
+			currentWallMoveCandidate.setTargetTile(currentTile);
 
-		// Else, update wall move candidate with new target tile
-		
+			boolean wallNotMoved = false;
+			return wallNotMoved; // Not a valid wall placement
+
+		} else {
+			// Make a new updated target tile with new parameters
+			Tile updatedTile = currentBoard.getTile((targetRow - 1) * 9 + targetCol - 1);
+
+			// Else, update wall move candidate with new target tile
 
 			currentWallMoveCandidate.setTargetTile(updatedTile);
 
@@ -251,23 +246,15 @@ public class Controller {
 
 		// Gets the Current game
 		Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
-		// Gets the current wall move candidate in play
-		WallMove currentWallMoveCandidate = currentGame.getWallMoveCandidate();
 		// Gets current Game position
 		GamePosition currentGamePosition = currentGame.getCurrentPosition();
-		currentGame.getCurrentPosition().getPlayerToMove();
-		QuoridorApplication.getQuoridor().getBoard();
-		currentGame.numberOfMoves();
-		currentGame.numberOfMoves();
-
-		wallMoveCandidate = currentWallMoveCandidate;
+		Board currentBoard = QuoridorApplication.getQuoridor().getBoard();
+		// Get current player
+		Player player = currentGamePosition.getPlayerToMove();
 
 		// Get a list of all walls on board
 		List<Wall> blackWallsOnBoard = currentGamePosition.getBlackWallsOnBoard();
 		List<Wall> whiteWallsOnBoard = currentGamePosition.getWhiteWallsOnBoard();
-
-		// Get current player
-		Player player = currentGamePosition.getPlayerToMove();
 
 		// Ensure that it is a valid position to drop wall:
 
@@ -290,21 +277,26 @@ public class Controller {
 		}
 
 		// Update parameters of game:
-
 		currentGame.addMove(wallMoveCandidate); // Stores move
-		//currentGame.setWallMoveCandidate(null);// Refreshes wall move candidate
+		// currentGame.setWallMoveCandidate(null);// Refreshes wall move candidate
 
 		// Update player info
 		if (player.equals(currentGame.getWhitePlayer())) {
-			currentGamePosition.addWhiteWallsOnBoard(wallMoveCandidate.getWallPlaced()); //Also increments number of walls on board
-			currentGamePosition.setPlayerToMove(currentGame.getBlackPlayer()); // Update player to black player
+			currentGamePosition.addWhiteWallsOnBoard(wallMoveCandidate.getWallPlaced());// Also increments number of
+																						// walls on board
+
+			currentGamePosition.setPlayerToMove(currentGame.getBlackPlayer());// Update player to black player)
+
 		} else if (player.equals(currentGame.getBlackPlayer())) {
 			currentGamePosition.addBlackWallsOnBoard(wallMoveCandidate.getWallPlaced());
+
 			currentGamePosition.setPlayerToMove(currentGame.getWhitePlayer()); // Update player to white player
+
 		} else {
 			return false;
-		}		
+		}
 		return true;
+
 	}
 
 	/**
@@ -360,37 +352,35 @@ public class Controller {
 	 * @return boolean true if wall move was successfully cancelled
 	 */
 	public static boolean cancelWallMove() {
-		// Gets the Current game
 		Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
-		// Gets current Game position
 		GamePosition currentGamePosition = currentGame.getCurrentPosition();
 		currentGame.getCurrentPosition().getPlayerToMove();
 		QuoridorApplication.getQuoridor().getBoard();
-		currentGame.numberOfMoves();
-		currentGame.numberOfMoves();
+
 		// Get current Wall Move and it's player
-		WallMove move = currentGame.getWallMoveCandidate();
+		WallMove wallMove = currentGame.getWallMoveCandidate();
 		Player player = currentGamePosition.getPlayerToMove();
 
 		// Check if there is a move
-		if (move == null) {
+		if (wallMove == null) {
 			return false;
 		}
 
 		// If it is white players move
 		if (player.equals(currentGame.getWhitePlayer())) {
-			currentGamePosition.addWhiteWallsInStock(move.getWallPlaced()); // Puts wall attempted to be placed back in
-																			// their stock
+			currentGamePosition.addWhiteWallsInStock(wallMove.getWallPlaced()); // Puts wall attempted to be placed back
+																				// in
+			// their stock
 		}
 		// Black player move
 		else if (player.equals(currentGame.getBlackPlayer())) {
-			currentGamePosition.addBlackWallsInStock(move.getWallPlaced()); // Puts wall attempted to be placed back in
-																			// their stock
+			currentGamePosition.addBlackWallsInStock(wallMove.getWallPlaced()); // Puts wall attempted to be placed back
+																				// in
+			// their stock
 		} else {
 			return false; // Some unexpected error
 		}
-
-		currentGame.setWallMoveCandidate(null);
+		// currentGame.setWallMoveCandidate(null);
 		return true;
 	}
 
