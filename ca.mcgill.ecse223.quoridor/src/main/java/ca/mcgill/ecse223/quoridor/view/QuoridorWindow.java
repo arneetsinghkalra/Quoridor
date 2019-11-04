@@ -173,6 +173,11 @@ public class QuoridorWindow extends JFrame {
 		startGameButton.setFont(new Font("Cooper Black", Font.PLAIN, 20));
 		
 		startGameButton.addActionListener(new ActionListener() {
+			
+			/**
+			 * <p> Start new game button <p>
+			 * @author Ali Tapan
+			 */
 			public void actionPerformed(ActionEvent e) {
 				CardLayout layout = (CardLayout) (contentPane.getLayout());
 				layout.show(contentPane, "activeGamePanel");
