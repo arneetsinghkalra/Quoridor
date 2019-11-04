@@ -196,22 +196,24 @@ public class QuoridorWindow extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				CardLayout layout = (CardLayout) (contentPane.getLayout());
 				
-				
-				String time = "";
+				String time ="";
 				String seconds = "";
 				String minutes = "";
-				
-				
+	
 				if((player1Field.getText().length() == 0 && existingUsernames1.getSelectedItem().equals("or select existing username..."))
 					&& player2Field.getText().length() == 0 && existingUsernames2.getSelectedItem().equals("or select existing username..."))
 				{
-					JOptionPane.showMessageDialog(null, "This user name already exists!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
-					
+					JOptionPane.showMessageDialog(null, "Please provide a username!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
+					return;
 				}
 				
-				
+				if(minuteField.getText().length() == 0 && secondField.getText().length() == 0) {
+					JOptionPane.showMessageDialog(null, "Please provide user time!", "Invalid Remaining Time", JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+
+				layout.show(contentPane, "activeGamePanel");
 				Controller.startNewGame();
-				
 				//Checks if the user has entered a valid user name
 				//Shows a dialog box if the user name already exists from the previous games
 				
@@ -220,6 +222,7 @@ public class QuoridorWindow extends JFrame {
 					if(!Controller.provideNewUsername(player1Field.getText(), Controller.initWhitePlayer("user1")))
 					{
 						JOptionPane.showMessageDialog(null, "This user name already exists!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
+						return;
 					}
 				}
 				if(player2Field.getText().length() > 0 && existingUsernames2.getSelectedItem().equals("or select existing username..."))
@@ -227,6 +230,7 @@ public class QuoridorWindow extends JFrame {
 					if(!Controller.provideNewUsername(player2Field.getText(), Controller.initBlackPlayer("user2")))
 					{
 						JOptionPane.showMessageDialog(null, "This user name already exists!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
+						return;
 					}
 				}
 				
@@ -273,14 +277,16 @@ public class QuoridorWindow extends JFrame {
 				{
 					seconds = secondField.getText();
 				}
-			
+				
 				time = "00:" + minutes + ":" + seconds;
 				
 				Controller.setTotalThinkingTime(time);
 				Controller.startClock();
-				layout.show(contentPane, "activeGamePanel");
+				
 			}
 		});
+		
+		
 		setupPanel.add(startGameButton);
 		
 		JPanel activeGamePanel = new JPanel();
