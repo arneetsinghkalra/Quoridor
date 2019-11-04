@@ -444,7 +444,7 @@ public class QuoridorWindow extends JFrame {
         Box horizontalBox = Box.createHorizontalBox();
         titleTimeBox.add(horizontalBox);
 
-        turnLabel = new JLabel("It is");
+        turnLabel = new JLabel("It is not");
         turnLabel.setHorizontalTextPosition(SwingConstants.LEFT);
         turnLabel.setHorizontalAlignment(SwingConstants.LEFT);
         turnLabel.setFont(new Font("Cooper Black", Font.PLAIN, 14));

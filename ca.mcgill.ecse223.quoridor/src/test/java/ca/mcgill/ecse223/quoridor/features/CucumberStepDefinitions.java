@@ -39,6 +39,8 @@ import static org.junit.Assert.assertTrue;
 
 public class CucumberStepDefinitions {
 
+	private boolean validationResult;
+	Wall returnedWall;
     // ***********************************************
     // Background step definitions
     // ***********************************************
