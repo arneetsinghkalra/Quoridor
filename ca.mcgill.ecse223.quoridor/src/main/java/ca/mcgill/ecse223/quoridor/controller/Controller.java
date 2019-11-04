@@ -37,11 +37,10 @@ public class Controller {
    * @author Ali Tapan
    * @version 1.0
    */
-  public static void provideOrSelectUserName(Player player, Quoridor quoridor, String name) {
-	  Boolean check = selectExistingUsername(name, player);
-	  if(check == false) {
-		  provideNewUsername(name, player);
-	  }
+  public static void chooseAUserName(Player player, String username) {
+	  Quoridor quoridor = QuoridorApplication.getQuoridor();
+	  User user = quoridor.addUser("username");
+	  player = new Player(null, user, null);
   }
   	
   /**
@@ -53,7 +52,15 @@ public class Controller {
    */
   public static void setTotalThinkingTime(String time) {
 	  Quoridor quoridor = QuoridorApplication.getQuoridor();
-	  Time remaining = Time.valueOf(time);
+	  String error = "";
+	  Time remaining = null;
+	  
+			  try {
+				  remaining = Time.valueOf(time);
+			  }catch (IllegalArgumentException e) {
+				 error=e.getMessage(); 
+			  }
+			  
 	  quoridor.getCurrentGame().getBlackPlayer().setRemainingTime(remaining);
 	  quoridor.getCurrentGame().getWhitePlayer().setRemainingTime(remaining);
 	  quoridor.getCurrentGame().setGameStatus(GameStatus.ReadyToStart);
@@ -83,20 +90,21 @@ public class Controller {
    */
   public static Boolean selectExistingUsername(String username, Player player) {
 	  
-	  if(username == null)
+	  if(username.equals(null))
 	  {
 		 return false;
 	  }
-	  if(player == null)
+	  if(User.hasWithName(username) == false)
 	  {
 		  return false;
 	  }
+	  
 	  Quoridor quoridor = QuoridorApplication.getQuoridor();
 	  //Iterate through the users to see if they match the user name provided
-	  for(int i = 0; i< quoridor.numberOfUsers(); i++)
+	  for(int i = 0; i < quoridor.numberOfUsers(); i++)
 	  {
 		  User user = quoridor.getUser(i);
-		  if(user.getName() == username)
+		  if(user.getName().equals(username))
 		  {
 			 player.setUser(user);
 			 return true;
@@ -114,10 +122,16 @@ public class Controller {
    * @author Ali Tapan
    * @verison 1.0
    */
-  public static void provideNewUsername(String username, Player player) {
+  public static Boolean provideNewUsername(String username, Player player) {
+	  if(User.hasWithName(username) == true)
+	  {
+		  
+		  return false;
+	  }
 	  Quoridor quoridor = QuoridorApplication.getQuoridor();
 	  User user = quoridor.addUser(username);
 	  player.setUser(user);
+	  return true;
 }
   
   
