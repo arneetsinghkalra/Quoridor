@@ -27,6 +27,15 @@ public class Controller {
 	 return game;
   }
   	
+  /**
+   * <p> Initialize White Player <p>
+   * <p> Initializes a white player and assigns it <p>
+   * @param username
+   * @return Player object
+   * 
+   * @author Ali Tapan
+   * @version 1.0
+   */
   public static Player initWhitePlayer(String username) {
 	  Quoridor quoridor = QuoridorApplication.getQuoridor();
 	  User user = quoridor.addUser(username);
@@ -35,6 +44,15 @@ public class Controller {
 	  return p;
   }
   
+  /**
+   * <p> Initialize Black Player <p>
+   * <p> Initialize a black player and assigns it <p>
+   * @param username
+   * @return Player object
+   * 
+   * @author Ali Tapan
+   * @version 1.0
+   */
   public static Player initBlackPlayer(String username) {
 	  Quoridor quoridor = QuoridorApplication.getQuoridor();
 	  User user = quoridor.addUser(username);
