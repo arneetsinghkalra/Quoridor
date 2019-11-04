@@ -16,10 +16,6 @@ import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
 import ca.mcgill.ecse223.quoridor.model.Game.MoveMode;
 import ca.mcgill.ecse223.quoridor.view.QuoridorWindow;
 
-import javax.swing.*;
-
-import java.sql.Time;
-
 import static ca.mcgill.ecse223.quoridor.QuoridorApplication.*;
 
 
@@ -81,7 +77,7 @@ public class Controller {
 		 * <p> Select an Existing Username <p>
 		 * <p> The user selects an existing user name that was previously used in a game
 		 * @param username is a String that is the existing user name
-		 * @returns a Boolean, true if it successfully sets the username, false otherwise
+		 * @return a Boolean, true if it successfully sets the username, false otherwise
 		 * @author Ali Tapan
 		 * @version 2.0
 		 */
@@ -403,7 +399,6 @@ public class Controller {
 		 * Load the game from the game file.
 		 * load the correct player position and wall position
 		 * @author Yin
-		 * @param quoridor This is the quoridor you want to load the game into
 		 * @param fileName This is the name of the file which stores the game
 		 *
 		 * */
@@ -717,8 +712,6 @@ public class Controller {
 	 *         placed where a new wall is wanting to be placed. Returns true if wall
 	 *         is already present.
 	 *
-	 * @param WallMove wallOnBoard
-	 * @param WallMove wallCandidate
 	 * @return Boolean
 	 */
 	private static Boolean isWallAlreadyPresent(WallMove wallOnBoard, WallMove wallCandidate) {
