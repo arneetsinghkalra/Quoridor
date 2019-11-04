@@ -200,23 +200,50 @@ public class QuoridorWindow extends JFrame {
 				String seconds = "";
 				String minutes = "";
 	
+				//Checks trivial inputs
 				if((player1Field.getText().length() == 0 && existingUsernames1.getSelectedItem().equals("or select existing username..."))
-					&& player2Field.getText().length() == 0 && existingUsernames2.getSelectedItem().equals("or select existing username..."))
+					|| player2Field.getText().length() == 0 && existingUsernames2.getSelectedItem().equals("or select existing username..."))
 				{
 					JOptionPane.showMessageDialog(null, "Please provide a username!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
 					return;
 				}
 				
+				if(player1Field.getText().equals(player2Field.getText()))
+				{
+					JOptionPane.showMessageDialog(null, "Player 1 user name and Player 2 user name cannot be the same!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+				
+				if(!existingUsernames1.getSelectedItem().equals("or select existing username...") && !existingUsernames2.getSelectedItem().equals("or select existing username..."))
+				{
+					if(existingUsernames1.getSelectedItem().equals(existingUsernames2.getSelectedItem()))
+					{
+						JOptionPane.showMessageDialog(null, "Player 1 user name and Player 2 user name cannot be the same!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+				}
+				if(!minuteField.getText().matches("[0-9]*") || !secondField.getText().matches("[0-9]*"))
+				{
+					JOptionPane.showMessageDialog(null, "Please provide integers for user time!", "Invalid Remaining Time", JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+
 				if(minuteField.getText().length() == 0 && secondField.getText().length() == 0) {
 					JOptionPane.showMessageDialog(null, "Please provide user time!", "Invalid Remaining Time", JOptionPane.WARNING_MESSAGE);
 					return;
 				}
-
-				layout.show(contentPane, "activeGamePanel");
-				Controller.startNewGame();
-				//Checks if the user has entered a valid user name
-				//Shows a dialog box if the user name already exists from the previous games
 				
+				if(minuteField.getText().length() > 2 || secondField.getText().length() > 2)
+				{
+					JOptionPane.showMessageDialog(null, "Please provide 2 digits or less for remaining time!", "Invalid Remaining Time", JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+
+				
+				//Provide layout
+				layout.show(contentPane, "activeGamePanel");
+				
+				//Checks if the user has entered a valid user name
 				if(player1Field.getText().length() > 0 && existingUsernames1.getSelectedItem().equals("or select existing username..."))
 				{
 					if(!Controller.provideNewUsername(player1Field.getText(), Controller.initWhitePlayer("user1")))
@@ -234,7 +261,6 @@ public class QuoridorWindow extends JFrame {
 					}
 				}
 				
-				
 				//Checks if the player enters an input and also selects an existing user name, if true will show a dialog box
 				if(player1Field.getText().length() > 0 && !existingUsernames1.getSelectedItem().equals("or select existing username..."))
 				{
@@ -250,17 +276,18 @@ public class QuoridorWindow extends JFrame {
 				//Checks if the player selected an existing user name
 				if(!existingUsernames1.getSelectedItem().equals("or select existing username..."))
 				{
-					Controller.provideNewUsername(existingUsernames1.getSelectedItem().toString(), Controller.initWhitePlayer("user1"));
+					Controller.selectExistingUsername(existingUsernames1.getSelectedItem().toString(), Controller.initWhitePlayer("user1"));
 				}
 				
 				//Checks if the player selected an existing user name
 				if(!existingUsernames2.getSelectedItem().equals("or select existing username..."))
 				{
-					Controller.provideNewUsername(existingUsernames2.getSelectedItem().toString(), Controller.initBlackPlayer("user2"));
+					Controller.selectExistingUsername(existingUsernames2.getSelectedItem().toString(), Controller.initBlackPlayer("user2"));
 				}
 				
-				//Checks if the user has selected
 				
+				Controller.startNewGame();
+				//Checks if the user has selected
 				if(minuteField.getText().length() < 2)
 				{
 					minutes =  minutes + "0" + minuteField.getText();
