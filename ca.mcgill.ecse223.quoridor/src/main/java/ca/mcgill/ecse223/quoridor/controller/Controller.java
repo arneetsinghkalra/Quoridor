@@ -242,61 +242,62 @@ public class Controller {
 	 * @param aWall references the Wall that player will have in their hand
 	 * @return void method but drops wall which prompts end of player turn
 	 */
-	public static Boolean dropWall(WallMove wallMoveCandidate) {
+	public static Wall dropWall(WallMove wallMoveCandidate) {
 
-		// Gets the Current game
+		// Initial Parameters of game
 		Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
-		// Gets current Game position
 		GamePosition currentGamePosition = currentGame.getCurrentPosition();
-		Board currentBoard = QuoridorApplication.getQuoridor().getBoard();
-		// Get current player
 		Player player = currentGamePosition.getPlayerToMove();
 
+		
+		// -------- Validate Wall Position-------------
+		// Todo CHECK WITH WILLIAM TO SEE IF BELOW PARTS CAN BE REPLACED BY HIS METHODS
 		// Get a list of all walls on board
 		List<Wall> blackWallsOnBoard = currentGamePosition.getBlackWallsOnBoard();
 		List<Wall> whiteWallsOnBoard = currentGamePosition.getWhiteWallsOnBoard();
 
-		// Ensure that it is a valid position to drop wall:
-
-		// Todo CHECK WITH WILLIAM TO SEE IF BELOW PARTS CAN BE REPLACED BY HIS METHODS
-
 		// Check black walls on board
-		for (Wall wall : blackWallsOnBoard) {
-			if (isWallAlreadyPresent(wallMoveCandidate, wall.getMove())) {
+		for (Wall wall : blackWallsOnBoard) { // For each wall placed by black player on the board
+			if (isWallAlreadyPresent(wallMoveCandidate, wall.getMove())) { // If wall is already present at target
+				System.out.println("wall present black");
+													// location
 				cancelWallMove();
-				return false;
+				return null; // Return wall not dropped
 			}
 		}
 
 		// Check white walls on board
-		for (Wall wall : whiteWallsOnBoard) {
-			if (isWallAlreadyPresent(wallMoveCandidate, wall.getMove())) {
+		for (Wall wall : whiteWallsOnBoard) { // For each wall placed by white player on the board
+			if (isWallAlreadyPresent(wallMoveCandidate, wall.getMove())) { // If wall is already present at target
+				System.out.println("wall present white");
+													// location
 				cancelWallMove();
-				return false;
+
+				return null;// Return wall not dropped
 			}
 		}
-
+		
+		// ----------- Now drop the wall -------
+		
 		// Update parameters of game:
-		currentGame.addMove(wallMoveCandidate); // Stores move
-		// currentGame.setWallMoveCandidate(null);// Refreshes wall move candidate
-
+		currentGame.addMove(wallMoveCandidate); // Stores move	
+		
+	
 		// Update player info
 		if (player.equals(currentGame.getWhitePlayer())) {
-			currentGamePosition.addWhiteWallsOnBoard(wallMoveCandidate.getWallPlaced());// Also increments number of
-																						// walls on board
-
+			currentGamePosition.addWhiteWallsOnBoard(wallMoveCandidate.getWallPlaced());// Also increments number of																		// walls on board
 			currentGamePosition.setPlayerToMove(currentGame.getBlackPlayer());// Update player to black player)
+			currentGame.setWallMoveCandidate(null);// Refreshes wall move candidate
+			return wallMoveCandidate.getWallPlaced();
 
 		} else if (player.equals(currentGame.getBlackPlayer())) {
 			currentGamePosition.addBlackWallsOnBoard(wallMoveCandidate.getWallPlaced());
-
 			currentGamePosition.setPlayerToMove(currentGame.getWhitePlayer()); // Update player to white player
-
+			currentGame.setWallMoveCandidate(null);// Refreshes wall move candidate
+			return wallMoveCandidate.getWallPlaced();
 		} else {
-			return false;
+			return null;
 		}
-		return true;
-
 	}
 
 	/**
@@ -314,12 +315,14 @@ public class Controller {
 		Tile tileCandidate = wallCandidate.getTargetTile();
 
 		// Verify overlap status:
-
+		Boolean isSameColumn = (tileOnBoard.getColumn() == tileCandidate.getColumn());
+		Boolean isSameRow = (tileOnBoard.getRow() == tileCandidate.getRow());
+		
 		// Check if directions are both vertical
 		if (wallOnBoard.getWallDirection() == Direction.Vertical
 				&& wallCandidate.getWallDirection() == Direction.Vertical) {
 			// Then verify if column and row are identical and return boolean
-			return (tileOnBoard.getColumn() == tileCandidate.getColumn()
+			return (isSameColumn
 					&& Math.abs(tileOnBoard.getRow() - tileCandidate.getRow()) <= 1); // Checks if rows are off by more
 																						// than 1
 		}
@@ -327,20 +330,15 @@ public class Controller {
 		else if (wallOnBoard.getWallDirection() == Direction.Horizontal
 				&& wallCandidate.getWallDirection() == Direction.Horizontal) {
 			// Then verify if column and row are identical and return boolean
-			return (tileOnBoard.getRow() == tileCandidate.getRow()
+			return (isSameRow
 					&& Math.abs(tileOnBoard.getColumn() - tileCandidate.getColumn()) <= 1);// Checks if columns are off
 																							// by more than 1
 		}
 		// Case when Directions are opposite
-		else if (wallOnBoard.getWallDirection() == Direction.Horizontal
-				&& wallCandidate.getWallDirection() == Direction.Vertical) {
+		else {
 			// Only overlaps if NorthWest tile is the same for both walls
-			return (tileOnBoard.getColumn() == tileCandidate.getColumn()
-					&& tileOnBoard.getRow() == tileOnBoard.getRow());
+			return (isSameColumn && isSameRow);
 		}
-
-		return true; // Unexpected error, assume wall is present
-
 	}
 
 	/**
