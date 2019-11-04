@@ -16,11 +16,16 @@ import java.util.StringTokenizer;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.model.*;
+import javax.swing.*;
+
 import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
 import ca.mcgill.ecse223.quoridor.model.Game.MoveMode;
+import ca.mcgill.ecse223.quoridor.view.QuoridorWindow;
+
 
 import static ca.mcgill.ecse223.quoridor.model.Direction.Horizontal;
 import static ca.mcgill.ecse223.quoridor.model.Direction.Vertical;
+import static ca.mcgill.ecse223.quoridor.QuoridorApplication.*;
 
 
 public class Controller {
@@ -112,7 +117,34 @@ public class Controller {
    * the white player's thinking time.
    */
   public static void initializeBoard() {
-}
+		  	// white to move
+			  // white in spot top middle
+			  // black in spot bottom middle
+			  // white has walls in stock
+			  // black has walls in stock
+			  // white's clock starts
+			  // white's turn is shown
+			  Quoridor q = getQuoridor();
+			Board board = new Board(q);
+			Tile t;
+			for(int i=0;i<9;i++)
+				for(int j=0; j<9; j++)
+					t= new Tile(i,j,board);
+			PlayerPosition whitePlayerPosition = new PlayerPosition(q.getCurrentGame().getWhitePlayer(), board.getTile(4));
+			PlayerPosition blackPlayerPosition = new PlayerPosition(q.getCurrentGame().getWhitePlayer(), board.getTile(76));
+			GamePosition gp = new GamePosition(0,whitePlayerPosition,blackPlayerPosition
+					, q.getCurrentGame().getWhitePlayer(), q.getCurrentGame());
+			q.getCurrentGame().setCurrentPosition(gp);
+			for(int i=0;i<10;i++)
+			{
+				Wall a,b;
+				a = new Wall(i, q.getCurrentGame().getWhitePlayer());
+				b = new Wall(i+10, q.getCurrentGame().getBlackPlayer());
+			}
+			QuoridorWindow window = quoridorWindow;
+			window.createSecondTimer();
+			window.setCurrentPlayer(q.getCurrentGame().getWhitePlayer().getUser().getName());
+		}
 
   /**
    * @author Luke Barber
@@ -608,6 +640,22 @@ public class Controller {
 		int number = (int)letter.charAt(0)-96;
 		return number;
 		
+	}
+	public static void subtractSecond()
+	{
+		Quoridor q = getQuoridor();
+		Player curPlayer = q.getCurrentGame().getCurrentPosition().getPlayerToMove();
+		long remaining = curPlayer.getRemainingTime().getTime();
+		remaining -= 1000L;
+		if(remaining == 0)
+		{
+			if(curPlayer.equals(q.getCurrentGame().getWhitePlayer()))
+				q.getCurrentGame().setGameStatus(GameStatus.BlackWon);
+			else
+				q.getCurrentGame().setGameStatus(GameStatus.WhiteWon);
+			return;
+		}
+		curPlayer.setRemainingTime(new Time(remaining));
 	}
 }
 

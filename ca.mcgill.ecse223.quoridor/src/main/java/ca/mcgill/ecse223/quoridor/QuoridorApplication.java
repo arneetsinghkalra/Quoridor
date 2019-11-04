@@ -6,6 +6,7 @@ import ca.mcgill.ecse223.quoridor.model.Quoridor;
 public class QuoridorApplication {
 
 	private static Quoridor quoridor;
+	public static QuoridorWindow quoridorWindow;
 
 	public static Quoridor getQuoridor() {
 		if (quoridor == null) {

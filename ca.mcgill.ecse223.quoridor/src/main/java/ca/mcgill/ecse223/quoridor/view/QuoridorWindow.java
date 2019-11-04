@@ -5,11 +5,16 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileSystemView;
 
+import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.Controller;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.awt.event.ActionEvent;
 
 public class QuoridorWindow extends JFrame {
@@ -19,6 +24,11 @@ public class QuoridorWindow extends JFrame {
 	private JTextField textField_1;
 	private JTextField minuteField;
 	private JTextField secondField;
+	private Timer secondTimer;
+	private JLabel turnLabel;
+	private JLabel timeRemLabel;
+	private static boolean confirms = true;
+
     private static JFrame f; 
 
     //for the boards,tiles, and walls
@@ -83,7 +93,7 @@ public class QuoridorWindow extends JFrame {
 	    {
 		      public void actionPerformed(ActionEvent a)
 		      {
-		    	  	Controller.StartNewGame();
+		    	  	Controller.initializeBoard();
 		    	  	JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 		    		int returnValue = jfc.showOpenDialog(null);
 		    		
@@ -220,6 +230,120 @@ public class QuoridorWindow extends JFrame {
 		Box gameOptionBox = Box.createVerticalBox();
 		activeGamePanel.add(gameOptionBox, BorderLayout.SOUTH);
 		
+		JButton btnSaveGame = new JButton("Save Game");
+		btnSaveGame.setAlignmentX(Component.CENTER_ALIGNMENT);
+		gameOptionBox.add(btnSaveGame);
+		btnSaveGame.addActionListener(new ActionListener()
+	    {
+		      public void actionPerformed(ActionEvent a)
+		      {
+			    	  JFrame f= new JFrame();
+			    	  JTextField tf1;  
+			    	  JButton b1;
+		          tf1=new JTextField(); 
+		          tf1.setBounds(50,50,150,20);  
+		          tf1.setEditable(true); 
+		          b1=new JButton("create");
+		          b1.setBounds(50,200,50,50);
+		          f.add(tf1); 
+		          f.add(b1);
+		          f.setSize(300,300);  
+		          f.setLayout(null);
+		          f.setVisible(true);
+		          b1.addActionListener(new ActionListener() {
+		        	  		public void actionPerformed(ActionEvent b) {
+		        	  			f.setVisible(false);
+		        	  			Path path = Paths.get("src/test/resources/savePosition/"+tf1.getText());
+		        	  			if(Files.exists(path)) {
+		        	  				JFrame f= new JFrame();
+		        	  				JTextField tf1;  
+		        	  				JButton b1;
+		        	  				JButton b2;
+		        	  				tf1=new JTextField(); 
+		        	  				tf1.setText("confirms to overwrite");
+		        	  				tf1.setBounds(50,50,150,20);  
+		        	  				tf1.setEditable(false); 
+		        	  				b1=new JButton("Yes");
+		        	  				b1.setBounds(50,200,100,50);
+		        	  				b2=new JButton("No");
+		        	  				b2.setBounds(150, 200, 100, 50);
+		        	  				f.add(tf1); 
+		        	  				f.add(b1);
+		        	  				f.add(b2);
+		        	  				f.setSize(300,300);  
+		        	  				f.setLayout(null);
+		        	  				f.setVisible(true);
+		        	  				b1.addActionListener(new ActionListener() {
+		        	  					public void actionPerformed(ActionEvent b) {
+		        	  						confirms = true;
+		        	  						f.setVisible(false);
+				        	  				try {
+												Controller.savePosition(tf1.getText(),QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition(),confirms);
+											} catch (IOException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
+		        	  					}
+		        	  				});
+		        	  				b2.addActionListener(new ActionListener() {
+		        	  					public void actionPerformed(ActionEvent b) {
+		        	  						f.setVisible(false);
+		        	  					}
+		        	  				});
+		        	  			}else {
+			        	  			try {
+			        	  				Controller.savePosition(tf1.getText(),QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition(),confirms);
+			        	  			} catch (IOException e) {
+									e.printStackTrace();
+								}
+		        	  			}
+			    	  		}
+		          });
+		      }
+	    });
+		
+		JButton btnNewGame = new JButton("New Game");
+		btnNewGame.setAlignmentX(Component.CENTER_ALIGNMENT);
+		gameOptionBox.add(btnNewGame);
+		
+		JButton btnLoadGame = new JButton("Load Game");
+		btnLoadGame.setAlignmentX(Component.CENTER_ALIGNMENT);
+		gameOptionBox.add(btnLoadGame);
+		btnLoadGame.addActionListener(new ActionListener()
+	    {
+		      public void actionPerformed(ActionEvent a)
+		      {
+		    	  	Controller.initializeBoard();
+		    	  	JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+		    		int returnValue = jfc.showOpenDialog(null);
+		    		
+		    		if (returnValue == JFileChooser.APPROVE_OPTION) {
+		    			File selectedFile = jfc.getSelectedFile();
+		    			try {
+		    				Controller.loadPosition(selectedFile.getName());
+		    			}catch (UnsupportedOperationException e) {
+		    				JFrame f= new JFrame();
+        	  				JTextField tf1;
+        	  				JButton b1;
+        	  				tf1=new JTextField();
+        	  				tf1.setText("Cannot load game due to invalid position");
+        	  				tf1.setEditable(false); 
+        	  				b1=new JButton("OK");
+        	  				b1.setBounds(100,200,100,50);
+        	  				f.add(tf1); 
+        	  				f.add(b1);
+        	  				f.setSize(300,300);
+        	  				f.setLayout(null);
+        	  				b1.addActionListener(new ActionListener() {
+        	  					public void actionPerformed(ActionEvent b) {
+        	  						f.setVisible(false);
+        	  					}
+        	  				});
+		    			}
+		    		}
+		      }
+	    });
+		
 		Box titleTimeBox = Box.createVerticalBox();
 		activeGamePanel.add(titleTimeBox, BorderLayout.NORTH);
 		
@@ -308,6 +432,63 @@ public class QuoridorWindow extends JFrame {
 		wallCenters[2][2].setBackground(Color.black);
 		vWalls[3][2].setOpaque(true);
 	}
+    public void setTimeRemaining(int timeRemaining)
+    {
+        timeRemaining /= 1000;
+        int minutes, seconds;
+        minutes = timeRemaining/60;
+        seconds = timeRemaining % 60;
+        // Change text of label to new time
+        String min,sec;
+        if(minutes/10 == 0)
+            min="0"+minutes;
+        else
+            min =""+ minutes;
+        if(seconds/10 == 0)
+            sec = "0"+seconds;
+        else
+            sec = ""+ seconds;
+        String tr = "Time remaining: "+minutes+":"+seconds;
+        timeRemLabel.setText(tr);
+    }
+    public void setCurrentPlayer(String name)
+    {
+        turnLabel.setText(name+"'s turn");
+    }
+	public void subtractSecondFromView()
+    {
+        // pull text from label
+        // get last 2 characters
+        // change one by one
+        //set new text
+        String timeRem = timeRemLabel.getText();
+        timeRem = timeRem.substring(timeRem.lastIndexOf(":")+1);
+        String minRem = timeRem.substring(timeRem.lastIndexOf(":")-2, timeRem.lastIndexOf(":"));
+        int timeRemInt = Integer.parseInt(timeRem)-1;
+        int minRemInt = Integer.parseInt(minRem);
+        if(timeRemInt == -1)
+        {
+            timeRemInt = 59;
+            minRemInt--;
+        }
+        setTimeRemaining((60*minRemInt+timeRemInt)*1000);
+    }
+	
+	public void createSecondTimer()
+    {
+        ActionListener listener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Deduct a second from view
+                subtractSecondFromView();
+                // Deduct a second from model
+                Controller.subtractSecond();
+            }
+        };
+        secondTimer = new Timer(1000,listener);
+        secondTimer.setRepeats(true);
+    }
+	
 
 	// TODO add action/listener methods to actually progress the game and all that
 }
