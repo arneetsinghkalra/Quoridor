@@ -68,7 +68,59 @@ public class CucumberStepDefinitions {
 
 	@Given("The following walls exist:")
 	public void theFollowingWallsExist(io.cucumber.datatable.DataTable dataTable) {
+		
+		
+
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game currentGame = quoridor.getCurrentGame();
+		Board currentBoard = quoridor.getBoard();
+		
+
+		// First wall placed
+		Player whitePlayer = quoridor.getCurrentGame().getWhitePlayer();
+		Tile aNewTargetTile1 = currentBoard.getTile((1 - 1) * 9 + (1 - 1));
+		Direction direction1 = Direction.Horizontal;
+		Wall wall1 = whitePlayer.getWall(0);
+		wall1.setId(0);
+
+		WallMove wallMove1 = new WallMove(0, 0, whitePlayer, aNewTargetTile1, currentGame, direction1, wall1);
+		wall1.setMove(wallMove1);
+		
+
+		// Second wall placed
+		Player blackPlayer = quoridor.getCurrentGame().getBlackPlayer();
+		Tile aNewTargetTile2 = currentBoard.getTile((7 - 1) * 9 + (4 - 1));
+		Direction direction2 = Direction.Vertical;
+		Wall wall2 = blackPlayer.getWall(0);
+		wall2.setId(0);
+		
+		WallMove wallMove2 = new WallMove(0, 0, blackPlayer, aNewTargetTile2, currentGame, direction2, wall2);
+		//wall2.setMove(wallMove2);
+		System.out.println(currentGame.getCurrentPosition().getBlackWallsInStock());
+		System.out.println(currentGame.getCurrentPosition().getBlackWallsOnBoard());
+
+
+
+		quoridor.getCurrentGame().getCurrentPosition().removeWhiteWallsInStock(wall1);
+		
+		/*
+		System.out.println(currentGame.getCurrentPosition().numberOfWhiteWallsInStock());
+		System.out.println(currentGame.getCurrentPosition().numberOfWhiteWallsOnBoard());
+		System.out.println(currentGame.getCurrentPosition().numberOfBlackWallsInStock());
+		System.out.println(currentGame.getCurrentPosition().numberOfBlackWallsOnBoard());
+		*/
+		
+		quoridor.getCurrentGame().getCurrentPosition().addWhiteWallsOnBoard(wall1);
+		quoridor.getCurrentGame().getCurrentPosition().removeBlackWallsInStock(wall2);
+		quoridor.getCurrentGame().getCurrentPosition().addBlackWallsOnBoard(wall2);
+		
+		System.out.println(currentGame.getCurrentPosition().getBlackWallsInStock());
+		System.out.println(currentGame.getCurrentPosition().getBlackWallsOnBoard());
+		
+	
+
+
+		/*
 		List<Map<String, String>> valueMaps = dataTable.asMaps();
 		// keys: wrow, wcol, wdir
 		Player[] players = { quoridor.getCurrentGame().getWhitePlayer(), quoridor.getCurrentGame().getBlackPlayer()
@@ -103,8 +155,10 @@ public class CucumberStepDefinitions {
 					quoridor.getCurrentGame(), direction, wall);
 
 			if (playerIdx == 0) {
+
 				quoridor.getCurrentGame().getCurrentPosition().removeWhiteWallsInStock(wall);
 				quoridor.getCurrentGame().getCurrentPosition().addWhiteWallsOnBoard(wall);
+
 			} else {
 				quoridor.getCurrentGame().getCurrentPosition().removeBlackWallsInStock(wall);
 				quoridor.getCurrentGame().getCurrentPosition().addBlackWallsOnBoard(wall);
@@ -113,6 +167,7 @@ public class CucumberStepDefinitions {
 			playerIdx++;
 			playerIdx = playerIdx % 2;
 		}
+		*/
 
 	}
 
@@ -145,10 +200,6 @@ public class CucumberStepDefinitions {
 		WallMove wallMoveCandidate = new WallMove(1, 1, currentPlayer, targetTile, currentGame, direction, placedWall);
 
 		currentGame.setWallMoveCandidate(wallMoveCandidate);
-
-		System.out.println(currentGame.getCurrentPosition().numberOfBlackWallsInStock());
-		System.out.println(currentGame.getCurrentPosition().numberOfWhiteWallsInStock());
-
 	}
 
 	@Given("^A new game is initializing$")
@@ -517,7 +568,7 @@ public class CucumberStepDefinitions {
 	}
 
 	/** @author Luke Barber and Arneet Kalra */
-	
+
 	@Given("A wall move candidate exists with {string} at position \\({int}, {int})")
 	public void aWallMoveCandidateExistsWithAtPosition(String dir, int row, int column) {
 		// Shortcut variables
