@@ -19,28 +19,12 @@ public class Controller {
    * @return the created initialized Game object
    * 
    * @author Ali Tapan
-   * @version 1.0
- * @throws Throwable 
+   * @version 2.0
    */
   public static Game StartNewGame() {
 	 Quoridor quoridor = QuoridorApplication.getQuoridor();
 	 Game game = new Game(GameStatus.Initializing, MoveMode.PlayerMove, quoridor);
 	 return game;
-  }
-  
-  /**
-   * <p> Provide or Select User Name <p>
-   * <p> Lets the user select an existing user name that was used in a previous game or
-   * enter a new one.
-   * @param user 
-   * 
-   * @author Ali Tapan
-   * @version 1.0
-   */
-  public static void chooseAUserName(Player player, String username) {
-	  Quoridor quoridor = QuoridorApplication.getQuoridor();
-	  User user = quoridor.addUser("username");
-	  player = new Player(null, user, null);
   }
   	
   /**
@@ -48,7 +32,7 @@ public class Controller {
    * <p> Set the total thinking time for player.
    * 
    * @author Ali Tapan
-   * @version 1.0
+   * @version 2.0
    */
   public static void setTotalThinkingTime(String time) {
 	  Quoridor quoridor = QuoridorApplication.getQuoridor();
@@ -72,7 +56,7 @@ public class Controller {
    * <p> Initiates the game timer which starts when the game is running.
    * 
    * @author Ali Tapan
-   * @version 1.0
+   * @version 2.0
    */
   public static void startClock() {
 	  
@@ -84,9 +68,9 @@ public class Controller {
    * <p> Select an Existing Username <p>
    * <p> The user selects an existing user name that was previously used in a game
    * @param username is a String that is the existing user name
-   * 
+   * @returns a Boolean, true if it successfully sets the username, false otherwise
    * @author Ali Tapan
-   * @version 1.0
+   * @version 2.0
    */
   public static Boolean selectExistingUsername(String username, Player player) {
 	  
@@ -118,9 +102,9 @@ public class Controller {
    * <p> Provide a New Username <p>
    * <p> The user selects/enters a new user name that was not previously used in a game
    * @param username is a String that is the new user name
-   * 
+   * @return returns a Boolean, true if it successfully sets the username, false otherwise
    * @author Ali Tapan
-   * @verison 1.0
+   * @verison 2.0
    */
   public static Boolean provideNewUsername(String username, Player player) {
 	  if(User.hasWithName(username) == true)

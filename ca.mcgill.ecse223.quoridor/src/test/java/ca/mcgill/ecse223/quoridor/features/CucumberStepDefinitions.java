@@ -173,7 +173,9 @@ public class CucumberStepDefinitions {
 	public void whitePlayerChoosesAUsername() throws Throwable {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		String username = "John";
-		Controller.chooseAUserName(quoridor.getCurrentGame().getWhitePlayer(), username);
+		User user = quoridor.addUser(username);
+		Player player = new Player(null, user, 9, Direction.Vertical);
+		quoridor.getCurrentGame().setWhitePlayer(player);
 	}
 
 	/**
@@ -184,7 +186,9 @@ public class CucumberStepDefinitions {
 	public void blackPlayerChoosesAUsername() throws UnsupportedOperationException {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		String username = "Mel";
-		Controller.chooseAUserName(quoridor.getCurrentGame().getBlackPlayer(), username);
+		User user = quoridor.addUser(username);
+		Player player = new Player(null, user, 1, Direction.Vertical);
+		quoridor.getCurrentGame().setBlackPlayer(player);
 	}
 
 	/**
