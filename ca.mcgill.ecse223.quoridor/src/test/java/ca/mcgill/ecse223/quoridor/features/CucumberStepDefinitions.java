@@ -347,7 +347,9 @@ public class CucumberStepDefinitions {
 	/** @author Sam Perreault */
 	@When("{int}:{int} is set as the thinking time")
 	public void minSecIsSetAsTheThinkingTime(int min, int sec) {
-		Controller.setPlayerThinkingTime(min, sec);
+		String time = "";
+		time = "00:"+min+":"+sec;
+		Controller.setTotalThinkingTime();
 	}
 
 	/** @author Sam Perreault */
@@ -1265,10 +1267,12 @@ public class CucumberStepDefinitions {
 		User user2 = quoridor.addUser("userBlack");
 		int thinkingTime = 180;
 
-		new Player(new Time(thinkingTime), user1, 9, Direction.Horizontal);
-		new Player(new Time(thinkingTime), user2, 1, Direction.Horizontal);
+		Player white = new Player(new Time(thinkingTime), user1, 9, Direction.Horizontal);
+		Player black = new Player(new Time(thinkingTime), user2, 1, Direction.Horizontal);
 
 		Game game = new Game(GameStatus.ReadyToStart, MoveMode.PlayerMove, quoridor);
+		game.setWhitePlayer(white);
+		game.setBlackPlayer(black);
 		return game;
 	}
 

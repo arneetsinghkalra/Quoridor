@@ -1,5 +1,7 @@
 package ca.mcgill.ecse223.quoridor.view;
 
+import ca.mcgill.ecse223.quoridor.controller.Controller;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -14,6 +16,9 @@ public class QuoridorWindow extends JFrame {
 	private JTextField textField_1;
 	private JTextField minuteField;
 	private JTextField secondField;
+	private Timer secondTimer;
+	private JLabel turnLabel;
+	private JLabel timeRemLabel;
 
 	/**
 	 * Launch the application.
@@ -168,6 +173,12 @@ public class QuoridorWindow extends JFrame {
 		sl_setupPanel.putConstraint(SpringLayout.SOUTH, startGameButton, 0, SpringLayout.SOUTH, thinkingTimeBox);
 		sl_setupPanel.putConstraint(SpringLayout.EAST, startGameButton, 0, SpringLayout.EAST, defaultNamesComboBox);
 		startGameButton.setFont(new Font("Cooper Black", Font.PLAIN, 20));
+		startGameButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CardLayout layout = (CardLayout) (contentPane.getLayout());
+				layout.show(contentPane, "activeGamePanel");
+			}
+		});
 		setupPanel.add(startGameButton);
 		
 		JPanel activeGamePanel = new JPanel();
@@ -181,20 +192,111 @@ public class QuoridorWindow extends JFrame {
 		activeGamePanel.add(lblNewLabel_1, BorderLayout.EAST);
 		
 		Box gameOptionBox = Box.createVerticalBox();
+		gameOptionBox.setAlignmentX(Component.CENTER_ALIGNMENT);
 		activeGamePanel.add(gameOptionBox, BorderLayout.SOUTH);
+		
+		JButton btnSaveGame = new JButton("Save Game");
+		btnSaveGame.setAlignmentX(Component.CENTER_ALIGNMENT);
+		gameOptionBox.add(btnSaveGame);
+		
+		JButton btnNewGame = new JButton("New Game");
+		btnNewGame.setAlignmentX(Component.CENTER_ALIGNMENT);
+		gameOptionBox.add(btnNewGame);
+		
+		JButton btnLoadGame = new JButton("Load Game");
+		btnLoadGame.setAlignmentX(Component.CENTER_ALIGNMENT);
+		gameOptionBox.add(btnLoadGame);
 		
 		Box titleTimeBox = Box.createVerticalBox();
 		activeGamePanel.add(titleTimeBox, BorderLayout.NORTH);
 		
 		JLabel gameTitleLabel = new JLabel("QUORIDOR");
+		gameTitleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		gameTitleLabel.setVerticalAlignment(SwingConstants.TOP);
 		gameTitleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		gameTitleLabel.setFont(new Font("Cooper Black", Font.PLAIN, 40));
 		titleTimeBox.add(gameTitleLabel);
+		
+		Box horizontalBox = Box.createHorizontalBox();
+		titleTimeBox.add(horizontalBox);
+		
+		turnLabel = new JLabel("It is");
+		turnLabel.setHorizontalTextPosition(SwingConstants.LEFT);
+		turnLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		turnLabel.setFont(new Font("Cooper Black", Font.PLAIN, 14));
+		horizontalBox.add(turnLabel);
+		
+		Component horizontalStrut = Box.createHorizontalStrut(150);
+		horizontalBox.add(horizontalStrut);
+		
+		timeRemLabel = new JLabel("Time remaining: 99:99");
+		timeRemLabel.setFont(new Font("Cooper Black", Font.PLAIN, 14));
+		timeRemLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		horizontalBox.add(timeRemLabel);
 		
 		JPanel gameBoardPanel = new JPanel();
 		activeGamePanel.add(gameBoardPanel, BorderLayout.CENTER);
 		gameBoardPanel.setLayout(new GridLayout(9, 9, 5, 5));
 	}
 
+    public void setTimeRemaining(int timeRemaining)
+    {
+        timeRemaining /= 1000;
+        int minutes, seconds;
+        minutes = timeRemaining/60;
+        seconds = timeRemaining % 60;
+        // Change text of label to new time
+        String min,sec;
+        if(minutes/10 == 0)
+            min="0"+minutes;
+        else
+            min =""+ minutes;
+        if(seconds/10 == 0)
+            sec = "0"+seconds;
+        else
+            sec = ""+ seconds;
+        String tr = "Time remaining: "+minutes+":"+seconds;
+        timeRemLabel.setText(tr);
+    }
+
+    public void setCurrentPlayer(String name)
+    {
+        turnLabel.setText(name+"'s turn");
+    }
+
+    public void subtractSecondFromView()
+    {
+        // pull text from label
+        // get last 2 characters
+        // change one by one
+        //set new text
+        String timeRem = timeRemLabel.getText();
+        timeRem = timeRem.substring(timeRem.lastIndexOf(":")+1);
+        String minRem = timeRem.substring(timeRem.lastIndexOf(":")-2, timeRem.lastIndexOf(":"));
+        int timeRemInt = Integer.parseInt(timeRem)-1;
+        int minRemInt = Integer.parseInt(minRem);
+        if(timeRemInt == -1)
+        {
+            timeRemInt = 59;
+            minRemInt--;
+        }
+        setTimeRemaining((60*minRemInt+timeRemInt)*1000);
+    }
+
+
+    public void createSecondTimer()
+    {
+        ActionListener listener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Deduct a second from view
+                subtractSecondFromView();
+                // Deduct a second from model
+                Controller.subtractSecond();
+            }
+        };
+        secondTimer = new Timer(1000,listener);
+        secondTimer.setRepeats(true);
+    }
 	// TODO add action/listener methods to actually progress the game and all that
 }

@@ -5,7 +5,13 @@ import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.model.*;
 import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
 import ca.mcgill.ecse223.quoridor.model.Game.MoveMode;
+import ca.mcgill.ecse223.quoridor.view.QuoridorWindow;
 
+import javax.swing.*;
+
+import java.sql.Time;
+
+import static ca.mcgill.ecse223.quoridor.QuoridorApplication.*;
 
 
 public class Controller {
@@ -43,7 +49,8 @@ public class Controller {
    * @version 1.0
    */
   public static void setTotalThinkingTime() {
-}
+
+  }
   
   
   /**
@@ -54,6 +61,7 @@ public class Controller {
    * @version 1.0
    */
   public static void startClock() {
+
 }
   
   /**
@@ -78,17 +86,6 @@ public class Controller {
    */
   public static void provideNewUsername(String username) {
 }
-  
-  
-  /**
-   * @author Sam Perreault
-   * Sets the starting thinking time for the players. Time is accepted as minutes and seconds,
-   * and is converted to milliseconds.
-   * @param minute The number of minutes allowed to each player
-   * @param second The number of seconds allowed to each player
-   */
-  public static void  setPlayerThinkingTime(int minute, int second) {
-}
 
   /**
    * @author Sam Perreault
@@ -97,7 +94,56 @@ public class Controller {
    * the white player's thinking time.
    */
   public static void initializeBoard() {
+  	// white to move
+	  // white in spot top middle
+	  // black in spot bottom middle
+	  // white has walls in stock
+	  // black has walls in stock
+	  // white's clock starts
+	  // white's turn is shown
+	  Quoridor q = getQuoridor();
+	Board board = new Board(q);
+	Tile t;
+	for(int i=0;i<9;i++)
+		for(int j=0; j<9; j++)
+			t= new Tile(i,j,board);
+	PlayerPosition whitePlayerPosition = new PlayerPosition(q.getCurrentGame().getWhitePlayer(), board.getTile(4));
+	PlayerPosition blackPlayerPosition = new PlayerPosition(q.getCurrentGame().getWhitePlayer(), board.getTile(76));
+	GamePosition gp = new GamePosition(0,whitePlayerPosition,blackPlayerPosition
+			, q.getCurrentGame().getWhitePlayer(), q.getCurrentGame());
+	q.getCurrentGame().setCurrentPosition(gp);
+	for(int i=0;i<10;i++)
+	{
+		Wall a,b;
+		a = new Wall(i, q.getCurrentGame().getWhitePlayer());
+		b = new Wall(i+10, q.getCurrentGame().getBlackPlayer());
+	}
+	QuoridorWindow window = quoridorWindow;
+	window.createSecondTimer();
+	window.setCurrentPlayer(q.getCurrentGame().getWhitePlayer().getUser().getName());
 }
+
+	/**
+	 * @author Sam Perreault
+	 * Subtracts a second from the remaining time of the current player. If the remaining time becomes zero,
+	 * then the other player wins
+	 */
+	public static void subtractSecond()
+	{
+		Quoridor q = getQuoridor();
+		Player curPlayer = q.getCurrentGame().getCurrentPosition().getPlayerToMove();
+		long remaining = curPlayer.getRemainingTime().getTime();
+		remaining -= 1000L;
+		if(remaining == 0)
+		{
+			if(curPlayer.equals(q.getCurrentGame().getWhitePlayer()))
+				q.getCurrentGame().setGameStatus(GameStatus.BlackWon);
+			else
+				q.getCurrentGame().setGameStatus(GameStatus.WhiteWon);
+			return;
+		}
+		curPlayer.setRemainingTime(new Time(remaining));
+	}
 
   /**
    * @author Luke Barber
