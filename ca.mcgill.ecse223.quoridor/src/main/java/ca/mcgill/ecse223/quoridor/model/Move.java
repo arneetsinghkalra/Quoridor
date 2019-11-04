@@ -133,6 +133,8 @@ public abstract class Move
     }
     return wasSet;
   }
+  
+  
   /* Code from template association_SetOptionalOneToOptionalOne */
   public boolean setNextMove(Move aNewNextMove)
   {

@@ -1,23 +1,45 @@
 package ca.mcgill.ecse223.quoridor.view;
 
+import ca.mcgill.ecse223.quoridor.controller.Controller;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.filechooser.FileSystemView;
+
+import ca.mcgill.ecse223.quoridor.QuoridorApplication;
+
 
 import ca.mcgill.ecse223.quoridor.controller.Controller;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.awt.event.ActionEvent;
 
 public class QuoridorWindow extends JFrame {
 
-	private JPanel contentPane;
+	private static JPanel contentPane;
 	private JTextField player1Field;
 	private JTextField player2Field;
 	private JTextField minuteField;
 	private JTextField secondField;
+	private Timer secondTimer;
+	private JLabel turnLabel;
+	private JLabel timeRemLabel;
+	private static boolean confirms = true;
 
+    private static JFrame f;
+
+    //for the boards,tiles, and walls
+    private JButton[][] tiles = new JButton[9][9];
+    private JButton[][] wallCenters =  new JButton[8][8];
+    private Box[][] hWalls = new Box[9][9];
+    private Box[][] vWalls = new Box[9][9];
 	/**
 	 * Launch the application.
 	 */
@@ -105,10 +127,10 @@ public class QuoridorWindow extends JFrame {
 		
 		Component player1NamesStrut = Box.createHorizontalStrut(20);
 		player1HorBox.add(player1NamesStrut);
-		
-		player1Field = new JTextField();
-		player1HorBox.add(player1Field);
-		player1Field.setColumns(10);
+
+        player1Field = new JTextField();
+        player1HorBox.add(player1Field);
+        player1Field.setColumns(10);
 		
 		Component nameP1RightRigid = Box.createRigidArea(new Dimension(10, 10));
 		player1HorBox.add(nameP1RightRigid);
@@ -125,10 +147,10 @@ public class QuoridorWindow extends JFrame {
 		
 		Component horizontalStrut_1 = Box.createHorizontalStrut(20);
 		player2HorBox.add(horizontalStrut_1);
-		
-		player2Field = new JTextField();
-		player2HorBox.add(player2Field);
-		player2Field.setColumns(10);
+
+        player2Field = new JTextField();
+        player2HorBox.add(player2Field);
+        player2Field.setColumns(10);
 		
 		Component rigidArea_2 = Box.createRigidArea(new Dimension(10, 10));
 		player2HorBox.add(rigidArea_2);
@@ -157,164 +179,163 @@ public class QuoridorWindow extends JFrame {
 		secondField = new JTextField();
 		timefieldBox.add(secondField);
 		secondField.setColumns(2);
-		
-		
-		//Combo Boxes to list the user names that were previously used in a game
-		JComboBox existingUsernames1 = new JComboBox();
-		sl_setupPanel.putConstraint(SpringLayout.NORTH, existingUsernames1, 121, SpringLayout.NORTH, setupPanel);
-		sl_setupPanel.putConstraint(SpringLayout.WEST, existingUsernames1, 33, SpringLayout.EAST, player1NameBox);
-		sl_setupPanel.putConstraint(SpringLayout.SOUTH, existingUsernames1, 158, SpringLayout.NORTH, setupPanel);
-		sl_setupPanel.putConstraint(SpringLayout.EAST, existingUsernames1, 193, SpringLayout.EAST, player1NameBox);
-		existingUsernames1.setFont(new Font("Cooper Black", Font.PLAIN, 14));
-		existingUsernames1.setModel(new DefaultComboBoxModel(Controller.listExistingUsernames()));
-		setupPanel.add(existingUsernames1);
-		
-		
-		JButton startGameButton = new JButton("Start Game");
-		sl_setupPanel.putConstraint(SpringLayout.SOUTH, startGameButton, 0, SpringLayout.SOUTH, thinkingTimeBox);
-		sl_setupPanel.putConstraint(SpringLayout.EAST, startGameButton, 0, SpringLayout.EAST, existingUsernames1);
-		startGameButton.setFont(new Font("Cooper Black", Font.PLAIN, 20));
-		
-		
-		JComboBox existingUsernames2 = new JComboBox();
+
+        //Combo Boxes to list the user names that were previously used in a game
+        JComboBox existingUsernames1 = new JComboBox();
+        sl_setupPanel.putConstraint(SpringLayout.NORTH, existingUsernames1, 121, SpringLayout.NORTH, setupPanel);
+        sl_setupPanel.putConstraint(SpringLayout.WEST, existingUsernames1, 33, SpringLayout.EAST, player1NameBox);
+        sl_setupPanel.putConstraint(SpringLayout.SOUTH, existingUsernames1, 158, SpringLayout.NORTH, setupPanel);
+        sl_setupPanel.putConstraint(SpringLayout.EAST, existingUsernames1, 193, SpringLayout.EAST, player1NameBox);
+        existingUsernames1.setFont(new Font("Cooper Black", Font.PLAIN, 14));
+        existingUsernames1.setModel(new DefaultComboBoxModel(Controller.listExistingUsernames()));
+        setupPanel.add(existingUsernames1);
+
+
+        JButton startGameButton = new JButton("Start Game");
+        sl_setupPanel.putConstraint(SpringLayout.SOUTH, startGameButton, 0, SpringLayout.SOUTH, thinkingTimeBox);
+        sl_setupPanel.putConstraint(SpringLayout.EAST, startGameButton, 0, SpringLayout.EAST, existingUsernames1);
+        startGameButton.setFont(new Font("Cooper Black", Font.PLAIN, 20));
+
+
+        JComboBox existingUsernames2 = new JComboBox();
         sl_setupPanel.putConstraint(SpringLayout.NORTH, existingUsernames2, 150, SpringLayout.NORTH, setupPanel);
         sl_setupPanel.putConstraint(SpringLayout.WEST, existingUsernames2, -160, SpringLayout.EAST, existingUsernames1);
         sl_setupPanel.putConstraint(SpringLayout.SOUTH, existingUsernames2, -80, SpringLayout.NORTH, startGameButton);
         sl_setupPanel.putConstraint(SpringLayout.EAST, existingUsernames2, 0, SpringLayout.EAST, existingUsernames1);
         sl_setupPanel.putConstraint(SpringLayout.SOUTH, existingUsernames1, -6, SpringLayout.NORTH, existingUsernames2);
         existingUsernames2.setFont(new Font("Cooper Black", Font.PLAIN, 14));
-		existingUsernames2.setModel(new DefaultComboBoxModel(Controller.listExistingUsernames()));
-		setupPanel.add(existingUsernames2);
-		
-		
-		startGameButton.addActionListener(new ActionListener() {
-			
-			/**
-			 * <p> Start new game button <p>
-			 * @author Ali Tapan
-			 */
-			public void actionPerformed(ActionEvent e) {
-				CardLayout layout = (CardLayout) (contentPane.getLayout());
-				
-				String time ="";
-				String seconds = "";
-				String minutes = "";
-	
-				//Checks trivial inputs
-				if((player1Field.getText().length() == 0 && existingUsernames1.getSelectedItem().equals("or select existing username..."))
-					|| player2Field.getText().length() == 0 && existingUsernames2.getSelectedItem().equals("or select existing username..."))
-				{
-					JOptionPane.showMessageDialog(null, "Please provide a username!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
-					return;
-				}
-				
-				if(player1Field.getText().equals(player2Field.getText()))
-				{
-					JOptionPane.showMessageDialog(null, "Player 1 user name and Player 2 user name cannot be the same!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
-					return;
-				}
-				
-				if(!existingUsernames1.getSelectedItem().equals("or select existing username...") && !existingUsernames2.getSelectedItem().equals("or select existing username..."))
-				{
-					if(existingUsernames1.getSelectedItem().equals(existingUsernames2.getSelectedItem()))
-					{
-						JOptionPane.showMessageDialog(null, "Player 1 user name and Player 2 user name cannot be the same!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
-						return;
-					}
-				}
-				if(!minuteField.getText().matches("[0-9]*") || !secondField.getText().matches("[0-9]*"))
-				{
-					JOptionPane.showMessageDialog(null, "Please provide integers for user time!", "Invalid Remaining Time", JOptionPane.WARNING_MESSAGE);
-					return;
-				}
+        existingUsernames2.setModel(new DefaultComboBoxModel(Controller.listExistingUsernames()));
+        setupPanel.add(existingUsernames2);
 
-				if(minuteField.getText().length() == 0 && secondField.getText().length() == 0) {
-					JOptionPane.showMessageDialog(null, "Please provide user time!", "Invalid Remaining Time", JOptionPane.WARNING_MESSAGE);
-					return;
-				}
-				
-				if(minuteField.getText().length() > 2 || secondField.getText().length() > 2)
-				{
-					JOptionPane.showMessageDialog(null, "Please provide 2 digits or less for remaining time!", "Invalid Remaining Time", JOptionPane.WARNING_MESSAGE);
-					return;
-				}
 
-				
-				//Provide layout
-				layout.show(contentPane, "activeGamePanel");
-				
-				//Checks if the user has entered a valid user name
-				if(player1Field.getText().length() > 0 && existingUsernames1.getSelectedItem().equals("or select existing username..."))
-				{
-					if(!Controller.provideNewUsername(player1Field.getText(), Controller.initWhitePlayer("user1")))
-					{
-						JOptionPane.showMessageDialog(null, "This user name already exists!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
-						return;
-					}
-				}
-				if(player2Field.getText().length() > 0 && existingUsernames2.getSelectedItem().equals("or select existing username..."))
-				{
-					if(!Controller.provideNewUsername(player2Field.getText(), Controller.initBlackPlayer("user2")))
-					{
-						JOptionPane.showMessageDialog(null, "This user name already exists!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
-						return;
-					}
-				}
-				
-				//Checks if the player enters an input and also selects an existing user name, if true will show a dialog box
-				if(player1Field.getText().length() > 0 && !existingUsernames1.getSelectedItem().equals("or select existing username..."))
-				{
-					JOptionPane.showMessageDialog(null, "Cannot enter new user name and select an existing username at the same time!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
-				}
-				
-				if(player2Field.getText().length() > 0 && existingUsernames2.getSelectedItem().equals("or select existing username..."))
-				{
-					JOptionPane.showMessageDialog(null, "Cannot enter new user name and select an existing username at the same time!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
-				}
-				
-				
-				//Checks if the player selected an existing user name
-				if(!existingUsernames1.getSelectedItem().equals("or select existing username..."))
-				{
-					Controller.selectExistingUsername(existingUsernames1.getSelectedItem().toString(), Controller.initWhitePlayer("user1"));
-				}
-				
-				//Checks if the player selected an existing user name
-				if(!existingUsernames2.getSelectedItem().equals("or select existing username..."))
-				{
-					Controller.selectExistingUsername(existingUsernames2.getSelectedItem().toString(), Controller.initBlackPlayer("user2"));
-				}
-				
-				
-				Controller.startNewGame();
-				//Checks if the user has selected
-				if(minuteField.getText().length() < 2)
-				{
-					minutes =  minutes + "0" + minuteField.getText();
-				}
-				else
-				{
-					minutes = minuteField.getText();
-				}
-				if(secondField.getText().length() < 2)
-				{
-					seconds = seconds + "0" + secondField.getText();
-				}
-				else
-				{
-					seconds = secondField.getText();
-				}
-				
-				time = "00:" + minutes + ":" + seconds;
-				
-				Controller.setTotalThinkingTime(time);
-				Controller.startClock();
-				
-			}
-		});
-		
-		
-		setupPanel.add(startGameButton);
+        startGameButton.addActionListener(new ActionListener() {
+
+            /**
+             * <p> Start new game button <p>
+             * @author Ali Tapan
+             */
+            public void actionPerformed(ActionEvent e) {
+                CardLayout layout = (CardLayout) (contentPane.getLayout());
+
+                String time ="";
+                String seconds = "";
+                String minutes = "";
+
+                //Checks trivial inputs
+                if((player1Field.getText().length() == 0 && existingUsernames1.getSelectedItem().equals("or select existing username..."))
+                        || player2Field.getText().length() == 0 && existingUsernames2.getSelectedItem().equals("or select existing username..."))
+                {
+                    JOptionPane.showMessageDialog(null, "Please provide a username!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                if(player1Field.getText().equals(player2Field.getText()))
+                {
+                    JOptionPane.showMessageDialog(null, "Player 1 user name and Player 2 user name cannot be the same!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                if(!existingUsernames1.getSelectedItem().equals("or select existing username...") && !existingUsernames2.getSelectedItem().equals("or select existing username..."))
+                {
+                    if(existingUsernames1.getSelectedItem().equals(existingUsernames2.getSelectedItem()))
+                    {
+                        JOptionPane.showMessageDialog(null, "Player 1 user name and Player 2 user name cannot be the same!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                }
+                if(!minuteField.getText().matches("[0-9]*") || !secondField.getText().matches("[0-9]*"))
+                {
+                    JOptionPane.showMessageDialog(null, "Please provide integers for user time!", "Invalid Remaining Time", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                if(minuteField.getText().length() == 0 && secondField.getText().length() == 0) {
+                    JOptionPane.showMessageDialog(null, "Please provide user time!", "Invalid Remaining Time", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                if(minuteField.getText().length() > 2 || secondField.getText().length() > 2)
+                {
+                    JOptionPane.showMessageDialog(null, "Please provide 2 digits or less for remaining time!", "Invalid Remaining Time", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+
+                //Provide layout
+                layout.show(contentPane, "activeGamePanel");
+
+                //Checks if the user has entered a valid user name
+                if(player1Field.getText().length() > 0 && existingUsernames1.getSelectedItem().equals("or select existing username..."))
+                {
+                    if(!Controller.provideNewUsername(player1Field.getText(), Controller.initWhitePlayer("user1")))
+                    {
+                        JOptionPane.showMessageDialog(null, "This user name already exists!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                }
+                if(player2Field.getText().length() > 0 && existingUsernames2.getSelectedItem().equals("or select existing username..."))
+                {
+                    if(!Controller.provideNewUsername(player2Field.getText(), Controller.initBlackPlayer("user2")))
+                    {
+                        JOptionPane.showMessageDialog(null, "This user name already exists!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                }
+
+                //Checks if the player enters an input and also selects an existing user name, if true will show a dialog box
+                if(player1Field.getText().length() > 0 && !existingUsernames1.getSelectedItem().equals("or select existing username..."))
+                {
+                    JOptionPane.showMessageDialog(null, "Cannot enter new user name and select an existing username at the same time!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
+                }
+
+                if(player2Field.getText().length() > 0 && existingUsernames2.getSelectedItem().equals("or select existing username..."))
+                {
+                    JOptionPane.showMessageDialog(null, "Cannot enter new user name and select an existing username at the same time!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
+                }
+
+
+                //Checks if the player selected an existing user name
+                if(!existingUsernames1.getSelectedItem().equals("or select existing username..."))
+                {
+                    Controller.selectExistingUsername(existingUsernames1.getSelectedItem().toString(), Controller.initWhitePlayer("user1"));
+                }
+
+                //Checks if the player selected an existing user name
+                if(!existingUsernames2.getSelectedItem().equals("or select existing username..."))
+                {
+                    Controller.selectExistingUsername(existingUsernames2.getSelectedItem().toString(), Controller.initBlackPlayer("user2"));
+                }
+
+
+                Controller.startNewGame();
+                //Checks if the user has selected
+                if(minuteField.getText().length() < 2)
+                {
+                    minutes =  minutes + "0" + minuteField.getText();
+                }
+                else
+                {
+                    minutes = minuteField.getText();
+                }
+                if(secondField.getText().length() < 2)
+                {
+                    seconds = seconds + "0" + secondField.getText();
+                }
+                else
+                {
+                    seconds = secondField.getText();
+                }
+
+                time = "00:" + minutes + ":" + seconds;
+
+                Controller.setTotalThinkingTime(time);
+                Controller.startClock();
+
+            }
+        });
+
+
+        setupPanel.add(startGameButton);
 		
 		JPanel activeGamePanel = new JPanel();
 		contentPane.add(activeGamePanel, "activeGamePanel");
@@ -342,5 +363,131 @@ public class QuoridorWindow extends JFrame {
 		gameBoardPanel.setLayout(new GridLayout(9, 9, 5, 5));
 	}
 
-	// TODO add action/listener methods to actually progress the game and all that
+                if (i < 8) {
+                    hWalls[i][j] = Box.createHorizontalBox();
+                    hWalls[i][j].setOpaque(false);
+                    hWalls[i][j].setBackground(Color.black);
+                    c = new GridBagConstraints();
+                    c.gridx = j * 2;
+                    c.gridy = i * 2 + 1;
+                    c.weightx = 1;
+                    c.weighty = 1;
+                    c.ipadx = 10;
+                    c.ipady = -5;
+                    c.fill = GridBagConstraints.BOTH;
+                    gameBoardPanel.add(hWalls[i][j], c);
+                }
+
+                if (i < 8 && j < 8) {
+                    wallCenters[i][j] = new JButton();
+                    wallCenters[i][j].setBackground(Color.lightGray);
+                    c = new GridBagConstraints();
+                    c.gridx = j * 2 + 1;
+                    c.gridy = i * 2 + 1;
+                    c.weightx = 1;
+                    c.weighty = 1;
+                    c.ipadx = -5;
+                    c.ipady = -5;
+                    c.fill = GridBagConstraints.BOTH;
+                    //TODO: set click event for walls here--eg.dropwall
+                    gameBoardPanel.add(wallCenters[i][j], c);
+                }
+
+            }
+
+
+        }
+        //create a vertical wall at (3,3)
+        //by setting opaque of box and color of the wall center, we can create walls
+        //vWalls[2][2].setOpaque(true);
+        //wallCenters[2][2].setBackground(Color.black);
+        //vWalls[3][2].setOpaque(true);
+
+        Box horizontalBox = Box.createHorizontalBox();
+        titleTimeBox.add(horizontalBox);
+
+        turnLabel = new JLabel("It is");
+        turnLabel.setHorizontalTextPosition(SwingConstants.LEFT);
+        turnLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        turnLabel.setFont(new Font("Cooper Black", Font.PLAIN, 14));
+        horizontalBox.add(turnLabel);
+
+        Component horizontalStrut = Box.createHorizontalStrut(100);
+        horizontalBox.add(horizontalStrut);
+
+        timeRemLabel = new JLabel("Time remaining: 99:99");
+        timeRemLabel.setFont(new Font("Cooper Black", Font.PLAIN, 14));
+        timeRemLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        horizontalBox.add(timeRemLabel);
+
+    }
+
+    public String getTurnLabel()
+    {
+        return turnLabel.getText();
+    }
+
+    public boolean getIsTimerActive() {
+        return secondTimer.isRunning();
+    }
+    public void setTimeRemaining(int timeRemaining)
+    {
+        timeRemaining /= 1000;
+        int minutes, seconds;
+        minutes = timeRemaining/60;
+        seconds = timeRemaining % 60;
+        // Change text of label to new time
+        String min,sec;
+        if(minutes/10 == 0)
+            min="0"+minutes;
+        else
+            min =""+ minutes;
+        if(seconds/10 == 0)
+            sec = "0"+seconds;
+        else
+            sec = ""+ seconds;
+        String tr = "Time remaining: "+minutes+":"+seconds;
+        timeRemLabel.setText(tr);
+    }
+
+    public void setCurrentPlayer(String name)
+    {
+        turnLabel.setText(name+"'s turn");
+    }
+
+    public void subtractSecondFromView()
+    {
+        // pull text from label
+        // get last 2 characters
+        // change one by one
+        //set new text
+        String timeRem = timeRemLabel.getText();
+        timeRem = timeRem.substring(timeRem.lastIndexOf(":")+1);
+        String minRem = timeRem.substring(timeRem.lastIndexOf(":")-2, timeRem.lastIndexOf(":"));
+        int timeRemInt = Integer.parseInt(timeRem)-1;
+        int minRemInt = Integer.parseInt(minRem);
+        if(timeRemInt == -1)
+        {
+            timeRemInt = 59;
+            minRemInt--;
+        }
+        setTimeRemaining((60*minRemInt+timeRemInt)*1000);
+    }
+
+
+    public void createSecondTimer()
+    {
+        ActionListener listener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Deduct a second from view
+                subtractSecondFromView();
+                // Deduct a second from model
+                Controller.subtractSecond();
+            }
+        };
+        secondTimer = new Timer(1000,listener);
+        secondTimer.setRepeats(true);
+        secondTimer.start();
+    }
 }
