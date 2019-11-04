@@ -1,6 +1,7 @@
 package ca.mcgill.ecse223.quoridor.features;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
@@ -156,25 +157,16 @@ public class CucumberStepDefinitions {
 	public void iHaveAWallInMyHandOverTheBoard() throws Throwable {
 		// GUI-related feature -- TODO for later
 		// New game hard coded parameters for 5-8
+		//assertTrue(Controller.wallSelected());
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
 		Player currentPlayer = currentGame.getCurrentPosition().getPlayerToMove();
 		Board currentBoard = quoridor.getBoard();
-
 		Tile targetTile = currentBoard.getTile(2);
-
-		Wall placedWall = currentPlayer.getWall(1);
-
+		Wall placedWall = quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock(1);
 		currentGame.getCurrentPosition().removeWhiteWallsInStock(placedWall);
-
-		// Wall placedWall = currentGame.getCurrentPosition().getWhiteWallsInStock(1);
-
-		Direction direction = Direction.Horizontal;
-
-		// try this for now
-
+		Direction direction = null;
 		WallMove wallMoveCandidate = new WallMove(1, 1, currentPlayer, targetTile, currentGame, direction, placedWall);
-
 		currentGame.setWallMoveCandidate(wallMoveCandidate);
 	}
 
@@ -545,6 +537,7 @@ public class CucumberStepDefinitions {
 
 	/** @author Luke Barber and Arneet Kalra */
 
+	/** @author Luke Barber and Arneet Kalra */
 	@Given("A wall move candidate exists with {string} at position \\({int}, {int})")
 	public void aWallMoveCandidateExistsWithAtPosition(String dir, int row, int column) {
 		// Shortcut variables
@@ -552,16 +545,10 @@ public class CucumberStepDefinitions {
 		Game currentGame = quoridor.getCurrentGame();
 		Board currentBoard = quoridor.getBoard();
 		// Turn input string into Direction type
-		Direction direction = this.stringToDirection(dir);
-
-		// Turn input rows and columns to target tile
-		Tile aNewTargetTile = currentBoard.getTile((row - 1) * 9 + (column - 1));
-
-		// Get the current wall move candidate
-		WallMove wallMoveCandidate = currentGame.getWallMoveCandidate();
-
-		wallMoveCandidate.setWallDirection(direction);
-		wallMoveCandidate.setTargetTile(aNewTargetTile);
+		Direction direction = Controller.stringToDirection(dir);
+		Tile targetTile = currentBoard.getTile((row - 1) * 9 + (column - 1));
+		currentGame.getWallMoveCandidate().setWallDirection(direction);
+		currentGame.getWallMoveCandidate().setTargetTile(targetTile);
 	}
 
 	/** @author Luke Barber */
@@ -934,7 +921,7 @@ public class CucumberStepDefinitions {
 	@When("I initiate to load a saved game {string}")
 	public void iInitiateToLoadASavedGame(String fileName) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		quoridor = Controller.loadPosition(quoridor, fileName);
+		quoridor = Controller.loadPosition(fileName);
 	}
 
 	/**
@@ -947,7 +934,7 @@ public class CucumberStepDefinitions {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
 		GamePosition gamePosition = currentGame.getCurrentPosition();
-		validationResult = Controller.validatePosition(gamePosition);
+		validationResult = Controller.validatePosition();
 	}
 
 	/**
@@ -1058,8 +1045,15 @@ public class CucumberStepDefinitions {
 	public void theUserInitiatesToSaveTheGameWithName(String fileName) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		GamePosition gamePosition = quoridor.getCurrentGame().getCurrentPosition();
-		Controller.savePosition(fileName, gamePosition);
+		boolean confirms=false;
+		try {
+			Controller.savePosition(fileName, gamePosition, confirms);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
+
 
 	/**
 	 * @param fileName
@@ -1101,7 +1095,7 @@ public class CucumberStepDefinitions {
 	public void fileWithNameShallBeUpdatedInTheFileSystem(String fileName) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Quoridor quoridor1 = new Quoridor();
-		quoridor1 = Controller.loadPosition(quoridor1, fileName);
+		quoridor1 = Controller.loadPosition(fileName);
 		int quoridorBlackPlayerRow = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile()
 				.getRow();
 		int quoridorBlackPlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile()
@@ -1131,7 +1125,7 @@ public class CucumberStepDefinitions {
 	public void fileWithNameShallNotBeChangedInTheFileSystem(String fileName) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Quoridor quoridor1 = new Quoridor();
-		quoridor1 = Controller.loadPosition(quoridor1, fileName);
+		quoridor1 = Controller.loadPosition(fileName);
 		int quoridorBlackPlayerRow = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile()
 				.getRow();
 		int quoridorBlackPlayerColumn = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile()
@@ -1182,7 +1176,7 @@ public class CucumberStepDefinitions {
 	@When("validation of the position is initiated")
 	public void validationOfPositionIsInitialted() {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		validationResult = Controller.validatePosition(quoridor.getCurrentGame().getCurrentPosition());
+		validationResult = Controller.validatePosition();
 	}
 
 	/**
