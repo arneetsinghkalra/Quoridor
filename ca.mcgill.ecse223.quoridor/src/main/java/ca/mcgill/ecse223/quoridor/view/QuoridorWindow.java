@@ -53,9 +53,9 @@ public class QuoridorWindow extends JFrame {
 	{
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 600, 450);
+		setBounds(100, 90, 600, 450);
 		contentPane = new JPanel();	
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));	
+		contentPane.setBorder(new EmptyBorder(1, 1, 1, 1));	
 		setContentPane(contentPane);	
 		contentPane.setLayout(new CardLayout(0, 0));
 	  
@@ -77,7 +77,7 @@ public class QuoridorWindow extends JFrame {
 		});
 	
 		sl_titleScreenPanel.putConstraint(SpringLayout.NORTH, newGameButton, 131, SpringLayout.NORTH, titleScreenPanel);
-		sl_titleScreenPanel.putConstraint(SpringLayout.WEST, newGameButton, 74, SpringLayout.WEST, titleScreenPanel);
+		sl_titleScreenPanel.putConstraint(SpringLayout.WEST, newGameButton, 90, SpringLayout.WEST, titleScreenPanel);
 		newGameButton.setFont(new Font("Cooper Black", Font.PLAIN, 20));
 		titleScreenPanel.add(newGameButton);
 		
@@ -115,12 +115,12 @@ public class QuoridorWindow extends JFrame {
 		titleScreenPanel.add(loadGameButton);
 	
 	
-		JLabel titleLabel = new JLabel("QUORIDOR");
+		/*JLabel titleLabel = new JLabel("QUORIDOR");
 		sl_titleScreenPanel.putConstraint(SpringLayout.EAST, loadGameButton, -57, SpringLayout.WEST, titleLabel);
 		sl_titleScreenPanel.putConstraint(SpringLayout.SOUTH, titleLabel, -187, SpringLayout.SOUTH, titleScreenPanel);
 		sl_titleScreenPanel.putConstraint(SpringLayout.EAST, titleLabel, -63, SpringLayout.EAST, titleScreenPanel);
 		titleLabel.setFont(new Font("Cooper Black", Font.PLAIN, 40));
-		titleScreenPanel.add(titleLabel);
+		titleScreenPanel.add(titleLabel);*/
 	
 		JPanel activeGamePanel = new JPanel();
 		contentPane.add(activeGamePanel, "activeGamePanel");
@@ -363,7 +363,8 @@ public class QuoridorWindow extends JFrame {
 		activeGamePanel.add(gameBoardPanel, BorderLayout.CENTER);	
 		gameBoardPanel.setLayout(new GridBagLayout());
 		
-		JPanel setupPanel = new JPanel();
+		ImagePanel setupPanel = new ImagePanel(new ImageIcon("src/main/resources/setup.png").getImage());
+		//JPanel setupPanel = new JPanel();
 		contentPane.add(setupPanel, "setupPanel");
 		SpringLayout sl_setupPanel = new SpringLayout();
 		setupPanel.setLayout(sl_setupPanel);
@@ -445,9 +446,9 @@ public class QuoridorWindow extends JFrame {
 		
 		JComboBox existingUsernames1 = new JComboBox();
 		sl_setupPanel.putConstraint(SpringLayout.NORTH, existingUsernames1, 0, SpringLayout.NORTH, player1NameBox);
-		sl_setupPanel.putConstraint(SpringLayout.WEST, existingUsernames1, 29, SpringLayout.EAST, player1NameBox);
+		sl_setupPanel.putConstraint(SpringLayout.WEST, existingUsernames1, 10, SpringLayout.EAST, player1NameBox);
 		sl_setupPanel.putConstraint(SpringLayout.SOUTH, existingUsernames1, 144, SpringLayout.NORTH, setupPanel);
-		sl_setupPanel.putConstraint(SpringLayout.EAST, existingUsernames1, 189, SpringLayout.EAST, player1NameBox);
+		sl_setupPanel.putConstraint(SpringLayout.EAST, existingUsernames1, 200, SpringLayout.EAST, player1NameBox);
 		existingUsernames1.setFont(new Font("Cooper Black", Font.PLAIN, 14));
 		existingUsernames1.setModel(new DefaultComboBoxModel(Controller.listExistingUsernames()));
 		setupPanel.add(existingUsernames1);
