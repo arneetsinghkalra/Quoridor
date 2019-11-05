@@ -286,14 +286,16 @@ public class Controller {
 	
 		// Update player info
 		if (player.equals(currentGame.getWhitePlayer())) {
-			currentGamePosition.addWhiteWallsOnBoard(wallMoveCandidate.getWallPlaced());// Also increments number of																		// walls on board
-			currentGamePosition.setPlayerToMove(currentGame.getBlackPlayer());// Update player to black player)
+			currentGamePosition.addWhiteWallsOnBoard(wallMoveCandidate.getWallPlaced());// Also increments number of		// walls on board
+			switchCurrentPlayer(); //Switches the current player
+	//		currentGamePosition.setPlayerToMove(currentGame.getBlackPlayer());// Update player to black player)
 			currentGame.setWallMoveCandidate(null);// Refreshes wall move candidate
 			return wallMoveCandidate.getWallPlaced();
 
 		} else if (player.equals(currentGame.getBlackPlayer())) {
 			currentGamePosition.addBlackWallsOnBoard(wallMoveCandidate.getWallPlaced());
-			currentGamePosition.setPlayerToMove(currentGame.getWhitePlayer()); // Update player to white player
+			switchCurrentPlayer(); //Switches the current player
+			//currentGamePosition.setPlayerToMove(currentGame.getWhitePlayer()); // Update player to white player
 			currentGame.setWallMoveCandidate(null);// Refreshes wall move candidate
 			return wallMoveCandidate.getWallPlaced();
 		} else {
@@ -763,7 +765,23 @@ public class Controller {
 	 * @author William Wang
 	 * @param game the current quoridor game
 	 */
-	public static void switchCurrentPlayer(Game game) {
+	public static void switchCurrentPlayer() {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game game = quoridor.getCurrentGame();
+		game.setMoveMode(Game.MoveMode.PlayerMove);
+		GamePosition currentPosition = quoridor.getCurrentGame().getCurrentPosition();
+		List<GamePosition> positions = quoridor.getCurrentGame().getPositions();
+		GamePosition newPosition;
+		PlayerPosition player1Position = new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(), currentPosition.getWhitePosition().getTile());
+		PlayerPosition player2Position = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), currentPosition.getBlackPosition().getTile());
+		if(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsBlack()==null) {
+			newPosition = new GamePosition(currentPosition.getId()+1, player1Position, player2Position, game.getBlackPlayer(), game);
+		}
+		else {
+			newPosition = new GamePosition(currentPosition.getId()+1, player1Position, player2Position, game.getWhitePlayer(), game);	
+		}
+		game.addPosition(currentPosition);
+		game.setCurrentPosition(newPosition);
 	}
 	
 	//Helper Methods ----------------------------

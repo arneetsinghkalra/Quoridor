@@ -1286,7 +1286,7 @@ public class CucumberStepDefinitions {
 	@When("Player {string} completes his move")
 	public void playerCompletesMove(String player) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		Controller.switchCurrentPlayer(quoridor.getCurrentGame());
+		Controller.switchCurrentPlayer();
 	}
 
 	/**

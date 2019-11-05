@@ -836,9 +836,10 @@ public class QuoridorWindow extends JFrame {
 
 								vWalls[newI + 1][newJ].setOpaque(true);
 							}
-							
-							else { //No wall move candidate exists
-								JOptionPane.showMessageDialog(null, "Grab a Wall first!", "", JOptionPane.WARNING_MESSAGE);
+
+							else { // No wall move candidate exists
+								JOptionPane.showMessageDialog(null, "Grab a Wall first!", "",
+										JOptionPane.WARNING_MESSAGE);
 							}
 
 						}
