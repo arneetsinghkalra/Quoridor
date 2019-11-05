@@ -21,6 +21,23 @@ import ca.mcgill.ecse223.quoridor.view.QuoridorWindow;
 
 public class Controller {
 	
+	// Global variables to make life easier
+
+			// Gets the Current game
+			static Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
+			// Gets the current wall move candidate in play
+			static WallMove currentWallMoveCandidate = currentGame.getWallMoveCandidate();
+			// Gets current Game position
+			static GamePosition currentGamePosition = currentGame.getCurrentPosition();
+			// Gets current player to move
+			static Player currentPlayer = currentGame.getCurrentPosition().getPlayerToMove();
+			// Gets Current board
+			static Board currentBoard = QuoridorApplication.getQuoridor().getBoard();
+			// Gets move number
+			static int currentMoveNumber = currentGame.numberOfMoves();
+			// Gets round number
+			static int currentRoundNumber = (currentGame.numberOfMoves() + 1) / 2; // Ex: move 5 and 6 are round 3
+	
   /**
    * <p> Start New Game <p>
    * <p> Initialize a new Game object.
@@ -230,20 +247,86 @@ public class Controller {
 	}
 
 	/**
-	 * @author Luke Barber Grabs a given wall and holds it so that it is ready for
-	 *         use.
-	 * @param wall The wall that will be grabbed
-	 */
-	public static void grabWall(Wall wall) {
+	   * @author Luke Barber
+	   * Returns a boolean on whether a wall is selected in the stock
+	   */
+	  public static boolean wallSelected() {
+		  boolean wallSelected = false;
+		  if (QuoridorWindow.stockButtonSelected()) {
+			wallSelected = true;
+		  }
+		  return wallSelected;
+	  }
+	  /**
+	   * @author Luke Barber
+	   * Checks the stock of the playerToMove and calls the notify method in the view if the player's stock is 0
+	   */
+	  public static void notifyNoMoreWalls() {
+		  List<Wall> stock = null;
+		  if(currentPlayer.equals(currentGame.getWhitePlayer())) {
+				stock = currentGame.getCurrentPosition().getWhiteWallsInStock();
+		  }
+		  else if(currentPlayer.equals(currentGame.getBlackPlayer())) {
+				stock = currentGame.getCurrentPosition().getBlackWallsInStock();
+		  }
+		  
+		  if (stock.size()==0) {
+			  QuoridorWindow.warningNoMoreWalls();
+		  }
+	  }
+	  /**
+	   * @author Luke Barber
+	   * Grabs a given wall and holds it so that it is ready for use. 
+	   * @param wall The wall that will be grabbed
+	   */
+	  	public static boolean grabWall(Wall wall) {
+	  		boolean grabbed = false;
+	  		Player player;
+	  		if(currentPlayer.equals(currentGame.getWhitePlayer())) {
+	  			player = currentGame.getWhitePlayer();
+			  	currentGame.getCurrentPosition().removeWhiteWallsInStock(wall);
+	  		}
+	  		else if(currentPlayer.equals(currentGame.getBlackPlayer())) {
+	  			player = currentGame.getBlackPlayer();
+				currentGame.getCurrentPosition().removeBlackWallsInStock(wall);
+	  		}
+	  		else {
+	  			return grabbed;
+	  		}
+	  		int initialRow = 1;
+	  		int initialColumn = 1;
+	  		Direction direction = Direction.Horizontal;
+	  		Tile tile = currentBoard.getTile((initialRow - 1) * 9 + (initialColumn - 1));
+			WallMove wallMoveCandidate = new WallMove(1, 1, player, tile, currentGame, direction, wall);
+			currentGame.setWallMoveCandidate(wallMoveCandidate);
+			wall.setMove(wallMoveCandidate);
+	  		grabbed = true;
+		 	return grabbed;
 	}
-	// TODO Auto-generated method stub
 
-	/**
-	 * @author Luke Barber Rotates a given wall that is on the board.
-	 * @param wall The wall that will be rotated
-	 */
-	public static void rotateWall(Wall wall) {
-	}
+		
+		/**
+	   * @author Luke Barber
+	   * Rotates a given wall that is on the board. 
+	   * @param wall The wall to be rotated
+	   */
+		public static boolean rotateWall(Wall wall) {
+			boolean rotated = false; //Boolean value signifying whether the wall has been rotated or not
+			WallMove currentWallMove = wall.getMove(); //The wallMove associated with the given wall
+			if(currentWallMove.getWallDirection().equals(Direction.Horizontal)) {
+				currentWallMove.setWallDirection(Direction.Vertical);
+			}
+			else if (currentWallMove.getWallDirection().equals(Direction.Vertical)) {
+				currentWallMove.setWallDirection(Direction.Horizontal);
+			}
+			else {
+				return rotated;
+			}
+			wall.setMove(currentWallMove);
+			QuoridorWindow.rotateWallDirection(wall);
+			rotated = true;
+			return rotated;
+		}
 
 	/**
 	 * Part of Feature 7: Move Wall

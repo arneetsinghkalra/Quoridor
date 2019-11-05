@@ -1,6 +1,7 @@
 package ca.mcgill.ecse223.quoridor.view;
 
 import ca.mcgill.ecse223.quoridor.controller.Controller;
+import ca.mcgill.ecse223.quoridor.model.Wall;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -661,4 +662,20 @@ public class QuoridorWindow extends JFrame {
         secondTimer.setRepeats(true);
         secondTimer.start();
     }
+    
+	/** @author Luke Barber */
+	public static void warningNoMoreWalls() {
+		JOptionPane.showMessageDialog(null, "No More Walls Available in Stock!", "", JOptionPane.WARNING_MESSAGE);
+	}
+
+	/** @author Luke Barber */
+	public static void rotateWallDirection(Wall wall) {
+		// TODO Auto-generated method stub
+		
+	}
+	/** @author Luke Barber */
+	public static boolean stockButtonSelected() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
