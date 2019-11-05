@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -20,23 +21,6 @@ import ca.mcgill.ecse223.quoridor.view.QuoridorWindow;
 
 
 public class Controller {
-	
-	// Global variables to make life easier
-
-			// Gets the Current game
-			static Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
-			// Gets the current wall move candidate in play
-			static WallMove currentWallMoveCandidate = currentGame.getWallMoveCandidate();
-			// Gets current Game position
-			static GamePosition currentGamePosition = currentGame.getCurrentPosition();
-			// Gets current player to move
-			static Player currentPlayer = currentGame.getCurrentPosition().getPlayerToMove();
-			// Gets Current board
-			static Board currentBoard = QuoridorApplication.getQuoridor().getBoard();
-			// Gets move number
-			static int currentMoveNumber = currentGame.numberOfMoves();
-			// Gets round number
-			static int currentRoundNumber = (currentGame.numberOfMoves() + 1) / 2; // Ex: move 5 and 6 are round 3
 	
   /**
    * <p> Start New Game <p>
@@ -99,6 +83,7 @@ public class Controller {
 	  
 			  try {
 				  remaining = Time.valueOf(time);
+				  remaining = new Time(remaining.getTime()-5*1000*3600);
 			  }catch (IllegalArgumentException e) {
 				 error=e.getMessage(); 
 			  }
@@ -166,13 +151,14 @@ public class Controller {
   public static String[] listExistingUsernames()
   {
 	  Quoridor quoridor = QuoridorApplication.getQuoridor();
-	  String[] usernames = new String[quoridor.getUsers().size() + 1];
-	  usernames[0] = "or select existing username...";
-	  for(int i = 1; i < usernames.length ; i++)
+	  List<String> list = new ArrayList<String>();
+	  
+	  for(User u: quoridor.getUsers())
 	  {
-		  usernames[i] = quoridor.getUser(i).getName();
+		  list.add(u.getName());
 	  }
-	  return usernames;
+	  list.add(0, "or select existing username...");
+	  return list.toArray(new String[list.size()]);
   }
   
   /**
@@ -219,7 +205,7 @@ public class Controller {
 		a = new Wall(i, q.getCurrentGame().getWhitePlayer());
 		b = new Wall(i+10, q.getCurrentGame().getBlackPlayer());
 	}
-	QuoridorWindow window = new QuoridorWindow();
+	QuoridorWindow window =  QuoridorApplication.quoridorWindow;
 	window.createSecondTimer();
 	window.setCurrentPlayer(q.getCurrentGame().getWhitePlayer().getUser().getName());
 }
@@ -245,8 +231,22 @@ public class Controller {
 		}
 		curPlayer.setRemainingTime(new Time(remaining));
 	}
+	// Global variables to make life easier
 
-	/**
+			// Gets the Current game
+			static Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
+			// Gets the current wall move candidate in play
+			static WallMove currentWallMoveCandidate = currentGame.getWallMoveCandidate();
+			// Gets current Game position
+			static GamePosition currentGamePosition = currentGame.getCurrentPosition();
+			// Gets current player to move
+			// Gets Current board
+			static Board currentBoard = QuoridorApplication.getQuoridor().getBoard();
+			// Gets move number
+			static int currentMoveNumber = currentGame.numberOfMoves();
+			// Gets round number
+			static int currentRoundNumber = (currentGame.numberOfMoves() + 1) / 2; // Ex: move 5 and 6 are round 3
+	  /**
 	   * @author Luke Barber
 	   * Returns a boolean on whether a wall is selected in the stock
 	   */
@@ -263,6 +263,8 @@ public class Controller {
 	   */
 	  public static void notifyNoMoreWalls() {
 		  List<Wall> stock = null;
+		  Quoridor quoridor =  QuoridorApplication.getQuoridor();
+		  Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
 		  if(currentPlayer.equals(currentGame.getWhitePlayer())) {
 				stock = currentGame.getCurrentPosition().getWhiteWallsInStock();
 		  }
@@ -280,7 +282,9 @@ public class Controller {
 	   * @param wall The wall that will be grabbed
 	   */
 	  	public static boolean grabWall(Wall wall) {
+	  		Quoridor quoridor =  QuoridorApplication.getQuoridor();
 	  		boolean grabbed = false;
+	  		Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
 	  		Player player;
 	  		if(currentPlayer.equals(currentGame.getWhitePlayer())) {
 	  			player = currentGame.getWhitePlayer();
@@ -298,7 +302,7 @@ public class Controller {
 	  		Direction direction = Direction.Horizontal;
 	  		Tile tile = currentBoard.getTile((initialRow - 1) * 9 + (initialColumn - 1));
 			WallMove wallMoveCandidate = new WallMove(1, 1, player, tile, currentGame, direction, wall);
-			currentGame.setWallMoveCandidate(wallMoveCandidate);
+			quoridor.getCurrentGame().setWallMoveCandidate(wallMoveCandidate);
 			wall.setMove(wallMoveCandidate);
 	  		grabbed = true;
 		 	return grabbed;

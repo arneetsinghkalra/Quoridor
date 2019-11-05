@@ -197,7 +197,9 @@ public class QuoridorWindow extends JFrame {
         secondField = new JTextField();
         timefieldBox.add(secondField);
         secondField.setColumns(2);
-
+        
+        
+        
         JComboBox existingUsernames1 = new JComboBox();
         sl_setupPanel.putConstraint(SpringLayout.NORTH, existingUsernames1, 121, SpringLayout.NORTH, setupPanel);
         sl_setupPanel.putConstraint(SpringLayout.WEST, existingUsernames1, 33, SpringLayout.EAST, player1NameBox);
@@ -351,17 +353,6 @@ public class QuoridorWindow extends JFrame {
 
 
         setupPanel.add(startGameButton);
-		
-
-        JComboBox comboBox = new JComboBox();
-        sl_setupPanel.putConstraint(SpringLayout.NORTH, comboBox, 150, SpringLayout.NORTH, setupPanel);
-        sl_setupPanel.putConstraint(SpringLayout.WEST, comboBox, 33, SpringLayout.EAST, player1NameBox);
-        sl_setupPanel.putConstraint(SpringLayout.SOUTH, comboBox, -66, SpringLayout.NORTH, startGameButton);
-        sl_setupPanel.putConstraint(SpringLayout.EAST, comboBox, -75, SpringLayout.EAST, setupPanel);
-        sl_setupPanel.putConstraint(SpringLayout.SOUTH, existingUsernames1, -6, SpringLayout.NORTH, comboBox);
-        comboBox.setFont(new Font("Cooper Black", Font.PLAIN, 14));
-        comboBox.setModel(new DefaultComboBoxModel(new String[]{"or Choose a Player"}));
-        setupPanel.add(comboBox);
 
         JPanel activeGamePanel = new JPanel();
         contentPane.add(activeGamePanel, "activeGamePanel");
@@ -662,7 +653,6 @@ public class QuoridorWindow extends JFrame {
         secondTimer.setRepeats(true);
         secondTimer.start();
     }
-    
 	/** @author Luke Barber */
 	public static void warningNoMoreWalls() {
 		JOptionPane.showMessageDialog(null, "No More Walls Available in Stock!", "", JOptionPane.WARNING_MESSAGE);
@@ -678,4 +668,5 @@ public class QuoridorWindow extends JFrame {
 		// TODO Auto-generated method stub
 		return false;
 	}
+    
 }
