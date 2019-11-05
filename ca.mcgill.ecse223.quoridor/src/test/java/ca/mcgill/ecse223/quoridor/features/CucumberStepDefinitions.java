@@ -68,6 +68,7 @@ public class CucumberStepDefinitions {
 
 	@Given("The following walls exist:")
 	public void theFollowingWallsExist(io.cucumber.datatable.DataTable dataTable) {
+		/*
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
 		Board currentBoard = quoridor.getBoard();
@@ -108,44 +109,48 @@ public class CucumberStepDefinitions {
 		quoridor.getCurrentGame().getCurrentPosition().addBlackWallsOnBoard(wall2);
 		quoridor.getCurrentGame().getCurrentPosition().removeBlackWallsInStock(wall3);
 		quoridor.getCurrentGame().getCurrentPosition().addBlackWallsOnBoard(wall3);
+		*/
 
-		/*
-		 * List<Map<String, String>> valueMaps = dataTable.asMaps(); // keys: wrow,
-		 * wcol, wdir Player[] players = { quoridor.getCurrentGame().getWhitePlayer(),
-		 * quoridor.getCurrentGame().getBlackPlayer()
-		 * 
-		 * };
-		 * 
-		 * int playerIdx = 0; int wallIdxForPlayer = 0; for (Map<String, String> map :
-		 * valueMaps) { Integer wrow = Integer.decode(map.get("wrow")); Integer wcol =
-		 * Integer.decode(map.get("wcol")); // Wall to place // Walls are placed on an
-		 * alternating basis wrt. the owners // Wall wall = Wall.getWithId(playerIdx *
-		 * 10 + wallIdxForPlayer); Wall wall =
-		 * players[playerIdx].getWall(wallIdxForPlayer); // above implementation sets
-		 * wall to null
-		 * 
-		 * String dir = map.get("wdir");
-		 * 
-		 * Direction direction; switch (dir) { case "horizontal": direction =
-		 * Direction.Horizontal; break; case "vertical": direction = Direction.Vertical;
-		 * break; default: throw new
-		 * IllegalArgumentException("Unsupported wall direction was provided"); }
-		 * 
-		 * new WallMove(0, 1, players[playerIdx], quoridor.getBoard().getTile((wrow - 1)
-		 * * 9 + wcol - 1), quoridor.getCurrentGame(), direction, wall);
-		 * 
-		 * if (playerIdx == 0) {
-		 * 
-		 * quoridor.getCurrentGame().getCurrentPosition().removeWhiteWallsInStock(wall);
-		 * quoridor.getCurrentGame().getCurrentPosition().addWhiteWallsOnBoard(wall);
-		 * 
-		 * } else {
-		 * quoridor.getCurrentGame().getCurrentPosition().removeBlackWallsInStock(wall);
-		 * quoridor.getCurrentGame().getCurrentPosition().addBlackWallsOnBoard(wall); }
-		 * wallIdxForPlayer = wallIdxForPlayer + playerIdx; playerIdx++; playerIdx =
-		 * playerIdx % 2; }
-		 */
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		List<Map<String, String>> valueMaps = dataTable.asMaps();
+		// keys: wrow, wcol, wdir
+		Player[] players = { quoridor.getCurrentGame().getWhitePlayer(), quoridor.getCurrentGame().getBlackPlayer() };
+		int playerIdx = 0;
+		int wallIdxForPlayer = 0;
+		for (Map<String, String> map : valueMaps) {
+			Integer wrow = Integer.decode(map.get("wrow"));
+			Integer wcol = Integer.decode(map.get("wcol"));
+			// Wall to place
+			// Walls are placed on an alternating basis wrt. the owners
+			// Wall wall = Wall.getWithId(playerIdx * 10 + wallIdxForPlayer);
+			Wall wall = players[playerIdx].getWall(wallIdxForPlayer); // above implementation sets wall to null
 
+			String dir = map.get("wdir");
+
+			Direction direction;
+			switch (dir) {
+			case "horizontal":
+				direction = Direction.Horizontal;
+				break;
+			case "vertical":
+				direction = Direction.Vertical;
+				break;
+			default:
+				throw new IllegalArgumentException("Unsupported wall direction was provided");
+			}
+			new WallMove(0, 1, players[playerIdx], quoridor.getBoard().getTile((wrow - 1) * 9 + wcol - 1), quoridor.getCurrentGame(), direction, wall);
+			if (playerIdx == 0) {
+				quoridor.getCurrentGame().getCurrentPosition().removeWhiteWallsInStock(wall);
+				quoridor.getCurrentGame().getCurrentPosition().addWhiteWallsOnBoard(wall);
+			} else {
+				quoridor.getCurrentGame().getCurrentPosition().removeBlackWallsInStock(wall);
+				quoridor.getCurrentGame().getCurrentPosition().addBlackWallsOnBoard(wall);
+			}
+			wallIdxForPlayer = wallIdxForPlayer + playerIdx;
+			playerIdx++;
+			playerIdx = playerIdx % 2;
+		}
+		System.out.println();
 	}
 
 	@And("I do not have a wall in my hand")
@@ -157,7 +162,7 @@ public class CucumberStepDefinitions {
 	public void iHaveAWallInMyHandOverTheBoard() throws Throwable {
 		// GUI-related feature -- TODO for later
 		// New game hard coded parameters for 5-8
-		//assertTrue(Controller.wallSelected());
+		// assertTrue(Controller.wallSelected());
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
 		Player currentPlayer = currentGame.getCurrentPosition().getPlayerToMove();
@@ -657,7 +662,7 @@ public class CucumberStepDefinitions {
 	public void the_wall_candidate_is_at_the_edge_of_the_board(String side) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
-		
+
 		if (side == "left") {
 			assertTrue(currentGame.getWallMoveCandidate().getTargetTile().getColumn() == 1);
 		}
@@ -677,10 +682,7 @@ public class CucumberStepDefinitions {
 	@Then("I shall be notified that my move is illegal")
 	public void i_shall_be_notified_that_my_move_is_illegal() {
 		System.out.println("Illegal Move");
-		// throw new cucumber.api.PendingException();
-
-		// GUI-related feature -- TODO for later
-
+		Controller.notifyIllegalMove();
 	}
 
 	// ***********************************************
@@ -710,12 +712,13 @@ public class CucumberStepDefinitions {
 		// Call Williams Validate Position Method
 
 		/*
-		// Checks to see if any walls are on the board
-		boolean anyWhiteWallsOnBoard = currentGame.getCurrentPosition().getWhiteWallsOnBoard().isEmpty();
-		boolean anyBlackWallsOnBoard = currentGame.getCurrentPosition().getBlackWallsOnBoard().isEmpty();
-
-		// boolean noWallsOnBoard = (anyWhiteWallsOnBoard && anyBlackWallsOnBoard);
-		
+		 * // Checks to see if any walls are on the board boolean anyWhiteWallsOnBoard =
+		 * currentGame.getCurrentPosition().getWhiteWallsOnBoard().isEmpty(); boolean
+		 * anyBlackWallsOnBoard =
+		 * currentGame.getCurrentPosition().getBlackWallsOnBoard().isEmpty();
+		 * 
+		 * // boolean noWallsOnBoard = (anyWhiteWallsOnBoard && anyBlackWallsOnBoard);
+		 * 
 		 * if (noWallsOnBoard) { // Then there are no walls on the board so position
 		 * will be valid, thus make the // object Direction direction =
 		 * this.stringToDirection(dir); Tile aNewTargetTile = currentBoard.getTile((row
@@ -788,6 +791,9 @@ public class CucumberStepDefinitions {
 	@Then("My move shall be completed")
 	public void my_move_shall_be_completed() {
 		// Make sure moveWallCandidate does not exist anymore
+		assertEquals(null, QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate());
+
+		// Verifys that MoveMode is now a Player Move and no longer a WallMove
 		assertEquals(QuoridorApplication.getQuoridor().getCurrentGame().getMoveMode(), Game.MoveMode.PlayerMove);
 		/*
 		 * //Make sure it is the next players turn to move
@@ -848,10 +854,10 @@ public class CucumberStepDefinitions {
 		WallMove wallMoveCandidate = QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate();
 
 		assertEquals(null, Controller.dropWall(wallMoveCandidate));
+
+		Controller.notifyIllegalMove();
 		// System.out.println("Invalid wall move");
 		// throw new cucumber.api.PendingException();
-
-		// GUI-related feature -- TODO for later
 	}
 
 	/**
@@ -1045,7 +1051,7 @@ public class CucumberStepDefinitions {
 	public void theUserInitiatesToSaveTheGameWithName(String fileName) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		GamePosition gamePosition = quoridor.getCurrentGame().getCurrentPosition();
-		boolean confirms=false;
+		boolean confirms = false;
 		try {
 			Controller.savePosition(fileName, gamePosition, confirms);
 		} catch (IOException e) {
@@ -1053,7 +1059,6 @@ public class CucumberStepDefinitions {
 			e.printStackTrace();
 		}
 	}
-
 
 	/**
 	 * @param fileName

@@ -14,6 +14,7 @@ import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.model.*;
 import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
 import ca.mcgill.ecse223.quoridor.model.Game.MoveMode;
+import ca.mcgill.ecse223.quoridor.view.QuoridorWindow;
 
 public class Controller {
 
@@ -342,6 +343,16 @@ public class Controller {
 		// currentGame.setWallMoveCandidate(null);
 		return true;
 	}
+	
+	/**
+	 * notifyIllegalMove 
+	 * Method calls View to give a notification of illegal move
+	 * @author arneetkalra
+	 */
+	public static void notifyIllegalMove() {
+		QuoridorWindow.notifyIllegalWallMove();
+	}
+	
 
 	 /**
 		 * 
