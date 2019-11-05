@@ -752,9 +752,7 @@ public class QuoridorWindow extends JFrame {
 
 					vWalls[i][j] = Box.createVerticalBox();
 
-					vWalls[i][j].setOpaque(false);
-
-					vWalls[i][j].setBackground(Color.black);
+					vWalls[i][j].setOpaque(true);
 
 					c = new GridBagConstraints();
 
@@ -780,9 +778,7 @@ public class QuoridorWindow extends JFrame {
 
 					hWalls[i][j] = Box.createHorizontalBox();
 
-					hWalls[i][j].setOpaque(false);
-
-					hWalls[i][j].setBackground(Color.black);
+					hWalls[i][j].setOpaque(true);
 
 					c = new GridBagConstraints();
 
@@ -809,41 +805,46 @@ public class QuoridorWindow extends JFrame {
 					wallCenters[i][j] = new JButton();
 
 					wallCenters[i][j].setBackground(Color.lightGray);
-					//For loop helper
+					// For loop helper
 					@SuppressWarnings("deprecation")
 					final Integer newI = new Integer(i);
 					@SuppressWarnings("deprecation")
 					final Integer newJ = new Integer(j);
 
-					
-					wallCenters[i][j].addActionListener(new ActionListener(){
-						
+					wallCenters[i][j].addActionListener(new ActionListener() {
 
 						public void actionPerformed(ActionEvent e) {
 
-							//Drop Wall
-							//Controller.dropWall(QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate());
-							//If horizontal, highlight horizontal walls
-							//if (QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate().getWallDirection() == Direction.Horizontal){
-								hWalls[newI][newJ].setOpaque(true);
+							// Drop Wall
+							Controller.dropWall(
+									QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate());
+							// If horizontal, highlight horizontal walls
+							if (QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate()
+									.getWallDirection() == Direction.Horizontal) {
+								hWalls[newI][newJ].setBackground(Color.black);
 
 								wallCenters[newI][newJ].setBackground(Color.black);
 
-								hWalls[newI][newJ+1].setOpaque(true);
+								hWalls[newI][newJ + 1].setBackground(Color.black);
+							}
 
-//							} else { //ELse highlight vertically 
-//								vWalls[newI][newJ].setOpaque(true);
-//
-//								wallCenters[newI][newJ].setBackground(Color.black);
-//
-//								vWalls[newI+1][newJ].setOpaque(true);
-//								
-//							}
+							else if (QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate()
+									.getWallDirection() == Direction.Horizontal) { // ELse highlight vertically
+								vWalls[newI][newJ].setOpaque(true);
+
+								wallCenters[newI][newJ].setBackground(Color.black);
+
+								vWalls[newI + 1][newJ].setOpaque(true);
+							}
 							
+							else { //No wall move candidate exists
+								JOptionPane.showMessageDialog(null, "Grab a Wall first!", "", JOptionPane.WARNING_MESSAGE);
+							}
+
 						}
-				
+
 					});
-					
+
 					c = new GridBagConstraints();
 
 					c.gridx = j * 2 + 1;
