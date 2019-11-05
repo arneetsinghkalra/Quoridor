@@ -361,8 +361,23 @@ public class QuoridorWindow extends JFrame {
 		JPanel gameBoardPanel = new JPanel();
 		activeGamePanel.add(gameBoardPanel, BorderLayout.CENTER);
 		gameBoardPanel.setLayout(new GridLayout(9, 9, 5, 5));
-	}
-
+	
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				
+				tiles[i][j] = new JButton();
+                tiles[i][j].setBackground(Color.white);
+                GridBagConstraints c = new GridBagConstraints();
+                c.gridx = j * 2;
+                c.gridy = i * 2;
+                c.weightx = 1;
+                c.weighty = 1;
+                c.ipadx = 10;
+                c.ipady = 10;
+                c.fill = GridBagConstraints.BOTH;
+                //set click event for tiles here(eg.movepawn)
+                gameBoardPanel.add(tiles[i][j], c);
+				
                 if (i < 8) {
                     hWalls[i][j] = Box.createHorizontalBox();
                     hWalls[i][j].setOpaque(false);
@@ -397,6 +412,8 @@ public class QuoridorWindow extends JFrame {
 
 
         }
+		
+
         //create a vertical wall at (3,3)
         //by setting opaque of box and color of the wall center, we can create walls
         //vWalls[2][2].setOpaque(true);

@@ -755,32 +755,6 @@ public class CucumberStepDefinitions {
 		 */
 	}
 
-	/**
-	 * @author arneetkalra
-	 */
-	@When("I release the wall in my hand")
-	public void i_release_the_wall_in_my_hand() throws Throwable {
-
-		// Get Current Wall Move Candidate
-		WallMove wallMove = QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate();
-		// Drop the wall and return the wall placed
-		returnedWall = Controller.dropWall(wallMove);
-	}
-
-	/**
-	 * @author arneetkalra
-	 */
-	@Then("A wall move shall be registered with {string} at position \\({int}, {int})")
-	public void a_wall_move_shall_be_registered_with_at_position(String dir, int row, int col) {
-		// Convert string dir to Direction direction
-		Direction direction = this.stringToDirection(dir);
-
-		assertEquals(returnedWall.getMove().getWallDirection(), direction);
-
-		// Verify that wall move candidate
-		assertEquals(returnedWall.getMove().getTargetTile().getRow(), row);
-		assertEquals(returnedWall.getMove().getTargetTile().getColumn(), col);
-	}
 
 	/**
 	 * @author arneetkalra
@@ -938,18 +912,7 @@ public class CucumberStepDefinitions {
 		quoridor = Controller.loadPosition(fileName);
 	}
 
-	/**
-	 * Checks whether the position is valid or not
-	 *
-	 * @author Yin
-	 */
-	@And("^The position to load is valid$")
-	public void thePositionIsValid() {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		Game currentGame = quoridor.getCurrentGame();
-		GamePosition gamePosition = currentGame.getCurrentPosition();
-		validationResult = Controller.validatePosition();
-	}
+
 
 	/**
 	 * checks whether the playerToMove is the same as expected
@@ -1182,30 +1145,6 @@ public class CucumberStepDefinitions {
 		gamePosition.getWhitePosition().setTile(playerCurrentPosition);
 	}
 
-	/**
-	 * feature 11
-	 *
-	 * @author William Wang
-	 */
-	@When("validation of the position is initiated")
-	public void validationOfPositionIsInitialted() {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		validationResult = Controller.validatePosition();
-	}
-
-	/**
-	 * feature 11
-	 *
-	 * @author William Wang
-	 */
-	@Then("The position is {string}")
-	public void thePositionIs(String expectedResult) {
-		if (expectedResult.equals("OK")) {
-			assertTrue(validationResult);
-		} else if (expectedResult.equals("error")) {
-			assertFalse(validationResult);
-		}
-	}
 
 	/**
 	 * feature 11
