@@ -1,5 +1,8 @@
 package ca.mcgill.ecse223.quoridor.view;
 
+import ca.mcgill.ecse223.quoridor.controller.Controller;
+import ca.mcgill.ecse223.quoridor.model.Wall;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -20,8 +23,12 @@ import java.awt.event.ActionEvent;
 public class QuoridorWindow extends JFrame {
 
 	private static JPanel contentPane;
+	private JTextField player1Field;
+	private JTextField player2Field;
+
 	private JTextField player1NameField;
 	private JTextField textField_1;
+
 	private JTextField minuteField;
 	private JTextField secondField;
 	private Timer secondTimer;
@@ -29,7 +36,8 @@ public class QuoridorWindow extends JFrame {
 	private JLabel timeRemLabel;
 	private static boolean confirms = true;
 
-    private static JFrame f; 
+    private static JFrame f;
+
 
     //for the boards,tiles, and walls
     private JButton[][] tiles = new JButton[9][9];
@@ -51,7 +59,6 @@ public class QuoridorWindow extends JFrame {
 			}
 		});
 	}
-
 	/**
 	 * Create the frame.
 	 */
@@ -490,5 +497,15 @@ public class QuoridorWindow extends JFrame {
     }
 	
 
-	// TODO add action/listener methods to actually progress the game and all that
+	/** @author Luke Barber */
+	public static void rotateWallDirection(Wall wall) {
+		// TODO Auto-generated method stub
+		
+	}
+	/** @author Luke Barber */
+	public static boolean stockButtonSelected() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+    
 }
