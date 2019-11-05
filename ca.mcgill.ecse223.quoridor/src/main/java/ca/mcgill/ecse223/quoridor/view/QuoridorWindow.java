@@ -39,6 +39,8 @@ public class QuoridorWindow extends JFrame {
     private JButton[][] wallCenters =  new JButton[8][8];
     private Box[][] hWalls = new Box[9][9];
     private Box[][] vWalls = new Box[9][9];
+    
+    private int[] playerView = {0,0,0,0};
 	/**
 	 * Launch the application.
 	 */
@@ -588,6 +590,10 @@ public class QuoridorWindow extends JFrame {
         timeRemLabel.setFont(new Font("Cooper Black", Font.PLAIN, 14));
         timeRemLabel.setHorizontalAlignment(SwingConstants.CENTER);
         horizontalBox.add(timeRemLabel);
+        
+        movePlayer(0,4,8,4);
+        movePlayer(1,4,7,4);
+
 
     }
 
@@ -675,4 +681,19 @@ public class QuoridorWindow extends JFrame {
 		return false;
 	}
     
+	public void movePlayer(int whitex, int whitey, int blackx, int blacky) {
+		int blackChar = 0x2B24;
+		int whiteChar = 0x20DD;
+		tiles[whitex][whitey].setText("O");
+		tiles[blackx][blacky].setText(""+(char)blackChar);
+		
+		tiles[playerView[0]][playerView[1]].setText("");
+		tiles[playerView[2]][playerView[3]].setText("");
+		
+		playerView[0] = whitex;
+		playerView[1] = whitey;
+		playerView[2] = blackx;
+		playerView[3] = blacky;
+
+	}
 }
