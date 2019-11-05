@@ -45,23 +45,6 @@ public class QuoridorWindow extends JFrame {
     private JButton[][] wallCenters =  new JButton[8][8];
     private Box[][] hWalls = new Box[9][9];
     private Box[][] vWalls = new Box[9][9];
-
-	/**
-	* Launch the application.
-	*/
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					QuoridorWindow frame = new QuoridorWindow();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-	
-				}
-			}
-		});
-	}
 	
 	/**
 	* Create the frame.
@@ -75,9 +58,11 @@ public class QuoridorWindow extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));	
 		setContentPane(contentPane);	
 		contentPane.setLayout(new CardLayout(0, 0));
-			
-		JPanel titleScreenPanel = new JPanel();	
-		titleScreenPanel.setBackground(new Color(255, 255, 0));	
+	  
+		//JPanel titleScreenPanel = new JPanel();	
+		//titleScreenPanel.setBackground(new Color(255, 255, 0));
+		
+		ImagePanel titleScreenPanel = new ImagePanel(new ImageIcon("src/main/resources/quoridor.png").getImage());
 		contentPane.add(titleScreenPanel, "name_1049600133434900");	
 		SpringLayout sl_titleScreenPanel = new SpringLayout();	
 		titleScreenPanel.setLayout(sl_titleScreenPanel);
@@ -599,11 +584,22 @@ public class QuoridorWindow extends JFrame {
                 {
                     seconds = secondField.getText();
                 }
-
+                
+                if(minuteField.getText().length() == 0)
+                {
+                	minutes = minutes + "00";
+                }
+                if(secondField.getText().length() == 0)
+                {
+                	seconds = seconds + "00";
+                }
+                
                 time = "00:" + minutes + ":" + seconds;
 
                 Controller.setTotalThinkingTime(time);
                 Controller.startClock();
+                Controller.createBoard();
+                Controller.initializeBoard();
 
             }
         });
@@ -761,8 +757,8 @@ public class QuoridorWindow extends JFrame {
 	        // change one by one
 	        //set new text
 	        String timeRem = timeRemLabel.getText();
+	        String minRem = timeRem.substring(timeRem.lastIndexOf(":")-1, timeRem.lastIndexOf(":"));
 	        timeRem = timeRem.substring(timeRem.lastIndexOf(":")+1);
-	        String minRem = timeRem.substring(timeRem.lastIndexOf(":")-2, timeRem.lastIndexOf(":"));
 	        int timeRemInt = Integer.parseInt(timeRem)-1;
 	        int minRemInt = Integer.parseInt(minRem);
 	        if(timeRemInt == -1)
@@ -789,6 +785,7 @@ public class QuoridorWindow extends JFrame {
 	
 	        secondTimer = new Timer(1000,listener);
 	        secondTimer.setRepeats(true);
+	        secondTimer.start();
 	 }
 	
 	
@@ -818,4 +815,28 @@ public class QuoridorWindow extends JFrame {
 	}
 
 	// TODO add action/listener methods to actually progress the game and all that
+	
+	class ImagePanel extends JPanel {
+
+		  private Image img;
+
+		  public ImagePanel(String img) {
+		    this(new ImageIcon(img).getImage());
+		  }
+
+		  public ImagePanel(Image img) {
+		    this.img = img;
+		    Dimension size = new Dimension(img.getWidth(null), img.getHeight(null));
+		    setPreferredSize(size);
+		    setMinimumSize(size);
+		    setMaximumSize(size);
+		    setSize(size);
+		    setLayout(null);
+		  }
+
+		  public void paintComponent(Graphics g) {
+		    g.drawImage(img, 0, 0, null);
+		  }
+
+		}
 }
