@@ -249,19 +249,17 @@ public class Controller {
 	   * Returns a boolean on whether a wall is selected in the stock
 	   */
 	  public static boolean wallSelected() {
-		  boolean wallSelected = false;
-		  if (QuoridorWindow.stockButtonSelected()) {
-			wallSelected = true;
-		  }
-		  return wallSelected;
+		  QuoridorWindow quoridorWindow = QuoridorApplication.quoridorWindow ;
+		  return quoridorWindow.wallSelected;
 	  }
 	  /**
 	   * @author Luke Barber
 	   * Checks the stock of the playerToMove and calls the notify method in the view if the player's stock is 0
 	   */
 	  public static void notifyNoMoreWalls() {
-		  List<Wall> stock = null;
-		  Quoridor quoridor =  QuoridorApplication.getQuoridor();
+		  List<Wall> stock = new ArrayList<Wall>();
+		  Quoridor quoridor = QuoridorApplication.getQuoridor();
+		  
 		  Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
 		  if(currentPlayer.equals(quoridor.getCurrentGame().getWhitePlayer())) {
 				stock = quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock();
@@ -281,16 +279,16 @@ public class Controller {
 	   */
 	  	public static boolean grabWall(Wall wall) {
 	  		Quoridor quoridor =  QuoridorApplication.getQuoridor();
-	  		boolean grabbed = false;
 	  		Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
+	  		boolean grabbed = false;
 	  		Player player;
 	  		if(currentPlayer.equals(quoridor.getCurrentGame().getWhitePlayer())) {
 	  			player = quoridor.getCurrentGame().getWhitePlayer();
-			  	quoridor.getCurrentGame().getCurrentPosition().removeWhiteWallsInStock(wall);
+	  			quoridor.getCurrentGame().getCurrentPosition().removeWhiteWallsInStock(wall);
 	  		}
 	  		else if(currentPlayer.equals(quoridor.getCurrentGame().getBlackPlayer())) {
 	  			player = quoridor.getCurrentGame().getBlackPlayer();
-				quoridor.getCurrentGame().getCurrentPosition().removeBlackWallsInStock(wall);
+	  			quoridor.getCurrentGame().getCurrentPosition().removeBlackWallsInStock(wall);
 	  		}
 	  		else {
 	  			return grabbed;
@@ -302,6 +300,7 @@ public class Controller {
 			WallMove wallMoveCandidate = new WallMove(1, 1, player, tile, quoridor.getCurrentGame(), direction, wall);
 			quoridor.getCurrentGame().setWallMoveCandidate(wallMoveCandidate);
 			wall.setMove(wallMoveCandidate);
+			quoridor.getCurrentGame().getCurrentPosition().removeWhiteWallsInStock(wall);
 	  		grabbed = true;
 		 	return grabbed;
 	}
@@ -325,7 +324,6 @@ public class Controller {
 				return rotated;
 			}
 			wall.setMove(currentWallMove);
-			QuoridorWindow.rotateWallDirection(wall);
 			rotated = true;
 			return rotated;
 		}
@@ -541,10 +539,7 @@ public class Controller {
 	 * 
 	 * */
 	public static Quoridor loadPosition(String fileName) {
-		startNewGame();
-		initWhitePlayer("User1");
-		initBlackPlayer("User2");
-		initializeBoard();
+
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		List<String> lines = Collections.emptyList(); 
 	    try
@@ -556,52 +551,73 @@ public class Controller {
 	      // do something 
 	      e.printStackTrace(); 
 	    }
+	    
 	    String firstLine = null;
 	    String secondLine = null;
-	    try {
+	    try 
+	    {
 		    firstLine = lines.get(0);
-		    secondLine = lines.get(1);
-	    }catch(IndexOutOfBoundsException e){
-			throw new UnsupportedOperationException("Invalid position");
+		    secondLine = lines.get(1); 
 	    }
+	    catch(IndexOutOfBoundsException e)
+	    {
+	    	throw new UnsupportedOperationException("Invalid position");
+	    }
+	    
         StringTokenizer first = new StringTokenizer(firstLine, ",");
         StringTokenizer second = new StringTokenizer(secondLine, ",");
         
-        	String nextPlayer = first.nextToken();
+        String nextPlayer = first.nextToken();
 	    String opponent = second.nextToken();
+	    
 		int nextPlayerColumn = 0;
 		int nextPlayerRow = 0;
-		if(nextPlayer.toCharArray().length!=4||opponent.toCharArray().length!=4) {
+		
+		if(nextPlayer.toCharArray().length!=4||opponent.toCharArray().length!=4)
+		{
 			throw new UnsupportedOperationException("Invalid position");
 		}
-		try{
+		
+		try
+		{
 			nextPlayerColumn =convertToInt(nextPlayer.substring(2,3));
 			nextPlayerRow = Integer.parseInt(nextPlayer.substring(3));
 		}
-		catch(IndexOutOfBoundsException e){
+		catch(IndexOutOfBoundsException e)
+		{
 			throw new UnsupportedOperationException("Invalid position");
 		}
-		if(nextPlayerRow>9||nextPlayerRow<1||nextPlayerColumn>9||nextPlayerColumn<1) {
+		
+		if(nextPlayerRow>9||nextPlayerRow<1||nextPlayerColumn>9||nextPlayerColumn<1) 
+		{
 			throw new UnsupportedOperationException("Invalid position");
 		}
+		
 		Tile nextPlayerTile = quoridor.getBoard().getTile((nextPlayerRow-1)*9+nextPlayerColumn-1);
 		int opponentColumn = 0;
 		int opponentRow = 0;
-		try{
+		try
+		{
 			opponentColumn =convertToInt(opponent.substring(2,3));
 			opponentRow = Integer.parseInt(opponent.substring(3));
 		}
-		catch(IndexOutOfBoundsException e){
+		catch(IndexOutOfBoundsException e)
+		{
 			throw new UnsupportedOperationException("Invalid position");
 		}
-		if(opponentRow>9||opponentRow<1||opponentColumn>9||opponentColumn<1) {
+		
+		if(opponentRow>9||opponentRow<1||opponentColumn>9||opponentColumn<1) 
+		{
 			throw new UnsupportedOperationException("Invalid position");
 		}
+		
 		Tile opponentTile = quoridor.getBoard().getTile((opponentRow-1)*9+opponentColumn-1);
 	    if(nextPlayer.substring(0,1).equals("B")){
-    			quoridor.getCurrentGame().getCurrentPosition().setPlayerToMove(quoridor.getCurrentGame().getBlackPlayer());
+	    	
+    		quoridor.getCurrentGame().getCurrentPosition().setPlayerToMove(quoridor.getCurrentGame().getBlackPlayer());
 		    quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().setTile(nextPlayerTile);
 		    quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().setTile(opponentTile);
+		    
 		    while(first.hasMoreTokens()) {
 		    		int i = 0;
 		    		Wall wall = quoridor.getCurrentGame().getCurrentPosition().getBlackWallsInStock(i);
@@ -980,6 +996,7 @@ public class Controller {
 		} else
 			return null;
 	}
+	
 	private static String blackPlayerData(GamePosition gamePosition) {
 		String data ="";
 		data += "B:"+(char)(gamePosition.getBlackPosition().getTile().getColumn()+96);
