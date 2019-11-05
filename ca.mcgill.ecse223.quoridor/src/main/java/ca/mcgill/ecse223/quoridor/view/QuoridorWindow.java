@@ -1,6 +1,7 @@
 package ca.mcgill.ecse223.quoridor.view;
 
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -68,7 +69,12 @@ public class QuoridorWindow extends JFrame {
 	public QuoridorWindow() 
 	{
 		
-		//BufferedImage img = ImageIO.read(new File("src/main/resources/"));
+		try {
+			BufferedImage img = ImageIO.read(new File("src/main/resources/Quoridor_img.jpg"));
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 				
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 600, 450);
@@ -492,7 +498,7 @@ public class QuoridorWindow extends JFrame {
              */
             public void actionPerformed(ActionEvent e) {
                 CardLayout layout = (CardLayout) (contentPane.getLayout());
-
+                Controller.startNewGame();
                 String time ="";
                 String seconds = "";
                 String minutes = "";
@@ -559,12 +565,12 @@ public class QuoridorWindow extends JFrame {
                 }
 
                 //Checks if the player enters an input and also selects an existing user name, if true will show a dialog box
-                if(player1Field.getText().length() > 0 && !existingUsernames1.getSelectedItem().equals("or select existing username..."))
+                if(player1Field.getText().length() > 0 && !existingUsernames1.getSelectedItem().equals(Controller.listExistingUsernames()[0]))
                 {
                     JOptionPane.showMessageDialog(null, "Cannot enter new user name and select an existing username at the same time!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
                 }
 
-                if(player2Field.getText().length() > 0 && existingUsernames2.getSelectedItem().equals("or select existing username..."))
+                if(player2Field.getText().length() > 0 && !existingUsernames2.getSelectedItem().equals(Controller.listExistingUsernames()[0]))
                 {
                     JOptionPane.showMessageDialog(null, "Cannot enter new user name and select an existing username at the same time!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
                 }
@@ -583,7 +589,6 @@ public class QuoridorWindow extends JFrame {
                 }
 
 
-                Controller.startNewGame();
                 //Checks if the user has selected
                 if(minuteField.getText().length() < 2)
                 {

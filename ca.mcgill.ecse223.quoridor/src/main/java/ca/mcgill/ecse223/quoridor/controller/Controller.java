@@ -33,7 +33,7 @@ public class Controller {
   public static Game startNewGame() {
 	 Quoridor quoridor = QuoridorApplication.getQuoridor();
 	 Game game = new Game(GameStatus.Initializing, MoveMode.PlayerMove, quoridor);
-	 
+	 quoridor.setCurrentGame(game);
 	 return game;
   }
   	
