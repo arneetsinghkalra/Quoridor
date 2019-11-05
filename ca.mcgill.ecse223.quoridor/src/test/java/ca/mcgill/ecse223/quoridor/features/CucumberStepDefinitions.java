@@ -76,6 +76,53 @@ public class CucumberStepDefinitions {
 
 	@Given("The following walls exist:")
 	public void theFollowingWallsExist(io.cucumber.datatable.DataTable dataTable) {
+		
+		
+		//For Arneet Kalra's step definitions
+		
+		
+		/*Quoridor quoridor = QuoridorApplication.getQuoridor();
+        Game currentGame = quoridor.getCurrentGame();
+		Board currentBoard = quoridor.getBoard();
+
+		// First wall placed
+		Player whitePlayer = quoridor.getCurrentGame().getWhitePlayer();
+		Tile aNewTargetTile1 = currentBoard.getTile((1 - 1) * 9 + (1 - 1));
+		Direction direction1 = Direction.Horizontal;
+        Wall wall1 = whitePlayer.getWall(0);
+        wall1.setId(0);
+
+		WallMove wallMove1 = new WallMove(0, 0, whitePlayer, aNewTargetTile1, currentGame, direction1, wall1);
+		wall1.setMove(wallMove1);
+
+		// Second wall placed
+		Player blackPlayer = quoridor.getCurrentGame().getBlackPlayer();
+		Tile aNewTargetTile2 = currentBoard.getTile((7 - 1) * 9 + (4 - 1));
+		Direction direction2 = Direction.Vertical;
+		Wall wall2 = blackPlayer.getWall(0);
+		wall2.setId(0);
+
+		WallMove wallMove2 = new WallMove(0, 0, blackPlayer, aNewTargetTile2, currentGame, direction2, wall2);
+		wall2.setMove(wallMove2);
+
+		// Make a 3rd wall to make step definition work for last case - something wrong with given step defintion
+		// Second wall placed
+		Tile aNewTargetTile3 = currentBoard.getTile((6 - 1) * 9 + (6 - 1));
+		Direction direction3 = Direction.Horizontal;
+		Wall wall3 = blackPlayer.getWall(1);
+		wall2.setId(0);
+
+		WallMove wallMove3 = new WallMove(0, 0, blackPlayer, aNewTargetTile3, currentGame, direction3, wall3);
+		wall3.setMove(wallMove3);
+
+		quoridor.getCurrentGame().getCurrentPosition().removeWhiteWallsInStock(wall1);
+		quoridor.getCurrentGame().getCurrentPosition().addWhiteWallsOnBoard(wall1);
+		quoridor.getCurrentGame().getCurrentPosition().removeBlackWallsInStock(wall2);
+		quoridor.getCurrentGame().getCurrentPosition().addBlackWallsOnBoard(wall2);
+		quoridor.getCurrentGame().getCurrentPosition().removeBlackWallsInStock(wall3);
+		quoridor.getCurrentGame().getCurrentPosition().addBlackWallsOnBoard(wall3);*/
+		
+		
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		List<Map<String, String>> valueMaps = dataTable.asMaps();
 		// keys: wrow, wcol, wdir

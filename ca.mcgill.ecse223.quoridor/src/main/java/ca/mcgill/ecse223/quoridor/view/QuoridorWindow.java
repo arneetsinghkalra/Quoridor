@@ -69,13 +69,6 @@ public class QuoridorWindow extends JFrame {
 	public QuoridorWindow() 
 	{
 		
-		try {
-			BufferedImage img = ImageIO.read(new File("src/main/resources/Quoridor_img.jpg"));
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-				
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 600, 450);
 		contentPane = new JPanel();	
