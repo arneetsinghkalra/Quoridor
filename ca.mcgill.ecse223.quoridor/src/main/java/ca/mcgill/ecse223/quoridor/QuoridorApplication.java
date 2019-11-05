@@ -1,3 +1,4 @@
+
 package ca.mcgill.ecse223.quoridor;
 
 import ca.mcgill.ecse223.quoridor.view.QuoridorWindow;
@@ -6,6 +7,7 @@ import ca.mcgill.ecse223.quoridor.model.Quoridor;
 public class QuoridorApplication {
 
 	private static Quoridor quoridor;
+	public static QuoridorWindow quoridorWindow;
 
 	public static Quoridor getQuoridor() {
 		if (quoridor == null) {
@@ -18,7 +20,8 @@ public class QuoridorApplication {
 	public static void main(String[] args) {
 	java.awt.EventQueue.invokeLater(new Runnable() {
         public void run() {
-            new QuoridorWindow().setVisible(true);
+        	quoridorWindow = new QuoridorWindow();
+            quoridorWindow.setVisible(true);
         }
     });
 	}
