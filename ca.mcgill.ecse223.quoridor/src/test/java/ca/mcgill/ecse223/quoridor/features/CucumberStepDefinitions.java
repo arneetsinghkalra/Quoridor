@@ -156,29 +156,11 @@ public class CucumberStepDefinitions {
 	// Scenario and scenario outline step definitions
 	// ***********************************************
 
-	/*
-	 * TODO Insert your missing step definitions here
-	 * 
-	 * Call the methods of the controller that will manipulate the model once they
-	 * are implemented
-	 * 
-	 */
-//Quoridor Class
-	//private Quoridor quoridor = QuoridorApplication.getQuoridor();
-	// Current Game Object
-	//private Game currentGame = quoridor.getCurrentGame();
-
-	// Parameters required for WallMove Object
-	// Parameters for running game --ignore for now
-	/*
-	 * private int moveNum = quoridor.getCurrentGame().numberOfMoves() + 1; private
-	 * int roundNum = (moveNum + 1) / 2 ;
-	 */
-
-	// -----------------------------------------------------------------------------//
-	// Feature 1 - StartNewGame - Implemented by Ali Tapan - 260556540
-	// -----------------------------------------------------------------------------//
+	//--------------------------------------------------------------------------------
 	
+	// ************************************************************************** 
+	// Feature 1 - StartNewGame - Implemented by Ali Tapan - 260556540			 
+	// **************************************************************************
 	
 	/**
 	 *
@@ -187,7 +169,6 @@ public class CucumberStepDefinitions {
 	@When("A new game is being initialized")
 	public void aNewGameIsBeingInitialized() {
 		Controller.startNewGame();
-
 	}
 
 	/**
@@ -269,11 +250,10 @@ public class CucumberStepDefinitions {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		assertEquals(true, quoridor.getBoard().hasTiles());
 	}
-
-	// -----------------------------------------------------------------------------//
+	
+	// **************************************************************************
 	// Feature 2 - ProvideSelectUserName - Implemented by Ali Tapan - 260556540
-	// -----------------------------------------------------------------------------//
-
+	// **************************************************************************
 	
 	/**
 	 *
@@ -376,7 +356,9 @@ public class CucumberStepDefinitions {
 		}
 	}
 
-	// ------------------------------3-4----------------------------------------------//
+	// **************************************************************************
+	// Feature 3 - SetTotalThinkingTime - Implemented by Sam Perreault
+	// **************************************************************************
 
 	/** @author Sam Perreault */
     @When("{int}:{int} is set as the thinking time")
@@ -395,6 +377,11 @@ public class CucumberStepDefinitions {
         assertEquals(timeRem, quoridor.getCurrentGame().getBlackPlayer().getRemainingTime().getTime());
     }
 
+    
+	// **************************************************************************
+	// Feature 4 - InitializeBoard - Implemented by Sam Perreault
+	// **************************************************************************
+    
     /** @author Sam Perreault */
     @When("The initialization of the board is initiated")
     public void theInitializationOfTheBoardIsInitiated() {
@@ -463,17 +450,9 @@ public class CucumberStepDefinitions {
         // GUI method to be implemented later
     }
 
-	// --------------------------------------------------5-6--------------------------------------------------
-
-	// --------------------------------------------------5-6--------------------------------------------------
-
-	// ***********************************************
-	// Feature 1 - Grab Wall    @author Luke Barber - 260840096
-	// ***********************************************
-
-	// ***********************************************
-	// Feature 1 - Grab Wall    @author Luke Barber - 260840096
-	// ***********************************************
+    // **************************************************************************
+	// Feature 5 - Grab Wall - Implemented by Luke Barber - 260840096
+    // **************************************************************************
 
 	/** @author Luke Barber */
 	@Given("I have more walls on stock")
@@ -552,9 +531,9 @@ public class CucumberStepDefinitions {
 	}
 
 	
-	// ***********************************************
-	// Feature 2 - Rotate Wall    @author Luke Barber - 260840096
-	// ***********************************************
+	// **************************************************************************
+	// Feature 6 - Rotate Wall - Implemented by Luke Barber - 260840096
+	// **************************************************************************
 		
 	/** @author Luke Barber and Arneet Kalra */
 	@Given("A wall move candidate exists with {string} at position \\({int}, {int})")
@@ -599,9 +578,9 @@ public class CucumberStepDefinitions {
 		assertEquals(currentGame.getWallMoveCandidate().getTargetTile().getColumn(), column);
 	}
 
-	// ***********************************************
-	// M O V E W A L L F E A T U R E (7)
-	// ***********************************************
+	// **************************************************************************
+	// Feature 7 - MoveWall - Implemented by Arneet Kalra
+	// **************************************************************************
 
 	/**
 	 * @author arneetkalra
@@ -709,9 +688,9 @@ public class CucumberStepDefinitions {
 
 	}
 
-	// ***********************************************
-	// D R O P W A L L F E A T U R E
-	// ***********************************************
+	// **************************************************************************
+	// Feature 8 - DropWall - Implemented by Arneet Kalra
+	// **************************************************************************
 
 	/**
 	 * @author arneetkalra
@@ -916,8 +895,11 @@ public class CucumberStepDefinitions {
 		List<Move> allMoves = currentGame.getMoves();
 		assertEquals(allMoves.size(), 0);
 	}
-
-	// -----------------------------9-10---------------------------
+	
+	// **************************************************************************
+	// Feature 9 - LoadPosition - Implemented by Yin Zhang - 260726999
+	// **************************************************************************
+	
 	/**
 	 * Load the game from the file
 	 *
@@ -1090,7 +1072,12 @@ public class CucumberStepDefinitions {
 	public void theLoadShallReturnAnError() {
 		assertFalse(validationResult);
 	}
-	// SavePosition
+	
+	
+	// **************************************************************************
+	// Feature 10 - SavePosition - Implemented by Yin Zhang - 260726999
+	// **************************************************************************
+
 	/**
 	 * Checks whether the file is in the system or not
 	 *
@@ -1213,8 +1200,11 @@ public class CucumberStepDefinitions {
 		assertTrue(quoridor1WhitePlayerRow==9);
 		assertTrue(quoridor1WhitePlayerColumn==5);
 	}
-
-	// -------------11-12-------------------------
+	
+	// **************************************************************************
+	// Feature 11 - ValidatePosition - Implemented by William Wang
+	// **************************************************************************
+	
 	/**
 	 * feature 11
 	 *
@@ -1222,8 +1212,6 @@ public class CucumberStepDefinitions {
 	 */
 	@Given("A game position is supplied with pawn coordinate {int}:{int}")
 	public void gamePositionWithPawnCoordinate(int row, int column) {
-
-
 
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 
@@ -1288,6 +1276,11 @@ public class CucumberStepDefinitions {
 	    // Write code here that turns the phrase above into concrete actions
 		assertFalse(validationResult);
 	}
+	
+	// **************************************************************************
+	// Feature 12 - SwitchCurrentPlayer - Implemented by William Wang
+	// **************************************************************************
+	
 	/**
 	 * feature 12
 	 *

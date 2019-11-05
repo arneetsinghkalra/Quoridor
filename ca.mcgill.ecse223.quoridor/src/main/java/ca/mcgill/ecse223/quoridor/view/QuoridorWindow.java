@@ -14,6 +14,7 @@ import ca.mcgill.ecse223.quoridor.model.Wall;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -66,6 +67,9 @@ public class QuoridorWindow extends JFrame {
 	*/
 	public QuoridorWindow() 
 	{
+		
+		//BufferedImage img = ImageIO.read(new File("src/main/resources/"));
+				
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 600, 450);
 		contentPane = new JPanel();	
@@ -681,16 +685,44 @@ public class QuoridorWindow extends JFrame {
 		}
 
 	
-	//test to set text
-	currentPlayerName.setText("Current Player: White");
+		//test to set text
+		currentPlayerName.setText("Current Player: White");
+		
+		//create a vertical wall at (3,3)
+		//by setting opaque of box and color of the wall center, we can create walls
+		//vWalls[2][2].setOpaque(true);
+		//wallCenters[2][2].setBackground(Color.black);
+		//vWalls[3][2].setOpaque(true);
+		
+		
+		
+		//NEED RE-DESIGN HERE!!!//
+	    turnLabel = new JLabel("It is");
+	    turnLabel.setHorizontalTextPosition(SwingConstants.LEFT);
+	    turnLabel.setHorizontalAlignment(SwingConstants.LEFT);
+	    turnLabel.setFont(new Font("Cooper Black", Font.PLAIN, 14));
+	    horizontalBox.add(turnLabel);
 	
-	//create a vertical wall at (3,3)
-	//by setting opaque of box and color of the wall center, we can create walls
-	//vWalls[2][2].setOpaque(true);
-	//wallCenters[2][2].setBackground(Color.black);
-	//vWalls[3][2].setOpaque(true);
+	    Component horizontalStrut = Box.createHorizontalStrut(100);
+	    horizontalBox.add(horizontalStrut);
+	
+	    timeRemLabel = new JLabel("Time remaining: 99:99");
+	    timeRemLabel.setFont(new Font("Cooper Black", Font.PLAIN, 14));
+	    timeRemLabel.setHorizontalAlignment(SwingConstants.CENTER);
+	    horizontalBox.add(timeRemLabel);
 	}
 	
+	
+	public String getTurnLabel()
+	{
+	    return turnLabel.getText();
+	}
+
+	public boolean getIsTimerActive() 
+	{
+	    return secondTimer.isRunning();
+	}
+	    
 	public void setTimeRemaining(int timeRemaining)
 	{
 	        timeRemaining /= 1000;
