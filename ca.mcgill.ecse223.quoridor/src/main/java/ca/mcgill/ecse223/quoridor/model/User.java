@@ -13,6 +13,7 @@ public class User
   //------------------------
 
   private static Map<String, User> usersByName = new HashMap<String, User>();
+  private static String nextName = "";
 
   //------------------------
   // MEMBER VARIABLES
@@ -118,4 +119,15 @@ public class User
             "name" + ":" + getName()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "quoridor = "+(getQuoridor()!=null?Integer.toHexString(System.identityHashCode(getQuoridor())):"null");
   }
+  
+  public static void reinitializeUniqueUser(List<User> users)
+  {
+	  nextName = "";
+	  for(User user : users)
+	  {
+		  User.usersByName.put(user.getName(), user);
+	  }  		  
+  }
+  
+  private static final long serialVersionUID = 2045406856025012133L ;
 }

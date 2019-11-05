@@ -372,9 +372,10 @@ public class CucumberStepDefinitions {
 	/**
 	 *
 	 * @author Ali Tapan
+	 * @throws Exception 
 	 */
 	@When("The player provides new user name: {string}")
-	public void thePlayerProvidesNewUserName(String username) {
+	public void thePlayerProvidesNewUserName(String username) throws Exception {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Controller.provideNewUsername(username, quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove());
 	}
@@ -382,9 +383,10 @@ public class CucumberStepDefinitions {
 	/**
 	 *
 	 * @author Ali Tapan
+	 * @throws Exception 
 	 */
 	@Then("The player shall be warned that {string} already exists")
-	public void thePlayerShallBeWarnedThatAlreadyExists(String username) {
+	public void thePlayerShallBeWarnedThatAlreadyExists(String username) throws Exception {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Boolean check = Controller.provideNewUsername(username, quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove());
 		assertEquals(false, check);

@@ -2,6 +2,7 @@
 /*This code was generated using the UMPLE 1.29.0.4181.a593105a9 modeling language!*/
 
 package ca.mcgill.ecse223.quoridor.model;
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -9,7 +10,7 @@ import java.util.*;
  * public enum Direction { Horizontal, Vertical }
  */
 // line 9 "../../../../../QuoridorGame.ump"
-public class Quoridor
+public class Quoridor implements Serializable
 {
 
   //------------------------
@@ -236,5 +237,11 @@ public class Quoridor
     }
     
   }
+  
+  public void reinitialize(){
+	    User.reinitializeUniqueUser(this.getUsers());
+	  }
+  
+  private static final long serialVersionUID = -2683593616927798071L ;
 
 }

@@ -16,6 +16,7 @@ import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.model.*;
 import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
 import ca.mcgill.ecse223.quoridor.model.Game.MoveMode;
+import ca.mcgill.ecse223.quoridor.persistence.QuoridorPersistence;
 import ca.mcgill.ecse223.quoridor.view.QuoridorWindow;
 
 
@@ -128,6 +129,7 @@ public class Controller {
 	  }
 	  
 	  Quoridor quoridor = QuoridorApplication.getQuoridor();
+	  QuoridorPersistence.load();
 	  //Iterate through the users to see if they match the user name provided
 	  for(int i = 0; i < quoridor.numberOfUsers(); i++)
 	  {
@@ -168,7 +170,7 @@ public class Controller {
    * @param username is a String that is the new user name
    * @return returns a Boolean, true if it successfully sets the username, false otherwise
    * @author Ali Tapan
-   * @verison 2.0
+   * @version 2.0
    */
   public static Boolean provideNewUsername(String username, Player player) {
 	  if(User.hasWithName(username) == true)
@@ -177,8 +179,14 @@ public class Controller {
 	  }
 	  Quoridor quoridor = QuoridorApplication.getQuoridor();
 	  player.getUser().setName(username);
+	  try {
+		  QuoridorPersistence.save(quoridor);
+	  } catch (Exception e) {
+		 e.getMessage();
+	  }
 	  //User user = quoridor.addUser(username);
 	  //player.setUser(user);
+	  
 	  return true;
 }
   	
@@ -219,6 +227,7 @@ public class Controller {
 	window.setTimeRemaining((int)(q.getCurrentGame().getWhitePlayer().getRemainingTime().getTime()));
 	window.createSecondTimer();
 	window.setCurrentPlayer(q.getCurrentGame().getWhitePlayer().getUser().getName());
+	window.movePlayer(0, 4, 8, 4);
 }
 
 	/**
@@ -624,7 +633,6 @@ public class Controller {
 		    while(first.hasMoreTokens()) {
 		    		int i = 0;
 		    		Wall wall = quoridor.getCurrentGame().getCurrentPosition().getBlackWallsInStock(i);
-		    		System.out.println(wall);
 				String direction = null;
 				int column = 0;
 				int row = 0;
@@ -654,7 +662,6 @@ public class Controller {
 		    while(second.hasMoreTokens()) {
 				int i = 0;
 				Wall wall = quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock(i+1);
-				System.out.println(quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock(9));
 				int column = 0;
 				int row = 0;
 				String direction = null;
@@ -753,6 +760,11 @@ public class Controller {
 			}
 	    boolean sameRemainingWall = (quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock().size()==quoridor.getCurrentGame().getCurrentPosition().getBlackWallsInStock().size());
 	    if(validatePosition()&&sameRemainingWall) {
+	    		int blackRow = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow();
+	    		int blackColumn = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn();
+	    		int whiteRow = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow();
+	    		int whiteColumn = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn();
+	    		QuoridorApplication.quoridorWindow.movePlayer(blackRow-1,blackColumn-1,whiteRow-1,whiteColumn-1);
 	    		return quoridor;
 	    		}else {
 	    			throw new UnsupportedOperationException("Invalid position");
@@ -769,12 +781,10 @@ public class Controller {
 		if(gamePosition.getPlayerToMove().getUser().getName().equals(gamePosition.getBlackPosition().getPlayer().getUser().getName())) {
 			data += blackPlayerData(gamePosition)+"\n";
 			data += whitePlayerData(gamePosition);
-			System.out.println(data);
 		}
 		else {
 			data += whitePlayerData(gamePosition)+"\n";
 			data += blackPlayerData(gamePosition);
-			System.out.println(data);
 		}
 		Path path = Paths.get("src/test/resources/savePosition/"+fileName);
 		if(Files.exists(path)) {
@@ -1000,7 +1010,6 @@ public class Controller {
 		String data ="";
 		data += "B:"+(char)(gamePosition.getBlackPosition().getTile().getColumn()+96);
 		data += String.valueOf((gamePosition.getBlackPosition().getTile().getRow()));
-		System.out.println(data);
 		for(int i = 0; i<gamePosition.getBlackWallsOnBoard().size(); i++) {
 	        data += ","+(char)(gamePosition.getBlackWallsOnBoard().get(i).getMove().getTargetTile().getColumn()+96);
 	        data += (gamePosition.getBlackWallsOnBoard().get(i).getMove().getTargetTile().getRow());

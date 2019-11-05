@@ -12,6 +12,7 @@ import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
 import ca.mcgill.ecse223.quoridor.model.Wall;
+import ca.mcgill.ecse223.quoridor.persistence.QuoridorPersistence;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -35,7 +36,7 @@ public class QuoridorWindow extends JFrame {
 	private JLabel timeRemLabel;
 	private JLabel currentPlayerName;
 	private static boolean confirms = true;
-
+	private int[] playerView = {0,0,0,0};
 	private static JFrame f;
 
 	// for the boards,tiles, and walls
@@ -98,7 +99,7 @@ public class QuoridorWindow extends JFrame {
 	            Controller.startClock();
 	            Controller.createBoard();
 	            Controller.initializeBoard();
-
+	            boolean wrong = false;
 				JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 				int returnValue = jfc.showOpenDialog(null);
 
@@ -110,12 +111,37 @@ public class QuoridorWindow extends JFrame {
 					}
 					catch (UnsupportedOperationException e) 
 					{
-						JDialog d = new JDialog(f, "Cannot load game due to invalid position"); 
-						d.setVisible(true);
-					}
+				    		JFrame f= new JFrame();
+				    		JTextField tf1;
+				    		JButton b1;
+				    		tf1=new JTextField();
+				    		tf1.setText("Cannot load game due to invalid position");
+				    		tf1.setEditable(false); 
+				    		b1=new JButton("OK");
+				    		tf1.setBounds(50,100,350,50);
+				    		b1.setBounds(100,200,100,50);
+				    		f.getContentPane().add(tf1);
+				    		f.getContentPane().add(b1);
+				    		f.setSize(400,400);
+				    		f.getContentPane().setLayout(null);
+				    		f.setVisible(true);
+				    		b1.addActionListener(new ActionListener() 
+				    		{
+				    			public void actionPerformed(ActionEvent b) {
+				    				f.setVisible(false);
+				    			}
+				    		});
+				    		wrong = true;
+				    	}
 				}
-                CardLayout layout = (CardLayout) (contentPane.getLayout());
-				layout.show(contentPane, "activeGamePanel");
+				if(!wrong) {
+					CardLayout layout = (CardLayout) (contentPane.getLayout());
+					layout.show(contentPane, "activeGamePanel");
+				}else {
+					Quoridor quoridor = QuoridorApplication.getQuoridor();
+					quoridor.delete();
+					quoridor = new Quoridor();
+				}
 			}
 	    });
 
@@ -213,49 +239,43 @@ public class QuoridorWindow extends JFrame {
 		btnLoadGame.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnLoadGame.addActionListener(new ActionListener()
 	    {
-	      public void actionPerformed(ActionEvent a)
-	      {
-//			Controller.startNewGame();
-//			Controller.initBlackPlayer("Black");
-//			Controller.initWhitePlayer("White");
-//	        Controller.setTotalThinkingTime("00:01:00");
-//	        Controller.startClock();
-//	        Controller.createBoard();
-//	        Controller.initializeBoard();
-		    JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-		    int returnValue = jfc.showOpenDialog(null);
-	   
-		    if (returnValue == JFileChooser.APPROVE_OPTION) {
-		    	File selectedFile = jfc.getSelectedFile();
-		    	try
-		    	{
-		    		Controller.loadPosition(selectedFile.getName());
-		    	}
-		    	catch (UnsupportedOperationException e) 
-		    	{
-		    		JFrame f= new JFrame();
-		    		JTextField tf1;
-		    		JButton b1;
-		    		tf1=new JTextField();
-		    		tf1.setText("Cannot load game due to invalid position");
-		    		tf1.setEditable(false); 
-		    		b1=new JButton("OK");
-		    		b1.setBounds(100,200,100,50);
-		    		f.getContentPane().add(tf1);
-		    		f.getContentPane().add(b1);
-		    		f.setSize(300,300);
-		    		f.getContentPane().setLayout(null);
-		    		
-		    		b1.addActionListener(new ActionListener() 
-		    		{
-		    			public void actionPerformed(ActionEvent b) {
-		    				f.setVisible(false);
-		    			}
-		    		});
-		    	}
-		    }
-		  }
-		});
+			public void actionPerformed(ActionEvent a)
+		      {
+			    JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+			    int returnValue = jfc.showOpenDialog(null);
+		   
+			    if (returnValue == JFileChooser.APPROVE_OPTION) {
+			    	File selectedFile = jfc.getSelectedFile();
+			    	try
+			    	{
+			    		Controller.loadPosition(selectedFile.getName());
+			    	}
+			    	catch (UnsupportedOperationException e) 
+			    	{
+			    		JFrame f= new JFrame();
+			    		JTextField tf1;
+			    		JButton b1;
+			    		tf1=new JTextField();
+			    		tf1.setText("Cannot load game due to invalid position");
+			    		tf1.setEditable(false); 
+			    		b1=new JButton("OK");
+			    		tf1.setBounds(50,100,350,50);
+			    		b1.setBounds(100,200,100,50);
+			    		f.getContentPane().add(tf1);
+			    		f.getContentPane().add(b1);
+			    		f.setSize(400,400);
+			    		f.getContentPane().setLayout(null);
+			    		f.setVisible(true);
+			    		b1.addActionListener(new ActionListener() 
+			    		{
+			    			public void actionPerformed(ActionEvent b) {
+			    				f.setVisible(false);
+			    			}
+			    		});
+			    	}
+			    }
+			  }
+			});
 		
 		btnSaveGame.addActionListener(new ActionListener()
 		{
@@ -545,19 +565,32 @@ public class QuoridorWindow extends JFrame {
                 //Checks if the user has entered a valid user name
                 if(player1Field.getText().length() > 0 && existingUsernames1.getSelectedItem().equals("or select existing username..."))
                 {
-                    if(!Controller.provideNewUsername(player1Field.getText(), Controller.initWhitePlayer("user1")))
-                    {
-                        JOptionPane.showMessageDialog(null, "This user name already exists!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
+                    try {
+						if(!Controller.provideNewUsername(player1Field.getText(), Controller.initWhitePlayer("user1")))
+						{
+						    JOptionPane.showMessageDialog(null, "This user name already exists!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
+						    return;
+						}
+					} catch (HeadlessException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
                 }
                 if(player2Field.getText().length() > 0 && existingUsernames2.getSelectedItem().equals("or select existing username..."))
                 {
-                    if(!Controller.provideNewUsername(player2Field.getText(), Controller.initBlackPlayer("user2")))
-                    {
-                        JOptionPane.showMessageDialog(null, "This user name already exists!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
+                    try {
+						if(!Controller.provideNewUsername(player2Field.getText(), Controller.initBlackPlayer("user2")))
+						{
+						    JOptionPane.showMessageDialog(null, "This user name already exists!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
+						    return;
+						}
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
                 }
 
                 //Checks if the player enters an input and also selects an existing user name, if true will show a dialog box
@@ -695,27 +728,27 @@ public class QuoridorWindow extends JFrame {
 							Controller.dropWall(
 									QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate());
 							// If horizontal, highlight horizontal walls
-							//if (QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate()
-							//		.getWallDirection() == Direction.Horizontal) {
+							if (QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate()
+									.getWallDirection() == Direction.Horizontal) {
 								hWalls[newI][newJ].setBackground(Color.black);
 
 								wallCenters[newI][newJ].setBackground(Color.black);
 
 								hWalls[newI][newJ + 1].setBackground(Color.black);
-						//	}
+							}
 
-						//	else if (QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate()
-							//		.getWallDirection() == Direction.Horizontal) { // ELse highlight vertically
+							else if (QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate()
+									.getWallDirection() == Direction.Horizontal) { // ELse highlight vertically
 								vWalls[newI][newJ].setOpaque(true);
 
 								wallCenters[newI][newJ].setBackground(Color.black);
 
 								vWalls[newI + 1][newJ].setOpaque(true);
-						//	}
+							}
 							
-						//	else { //No wall move candidate exists
-						//		JOptionPane.showMessageDialog(null, "Grab a Wall first!", "", JOptionPane.WARNING_MESSAGE);
-						//	}
+							else { //No wall move candidate exists
+								JOptionPane.showMessageDialog(null, "Grab a Wall first!", "", JOptionPane.WARNING_MESSAGE);
+							}
 
 						}
 
@@ -728,7 +761,7 @@ public class QuoridorWindow extends JFrame {
 			}
 					
 		}
-
+		
 		
 		//create a vertical wall at (3,3)
 		//by setting opaque of box and color of the wall center, we can create walls
@@ -750,6 +783,23 @@ public class QuoridorWindow extends JFrame {
 	    horizontalBox.add(timeRemLabel);
 	}
 
+	
+	public void movePlayer(int whitex, int whitey, int blackx, int blacky) {
+		int blackChar = 0x2B24;
+		int whiteChar = 0x20DD;
+		tiles[whitex][whitey].setText("O");
+		tiles[blackx][blacky].setText(""+(char)blackChar);
+		
+		tiles[playerView[0]][playerView[1]].setText("");
+		tiles[playerView[2]][playerView[3]].setText("");
+		
+		playerView[0] = whitex;
+		playerView[1] = whitey;
+		playerView[2] = blackx;
+		playerView[3] = blacky;
+
+	}
+	
 	public String getTurnLabel() {
 		return currentPlayerName.getText();
 	}
