@@ -33,7 +33,7 @@ public class Controller {
   public static Game startNewGame() {
 	 Quoridor quoridor = QuoridorApplication.getQuoridor();
 	 Game game = new Game(GameStatus.Initializing, MoveMode.PlayerMove, quoridor);
-	 quoridor.setCurrentGame(game);
+	 //quoridor.setCurrentGame(game);
 	 return game;
   }
   	
@@ -216,6 +216,7 @@ public class Controller {
 		q.getCurrentGame().getCurrentPosition().addBlackWallsInStock(b);
 	}
 	QuoridorWindow window =  QuoridorApplication.quoridorWindow;
+	window.setTimeRemaining((int)(q.getCurrentGame().getWhitePlayer().getRemainingTime().getTime()));
 	window.createSecondTimer();
 	window.setCurrentPlayer(q.getCurrentGame().getWhitePlayer().getUser().getName());
 }
@@ -472,13 +473,15 @@ public class Controller {
 		// Update player info
 		if (player.equals(currentGame.getWhitePlayer())) {
 			currentGamePosition.addWhiteWallsOnBoard(wallMoveCandidate.getWallPlaced());// Also increments number of																		// walls on board
-			currentGamePosition.setPlayerToMove(currentGame.getBlackPlayer());// Update player to black player)
+			switchCurrentPlayer();
+			//currentGamePosition.setPlayerToMove(currentGame.getBlackPlayer());// Update player to black player)
 			currentGame.setWallMoveCandidate(null);// Refreshes wall move candidate
 			return wallMoveCandidate.getWallPlaced();
 
 		} else if (player.equals(currentGame.getBlackPlayer())) {
 			currentGamePosition.addBlackWallsOnBoard(wallMoveCandidate.getWallPlaced());
-			currentGamePosition.setPlayerToMove(currentGame.getWhitePlayer()); // Update player to white player
+			//currentGamePosition.setPlayerToMove(currentGame.getWhitePlayer()); // Update player to white player
+			switchCurrentPlayer();
 			currentGame.setWallMoveCandidate(null);// Refreshes wall move candidate
 			return wallMoveCandidate.getWallPlaced();
 		} else {
@@ -965,13 +968,9 @@ public class Controller {
 		PlayerPosition player2Position = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), currentPosition.getBlackPosition().getTile());
 		if(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsBlack()==null) {
 			newPosition = new GamePosition(currentPosition.getId()+1, player1Position, player2Position, game.getBlackPlayer(), game);
-			game.getWhitePlayer().setRemainingTime(new Time(0));
-			game.getBlackPlayer().setRemainingTime(new Time(180000));
 		}
 		else {
 			newPosition = new GamePosition(currentPosition.getId()+1, player1Position, player2Position, game.getWhitePlayer(), game);	
-			game.getWhitePlayer().setRemainingTime(new Time(180000));
-			game.getBlackPlayer().setRemainingTime(new Time(0));
 		}
 		game.addPosition(currentPosition);
 		game.setCurrentPosition(newPosition);
@@ -1004,7 +1003,7 @@ public class Controller {
 		System.out.println(data);
 		for(int i = 0; i<gamePosition.getBlackWallsOnBoard().size(); i++) {
 	        data += ","+(char)(gamePosition.getBlackWallsOnBoard().get(i).getMove().getTargetTile().getColumn()+96);
-	        data += ","+(gamePosition.getBlackWallsOnBoard().get(i).getMove().getTargetTile().getRow());
+	        data += (gamePosition.getBlackWallsOnBoard().get(i).getMove().getTargetTile().getRow());
 	        data += convertWallDir(gamePosition.getBlackWallsOnBoard().get(i).getMove().getWallDirection());
 	        }
 		return data;
@@ -1016,7 +1015,7 @@ public class Controller {
 		data += String.valueOf((gamePosition.getWhitePosition().getTile().getRow()));
 		for(int i = 0; i<gamePosition.getWhiteWallsOnBoard().size(); i++) {
 	        data += ","+(char)(gamePosition.getWhiteWallsOnBoard().get(i).getMove().getTargetTile().getColumn()+96);
-	        data += ","+(gamePosition.getWhiteWallsOnBoard().get(i).getMove().getTargetTile().getRow());
+	        data += (gamePosition.getWhiteWallsOnBoard().get(i).getMove().getTargetTile().getRow());
 	        data += convertWallDir(gamePosition.getWhiteWallsOnBoard().get(i).getMove().getWallDirection());
 	        }
 		return data;

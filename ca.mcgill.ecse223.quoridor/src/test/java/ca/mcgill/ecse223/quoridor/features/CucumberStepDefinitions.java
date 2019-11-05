@@ -56,7 +56,7 @@ public class CucumberStepDefinitions {
 	@Given("^The game is not running$")
 	public void theGameIsNotRunning() {
 		initQuoridorAndBoard();
-		createUsersAndPlayers("user1", "user2");
+		createUsersAndPlayersLoad=createUsersAndPlayers("user1", "user2");
 	}
 
 	@Given("^The game is running$")
@@ -963,7 +963,7 @@ public class CucumberStepDefinitions {
 //				wall.delete();
 //			}
 //		}
-		
+		/*
 		//------// added
 		Controller.startNewGame();
 		Player white = createPlayer("user1");
@@ -976,15 +976,15 @@ public class CucumberStepDefinitions {
 		quoridor.getCurrentGame().setWhitePlayer(white);
 		quoridor.getCurrentGame().setBlackPlayer(black);
 		quoridor.getCurrentGame().setCurrentPosition(gp);
-		//-----// added
+		//-----// added*/
 		
 //		Controller.initWhitePlayer("User1");
 //		Controller.initBlackPlayer("User2");
-//		Controller.initializeBoard();
+		//Controller.initializeBoard();
 		//ArrayList<Player> createUsersAndPlayers = createUsersAndPlayers("user4", "user5");
 		
 		
-		//createAndStartGame(createUsersAndPlayersLoad);
+		createAndStartGame(createUsersAndPlayersLoad);
 		
 		try {
 			quoridor = Controller.loadPosition(fileName);
@@ -1410,10 +1410,10 @@ public class CucumberStepDefinitions {
 	@Then("The clock of {string} shall be stopped")
 	public void clockShallBeStopped(String player) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		if (player.equals("white")) {
-			assertTrue(quoridor.getCurrentGame().getWhitePlayer().getRemainingTime().getTime() == 0);
+		if (player.equals("black")) {
+			assertTrue(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsBlack()==null);
 		} else {
-			assertTrue(quoridor.getCurrentGame().getBlackPlayer().getRemainingTime().getTime() == 0);
+			assertTrue(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsWhite()==null);
 		}
 	}
 
@@ -1426,9 +1426,9 @@ public class CucumberStepDefinitions {
 	public void clockShallBeRunning(String player) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		if (player.equals("white")) {
-			assertFalse(quoridor.getCurrentGame().getWhitePlayer().getRemainingTime().getTime() == 0);
+			assertTrue(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsBlack()==null);
 		} else {
-			assertFalse(quoridor.getCurrentGame().getBlackPlayer().getRemainingTime().getTime() == 0);
+			assertTrue(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsWhite()==null);
 		}
 	}
 

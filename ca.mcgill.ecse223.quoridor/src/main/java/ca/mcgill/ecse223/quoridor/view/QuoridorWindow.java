@@ -1,6 +1,5 @@
 package ca.mcgill.ecse223.quoridor.view;
 
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -9,6 +8,7 @@ import javax.swing.filechooser.FileSystemView;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.Controller;
+import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
 import ca.mcgill.ecse223.quoridor.model.Wall;
@@ -23,9 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.awt.event.ActionEvent;
 
-
 public class QuoridorWindow extends JFrame {
-
 
 	private static JPanel contentPane;
 	private JTextField player1Field;
@@ -34,18 +32,18 @@ public class QuoridorWindow extends JFrame {
 	private JTextField secondField;
 	public Boolean wallSelected = false;
 	private Timer secondTimer;
-	private JLabel turnLabel;
 	private JLabel timeRemLabel;
+	private JLabel currentPlayerName;
 	private static boolean confirms = true;
 
-    private static JFrame f; 
+	private static JFrame f;
 
-    //for the boards,tiles, and walls
-    private JButton[][] tiles = new JButton[9][9];
-    private JButton[][] wallCenters =  new JButton[8][8];
-    private Box[][] hWalls = new Box[9][9];
-    private Box[][] vWalls = new Box[9][9];
-	
+	// for the boards,tiles, and walls
+	private JButton[][] tiles = new JButton[9][9];
+	private JButton[][] wallCenters = new JButton[8][8];
+	private Box[][] hWalls = new Box[9][9];
+	private Box[][] vWalls = new Box[9][9];
+
 	/**
 	* Create the frame.
 	*/
@@ -92,8 +90,15 @@ public class QuoridorWindow extends JFrame {
 		loadGameButton.addActionListener(new ActionListener()
 	    {
 			public void actionPerformed(ActionEvent a)
-			{
-				Controller.initializeBoard();
+			{	
+				Controller.startNewGame();
+				Controller.initBlackPlayer("Black");
+				Controller.initWhitePlayer("White");
+	            Controller.setTotalThinkingTime("00:01:00");
+	            Controller.startClock();
+	            Controller.createBoard();
+	            Controller.initializeBoard();
+
 				JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 				int returnValue = jfc.showOpenDialog(null);
 
@@ -109,6 +114,8 @@ public class QuoridorWindow extends JFrame {
 						d.setVisible(true);
 					}
 				}
+                CardLayout layout = (CardLayout) (contentPane.getLayout());
+				layout.show(contentPane, "activeGamePanel");
 			}
 	    });
 
@@ -208,9 +215,15 @@ public class QuoridorWindow extends JFrame {
 	    {
 	      public void actionPerformed(ActionEvent a)
 	      {
-	      Controller.initializeBoard();
-	      JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-	      int returnValue = jfc.showOpenDialog(null);
+//			Controller.startNewGame();
+//			Controller.initBlackPlayer("Black");
+//			Controller.initWhitePlayer("White");
+//	        Controller.setTotalThinkingTime("00:01:00");
+//	        Controller.startClock();
+//	        Controller.createBoard();
+//	        Controller.initializeBoard();
+		    JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+		    int returnValue = jfc.showOpenDialog(null);
 	   
 		    if (returnValue == JFileChooser.APPROVE_OPTION) {
 		    	File selectedFile = jfc.getSelectedFile();
@@ -354,7 +367,7 @@ public class QuoridorWindow extends JFrame {
 		gameTitleLabel.setFont(new Font("Cooper Black", Font.PLAIN, 40));
 		titleTimeBox.add(gameTitleLabel);
 	
-		JLabel currentPlayerName = new JLabel("Current Player : ");
+		currentPlayerName = new JLabel("Current Player : ");
 		titleTimeBox.add(currentPlayerName);
 	
 	
@@ -476,20 +489,28 @@ public class QuoridorWindow extends JFrame {
              * 
              */
             public void actionPerformed(ActionEvent e) {
-                CardLayout layout = (CardLayout) (contentPane.getLayout());
-                Controller.startNewGame();
+            	CardLayout layout = (CardLayout) (contentPane.getLayout());
+ 
                 String time ="";
                 String seconds = "";
                 String minutes = "";
 
                 //Checks trivial inputs
-                if((player1Field.getText().length() == 0 && existingUsernames1.getSelectedItem().equals("or select existing username..."))
-                        || player2Field.getText().length() == 0 && existingUsernames2.getSelectedItem().equals("or select existing username..."))
+                if((player1Field.getText().length() == 0 && existingUsernames1.getSelectedItem().equals("or select existing username...")))
                 {
                     JOptionPane.showMessageDialog(null, "Please provide a username!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
-
+                if(player2Field.getText().length() == 0 && existingUsernames2.getSelectedItem().equals("or select existing username..."))
+        		{
+        			JOptionPane.showMessageDialog(null, "Please provide a username!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
+        			return;
+        		}
+                if(minuteField.getText().length() == 0 && secondField.getText().length() == 0) {
+                    JOptionPane.showMessageDialog(null, "Please provide user time!", "Invalid Remaining Time", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                
                 if(player1Field.getText().equals(player2Field.getText()))
                 {
                     JOptionPane.showMessageDialog(null, "Player 1 user name and Player 2 user name cannot be the same!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
@@ -510,10 +531,6 @@ public class QuoridorWindow extends JFrame {
                     return;
                 }
 
-                if(minuteField.getText().length() == 0 && secondField.getText().length() == 0) {
-                    JOptionPane.showMessageDialog(null, "Please provide user time!", "Invalid Remaining Time", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
 
                 if(minuteField.getText().length() > 2 || secondField.getText().length() > 2)
                 {
@@ -521,7 +538,7 @@ public class QuoridorWindow extends JFrame {
                     return;
                 }
 
-
+                Controller.startNewGame();
                 //Provide layout
                 layout.show(contentPane, "activeGamePanel");
 
@@ -547,11 +564,13 @@ public class QuoridorWindow extends JFrame {
                 if(player1Field.getText().length() > 0 && !existingUsernames1.getSelectedItem().equals(Controller.listExistingUsernames()[0]))
                 {
                     JOptionPane.showMessageDialog(null, "Cannot enter new user name and select an existing username at the same time!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
+                    return;
                 }
 
                 if(player2Field.getText().length() > 0 && !existingUsernames2.getSelectedItem().equals(Controller.listExistingUsernames()[0]))
                 {
                     JOptionPane.showMessageDialog(null, "Cannot enter new user name and select an existing username at the same time!", "Invalid Username", JOptionPane.WARNING_MESSAGE);
+                    return;
                 }
 
 
@@ -596,16 +615,14 @@ public class QuoridorWindow extends JFrame {
                 }
                 
                 time = "00:" + minutes + ":" + seconds;
-
+                
                 Controller.setTotalThinkingTime(time);
                 Controller.startClock();
                 Controller.createBoard();
                 Controller.initializeBoard();
-
-            }
+           
+        	}	
         });
-
-
         setupPanel.add(startGameButton);
 		
 	
@@ -659,17 +676,50 @@ public class QuoridorWindow extends JFrame {
 					gameBoardPanel.add(hWalls[i][j],c);
 				}
 					
-				if(i<8&&j<8) 
-				{	
+				if (i < 8 && j < 8) {
+
 					wallCenters[i][j] = new JButton();
+
 					wallCenters[i][j].setBackground(Color.lightGray);
-					c = new GridBagConstraints();
-					c.gridx = j*2+1;
-					c.gridy = i*2+1;
-					c.weightx=1;
-					c.weighty = 1;
-					c.ipadx = -5;
-					c.ipady = -5;
+					// For loop helper
+					@SuppressWarnings("deprecation")
+					final Integer newI = new Integer(i);
+					@SuppressWarnings("deprecation")
+					final Integer newJ = new Integer(j);
+
+					wallCenters[i][j].addActionListener(new ActionListener() {
+
+						public void actionPerformed(ActionEvent e) {
+
+							// Drop Wall
+							Controller.dropWall(
+									QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate());
+							// If horizontal, highlight horizontal walls
+							//if (QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate()
+							//		.getWallDirection() == Direction.Horizontal) {
+								hWalls[newI][newJ].setBackground(Color.black);
+
+								wallCenters[newI][newJ].setBackground(Color.black);
+
+								hWalls[newI][newJ + 1].setBackground(Color.black);
+						//	}
+
+						//	else if (QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate()
+							//		.getWallDirection() == Direction.Horizontal) { // ELse highlight vertically
+								vWalls[newI][newJ].setOpaque(true);
+
+								wallCenters[newI][newJ].setBackground(Color.black);
+
+								vWalls[newI + 1][newJ].setOpaque(true);
+						//	}
+							
+						//	else { //No wall move candidate exists
+						//		JOptionPane.showMessageDialog(null, "Grab a Wall first!", "", JOptionPane.WARNING_MESSAGE);
+						//	}
+
+						}
+
+					});
 					c.fill = GridBagConstraints.BOTH;
 					//TODO: set click event for walls here--eg.dropwall
 					gameBoardPanel.add(wallCenters[i][j],c);
@@ -679,9 +729,6 @@ public class QuoridorWindow extends JFrame {
 					
 		}
 
-	
-		//test to set text
-		currentPlayerName.setText("Current Player: White");
 		
 		//create a vertical wall at (3,3)
 		//by setting opaque of box and color of the wall center, we can create walls
@@ -692,152 +739,131 @@ public class QuoridorWindow extends JFrame {
 		
 		
 		//NEED RE-DESIGN HERE!!!//
-	    turnLabel = new JLabel("It is");
-	    turnLabel.setHorizontalTextPosition(SwingConstants.LEFT);
-	    turnLabel.setHorizontalAlignment(SwingConstants.LEFT);
-	    turnLabel.setFont(new Font("Cooper Black", Font.PLAIN, 14));
-	    horizontalBox.add(turnLabel);
+	    
 	
 	    Component horizontalStrut = Box.createHorizontalStrut(100);
 	    horizontalBox.add(horizontalStrut);
 	
-	    timeRemLabel = new JLabel("Time remaining: 99:99");
+	    timeRemLabel = new JLabel("Time remaining: 00:00");
 	    timeRemLabel.setFont(new Font("Cooper Black", Font.PLAIN, 14));
 	    timeRemLabel.setHorizontalAlignment(SwingConstants.CENTER);
 	    horizontalBox.add(timeRemLabel);
 	}
-	
-	
-	public String getTurnLabel()
-	{
-	    return turnLabel.getText();
+
+	public String getTurnLabel() {
+		return currentPlayerName.getText();
 	}
 
-	public boolean getIsTimerActive() 
-	{
-	    return secondTimer.isRunning();
-	}
-	    
-	public void setTimeRemaining(int timeRemaining)
-	{
-	        timeRemaining /= 1000;
-	        int minutes, seconds;
-	        minutes = timeRemaining/60;
-	        seconds = timeRemaining % 60;
-	        // Change text of label to new time
-	        String min,sec;
-	        if(minutes/10 == 0)
-	        {
-	            min="0"+minutes;
-	        }
-	        else
-	        {
-	            min =""+ minutes;
-	        }
-	        if(seconds/10 == 0)
-	        {
-	            sec = "0"+seconds;
-	        }
-	        else
-	        {
-	            sec = ""+ seconds;
-	        }
-	        String tr = "Time remaining: "+minutes+":"+seconds;
-	        timeRemLabel.setText(tr);
-	}
-	
-	public void setCurrentPlayer(String name)
-	{
-	      	turnLabel.setText(name+"'s turn");
-	}
-	
-	public void subtractSecondFromView()
-	{
-	        // pull text from label
-	        // get last 2 characters
-	        // change one by one
-	        //set new text
-	        String timeRem = timeRemLabel.getText();
-	        String minRem = timeRem.substring(timeRem.lastIndexOf(":")-1, timeRem.lastIndexOf(":"));
-	        timeRem = timeRem.substring(timeRem.lastIndexOf(":")+1);
-	        int timeRemInt = Integer.parseInt(timeRem)-1;
-	        int minRemInt = Integer.parseInt(minRem);
-	        if(timeRemInt == -1)
-	        {
-	            timeRemInt = 59;
-	            minRemInt--;
-	        }
-	        setTimeRemaining((60*minRemInt+timeRemInt)*1000);
-	
+	public boolean getIsTimerActive() {
+		return secondTimer.isRunning();
 	}
 
-	public void createSecondTimer()
-	{
-	        ActionListener listener = new ActionListener() {
-	        @Override
-	        public void actionPerformed(ActionEvent e) 
-	        {
-		        // Deduct a second from view
-		        subtractSecondFromView();
-		        // Deduct a second from model
-		        Controller.subtractSecond();
-	        }
-	 };
-	
-	        secondTimer = new Timer(1000,listener);
-	        secondTimer.setRepeats(true);
-	        secondTimer.start();
-	 }
-	
-	
+	public void setTimeRemaining(int timeRemaining) {
+		timeRemaining /= 1000;
+		int minutes, seconds;
+		minutes = timeRemaining / 60;
+		seconds = timeRemaining % 60;
+		// Change text of label to new time
+		String min, sec;
+		if (minutes / 10 == 0) {
+			min = "0" + minutes;
+		} else {
+			min = "" + minutes;
+		}
+		if (seconds / 10 == 0) {
+			sec = "0" + seconds;
+		} else {
+			sec = "" + seconds;
+		}
+		String tr = "Time remaining: " + min + ":" + sec;
+		timeRemLabel.setText(tr);
+	}
+
+	public void setCurrentPlayer(String name) {
+		currentPlayerName.setText(name + "'s turn");
+	}
+
+	public void subtractSecondFromView() {
+		// pull text from label
+		// get last 2 characters
+		// change one by one
+		// set new text
+		String timeRem = timeRemLabel.getText();
+		String minRem = timeRem.substring(timeRem.lastIndexOf(":") - 2, timeRem.lastIndexOf(":"));
+		timeRem = timeRem.substring(timeRem.lastIndexOf(":") + 1);
+		minRem = minRem.trim();
+		timeRem = timeRem.trim();
+		int timeRemInt = Integer.parseInt(timeRem) - 1;
+		int minRemInt = Integer.parseInt(minRem);
+		if (timeRemInt == -1) {
+			timeRemInt = 59;
+			minRemInt--;
+		}
+		setTimeRemaining((60 * minRemInt + timeRemInt) * 1000);
+
+	}
+
+	public void createSecondTimer() {
+		ActionListener listener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// Deduct a second from view
+				subtractSecondFromView();
+				// Deduct a second from model
+				Controller.subtractSecond();
+			}
+		};
+
+		secondTimer = new Timer(1000, listener);
+		secondTimer.setRepeats(true);
+		secondTimer.start();
+	}
+
 	/**
-	* @author arneetkalra
-	*/
-	public static void notifyIllegalWallMove()
-	{
-		JOptionPane.showMessageDialog(null, "Illegal Wall Move!","",JOptionPane.WARNING_MESSAGE);
+	 * @author arneetkalra
+	 */
+	public static void notifyIllegalWallMove() {
+		JOptionPane.showMessageDialog(null, "Illegal Wall Move!", "", JOptionPane.WARNING_MESSAGE);
 	}
-	
+
 	/** @author Luke Barber */
-	public static void warningNoMoreWalls() 
-	{
+	public static void warningNoMoreWalls() {
 		JOptionPane.showMessageDialog(null, "No More Walls Available in Stock!", "", JOptionPane.WARNING_MESSAGE);
 	}
-	
+
 	/** @author Luke Barber */
-	public void setWallSelected(boolean selected)
-	{
+	public void setWallSelected(boolean selected) {
 		wallSelected = selected;
 	}
+
 	/** @author Luke Barber */
-	public boolean getWallSelected() 
-	{
+	public boolean getWallSelected() {
 		return this.wallSelected;
 	}
 
 	// TODO add action/listener methods to actually progress the game and all that
-	
+
 	class ImagePanel extends JPanel {
 
-		  private Image img;
+		private Image img;
 
-		  public ImagePanel(String img) {
-		    this(new ImageIcon(img).getImage());
-		  }
-
-		  public ImagePanel(Image img) {
-		    this.img = img;
-		    Dimension size = new Dimension(img.getWidth(null), img.getHeight(null));
-		    setPreferredSize(size);
-		    setMinimumSize(size);
-		    setMaximumSize(size);
-		    setSize(size);
-		    setLayout(null);
-		  }
-
-		  public void paintComponent(Graphics g) {
-		    g.drawImage(img, 0, 0, null);
-		  }
-
+		public ImagePanel(String img) {
+			this(new ImageIcon(img).getImage());
 		}
+
+		public ImagePanel(Image img) {
+			this.img = img;
+			Dimension size = new Dimension(img.getWidth(null), img.getHeight(null));
+			setPreferredSize(size);
+			setMinimumSize(size);
+			setMaximumSize(size);
+			setSize(size);
+			setLayout(null);
+		}
+
+		public void paintComponent(Graphics g) {
+			g.drawImage(img, 0, 0, null);
+		}
+
+	}
 }
