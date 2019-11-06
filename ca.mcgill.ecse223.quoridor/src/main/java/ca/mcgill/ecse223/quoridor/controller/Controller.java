@@ -476,7 +476,7 @@ public class Controller {
 		// ----------- Now drop the wall -------
 
 		// Update parameters of game:
-		currentGame.addMove(wallMoveCandidate); // Stores move
+		//currentGame.addMove(wallMoveCandidate); // Stores move
 
 	
 		// Update player info

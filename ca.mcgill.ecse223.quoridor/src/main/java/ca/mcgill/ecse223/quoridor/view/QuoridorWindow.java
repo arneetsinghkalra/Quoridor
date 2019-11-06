@@ -75,18 +75,18 @@ public class QuoridorWindow extends JFrame {
 			}
 		});
 	
-		sl_titleScreenPanel.putConstraint(SpringLayout.NORTH, newGameButton, 131, SpringLayout.NORTH, titleScreenPanel);
-		sl_titleScreenPanel.putConstraint(SpringLayout.WEST, newGameButton, 90, SpringLayout.WEST, titleScreenPanel);
+		sl_titleScreenPanel.putConstraint(SpringLayout.NORTH, newGameButton, 185, SpringLayout.NORTH, titleScreenPanel);
+		sl_titleScreenPanel.putConstraint(SpringLayout.WEST, newGameButton, 350, SpringLayout.WEST, titleScreenPanel);
 		newGameButton.setFont(new Font("Cooper Black", Font.PLAIN, 20));
 		titleScreenPanel.add(newGameButton);
 		
 		
 		JButton loadGameButton = new JButton("Load Game");
-		sl_titleScreenPanel.putConstraint(SpringLayout.NORTH, loadGameButton, 207, SpringLayout.NORTH, titleScreenPanel);
-		sl_titleScreenPanel.putConstraint(SpringLayout.WEST, loadGameButton, 74, SpringLayout.WEST, titleScreenPanel);
-		sl_titleScreenPanel.putConstraint(SpringLayout.SOUTH, loadGameButton, -124, SpringLayout.SOUTH, titleScreenPanel);	
-		sl_titleScreenPanel.putConstraint(SpringLayout.SOUTH, newGameButton, -6, SpringLayout.NORTH, loadGameButton);
-		sl_titleScreenPanel.putConstraint(SpringLayout.EAST, newGameButton, 0, SpringLayout.EAST, loadGameButton);
+		sl_titleScreenPanel.putConstraint(SpringLayout.NORTH, loadGameButton, 230, SpringLayout.NORTH, titleScreenPanel);
+		sl_titleScreenPanel.putConstraint(SpringLayout.WEST, loadGameButton, 350, SpringLayout.WEST, titleScreenPanel);
+		//sl_titleScreenPanel.putConstraint(SpringLayout.SOUTH, loadGameButton, -124, SpringLayout.SOUTH, titleScreenPanel);	
+		//sl_titleScreenPanel.putConstraint(SpringLayout.SOUTH, newGameButton, -6, SpringLayout.NORTH, loadGameButton);
+		//sl_titleScreenPanel.putConstraint(SpringLayout.EAST, newGameButton, 0, SpringLayout.EAST, loadGameButton);
 		loadGameButton.setFont(new Font("Cooper Black", Font.PLAIN, 20));
 		loadGameButton.addActionListener(new ActionListener()
 	    {
@@ -460,7 +460,7 @@ public class QuoridorWindow extends JFrame {
 		sl_setupPanel.putConstraint(SpringLayout.WEST, thinkingTimeBox, 0, SpringLayout.WEST, player1NameBox);
 		setupPanel.add(thinkingTimeBox);
 		
-		JLabel setTimerLabel = new JLabel("Set Timer Amount");
+		JLabel setTimerLabel = new JLabel("Set Timer - Minutes & Seconds ");
 		setTimerLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		setTimerLabel.setFont(new Font("Cooper Black", Font.PLAIN, 20));
 		thinkingTimeBox.add(setTimerLabel);
@@ -724,42 +724,67 @@ public class QuoridorWindow extends JFrame {
 
 						public void actionPerformed(ActionEvent e) {
 
-							// Drop Wall
-							Controller.dropWall(
-									QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate());
 							// If horizontal, highlight horizontal walls
 							if (QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate()
 									.getWallDirection() == Direction.Horizontal) {
+
+								// Do drop wall and return the wall placed
+								Wall returnedWall = Controller.dropWall(
+										QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate());
+
+								// Make a wall horizontally
 								hWalls[newI][newJ].setBackground(Color.black);
 
 								wallCenters[newI][newJ].setBackground(Color.black);
 
 								hWalls[newI][newJ + 1].setBackground(Color.black);
+
+								System.out.println(returnedWall.getMove().getTargetTile());
+
 							}
 
 							else if (QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate()
-									.getWallDirection() == Direction.Horizontal) { // ELse highlight vertically
-								vWalls[newI][newJ].setOpaque(true);
+									.getWallDirection() == Direction.Vertical) {
+
+								// Do drop wall and return the wall placed
+								Wall returnedWall = Controller.dropWall(
+										QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate());
+
+								// Make a wall vertically
+								vWalls[newI][newJ].setBackground(Color.black);
 
 								wallCenters[newI][newJ].setBackground(Color.black);
 
-								vWalls[newI + 1][newJ].setOpaque(true);
-							}
-							
-							else { //No wall move candidate exists
-								JOptionPane.showMessageDialog(null, "Grab a Wall first!", "", JOptionPane.WARNING_MESSAGE);
+								vWalls[newI + 1][newJ].setBackground(Color.black);
+
+								System.out.println(returnedWall.getMove().getTargetTile());
 							}
 
+							else { // No wall move candidate exists
+								JOptionPane.showMessageDialog(null, "Grab a Wall first!", "",
+										JOptionPane.WARNING_MESSAGE);
+							}
 						}
-
 					});
+					c.gridx = j * 2 + 1;
+
+					c.gridy = i * 2 + 1;
+
+					c.weightx = 1;
+
+					c.weighty = 1;
+
+					c.ipadx = -5;
+
+					c.ipady = -5;
+
 					c.fill = GridBagConstraints.BOTH;
-					//TODO: set click event for walls here--eg.dropwall
-					gameBoardPanel.add(wallCenters[i][j],c);
+					// TODO: set click event for walls here--eg.dropwall
+					gameBoardPanel.add(wallCenters[i][j], c);
 				}
-					
+
 			}
-					
+
 		}
 		
 		
