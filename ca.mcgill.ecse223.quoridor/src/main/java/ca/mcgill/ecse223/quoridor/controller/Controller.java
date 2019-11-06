@@ -227,6 +227,7 @@ public class Controller {
 	window.setTimeRemaining((int)(q.getCurrentGame().getWhitePlayer().getRemainingTime().getTime()));
 	window.createSecondTimer();
 	window.setCurrentPlayer(q.getCurrentGame().getWhitePlayer().getUser().getName());
+	window.setPlayerNames(q.getCurrentGame().getWhitePlayer().getUser().getName(), q.getCurrentGame().getBlackPlayer().getUser().getName());
 	window.movePlayer(0, 4, 8, 4);
 }
 
@@ -287,33 +288,29 @@ public class Controller {
 	   * Grabs a given wall and holds it so that it is ready for use. 
 	   * @param wall The wall that will be grabbed
 	   */
-	  	public static boolean grabWall(Wall wall) {
-	  		Quoridor quoridor =  QuoridorApplication.getQuoridor();
-	  		Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
-	  		boolean grabbed = false;
-	  		Player player;
-	  		if(currentPlayer.equals(quoridor.getCurrentGame().getWhitePlayer())) {
-	  			player = quoridor.getCurrentGame().getWhitePlayer();
-	  			quoridor.getCurrentGame().getCurrentPosition().removeWhiteWallsInStock(wall);
-	  		}
-	  		else if(currentPlayer.equals(quoridor.getCurrentGame().getBlackPlayer())) {
-	  			player = quoridor.getCurrentGame().getBlackPlayer();
-	  			quoridor.getCurrentGame().getCurrentPosition().removeBlackWallsInStock(wall);
-	  		}
-	  		else {
-	  			return grabbed;
-	  		}
-	  		int initialRow = 1;
-	  		int initialColumn = 1;
-	  		Direction direction = Direction.Horizontal;
-	  		Tile tile = quoridor.getBoard().getTile((initialRow - 1) * 9 + (initialColumn - 1));
-			WallMove wallMoveCandidate = new WallMove(1, 1, player, tile, quoridor.getCurrentGame(), direction, wall);
-			quoridor.getCurrentGame().setWallMoveCandidate(wallMoveCandidate);
-			wall.setMove(wallMoveCandidate);
-			quoridor.getCurrentGame().getCurrentPosition().removeWhiteWallsInStock(wall);
-	  		grabbed = true;
-		 	return grabbed;
-	}
+	  public static boolean grabWall(Wall wall) {
+		    Quoridor quoridor =  QuoridorApplication.getQuoridor();
+		    Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
+		    boolean grabbed = false;
+		    int initialRow = 1;
+		    int initialColumn = 1;
+		    Direction direction = Direction.Horizontal;
+		    Tile tile = quoridor.getBoard().getTile((initialRow - 1) * 9 + (initialColumn - 1));
+		  WallMove wallMoveCandidate = new WallMove(1, 1, currentPlayer, tile, quoridor.getCurrentGame(), direction, wall);
+		  quoridor.getCurrentGame().setWallMoveCandidate(wallMoveCandidate);
+		  wall.setMove(wallMoveCandidate);
+		  if(currentPlayer.equals(quoridor.getCurrentGame().getWhitePlayer())) {
+		   quoridor.getCurrentGame().getCurrentPosition().removeWhiteWallsInStock(wall);
+		    }
+		    else if(currentPlayer.equals(quoridor.getCurrentGame().getBlackPlayer())) {
+		     quoridor.getCurrentGame().getCurrentPosition().removeBlackWallsInStock(wall);
+		    }
+		    else {
+		     return grabbed;
+		    }
+		    grabbed = true;
+		   return grabbed;
+		}
 
 		
 		/**
@@ -424,6 +421,28 @@ public class Controller {
 			return wallMoved;
 		}
 	}
+	
+	/**
+	 * @author arneetkalra
+	 * 
+	 * helper method for View to get the wall move direction
+	 */
+	public static Direction returnWallMoveDirection() {
+
+		Direction direction = QuoridorApplication.getQuordior().getCurrentGame().getWallMoveCandidate().getWallDirection();
+		return direction;
+	}
+	
+	/**
+	 * Helper method for view which returns the current wall move candidate
+	 * @author arneetkalra
+	 * @return WallMove wallMoveCandidate
+	 */
+	public static WallMove returnWallMoveCandidate() {
+		WallMove wallMoveCandidate = QuoridorApplication.getQuordior().getCurrentGame().getWallMoveCandidate();
+		return wallMoveCandidate;
+	}
+
 
 	/**
 	 * <p>
@@ -454,9 +473,7 @@ public class Controller {
 
 		// Check black walls on board
 		for (Wall wall : blackWallsOnBoard) { // For each wall placed by black player on the board
-			if (isWallAlreadyPresent(wallMoveCandidate, wall.getMove())) { // If wall is already present at target
-				System.out.println("wall present black");
-													// location
+			if (isWallAlreadyPresent(wallMoveCandidate, wall.getMove())) { // If wall is already present at location
 				cancelWallMove();
 				return null; // Return wall not dropped
 			}
@@ -465,10 +482,7 @@ public class Controller {
 		// Check white walls on board
 		for (Wall wall : whiteWallsOnBoard) { // For each wall placed by white player on the board
 			if (isWallAlreadyPresent(wallMoveCandidate, wall.getMove())) { // If wall is already present at target
-				System.out.println("wall present white");
-													// location
 				cancelWallMove();
-
 				return null;// Return wall not dropped
 			}
 		}
@@ -498,8 +512,16 @@ public class Controller {
 		}
 	}
 
+/**
+ * setDroppedWallTile is a helper method for the view to set 
+ * @author arneetkalra
+ */
 
-
+	public static void setDroppedWallTile(int row, int col) {
+		Tile targetTile = QuoridorApplication.getQuoridor().getBoard().getTile((row) * 9 + col);
+		QuoridorApplication.getQuordior().getCurrentGame().getWallMoveCandidate().setTargetTile(targetTile);
+		//wall.getMove().setTargetTile(targetTile);
+	}
 	/**
 	 * Part of Feature 8: Drop Wall
 	 *
@@ -686,6 +708,7 @@ public class Controller {
 			    wall.setOwner(quoridor.getCurrentGame().getWhitePlayer());
 			    wall.getMove().setWallDirection(converToDir(direction));
 			    quoridor.getCurrentGame().getCurrentPosition().addWhiteWallsOnBoard(wall);
+			    //dropWall(move);
 			    quoridor.getCurrentGame().getCurrentPosition().removeWhiteWallsInStock(wall);
 			    i++;
 		    }
@@ -696,7 +719,7 @@ public class Controller {
 		    quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().setTile(opponentTile);
 		    while(first.hasMoreTokens()) {
 		    		int i = 0;
-		    		Wall wall = quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock(i);
+		    		Wall wall = quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock(i+1);
 				String direction = null;
 				int column = 0;
 				int row = 0;
@@ -722,7 +745,8 @@ public class Controller {
 			    wall.getMove().setWallDirection(converToDir(direction));
 			    wall.setOwner(quoridor.getCurrentGame().getBlackPlayer());
 			    quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsOnBoard().add(wall);
-			    quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock().remove(i);
+			    //dropWall(move);
+			    quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock().remove(wall);
 			    i++;
 		    }
 			while(second.hasMoreTokens()) {
@@ -751,7 +775,9 @@ public class Controller {
 			    second.nextToken();
 				wall.setMove(move);
 			    quoridor.getCurrentGame().getCurrentPosition().getBlackWallsOnBoard().add(wall);
-			    quoridor.getCurrentGame().getCurrentPosition().getBlackWallsInStock().remove(i);
+			    //Run drop wall
+			    //dropWall(move);
+			    quoridor.getCurrentGame().getCurrentPosition().getBlackWallsInStock().remove(wall);
 			    i++;
 		    }
 	
@@ -759,6 +785,8 @@ public class Controller {
     				throw new UnsupportedOperationException("Invalid position");
 			}
 	    boolean sameRemainingWall = (quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock().size()==quoridor.getCurrentGame().getCurrentPosition().getBlackWallsInStock().size());
+	    System.out.print(validatePosition());
+	    System.out.print(sameRemainingWall);
 	    if(validatePosition()&&sameRemainingWall) {
 	    		int blackRow = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow();
 	    		int blackColumn = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn();
@@ -978,13 +1006,29 @@ public class Controller {
 		PlayerPosition player2Position = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), currentPosition.getBlackPosition().getTile());
 		if(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsBlack()==null) {
 			newPosition = new GamePosition(currentPosition.getId()+1, player1Position, player2Position, game.getBlackPlayer(), game);
+			
 		}
 		else {
 			newPosition = new GamePosition(currentPosition.getId()+1, player1Position, player2Position, game.getWhitePlayer(), game);	
 		}
+		//Update Game position for the walls
+		for(Wall w: currentPosition.getWhiteWallsInStock())
+			newPosition.addWhiteWallsInStock(w);
+		
+		for(Wall w: currentPosition.getBlackWallsInStock())
+			newPosition.addBlackWallsInStock(w);
+		
+		for(Wall w: currentPosition.getWhiteWallsOnBoard())
+			newPosition.addWhiteWallsOnBoard(w);
+		
+		for(Wall w: currentPosition.getBlackWallsOnBoard())
+			newPosition.addBlackWallsOnBoard(w);
+		
 		game.addPosition(currentPosition);
 		game.setCurrentPosition(newPosition);
-		
+		QuoridorWindow window = QuoridorApplication.quoridorWindow;
+		window.setCurrentPlayer(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getUser().getName());
+		window.setTimeRemaining((int)(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getRemainingTime().getTime()));
 		
 	}
 
