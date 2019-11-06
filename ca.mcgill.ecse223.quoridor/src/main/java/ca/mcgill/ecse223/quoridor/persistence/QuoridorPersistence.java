@@ -3,7 +3,8 @@ package ca.mcgill.ecse223.quoridor.persistence;
 import ca.mcgill.ecse223.quoridor.model.*;
 
 public class QuoridorPersistence {
-private static String filename = "data.quoridor";
+	
+	private static String filename = "data.quoridor";
 	
 	public static void save(Quoridor quoridor) {
 		PersistenceObjectStream.serialize(quoridor);

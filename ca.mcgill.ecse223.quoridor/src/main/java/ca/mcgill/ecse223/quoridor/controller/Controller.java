@@ -155,7 +155,7 @@ public class Controller {
   {
 	  Quoridor quoridor = QuoridorApplication.getQuoridor();
 	  List<String> list = new ArrayList<String>();
-	  
+	  QuoridorPersistence.load();
 	  for(User u: quoridor.getUsers())
 	  {
 		  list.add(u.getName());
@@ -178,8 +178,8 @@ public class Controller {
 		  return false;
 	  }
 	  Quoridor quoridor = QuoridorApplication.getQuoridor();
-	  player.getUser().setName(username);
 	  try {
+		  player.getUser().setName(username);
 		  QuoridorPersistence.save(quoridor);
 	  } catch (Exception e) {
 		 e.getMessage();
