@@ -647,9 +647,8 @@ public class QuoridorWindow extends JFrame {
                 {
                 	seconds = seconds + "00";
                 }
-                
+              
                 time = "00:" + minutes + ":" + seconds;
-                
                 Controller.setTotalThinkingTime(time);
                 Controller.startClock();
                 Controller.createBoard();
@@ -703,69 +702,43 @@ public class QuoridorWindow extends JFrame {
 				}
 
 				if (i < 8 && j < 8) {
-
 					wallCenters[i][j] = new JButton();
-
 					wallCenters[i][j].setBackground(Color.lightGray);
 					// For loop helper
 					@SuppressWarnings("deprecation")
 					final Integer newI = new Integer(i);
 					@SuppressWarnings("deprecation")
 					final Integer newJ = new Integer(j);
-
 					wallCenters[i][j].addActionListener(new ActionListener() {
-
 						public void actionPerformed(ActionEvent e) {
-
 							// If horizontal, highlight horizontal walls
-							if (QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate()
-									.getWallDirection() == Direction.Horizontal) {
-
+							if (QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate().getWallDirection() == Direction.Horizontal) {
 								// Do drop wall and return the wall placed
-								Wall returnedWall = Controller.dropWall(
-										QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate());
-
+								Wall returnedWall = Controller.dropWall(QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate());
 								// Make a wall horizontally
 								hWalls[newI][newJ].setBackground(Color.black);
-
 								wallCenters[newI][newJ].setBackground(Color.black);
-
 								hWalls[newI][newJ + 1].setBackground(Color.black);
-
 								// Set Target tile to placed wall on board
 								int row = newI;
 								int col = newJ;
 								Tile targetTile = QuoridorApplication.getQuoridor().getBoard().getTile((row) * 9 + col);
-
 								returnedWall.getMove().setTargetTile(targetTile);
-
 							}
-
-							else if (QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate()
-									.getWallDirection() == Direction.Vertical) {
-
+							else if (QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate().getWallDirection() == Direction.Vertical) {
 								// Do drop wall and return the wall placed
-								Wall returnedWall = Controller.dropWall(
-										QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate());
-
+								Wall returnedWall = Controller.dropWall(QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate());
 								// Make a wall vertically
 								vWalls[newI][newJ].setBackground(Color.black);
-
 								wallCenters[newI][newJ].setBackground(Color.black);
-
 								vWalls[newI + 1][newJ].setBackground(Color.black);
-
 								// Set Target tile to placed wall on board
 								int row = newI;
 								int col = newJ;
-								Tile targetTile = QuoridorApplication.getQuoridor().getBoard()
-										.getTile((row - 1) * 9 + col - 1);
-
+								Tile targetTile = QuoridorApplication.getQuoridor().getBoard().getTile((row - 1) * 9 + col - 1);
 								returnedWall.getMove().setTargetTile(targetTile);
-
 								System.out.println(returnedWall.getMove().getTargetTile());
 							}
-
 							else { // No wall move candidate exists
 								JOptionPane.showMessageDialog(null, "Grab a Wall first!", "",
 										JOptionPane.WARNING_MESSAGE);
@@ -773,17 +746,11 @@ public class QuoridorWindow extends JFrame {
 						}
 					});
 					c.gridx = j * 2 + 1;
-
 					c.gridy = i * 2 + 1;
-
 					c.weightx = 1;
-
 					c.weighty = 1;
-
 					c.ipadx = -5;
-
 					c.ipady = -5;
-
 					c.fill = GridBagConstraints.BOTH;
 					// TODO: set click event for walls here--eg.dropwall
 					gameBoardPanel.add(wallCenters[i][j], c);
