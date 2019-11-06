@@ -11,6 +11,7 @@ import ca.mcgill.ecse223.quoridor.controller.Controller;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
+import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.persistence.QuoridorPersistence;
 
@@ -653,62 +654,54 @@ public class QuoridorWindow extends JFrame {
                 Controller.startClock();
                 Controller.createBoard();
                 Controller.initializeBoard();
-           
         	}	
         });
         setupPanel.add(startGameButton);
-		
 	
-		for(int i=0;i<9;i++) 
-		{
-			for(int j=0;j<9;j++) 
-			{
-	
+        for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+
 				tiles[i][j] = new JButton();
 				tiles[i][j].setBackground(Color.white);
 				GridBagConstraints c = new GridBagConstraints();
-				c.gridx = j*2;
-				c.gridy = i*2;
+				c.gridx = j * 2;
+				c.gridy = i * 2;
 				c.weightx = 1;
 				c.weighty = 1;
 				c.ipadx = 10;
 				c.ipady = 10;
 				c.fill = GridBagConstraints.BOTH;
-				//set click event for tiles here(eg.movepawn)
-				gameBoardPanel.add(tiles[i][j],c);
-	
-				if(j<8)
-				{
-					vWalls[i][j] = Box.createVerticalBox();	
-					vWalls[i][j].setOpaque(false);
-					vWalls[i][j].setBackground(Color.black);
+				// set click event for tiles here(eg.movepawn)
+				gameBoardPanel.add(tiles[i][j], c);
+
+				if (j < 8) {
+					vWalls[i][j] = Box.createVerticalBox();
+					vWalls[i][j].setOpaque(true);
 					c = new GridBagConstraints();
-					c.gridx = j*2+1;
-					c.gridy = i*2;
-					c.weightx=1;
+					c.gridx = j * 2 + 1;
+					c.gridy = i * 2;
+					c.weightx = 1;
 					c.weighty = 1;
 					c.ipady = 10;
 					c.ipadx = -5;
 					c.fill = GridBagConstraints.BOTH;
-					gameBoardPanel.add(vWalls[i][j],c);	
+					gameBoardPanel.add(vWalls[i][j], c);
 				}
-	
-				if(i<8) 
-				{
+
+				if (i < 8) {
 					hWalls[i][j] = Box.createHorizontalBox();
-					hWalls[i][j].setOpaque(false);
-					hWalls[i][j].setBackground(Color.black);
+					hWalls[i][j].setOpaque(true);
 					c = new GridBagConstraints();
-					c.gridx = j*2;
-					c.gridy = i*2+1;
-					c.weightx=1;
+					c.gridx = j * 2;
+					c.gridy = i * 2 + 1;
+					c.weightx = 1;
 					c.weighty = 1;
 					c.ipadx = 10;
 					c.ipady = -5;
 					c.fill = GridBagConstraints.BOTH;
-					gameBoardPanel.add(hWalls[i][j],c);
+					gameBoardPanel.add(hWalls[i][j], c);
 				}
-					
+
 				if (i < 8 && j < 8) {
 
 					wallCenters[i][j] = new JButton();
@@ -739,7 +732,12 @@ public class QuoridorWindow extends JFrame {
 
 								hWalls[newI][newJ + 1].setBackground(Color.black);
 
-								System.out.println(returnedWall.getMove().getTargetTile());
+								// Set Target tile to placed wall on board
+								int row = newI;
+								int col = newJ;
+								Tile targetTile = QuoridorApplication.getQuoridor().getBoard().getTile((row) * 9 + col);
+
+								returnedWall.getMove().setTargetTile(targetTile);
 
 							}
 
@@ -756,6 +754,14 @@ public class QuoridorWindow extends JFrame {
 								wallCenters[newI][newJ].setBackground(Color.black);
 
 								vWalls[newI + 1][newJ].setBackground(Color.black);
+
+								// Set Target tile to placed wall on board
+								int row = newI;
+								int col = newJ;
+								Tile targetTile = QuoridorApplication.getQuoridor().getBoard()
+										.getTile((row - 1) * 9 + col - 1);
+
+								returnedWall.getMove().setTargetTile(targetTile);
 
 								System.out.println(returnedWall.getMove().getTargetTile());
 							}
@@ -786,18 +792,6 @@ public class QuoridorWindow extends JFrame {
 			}
 
 		}
-		
-		
-		//create a vertical wall at (3,3)
-		//by setting opaque of box and color of the wall center, we can create walls
-		//vWalls[2][2].setOpaque(true);
-		//wallCenters[2][2].setBackground(Color.black);
-		//vWalls[3][2].setOpaque(true);
-		
-		
-		
-		//NEED RE-DESIGN HERE!!!//
-	    
 	
 	    Component horizontalStrut = Box.createHorizontalStrut(100);
 	    horizontalBox.add(horizontalStrut);
