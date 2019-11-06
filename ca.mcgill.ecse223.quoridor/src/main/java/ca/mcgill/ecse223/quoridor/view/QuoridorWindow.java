@@ -13,6 +13,7 @@ import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
 import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.Wall;
+import ca.mcgill.ecse223.quoridor.model.WallMove;
 import ca.mcgill.ecse223.quoridor.persistence.QuoridorPersistence;
 
 import java.awt.*;
@@ -136,6 +137,15 @@ public class QuoridorWindow extends JFrame {
 					}
 				}
 				if (!wrong) {
+					Quoridor quoridor = QuoridorApplication.getQuordior();
+					for(int i = 0;i<quoridor.getCurrentGame().getCurrentPosition().numberOfBlackWallsOnBoard();i++) {
+				        WallMove move = quoridor.getCurrentGame().getCurrentPosition().getBlackWallsOnBoard(i).getMove();
+				        QuoridorApplication.quoridorWindow.displayWall(move.getTargetTile().getRow(),move.getTargetTile().getColumn(),move.getWallDirection());
+				       }
+				       for(int i = 0;i<quoridor.getCurrentGame().getCurrentPosition().numberOfWhiteWallsOnBoard();i++) {
+				        WallMove move = quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsOnBoard(i).getMove();
+				        QuoridorApplication.quoridorWindow.displayWall(move.getTargetTile().getRow(),move.getTargetTile().getColumn(),move.getWallDirection());
+				       }
 					CardLayout layout = (CardLayout) (contentPane.getLayout());
 					layout.show(contentPane, "activeGamePanel");
 				} else {
@@ -300,6 +310,15 @@ public class QuoridorWindow extends JFrame {
 							}
 						});
 					}
+					Quoridor quoridor = QuoridorApplication.getQuordior();
+					for(int i = 0;i<quoridor.getCurrentGame().getCurrentPosition().numberOfBlackWallsOnBoard();i++) {
+				        WallMove move = quoridor.getCurrentGame().getCurrentPosition().getBlackWallsOnBoard(i).getMove();
+				        QuoridorApplication.quoridorWindow.displayWall(move.getTargetTile().getRow(),move.getTargetTile().getColumn(),move.getWallDirection());
+				       }
+				       for(int i = 0;i<quoridor.getCurrentGame().getCurrentPosition().numberOfWhiteWallsOnBoard();i++) {
+				        WallMove move = quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsOnBoard(i).getMove();
+				        QuoridorApplication.quoridorWindow.displayWall(move.getTargetTile().getRow(),move.getTargetTile().getColumn(),move.getWallDirection());
+				       }
 				}
 			}
 		});
@@ -941,4 +960,17 @@ public class QuoridorWindow extends JFrame {
 		}
 
 	}
+	public void displayWall(int x, int y,Direction direction) {
+		  if(direction == Direction.Horizontal) {
+		   hWalls[x][y].setBackground(Color.black);
+		   wallCenters[x][y].setBackground(Color.black);
+		   hWalls[x][y + 1].setBackground(Color.black);
+		  }
+		  else {
+		   vWalls[x][y].setBackground(Color.black);
+		   wallCenters[x][y].setBackground(Color.black);
+		   vWalls[x+1][y].setBackground(Color.black);
+		  }
+
+		 }
 }
