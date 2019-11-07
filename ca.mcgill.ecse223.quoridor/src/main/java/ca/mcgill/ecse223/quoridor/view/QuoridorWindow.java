@@ -4,6 +4,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileSystemView;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
@@ -18,6 +19,9 @@ import ca.mcgill.ecse223.quoridor.persistence.QuoridorPersistence;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +47,11 @@ public class QuoridorWindow extends JFrame {
 	private static boolean confirms = true;
 	private int[] playerView = { 0, 0, 0, 0 };
 	private static JFrame f;
-
+	private Color wallCenterColor;
+	private Color hWallLeftColor;
+	private Color hWallRightColor;
+	private Color vWallLeftColor;
+	private Color vWallRightColor;
 	// for the boards,tiles, and walls
 	private JButton[][] tiles = new JButton[9][9];
 	private JButton[][] wallCenters = new JButton[8][8];
@@ -138,14 +146,20 @@ public class QuoridorWindow extends JFrame {
 				}
 				if (!wrong) {
 					Quoridor quoridor = QuoridorApplication.getQuordior();
-					for(int i = 0;i<quoridor.getCurrentGame().getCurrentPosition().numberOfBlackWallsOnBoard();i++) {
-				        WallMove move = quoridor.getCurrentGame().getCurrentPosition().getBlackWallsOnBoard(i).getMove();
-				        QuoridorApplication.quoridorWindow.displayWall(move.getTargetTile().getRow(),move.getTargetTile().getColumn(),move.getWallDirection());
-				       }
-				       for(int i = 0;i<quoridor.getCurrentGame().getCurrentPosition().numberOfWhiteWallsOnBoard();i++) {
-				        WallMove move = quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsOnBoard(i).getMove();
-				        QuoridorApplication.quoridorWindow.displayWall(move.getTargetTile().getRow(),move.getTargetTile().getColumn(),move.getWallDirection());
-				       }
+					for (int i = 0; i < quoridor.getCurrentGame().getCurrentPosition()
+							.numberOfBlackWallsOnBoard(); i++) {
+						WallMove move = quoridor.getCurrentGame().getCurrentPosition().getBlackWallsOnBoard(i)
+								.getMove();
+						QuoridorApplication.quoridorWindow.displayWall(move.getTargetTile().getRow(),
+								move.getTargetTile().getColumn(), move.getWallDirection());
+					}
+					for (int i = 0; i < quoridor.getCurrentGame().getCurrentPosition()
+							.numberOfWhiteWallsOnBoard(); i++) {
+						WallMove move = quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsOnBoard(i)
+								.getMove();
+						QuoridorApplication.quoridorWindow.displayWall(move.getTargetTile().getRow(),
+								move.getTargetTile().getColumn(), move.getWallDirection());
+					}
 					CardLayout layout = (CardLayout) (contentPane.getLayout());
 					layout.show(contentPane, "activeGamePanel");
 				} else {
@@ -311,14 +325,20 @@ public class QuoridorWindow extends JFrame {
 						});
 					}
 					Quoridor quoridor = QuoridorApplication.getQuordior();
-					for(int i = 0;i<quoridor.getCurrentGame().getCurrentPosition().numberOfBlackWallsOnBoard();i++) {
-				        WallMove move = quoridor.getCurrentGame().getCurrentPosition().getBlackWallsOnBoard(i).getMove();
-				        QuoridorApplication.quoridorWindow.displayWall(move.getTargetTile().getRow(),move.getTargetTile().getColumn(),move.getWallDirection());
-				       }
-				       for(int i = 0;i<quoridor.getCurrentGame().getCurrentPosition().numberOfWhiteWallsOnBoard();i++) {
-				        WallMove move = quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsOnBoard(i).getMove();
-				        QuoridorApplication.quoridorWindow.displayWall(move.getTargetTile().getRow(),move.getTargetTile().getColumn(),move.getWallDirection());
-				       }
+					for (int i = 0; i < quoridor.getCurrentGame().getCurrentPosition()
+							.numberOfBlackWallsOnBoard(); i++) {
+						WallMove move = quoridor.getCurrentGame().getCurrentPosition().getBlackWallsOnBoard(i)
+								.getMove();
+						QuoridorApplication.quoridorWindow.displayWall(move.getTargetTile().getRow(),
+								move.getTargetTile().getColumn(), move.getWallDirection());
+					}
+					for (int i = 0; i < quoridor.getCurrentGame().getCurrentPosition()
+							.numberOfWhiteWallsOnBoard(); i++) {
+						WallMove move = quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsOnBoard(i)
+								.getMove();
+						QuoridorApplication.quoridorWindow.displayWall(move.getTargetTile().getRow(),
+								move.getTargetTile().getColumn(), move.getWallDirection());
+					}
 				}
 			}
 		});
@@ -750,15 +770,99 @@ public class QuoridorWindow extends JFrame {
 					final Integer newI = new Integer(i);
 					@SuppressWarnings("deprecation")
 					final Integer newJ = new Integer(j);
+
+					wallCenters[i][j].addMouseListener(new MouseAdapter() {
+
+						public void mouseEntered(MouseEvent e) {
+
+							if (Controller.returnWallMoveCandidate() != null) { // If there is a wall in hand
+								if (Controller.returnWallMoveDirection() == Direction.Horizontal) { // Check if the wall
+																									// in hand is
+									// horizontal
+									// Hover a wall horizontally
+									hWalls[newI][newJ].setBackground(Color.GREEN);
+									wallCenters[newI][newJ].setBackground(Color.GREEN);
+									hWalls[newI][newJ + 1].setBackground(Color.GREEN);
+								} else { // Hover a wall vertically
+									vWalls[newI][newJ].setBackground(Color.GREEN);
+									wallCenters[newI][newJ].setBackground(Color.GREEN);
+									vWalls[newI + 1][newJ].setBackground(Color.GREEN);
+								}
+							} else {
+								return;// Do nothing
+							}
+						}
+
+						public void mouseExited(MouseEvent e) {
+							
+							if(Controller.noOverlappingWalls(null, null) == false) {
+							//IDea: in the exit check if its a valid positon
+							if (Controller.returnWallMoveDirection() == Direction.Horizontal) { // Check if the wall in hand is horizontal
+								// Hover a wall horizontally
+								hWalls[newI][newJ].setBackground(Color.black);
+								wallCenters[newI][newJ].setBackground(Color.black);
+								hWalls[newI][newJ + 1].setBackground(Color.black);
+							} else { // Hover a wall vertically
+								vWalls[newI][newJ].setBackground(Color.black);
+								wallCenters[newI][newJ].setBackground(Color.black);
+								vWalls[newI + 1][newJ].setBackground(Color.black);
+							}
+							}
+							
+							else {
+								if (Controller.returnWallMoveDirection() == Direction.Horizontal) { // Check if the wall in hand is horizontal
+									// Hover a wall horizontally
+									hWalls[newI][newJ].setBackground(Color.pink);
+									wallCenters[newI][newJ].setBackground(Color.pink);
+									hWalls[newI][newJ + 1].setBackground(Color.pink);
+								} else { // Hover a wall vertically
+									vWalls[newI][newJ].setBackground(Color.pink);
+									wallCenters[newI][newJ].setBackground(Color.pink);
+									vWalls[newI + 1][newJ].setBackground(Color.pink);
+								}
+							}
+
+						}
+					});
+
+					/*
+					 * // Store the current state of the colours wallCenterColor =
+					 * wallCenters[newI][newJ].getBackground(); hWallLeftColor =
+					 * hWalls[newI][newJ].getBackground(); // Left of center hWallRightColor =
+					 * hWalls[newI + 1][newJ].getBackground(); // Right of center
+					 * 
+					 * if (Controller.returnWallMoveCandidate() != null) { // If there is a wall in
+					 * hand
+					 * 
+					 * // No wall conlfict exists so it would be a legal spot if
+					 * (Controller.returnWallMoveDirection() == Direction.Horizontal) { // Check if
+					 * the wall // in hand is // horizontal
+					 * 
+					 * // Hover a wall horizontally hWalls[newI][newJ].setBackground(Color.GREEN);
+					 * wallCenters[newI][newJ].setBackground(Color.GREEN); hWalls[newI][newJ +
+					 * 1].setBackground(Color.GREEN); } else { // Hover a wall vertically
+					 * vWalls[newI][newJ].setBackground(Color.GREEN);
+					 * wallCenters[newI][newJ].setBackground(Color.GREEN); vWalls[newI +
+					 * 1][newJ].setBackground(Color.GREEN); } } else { } // If no wall in hand, do
+					 * nothing System.out.println(wallCenterColor);
+					 * System.out.println(hWallLeftColor); System.out.println(hWallRightColor);
+					 * 
+					 * }
+					 */
+
 					wallCenters[i][j].addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
-			
+
+							// Tell user to grab a wall before placing it
+							if (Controller.returnWallMoveCandidate() == null)
+								QuoridorWindow.notifyGrabAWall();
+
 							if (Controller.returnWallMoveDirection() == Direction.Horizontal) {
 								// If drop wall is valid
 								Controller.setDroppedWallTile(newI, newJ);
-								
+
 								Wall returnedWall = Controller.dropWall(Controller.returnWallMoveCandidate());
-								
+
 								if (returnedWall != null) {
 									// Do drop wall and return the wall placed
 									// Make a wall horizontally
@@ -771,8 +875,10 @@ public class QuoridorWindow extends JFrame {
 									QuoridorWindow.notifyIllegalWallMove();
 								}
 
-							} else if (Controller.returnWallMoveDirection() == Direction.Vertical) {
-								
+							}
+
+							else if (Controller.returnWallMoveDirection() == Direction.Vertical) {
+
 								Controller.setDroppedWallTile(newI, newJ);
 
 								Wall returnedWall = Controller.dropWall(Controller.returnWallMoveCandidate());
@@ -784,7 +890,7 @@ public class QuoridorWindow extends JFrame {
 									vWalls[newI][newJ].setBackground(Color.black);
 									wallCenters[newI][newJ].setBackground(Color.black);
 									vWalls[newI + 1][newJ].setBackground(Color.black);
-								
+
 									isGrabWall = true;
 								} else { // No wall move candidate exists
 									QuoridorWindow.notifyIllegalWallMove();
@@ -801,20 +907,19 @@ public class QuoridorWindow extends JFrame {
 					c.fill = GridBagConstraints.BOTH;
 					// TODO: set click event for walls here--eg.dropwall
 					gameBoardPanel.add(wallCenters[i][j], c);
-				}
 
+				}
 			}
 
+			Component horizontalStrut = Box.createHorizontalStrut(100);
+			horizontalStrut.setBackground(Color.PINK);
+			horizontalBox.add(horizontalStrut);
+
+			timeRemLabel = new JLabel("Time remaining: 00:00");
+			timeRemLabel.setFont(new Font("Cooper Black", Font.PLAIN, 14));
+			timeRemLabel.setHorizontalAlignment(SwingConstants.CENTER);
+			horizontalBox.add(timeRemLabel);
 		}
-
-		Component horizontalStrut = Box.createHorizontalStrut(100);
-		horizontalStrut.setBackground(Color.PINK);
-		horizontalBox.add(horizontalStrut);
-
-		timeRemLabel = new JLabel("Time remaining: 00:00");
-		timeRemLabel.setFont(new Font("Cooper Black", Font.PLAIN, 14));
-		timeRemLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		horizontalBox.add(timeRemLabel);
 	}
 
 	public void movePlayer(int whitex, int whitey, int blackx, int blacky) {
@@ -840,9 +945,8 @@ public class QuoridorWindow extends JFrame {
 	public boolean getIsTimerActive() {
 		return secondTimer.isRunning();
 	}
-	
-	public void setPlayerNames(String white, String black)
-	{
+
+	public void setPlayerNames(String white, String black) {
 		blackPlayerName.setText(black);
 		whitePlayerName.setText(white);
 	}
@@ -935,7 +1039,12 @@ public class QuoridorWindow extends JFrame {
 		return this.wallSelected;
 	}
 
-	// TODO add action/listener methods to actually progress the game and all that
+	/**
+	 * @author arneetkalra
+	 */
+	public static void notifyGrabAWall() {
+		JOptionPane.showMessageDialog(null, "Grab a Wall First!", "", JOptionPane.WARNING_MESSAGE);
+	}
 
 	class ImagePanel extends JPanel {
 
@@ -960,17 +1069,17 @@ public class QuoridorWindow extends JFrame {
 		}
 
 	}
-	public void displayWall(int x, int y,Direction direction) {
-		  if(direction == Direction.Horizontal) {
-		   hWalls[x][y].setBackground(Color.black);
-		   wallCenters[x][y].setBackground(Color.black);
-		   hWalls[x][y + 1].setBackground(Color.black);
-		  }
-		  else {
-		   vWalls[x][y].setBackground(Color.black);
-		   wallCenters[x][y].setBackground(Color.black);
-		   vWalls[x+1][y].setBackground(Color.black);
-		  }
 
-		 }
+	public void displayWall(int x, int y, Direction direction) {
+		if (direction == Direction.Horizontal) {
+			hWalls[x][y].setBackground(Color.black);
+			wallCenters[x][y].setBackground(Color.black);
+			hWalls[x][y + 1].setBackground(Color.black);
+		} else {
+			vWalls[x][y].setBackground(Color.black);
+			wallCenters[x][y].setBackground(Color.black);
+			vWalls[x + 1][y].setBackground(Color.black);
+		}
+
+	}
 }
