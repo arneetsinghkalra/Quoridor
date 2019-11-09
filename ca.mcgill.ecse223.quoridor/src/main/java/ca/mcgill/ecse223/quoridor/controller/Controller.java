@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.model.*;
@@ -515,25 +517,15 @@ public class Controller {
 		GamePosition currentGamePosition = currentGame.getCurrentPosition();
 		Player player = currentGamePosition.getPlayerToMove();
 
-		// -------- Validate Wall Position-------------
-		// Todo CHECK WITH WILLIAM TO SEE IF BELOW PARTS CAN BE REPLACED BY HIS METHODS
-		// Get a list of all walls on board
-		List<Wall> blackWallsOnBoard = currentGamePosition.getBlackWallsOnBoard();
-		List<Wall> whiteWallsOnBoard = currentGamePosition.getWhiteWallsOnBoard();
+		//Get a list of all all the walls placed on the board
+		List<Wall> allWallsOnBoard = getAllWallsOnBoard();
 
-		// Check black walls on board
-		for (Wall wall : blackWallsOnBoard) { // For each wall placed by black player on the board
+
+		// Check the validity of new wall based on the walls placed 
+		for (Wall wall : allWallsOnBoard) { // For each wall placed on the board 
 			if (isWallAlreadyPresent(wallMoveCandidate, wall.getMove())) { // If wall is already present at location
 				cancelWallMove();
 				return null; // Return wall not dropped
-			}
-		}
-
-		// Check white walls on board
-		for (Wall wall : whiteWallsOnBoard) { // For each wall placed by white player on the board
-			if (isWallAlreadyPresent(wallMoveCandidate, wall.getMove())) { // If wall is already present at target
-				cancelWallMove();
-				return null;// Return wall not dropped
 			}
 		}
 
@@ -563,6 +555,100 @@ public class Controller {
 			return null;
 		}
 	}
+	
+	/**
+	 * Helper method which returns a list of all walls on the board, both black and white. 
+	 * @author arneetkalra
+	 * @return List<Wall> 
+	 */
+	public static List<Wall> getAllWallsOnBoard() {
+		// Initial Parameters of game
+		GamePosition currentGamePosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
+		
+		// Get a list of all walls on the board
+		List<Wall> blackWallsOnBoard = currentGamePosition.getBlackWallsOnBoard();
+		List<Wall> whiteWallsOnBoard = currentGamePosition.getWhiteWallsOnBoard();
+
+		// Make one list for all walls on the board:
+		List<Wall> allWallsOnBoard = Stream.of(blackWallsOnBoard, whiteWallsOnBoard).flatMap(x -> x.stream()).collect(Collectors.toList());
+
+		return allWallsOnBoard;
+	}
+	
+	/**
+	 * @author arneetkalra
+	 * @param hoveredTile
+	 * @param candidateDirection
+	 * @return
+	 */
+	public static boolean hoveredWallIsValid(Tile hoveredTile, Direction candidateDirection) {
+		
+		List<Wall> allWallsOnBoard = getAllWallsOnBoard();
+		
+		for (Wall wall : allWallsOnBoard) {
+			if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove()) ==true) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	/**
+	 * @author arneetkalra
+	 * @param hoveredTile
+	 * @param candidateDirection
+	 * @return
+	 */
+	public static int returnInvalidWallRow(Tile hoveredTile, Direction candidateDirection) {
+		
+		List<Wall> allWallsOnBoard = getAllWallsOnBoard();
+		
+		for (Wall wall : allWallsOnBoard) {
+			if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove()) ==true) {
+				return wall.getMove().getTargetTile().getRow() -1;
+			}
+		}
+		
+		return 0;
+
+	}
+	/**
+	 * @author arneetkalra
+	 * @param hoveredTile
+	 * @param candidateDirection
+	 * @return
+	 */
+	public static int returnInvalidWallColumn(Tile hoveredTile, Direction candidateDirection) {
+		
+		List<Wall> allWallsOnBoard = getAllWallsOnBoard();
+		
+		for (Wall wall : allWallsOnBoard) {
+			if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove()) ==true) {
+				return wall.getMove().getTargetTile().getColumn() -1;
+			}
+		}
+		
+		return 0;
+	}
+	
+	/**
+	 * @author arneetkalra
+	 * @param hoveredTile
+	 * @param candidateDirection
+	 * @return
+	 */
+	public static Direction returnInvalidWallDirection(Tile hoveredTile, Direction candidateDirection) {
+
+		List<Wall> allWallsOnBoard = getAllWallsOnBoard();
+
+		for (Wall wall : allWallsOnBoard) {
+			if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove()) == true) {
+				return wall.getMove().getWallDirection();
+			}
+		}
+
+		return null;
+	}
 
 	/**
 	 * setDroppedWallTile is a helper method for the view to set
@@ -570,10 +656,20 @@ public class Controller {
 	 * @author arneetkalra
 	 */
 
-	public static void setDroppedWallTile(int row, int col) {
+	public static void setDroppedWallTileToCandidate(int row, int col) {
 		Tile targetTile = QuoridorApplication.getQuoridor().getBoard().getTile((row) * 9 + col);
 		QuoridorApplication.getQuordior().getCurrentGame().getWallMoveCandidate().setTargetTile(targetTile);
-		// wall.getMove().setTargetTile(targetTile);
+	}
+	
+	/**
+	 * @author arneetkalra
+	 * @param row
+	 * @param col
+	 * @return
+	 */
+	public static Tile getDroppedWallTile(int row, int col) {
+		Tile targetTile = QuoridorApplication.getQuoridor().getBoard().getTile((row) * 9 + col);
+		return targetTile;
 	}
 
 	/**
@@ -1001,6 +1097,49 @@ public class Controller {
 			return (isSameColumn && isSameRow);
 		}
 	}
+	
+	/**
+	 * Another isWallAlreadyPresent method which takes different parameters, and is used to validate the position for a hovered wall.
+	 * @author arneetkalra
+	 * @param hoveredTile
+	 * @param candidateDirection
+	 * @param wallCandidate
+	 * @return
+	 */
+	private static Boolean isWallAlreadyPresent(Tile hoveredTile, Direction candidateDirection, WallMove wallCandidate) {
+		// Get tiles for onBoard and Candidate
+		Tile tileCandidate = wallCandidate.getTargetTile();
+
+		// Verify overlap status:
+		Boolean isSameColumn = (hoveredTile.getColumn() == tileCandidate.getColumn());
+		Boolean isSameRow = (hoveredTile.getRow() == tileCandidate.getRow());
+
+		// Check if directions are both vertical
+		if (candidateDirection == Direction.Vertical
+				&& wallCandidate.getWallDirection() == Direction.Vertical) {
+			// Then verify if column and row are identical and return boolean
+			return (isSameColumn && Math.abs(hoveredTile.getRow() - tileCandidate.getRow()) <= 1); // Checks if rows are
+																									// off by more
+																									// than 1
+		}
+		// Check if directions are both horizontal
+		else if (candidateDirection == Direction.Horizontal
+				&& wallCandidate.getWallDirection() == Direction.Horizontal) {
+			// Then verify if column and row are identical and return boolean
+			return (isSameRow && Math.abs(hoveredTile.getColumn() - tileCandidate.getColumn()) <= 1);// Checks if
+																										// columns are
+																										// off
+																										// by more than
+																										// 1
+		}
+		// Case when Directions are opposite
+		else {
+			// Only overlaps if NorthWest tile is the same for both walls
+			return (isSameColumn && isSameRow);
+		}
+	}
+	
+	
 
 	/*
 	 * /** <p>Helper for validate move<p> <p>validate if two walls are

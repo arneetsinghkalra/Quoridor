@@ -44,14 +44,14 @@ public class QuoridorWindow extends JFrame {
 	private JLabel currentPlayerName;
 	private JLabel blackPlayerName;
 	private JLabel whitePlayerName;
+	public Color wallCenterColor;
+	public Color hWallLeftColor;
+	public Color hWallRightColor;
+	public Color vWallDownColor;
+	public Color vWallUpColor;
 	private static boolean confirms = true;
 	private int[] playerView = { 0, 0, 0, 0 };
 	private static JFrame f;
-	private Color wallCenterColor;
-	private Color hWallLeftColor;
-	private Color hWallRightColor;
-	private Color vWallLeftColor;
-	private Color vWallRightColor;
 	// for the boards,tiles, and walls
 	private JButton[][] tiles = new JButton[9][9];
 	private JButton[][] wallCenters = new JButton[8][8];
@@ -64,7 +64,7 @@ public class QuoridorWindow extends JFrame {
 	public QuoridorWindow() {
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 90, 600, 450);
+		setBounds(100, 90, 780, 600); // New dimensions
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(1, 1, 1, 1));
 		setContentPane(contentPane);
@@ -767,88 +767,274 @@ public class QuoridorWindow extends JFrame {
 					wallCenters[i][j].setBackground(Color.white);
 					// For loop helper
 					@SuppressWarnings("deprecation")
-					final Integer newI = new Integer(i);
+					final Integer xPos = new Integer(i);
 					@SuppressWarnings("deprecation")
-					final Integer newJ = new Integer(j);
+					final Integer yPos = new Integer(j);
 
 					wallCenters[i][j].addMouseListener(new MouseAdapter() {
 
-						public void mouseEntered(MouseEvent e) {
+						public void setWallToBlack(Integer x, Integer y) {
+							if (Controller.returnWallMoveDirection() == Direction.Horizontal) { // Check if wall in hand
+																								// is horizontal Hover a
+																								// wall horizontally
+								hWalls[x][y].setBackground(Color.black);
+								wallCenters[x][y].setBackground(Color.black);
+								hWalls[x][y + 1].setBackground(Color.black);
+							} else { // Hover a wall vertically
+								vWalls[x][y].setBackground(Color.black);
+								wallCenters[x][y].setBackground(Color.black);
+								vWalls[x + 1][y].setBackground(Color.black);
+							}
 
-							if (Controller.returnWallMoveCandidate() != null) { // If there is a wall in hand
-								if (Controller.returnWallMoveDirection() == Direction.Horizontal) { // Check if the wall
-																									// in hand is
-									// horizontal
-									// Hover a wall horizontally
-									hWalls[newI][newJ].setBackground(Color.GREEN);
-									wallCenters[newI][newJ].setBackground(Color.GREEN);
-									hWalls[newI][newJ + 1].setBackground(Color.GREEN);
-								} else { // Hover a wall vertically
-									vWalls[newI][newJ].setBackground(Color.GREEN);
-									wallCenters[newI][newJ].setBackground(Color.GREEN);
-									vWalls[newI + 1][newJ].setBackground(Color.GREEN);
+						}
+
+						void setWallToGreen(Integer x, Integer y) {
+							if (Controller.returnWallMoveDirection() == Direction.Horizontal) { // Check if the wall in
+																								// hand is horizontal
+																								// Hover a wall
+																								// horizontally
+								hWalls[x][y].setBackground(Color.GREEN);
+								wallCenters[x][y].setBackground(Color.GREEN);
+								hWalls[x][y + 1].setBackground(Color.GREEN);
+							} else { // Hover a wall vertically
+								vWalls[x][y].setBackground(Color.GREEN);
+								wallCenters[x][y].setBackground(Color.GREEN);
+								vWalls[x + 1][y].setBackground(Color.GREEN);
+							}
+						}
+
+						void setWallToPink(Integer x, Integer y) {
+							if (Controller.returnWallMoveDirection() == Direction.Horizontal) { // Check if the wall in
+																								// hand is horizontal
+																								// Hover a wall
+																								// horizontally
+								hWalls[x][y].setBackground(Color.pink);
+								wallCenters[x][y].setBackground(Color.pink);
+								hWalls[x][y + 1].setBackground(Color.pink);
+							} else { // Hover a wall vertically
+								vWalls[x][y].setBackground(Color.pink);
+								wallCenters[x][y].setBackground(Color.pink);
+								vWalls[x + 1][y].setBackground(Color.pink);
+							}
+						}
+
+						void setWallToRed(Integer x, Integer y) {
+							if (Controller.returnWallMoveDirection() == Direction.Horizontal) { // Check if the wall in
+																								// hand is horizontal
+																								// Hover a wall
+																								// horizontally
+								hWalls[x][y].setBackground(Color.red);
+								wallCenters[x][y].setBackground(Color.red);
+								hWalls[x][y + 1].setBackground(Color.red);
+							} else { // Hover a wall vertically
+								vWalls[x][y].setBackground(Color.red);
+								wallCenters[x][y].setBackground(Color.red);
+								vWalls[x + 1][y].setBackground(Color.red);
+							}
+						}
+
+						public void mouseEntered(MouseEvent e) {
+							// Get Initial Colours
+							wallCenterColor = wallCenters[xPos][yPos].getBackground();
+
+							hWallLeftColor = hWalls[xPos][yPos].getBackground();
+							hWallRightColor = hWalls[xPos][yPos + 1].getBackground();
+
+							vWallDownColor = vWalls[xPos][yPos].getBackground();
+							vWallUpColor = vWalls[xPos + 1][yPos].getBackground();
+
+							Tile currentTile = Controller.getDroppedWallTile(xPos, yPos);
+							// If there is a wall in hand
+							if (Controller.returnWallMoveCandidate() != null) { 
+								// If it s a horizontal wall in hand
+								if (Controller.returnWallMoveDirection() == Direction.Horizontal) { 
+									// If it is in a valid position
+									if (Controller.hoveredWallIsValid(currentTile,Controller.returnWallMoveDirection()) == true) { 
+										//Set it to Green 
+										setWallToGreen(xPos, yPos);
+									} 
+									// If it is not in a valid position
+									else { 
+										//Check to see if the conflict is with a horizontal wall, if so set the horizontal wall as red
+										if (Controller.returnInvalidWallDirection(currentTile,Direction.Horizontal) == Direction.Horizontal) {
+											//Gets horizontal wall coordinates
+											int row = Controller.returnInvalidWallRow(currentTile, Direction.Horizontal); 
+											int column = Controller.returnInvalidWallColumn(currentTile,Direction.Horizontal); 
+											// Set the conflict wall to black
+											hWalls[row][column].setBackground(Color.red);
+											wallCenters[row][column].setBackground(Color.red);
+											hWalls[row][column + 1].setBackground(Color.red);
+										}
+										//Else if the conflict wall is Vertical, set vertical wall as red 
+										else if (Controller.returnInvalidWallDirection(currentTile,Direction.Horizontal) == Direction.Vertical) {
+											//Gets Vertical wall coordinates
+											int row = Controller.returnInvalidWallRow(currentTile, Direction.Vertical); 
+											int column = Controller.returnInvalidWallColumn(currentTile,Direction.Vertical); 
+											// Set the conflict wall to black
+											vWalls[row][column].setBackground(Color.red);
+											wallCenters[row][column].setBackground(Color.red);
+											vWalls[row + 1][column].setBackground(Color.red);
+										}
+										
+									}
 								}
-							} else {
-								return;// Do nothing
+								
+								// If its a vertical wall in hand
+								else if (Controller.returnWallMoveDirection() == Direction.Vertical) { 
+									//If its in a valid position
+									if (Controller.hoveredWallIsValid(currentTile,Controller.returnWallMoveDirection()) == true) {
+										//Set the vertical wall hover to green
+										setWallToGreen(xPos, yPos);
+									} 
+									// If its not in a valid position
+									else {
+										//Check to see if the conflict is with a horizontal wall, if so set the horizontal wall as red
+										if (Controller.returnInvalidWallDirection(currentTile,Direction.Vertical) == Direction.Horizontal) {
+											//Gets horizontal wall coordinates
+											int row = Controller.returnInvalidWallRow(currentTile, Direction.Horizontal); 
+											int column = Controller.returnInvalidWallColumn(currentTile,Direction.Horizontal); 
+											// Set the conflict wall to black
+											hWalls[row][column].setBackground(Color.red);
+											wallCenters[row][column].setBackground(Color.red);
+											hWalls[row][column + 1].setBackground(Color.red);
+										}
+										//Else if the conflict wall is Vertical, set vertical wall as red 
+										else if (Controller.returnInvalidWallDirection(currentTile,Direction.Vertical) == Direction.Vertical) {
+											//Gets Vertical wall coordinates
+											int row = Controller.returnInvalidWallRow(currentTile, Direction.Vertical); 
+											int column = Controller.returnInvalidWallColumn(currentTile,Direction.Vertical); 
+											// Set the conflict wall to black
+											vWalls[row][column].setBackground(Color.red);
+											wallCenters[row][column].setBackground(Color.red);
+											vWalls[row + 1][column].setBackground(Color.red);
+										}
+									}
+								}
+							} else { // If no wall move candidate, do nothing
+								return;
 							}
 						}
 
 						public void mouseExited(MouseEvent e) {
+							Tile currentTile = Controller.getDroppedWallTile(xPos, yPos);
 							
-							if(Controller.noOverlappingWalls(null, null) == false) {
-							//IDea: in the exit check if its a valid positon
-							if (Controller.returnWallMoveDirection() == Direction.Horizontal) { // Check if the wall in hand is horizontal
-								// Hover a wall horizontally
-								hWalls[newI][newJ].setBackground(Color.black);
-								wallCenters[newI][newJ].setBackground(Color.black);
-								hWalls[newI][newJ + 1].setBackground(Color.black);
-							} else { // Hover a wall vertically
-								vWalls[newI][newJ].setBackground(Color.black);
-								wallCenters[newI][newJ].setBackground(Color.black);
-								vWalls[newI + 1][newJ].setBackground(Color.black);
-							}
-							}
-							
-							else {
-								if (Controller.returnWallMoveDirection() == Direction.Horizontal) { // Check if the wall in hand is horizontal
-									// Hover a wall horizontally
-									hWalls[newI][newJ].setBackground(Color.pink);
-									wallCenters[newI][newJ].setBackground(Color.pink);
-									hWalls[newI][newJ + 1].setBackground(Color.pink);
-								} else { // Hover a wall vertically
-									vWalls[newI][newJ].setBackground(Color.pink);
-									wallCenters[newI][newJ].setBackground(Color.pink);
-									vWalls[newI + 1][newJ].setBackground(Color.pink);
+							// If there is a wall in hand meaning no wall was placed
+							if (Controller.returnWallMoveCandidate() != null) { 
+								// If wall in hand is horizontal
+								if (Controller.returnWallMoveDirection() == Direction.Horizontal) { 
+									//If horizontal wall is in a valid position
+									if (Controller.hoveredWallIsValid(currentTile, Direction.Horizontal) == true) { 
+										//Set it to pink
+										setWallToPink(xPos, yPos);
+									}
+									//Else if it is in an invalid position
+									else if (Controller.hoveredWallIsValid(currentTile,Direction.Horizontal) == false) {
+										//Check to see if it conflicts with a Horizontal Wall
+										if (Controller.returnInvalidWallDirection(currentTile,Direction.Horizontal) == Direction.Horizontal) {
+											//Set that conflict horizontal wall to black
+											int row = Controller.returnInvalidWallRow(currentTile, Direction.Horizontal); 
+											int column = Controller.returnInvalidWallColumn(currentTile,Direction.Horizontal); 
+											hWalls[row][column].setBackground(Color.black);
+											wallCenters[row][column].setBackground(Color.black);
+											hWalls[row][column + 1].setBackground(Color.black);
+										}
+										//Otherwise, it conflicts with a vertical wall
+										else if (Controller.returnInvalidWallDirection(currentTile,Direction.Vertical) == Direction.Vertical) {
+											//Set that conflict vertical wall to black
+											int row = Controller.returnInvalidWallRow(currentTile, Direction.Vertical); 
+											int column = Controller.returnInvalidWallColumn(currentTile,Direction.Vertical); 
+											vWalls[row][column].setBackground(Color.black);
+											wallCenters[row][column].setBackground(Color.black);
+											vWalls[row + 1][column].setBackground(Color.black);
+										}
+									}
 								}
+								
+								// Else the Wall in hand is Vertical 
+								else { 
+									//If it is in a valid position
+									if (Controller.hoveredWallIsValid(currentTile, Direction.Vertical) == true) {
+										//Set the vertical wall to pink again
+										setWallToPink(xPos, yPos);
+									} 
+									//If it is an invalid position
+									else if (Controller.hoveredWallIsValid(currentTile,Direction.Vertical) == false) {
+										//Check to see if it conflicts with a Horizontal Wall
+										if (Controller.returnInvalidWallDirection(currentTile,Direction.Horizontal) == Direction.Horizontal) {
+											//Set that conflict horizontal wall to black
+											int row = Controller.returnInvalidWallRow(currentTile, Direction.Horizontal); 
+											int column = Controller.returnInvalidWallColumn(currentTile,Direction.Horizontal); 
+											hWalls[row][column].setBackground(Color.black);
+											wallCenters[row][column].setBackground(Color.black);
+											hWalls[row][column + 1].setBackground(Color.black);
+										}
+										//Otherwise, it conflicts with a vertical wall
+										else if (Controller.returnInvalidWallDirection(currentTile,Direction.Vertical) == Direction.Vertical) {
+											//Set that conflict vertical wall to black
+											int row = Controller.returnInvalidWallRow(currentTile, Direction.Vertical); 
+											int column = Controller.returnInvalidWallColumn(currentTile,Direction.Vertical); 
+											vWalls[row][column].setBackground(Color.black);
+											wallCenters[row][column].setBackground(Color.black);
+											vWalls[row + 1][column].setBackground(Color.black);
+										}
+									}
+								}
+							}
+							
+							// If no wall move candidate, it is either 1) No wall was grabbed or 2) Wall was placed
+							else { 
+
+								if (Controller.hoveredWallIsValid(currentTile, Direction.Horizontal) == true) {
+									hWalls[xPos][yPos].setBackground(Color.pink);
+									wallCenters[xPos][yPos].setBackground(Color.pink);
+									hWalls[xPos][yPos + 1].setBackground(Color.pink);
+								} else if (Controller.hoveredWallIsValid(currentTile, Direction.Vertical) == true) {
+									vWalls[xPos][yPos].setBackground(Color.pink);
+									wallCenters[xPos][yPos].setBackground(Color.pink);
+									vWalls[xPos + 1][yPos].setBackground(Color.pink);
+
+									System.out.println("Gets here");
+
+								}
+
+								else if (Controller.hoveredWallIsValid(currentTile, Direction.Horizontal) == false
+										|| Controller.hoveredWallIsValid(currentTile, Direction.Vertical) == false) {
+									if (Controller.returnInvalidWallDirection(currentTile,
+											Direction.Horizontal) == Direction.Horizontal) {
+										int row = Controller.returnInvalidWallRow(currentTile, Direction.Horizontal); // Get the row of	 the	 wall it conflicts with
+										int column = Controller.returnInvalidWallColumn(currentTile,
+												Direction.Horizontal); // Get the column of the wall it conflicts with
+										// Set the conflict wall to black
+										hWalls[row][column].setBackground(Color.black);
+										wallCenters[row][column].setBackground(Color.black);
+										hWalls[row][column + 1].setBackground(Color.black);
+									}
+
+									else if (Controller.returnInvalidWallDirection(currentTile,
+											Direction.Vertical) == Direction.Vertical) {
+										int row = Controller.returnInvalidWallRow(currentTile, Direction.Vertical); // Get
+																													// the
+																													// row
+																													// of
+																													// the
+																													// wall
+																													// it
+																													// conflicts
+																													// with
+										int column = Controller.returnInvalidWallColumn(currentTile,
+												Direction.Vertical); // Get the column of the wall it conflicts with
+										// Set the conflict wall to black
+										vWalls[row][column].setBackground(Color.black);
+										wallCenters[row][column].setBackground(Color.black);
+										vWalls[row + 1][column].setBackground(Color.black);
+									}
+
+								}
+
 							}
 
 						}
 					});
-
-					/*
-					 * // Store the current state of the colours wallCenterColor =
-					 * wallCenters[newI][newJ].getBackground(); hWallLeftColor =
-					 * hWalls[newI][newJ].getBackground(); // Left of center hWallRightColor =
-					 * hWalls[newI + 1][newJ].getBackground(); // Right of center
-					 * 
-					 * if (Controller.returnWallMoveCandidate() != null) { // If there is a wall in
-					 * hand
-					 * 
-					 * // No wall conlfict exists so it would be a legal spot if
-					 * (Controller.returnWallMoveDirection() == Direction.Horizontal) { // Check if
-					 * the wall // in hand is // horizontal
-					 * 
-					 * // Hover a wall horizontally hWalls[newI][newJ].setBackground(Color.GREEN);
-					 * wallCenters[newI][newJ].setBackground(Color.GREEN); hWalls[newI][newJ +
-					 * 1].setBackground(Color.GREEN); } else { // Hover a wall vertically
-					 * vWalls[newI][newJ].setBackground(Color.GREEN);
-					 * wallCenters[newI][newJ].setBackground(Color.GREEN); vWalls[newI +
-					 * 1][newJ].setBackground(Color.GREEN); } } else { } // If no wall in hand, do
-					 * nothing System.out.println(wallCenterColor);
-					 * System.out.println(hWallLeftColor); System.out.println(hWallRightColor);
-					 * 
-					 * }
-					 */
 
 					wallCenters[i][j].addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
@@ -859,16 +1045,16 @@ public class QuoridorWindow extends JFrame {
 
 							if (Controller.returnWallMoveDirection() == Direction.Horizontal) {
 								// If drop wall is valid
-								Controller.setDroppedWallTile(newI, newJ);
+								Controller.setDroppedWallTileToCandidate(xPos, yPos);
 
 								Wall returnedWall = Controller.dropWall(Controller.returnWallMoveCandidate());
 
 								if (returnedWall != null) {
 									// Do drop wall and return the wall placed
 									// Make a wall horizontally
-									hWalls[newI][newJ].setBackground(Color.black);
-									wallCenters[newI][newJ].setBackground(Color.black);
-									hWalls[newI][newJ + 1].setBackground(Color.black);
+									hWalls[xPos][yPos].setBackground(Color.black);
+									wallCenters[xPos][yPos].setBackground(Color.black);
+									hWalls[xPos][yPos + 1].setBackground(Color.black);
 									// Set Target tile to placed wall on board
 									isGrabWall = true;
 								} else {
@@ -879,7 +1065,7 @@ public class QuoridorWindow extends JFrame {
 
 							else if (Controller.returnWallMoveDirection() == Direction.Vertical) {
 
-								Controller.setDroppedWallTile(newI, newJ);
+								Controller.setDroppedWallTileToCandidate(xPos, yPos);
 
 								Wall returnedWall = Controller.dropWall(Controller.returnWallMoveCandidate());
 
@@ -887,15 +1073,24 @@ public class QuoridorWindow extends JFrame {
 								if (returnedWall != null) {
 									// Do drop wall and return the wall placed
 									// Make a wall vertically
-									vWalls[newI][newJ].setBackground(Color.black);
-									wallCenters[newI][newJ].setBackground(Color.black);
-									vWalls[newI + 1][newJ].setBackground(Color.black);
+									vWalls[xPos][yPos].setBackground(Color.black);
+									wallCenters[xPos][yPos].setBackground(Color.black);
+									vWalls[xPos + 1][yPos].setBackground(Color.black);
 
 									isGrabWall = true;
 								} else { // No wall move candidate exists
 									QuoridorWindow.notifyIllegalWallMove();
 								}
 							}
+
+							// Get Final Colours
+							wallCenterColor = wallCenters[xPos][yPos].getBackground();
+
+							hWallLeftColor = hWalls[xPos][yPos].getBackground();
+							hWallRightColor = hWalls[xPos][yPos + 1].getBackground();
+
+							vWallDownColor = vWalls[xPos][yPos].getBackground();
+							vWallUpColor = vWalls[xPos + 1][yPos].getBackground();
 						}
 					});
 					c.gridx = j * 2 + 1;
