@@ -583,14 +583,23 @@ public class Controller {
 	 */
 	public static boolean hoveredWallIsValid(Tile hoveredTile, Direction candidateDirection) {
 		
-		List<Wall> allWallsOnBoard = getAllWallsOnBoard();
 		
-		for (Wall wall : allWallsOnBoard) {
-			if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove()) ==true) {
-				return false;
+		List<Wall> allWallsOnBoard = getAllWallsOnBoard();
+
+		//If there are walls on the board 
+		if (getAllWallsOnBoard().size() > 0) {
+			for (Wall wall : allWallsOnBoard) {
+				System.out.println(hoveredTile);
+				System.out.println(candidateDirection);
+				System.out.println(wall);
+				if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove()) == true) {
+					
+
+					return false;
+				}
 			}
 		}
-		
+
 		return true;
 	}
 	/**
@@ -602,13 +611,15 @@ public class Controller {
 	public static int returnInvalidWallRow(Tile hoveredTile, Direction candidateDirection) {
 		
 		List<Wall> allWallsOnBoard = getAllWallsOnBoard();
-		
-		for (Wall wall : allWallsOnBoard) {
-			if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove()) ==true) {
-				return wall.getMove().getTargetTile().getRow() -1;
+		// If there are walls on the board
+		if (getAllWallsOnBoard().size() > 0) {
+			for (Wall wall : allWallsOnBoard) {
+				if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove()) == true) {
+					return wall.getMove().getTargetTile().getRow() - 1;
+				}
 			}
 		}
-		
+
 		return 0;
 
 	}
@@ -621,13 +632,16 @@ public class Controller {
 	public static int returnInvalidWallColumn(Tile hoveredTile, Direction candidateDirection) {
 		
 		List<Wall> allWallsOnBoard = getAllWallsOnBoard();
-		
-		for (Wall wall : allWallsOnBoard) {
-			if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove()) ==true) {
-				return wall.getMove().getTargetTile().getColumn() -1;
+
+		// If there are walls on the board
+		if (getAllWallsOnBoard().size() > 0) {
+			for (Wall wall : allWallsOnBoard) {
+				if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove()) == true) {
+					return wall.getMove().getTargetTile().getColumn() - 1;
+				}
 			}
 		}
-		
+
 		return 0;
 	}
 	
@@ -640,10 +654,12 @@ public class Controller {
 	public static Direction returnInvalidWallDirection(Tile hoveredTile, Direction candidateDirection) {
 
 		List<Wall> allWallsOnBoard = getAllWallsOnBoard();
-
-		for (Wall wall : allWallsOnBoard) {
-			if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove()) == true) {
-				return wall.getMove().getWallDirection();
+		// If there are walls on the board
+		if (getAllWallsOnBoard().size() > 0) {
+			for (Wall wall : allWallsOnBoard) {
+				if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove()) == true) {
+					return wall.getMove().getWallDirection();
+				}
 			}
 		}
 
@@ -1134,7 +1150,7 @@ public class Controller {
 		}
 		// Case when Directions are opposite
 		else {
-			// Only overlaps if NorthWest tile is the same for both walls
+			// Only overlaps if wall center is the same for both walls
 			return (isSameColumn && isSameRow);
 		}
 	}
@@ -1347,4 +1363,5 @@ public class Controller {
 
 		return false; //Otherwise walls dont exist  
 	}
+	//Wack stuff
 }

@@ -939,7 +939,7 @@ public class QuoridorWindow extends JFrame {
 											hWalls[row][column + 1].setBackground(Color.black);
 										}
 										//Otherwise, it conflicts with a vertical wall
-										else if (Controller.returnInvalidWallDirection(currentTile,Direction.Vertical) == Direction.Vertical) {
+										else if (Controller.returnInvalidWallDirection(currentTile,Direction.Horizontal) == Direction.Vertical) {
 											//Set that conflict vertical wall to black
 											int row = Controller.returnInvalidWallRow(currentTile, Direction.Vertical); 
 											int column = Controller.returnInvalidWallColumn(currentTile,Direction.Vertical); 
@@ -960,7 +960,7 @@ public class QuoridorWindow extends JFrame {
 									//If it is an invalid position
 									else if (Controller.hoveredWallIsValid(currentTile,Direction.Vertical) == false) {
 										//Check to see if it conflicts with a Horizontal Wall
-										if (Controller.returnInvalidWallDirection(currentTile,Direction.Horizontal) == Direction.Horizontal) {
+										if (Controller.returnInvalidWallDirection(currentTile,Direction.Vertical) == Direction.Horizontal) {
 											//Set that conflict horizontal wall to black
 											int row = Controller.returnInvalidWallRow(currentTile, Direction.Horizontal); 
 											int column = Controller.returnInvalidWallColumn(currentTile,Direction.Horizontal); 
