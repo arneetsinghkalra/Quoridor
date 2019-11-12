@@ -13,7 +13,6 @@ import java.util.Map;
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import org.junit.jupiter.api.Assertions;
 
-import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.Controller;
 import ca.mcgill.ecse223.quoridor.model.Board;
 import ca.mcgill.ecse223.quoridor.model.Direction;
@@ -1455,52 +1454,148 @@ public class CucumberStepDefinitions {
 	 * *********************
 	 * ********************/
 
-	// Move Pawn Feature
+	// Jump Pawn Feature
 
-	@Given("The player is located at {int}:{int}")
-	public void the_player_is_located_at(Integer int1, Integer int2) {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+	/**
+	 * @author arneetkalra
+	 * @param prow
+	 * @param pcol
+	 */
+	@And("The player is located at {int}:{int}")
+	public void the_player_is_located_at(Integer prow, Integer pcol) {
+		//Get Player whose turn it is
+		Player currentPlayer = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getPlayerToMove();
+		
+		//Calculate tile index of target tile
+		int tileIndex = ((prow - 1) * 9 + (pcol - 1));
+		Tile targetPosition = QuoridorApplication.getQuordior().getBoard().getTile(tileIndex);
+
+		// If it is black players turn
+		if (currentPlayer == QuoridorApplication.getQuordior().getCurrentGame().getBlackPlayer()) {
+			//Set the players position to target position
+			PlayerPosition currentPlayerPosition = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getBlackPosition();
+			currentPlayerPosition.setPlayer(currentPlayer);
+			currentPlayerPosition.setTile(targetPosition);
+		}
+
+		// If it is white players turn
+		if (currentPlayer == QuoridorApplication.getQuordior().getCurrentGame().getWhitePlayer()) {
+			//Set the players position to target position
+			PlayerPosition currentPlayerPosition = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getWhitePosition();
+			currentPlayerPosition.setPlayer(currentPlayer);
+			currentPlayerPosition.setTile(targetPosition);
+		}
+	}
+/**
+ * @author arneetkalra
+ * @param orow
+ * @param ocol
+ */
+	@And("The opponent is located at {int}:{int}")
+	public void the_opponent_is_located_at(Integer orow, Integer ocol) {
+		//Get Player whose turn it is
+				Player currentPlayer = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getPlayerToMove();
+				Player opponent;
+				
+				//Set the opponent to the opposite of the current player to move
+				if (currentPlayer == QuoridorApplication.getQuordior().getCurrentGame().getBlackPlayer()) {
+					opponent = QuoridorApplication.getQuordior().getCurrentGame().getWhitePlayer(); 
+				}
+				else {
+					opponent = QuoridorApplication.getQuordior().getCurrentGame().getBlackPlayer(); 
+				}
+				
+				//Calculate tile index of target tile
+				int tileIndex = ((orow - 1) * 9 + (ocol - 1));
+				Tile targetPosition = QuoridorApplication.getQuordior().getBoard().getTile(tileIndex);
+
+				// If opponent is black, set their position
+				if (opponent == QuoridorApplication.getQuordior().getCurrentGame().getBlackPlayer()) {
+					//Set the players position to target position
+					PlayerPosition opponentPosition = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getBlackPosition();
+					opponentPosition.setPlayer(currentPlayer);
+					opponentPosition.setTile(targetPosition);
+				}
+
+				// If opponent is white, set their position.
+				else {
+					//Set the players position to target position
+					PlayerPosition opponentPosition = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getWhitePosition();
+					opponentPosition.setPlayer(currentPlayer);
+					opponentPosition.setTile(targetPosition);
+				}
 	}
 
-	@Given("The opponent is located at {int}:{int}")
-	public void the_opponent_is_located_at(Integer int1, Integer int2) {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
-	}
+	@And("There are no {string} walls {string} from the player nearby")
+	public void there_are_no_walls_from_the_player_nearby(String direction, String side) {
+		//Finish this one, its pretty much true 
+		
+		//Current Position variable
+		GamePosition currentPosition = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition();
+		currentPosition.getBlackPosition();
 
-	@Given("There are no {string} walls {string} from the player nearby")
-	public void there_are_no_walls_from_the_player_nearby(String string, String string2) {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+		
+		//Convert String direction to Direction Type 
+		Direction dir = stringToDirection(direction);
+		
+		if (side == "left") {
+			currentPosition.getBlackPosition();
+			
+		}
+		if (side == "right") {
+		}
+		if (side == "up") {
+			
+		} else if (side == "down") {
+		}
+		
+		
 	}
 
 	@When("Player {string} initiates to move {string}")
 	public void player_initiates_to_move(String string, String string2) {
-		// Write code here that turns the phrase above into concrete actions
+		//When definition!!! Call a method in state machine
 		throw new cucumber.api.PendingException();
 	}
 
 	@Then("The move {string} shall be {string}")
-	public void the_move_shall_be(String string, String string2) {
+	public void the_move_shall_be(String side, String status) {
 		// Write code here that turns the phrase above into concrete actions
 		throw new cucumber.api.PendingException();
 	}
 
-	@Then("Player's new position shall be {int}:{int}")
-	public void player_s_new_position_shall_be(Integer int1, Integer int2) {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+	@And("Player's new position shall be {int}:{int}")
+	public void player_s_new_position_shall_be(Integer nrow, Integer ncol) {
+		// Get Player whose turn it is
+		Player currentPlayer = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getPlayerToMove();
+
+		// Calculate tile index of target tile
+		int tileIndex = ((nrow - 1) * 9 + (ncol - 1));
+		Tile targetPosition = QuoridorApplication.getQuordior().getBoard().getTile(tileIndex);
+
+		// If it is black players turn
+		if (currentPlayer == QuoridorApplication.getQuordior().getCurrentGame().getBlackPlayer()) {
+			assertEquals(currentPlayer.getGameAsBlack().getCurrentPosition().getBlackPosition().getTile(), targetPosition);
+		}
+
+		// If it is white players turn
+		if (currentPlayer == QuoridorApplication.getQuordior().getCurrentGame().getWhitePlayer()) {
+			assertEquals(currentPlayer.getGameAsWhite().getCurrentPosition().getWhitePosition().getTile(),targetPosition);
+		}
 	}
 
 	@Then("The next player to move shall become {string}")
-	public void the_next_player_to_move_shall_become(String string) {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+	public void the_next_player_to_move_shall_become(String nplayers) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		if (nplayers.equals("white")) {
+			assertEquals(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove(), quoridor.getCurrentGame().getWhitePlayer());
+		} else {
+			assertEquals(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove(), quoridor.getCurrentGame().getBlackPlayer());
+		}
 	}
 
 	@Given("There is a {string} wall at {int}:{int}")
-	public void there_is_a_wall_at(String string, Integer int1, Integer int2) {
+	public void there_is_a_wall_at(String dir, Integer wrow, Integer wcol) {
 		// Write code here that turns the phrase above into concrete actions
 		throw new cucumber.api.PendingException();
 	}
