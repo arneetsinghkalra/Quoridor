@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import org.junit.jupiter.api.Assertions;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
@@ -48,7 +49,7 @@ public class CucumberStepDefinitions {
 	private boolean userConfirms;
 	Wall returnedWall;
 	ArrayList<Player> createUsersAndPlayersLoad;
-	
+
 	// ***********************************************
 	// Background step definitions
 	// ***********************************************
@@ -71,16 +72,15 @@ public class CucumberStepDefinitions {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Player currentPlayer = quoridor.getCurrentGame().getWhitePlayer();
 		QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().setPlayerToMove(currentPlayer);
-
 	}
 
 	@Given("The following walls exist:")
 	public void theFollowingWallsExist(io.cucumber.datatable.DataTable dataTable) {
-		
-		
+
+
 		//For Arneet Kalra's step definitions
-		
-		
+
+
 		/*Quoridor quoridor = QuoridorApplication.getQuoridor();
         Game currentGame = quoridor.getCurrentGame();
 		Board currentBoard = quoridor.getBoard();
@@ -121,8 +121,8 @@ public class CucumberStepDefinitions {
 		quoridor.getCurrentGame().getCurrentPosition().addBlackWallsOnBoard(wall2);
 		quoridor.getCurrentGame().getCurrentPosition().removeBlackWallsInStock(wall3);
 		quoridor.getCurrentGame().getCurrentPosition().addBlackWallsOnBoard(wall3);*/
-		
-		
+
+
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		List<Map<String, String>> valueMaps = dataTable.asMaps();
 		// keys: wrow, wcol, wdir
@@ -204,11 +204,11 @@ public class CucumberStepDefinitions {
 	// ***********************************************
 
 	//--------------------------------------------------------------------------------
-	
-	// ************************************************************************** 
-	// Feature 1 - StartNewGame - Implemented by Ali Tapan - 260556540			 
+
 	// **************************************************************************
-	
+	// Feature 1 - StartNewGame - Implemented by Ali Tapan - 260556540
+	// **************************************************************************
+
 	/**
 	 *
 	 * @author Ali Tapan
@@ -297,11 +297,11 @@ public class CucumberStepDefinitions {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		assertEquals(true, quoridor.getBoard().hasTiles());
 	}
-	
+
 	// **************************************************************************
 	// Feature 2 - ProvideSelectUserName - Implemented by Ali Tapan - 260556540
 	// **************************************************************************
-	
+
 	/**
 	 *
 	 * @author Ali Tapan
@@ -345,7 +345,7 @@ public class CucumberStepDefinitions {
 	public void thePlayerSelectsExisting(String username) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Controller.selectExistingUsername(username, quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove());
-		
+
 	}
 
 	/**
@@ -357,7 +357,7 @@ public class CucumberStepDefinitions {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		assertEquals(username, quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getUser().getName());
 
-			
+
 	}
 
 	/**
@@ -372,7 +372,7 @@ public class CucumberStepDefinitions {
 	/**
 	 *
 	 * @author Ali Tapan
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@When("The player provides new user name: {string}")
 	public void thePlayerProvidesNewUserName(String username) throws Exception {
@@ -383,7 +383,7 @@ public class CucumberStepDefinitions {
 	/**
 	 *
 	 * @author Ali Tapan
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@Then("The player shall be warned that {string} already exists")
 	public void thePlayerShallBeWarnedThatAlreadyExists(String username) throws Exception {
@@ -426,11 +426,11 @@ public class CucumberStepDefinitions {
         assertEquals(timeRem, quoridor.getCurrentGame().getBlackPlayer().getRemainingTime().getTime());
     }
 
-    
+
 	// **************************************************************************
 	// Feature 4 - InitializeBoard - Implemented by Sam Perreault
 	// **************************************************************************
-    
+
     /** @author Sam Perreault */
     @When("The initialization of the board is initiated")
     public void theInitializationOfTheBoardIsInitiated() {
@@ -482,7 +482,7 @@ public class CucumberStepDefinitions {
         Quoridor quoridor = QuoridorApplication.getQuoridor();
         assertEquals(10, quoridor.getCurrentGame().getCurrentPosition().getBlackWallsInStock().size());
     }
-    
+
     /** @author Sam Perreault */
     @And("White's clock shall be counting down")
     public void whiteSClockShallBeCountingDown() {
@@ -506,21 +506,21 @@ public class CucumberStepDefinitions {
 	/** @author Luke Barber */
 	@Given("I have more walls on stock")
 	public void iHaveMoreWallsOnStock() {
-		/** 
+		/**
 		 * Since the player's stock is initialized in the background steps, there is no need to add more walls to a stock. Here, there should be a check
 		that there is a valid number of walls within the player's stock.*/
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		assertTrue(quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock().size() > Player.minimumNumberOfWalls()) ;
 		assertTrue(quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock().size() <= Player.maximumNumberOfWalls());
 	}
-	
+
 	/** @author Luke Barber*/
 	@When("I try to grab a wall from my stock")
 	public void iTryToGrabAWallFromMyStock() {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Wall wall = quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock(1);
 		Controller.grabWall(wall);
-		
+
 	}
 
 	/** @author Luke Barber */
@@ -537,7 +537,7 @@ public class CucumberStepDefinitions {
 		assertEquals(direction, currentGame.getWallMoveCandidate().getWallDirection());
 		assertEquals(tile, currentGame.getWallMoveCandidate().getTargetTile());
 	}
-	
+
 	/** @author Luke Barber */
 	@And("I shall have a wall in my hand over the board")
 	public void iShallHaveAWallInMyHandOverTheBoard() {
@@ -553,7 +553,7 @@ public class CucumberStepDefinitions {
 		Wall wall = quoridor.getCurrentGame().getWallMoveCandidate().getWallPlaced();
 		Wall wallInStock = quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock(wall.getId());
 		assertFalse(wall.equals(wallInStock));
-		
+
 	}
 
 	/** @author Luke Barber */
@@ -564,13 +564,13 @@ public class CucumberStepDefinitions {
 			quoridor.getCurrentGame().getCurrentPosition().removeWhiteWallsInStock(quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock(i));
 		}
 	}
-	
+
 	/** @author Luke Barber */
 	@Then("I shall be notified that I have no more walls")
 	public void iShallBeNotifiedThatIHaveNoMoreWalls() {
 	    Controller.notifyNoMoreWalls();
 	}
-	
+
 	/** @author Luke Barber */
 	@Then("I shall have no walls in my hand")
 	public void iShallHaveNoWallsInMyHand() {
@@ -579,11 +579,11 @@ public class CucumberStepDefinitions {
 	    assertFalse(Controller.wallSelected());
 	}
 
-	
+
 	// **************************************************************************
 	// Feature 6 - Rotate Wall - Implemented by Luke Barber - 260840096
 	// **************************************************************************
-		
+
 	/** @author Luke Barber and Arneet Kalra */
 	@Given("A wall move candidate exists with {string} at position \\({int}, {int})")
 	public void aWallMoveCandidateExistsWithAtPosition(String dir, int row, int column) {
@@ -606,7 +606,7 @@ public class CucumberStepDefinitions {
 		Controller.rotateWall(wall);
 
 	}
-	
+
 	/** @author Luke Barber */
 	@Then("The wall shall be rotated over the board to {string}")
 	public void theWallShallBeRotatedOverTheBoardTo(String newdir) {
@@ -944,11 +944,11 @@ public class CucumberStepDefinitions {
 		List<Move> allMoves = currentGame.getMoves();
 		assertEquals(allMoves.size(), 0);
 	}
-	
+
 	// **************************************************************************
 	// Feature 9 - LoadPosition - Implemented by Yin Zhang - 260726999
 	// **************************************************************************
-	
+
 	/**
 	 * Load the game from the file
 	 *
@@ -979,21 +979,21 @@ public class CucumberStepDefinitions {
 		quoridor.getCurrentGame().setBlackPlayer(black);
 		quoridor.getCurrentGame().setCurrentPosition(gp);
 		//-----// added*/
-		
+
 //		Controller.initWhitePlayer("User1");
 //		Controller.initBlackPlayer("User2");
 		//Controller.initializeBoard();
 		//ArrayList<Player> createUsersAndPlayers = createUsersAndPlayers("user4", "user5");
-		
-		
+
+
 		createAndStartGame(createUsersAndPlayersLoad);
-		
+
 		try {
 			quoridor = Controller.loadPosition(fileName);
 		}catch(UnsupportedOperationException e) {
 			validationResult = false;
 		}
-		
+
 	}
 
 	/**
@@ -1020,7 +1020,7 @@ public class CucumberStepDefinitions {
 		Player playerToMove1 = currentGamePosition.getPlayerToMove();
 		String playerToMoveString="";
 		if(playerToMove1.hasGameAsBlack()) {
-			playerToMoveString = "black"; 
+			playerToMoveString = "black";
 		}else {
 			playerToMoveString = "white";
 		}
@@ -1112,7 +1112,7 @@ public class CucumberStepDefinitions {
 		assertEquals(currentGame.getCurrentPosition().getBlackWallsInStock().size(), number);
 		assertEquals(currentGame.getCurrentPosition().getWhiteWallsInStock().size(), number);
 	}
-	
+
 	@When("The position to load is invalid")
 	public void thePositionToLoadIsInvalid() {
 		boolean isInvalid = Controller.validatePosition();
@@ -1121,8 +1121,8 @@ public class CucumberStepDefinitions {
 	public void theLoadShallReturnAnError() {
 		assertFalse(validationResult);
 	}
-	
-	
+
+
 	// **************************************************************************
 	// Feature 10 - SavePosition - Implemented by Yin Zhang - 260726999
 	// **************************************************************************
@@ -1169,7 +1169,7 @@ public class CucumberStepDefinitions {
 	/**
 	 * @param fileName
 	 * @author Yin Zhang 260726999
-	 * @throws IOException 
+	 * @throws IOException
 	 *
 	 */
 	@Then("A file with {string} shall be created in the filesystem")
@@ -1181,7 +1181,7 @@ public class CucumberStepDefinitions {
 	/**
 	 * @param fileName
 	 * @author Yin Zhang 260726999
-	 * @throws IOException 
+	 * @throws IOException
 	 *
 	 */
 	@Given("File {string} exists in the filesystem")
@@ -1205,8 +1205,8 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * @author Yin Zhang 260726999 check whether the file is updated
-	 * @throws IOException 
-	 * 
+	 * @throws IOException
+	 *
 	 */
 	@Then("File with {string} shall be updated in the filesystem")
 	public void fileWithNameShallBeUpdatedInTheFileSystem(String fileName) throws IOException {
@@ -1230,7 +1230,7 @@ public class CucumberStepDefinitions {
 	}
 	/**
 	 * @author Yin Zhang 260726999 check whether the file is updated
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@Then("File {string} shall not be changed in the filesystem")
 	public void fileWithNameShallNotBeChangedInTheFileSystem(String fileName) throws IOException {
@@ -1249,11 +1249,11 @@ public class CucumberStepDefinitions {
 		assertTrue(quoridor1WhitePlayerRow==9);
 		assertTrue(quoridor1WhitePlayerColumn==5);
 	}
-	
+
 	// **************************************************************************
 	// Feature 11 - ValidatePosition - Implemented by William Wang
 	// **************************************************************************
-	
+
 	/**
 	 * feature 11
 	 *
@@ -1325,11 +1325,11 @@ public class CucumberStepDefinitions {
 	    // Write code here that turns the phrase above into concrete actions
 		assertFalse(validationResult);
 	}
-	
+
 	// **************************************************************************
 	// Feature 12 - SwitchCurrentPlayer - Implemented by William Wang
 	// **************************************************************************
-	
+
 	/**
 	 * feature 12
 	 *
@@ -1448,7 +1448,7 @@ public class CucumberStepDefinitions {
 			assertTrue(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsBlack() != null);
 		}
 	}
-	
+
 	// ***********************************************
 	// Clean up
 	// ***********************************************
@@ -1547,11 +1547,11 @@ public class CucumberStepDefinitions {
 		GamePosition gamePosition = new GamePosition(0, player1Position, player2Position, players.get(0), game);
 
 		// Add the walls as in stock for the players
-		for (int j = 0; j < 10; j++) {
+		for (int j = 1; j <= 10; j++) {
 			Wall wall = Wall.getWithId(j);
 			gamePosition.addWhiteWallsInStock(wall);
 		}
-		for (int j = 0; j < 10; j++) {
+		for (int j = 1; j <= 10; j++) {
 			Wall wall = Wall.getWithId(j + 10);
 			gamePosition.addBlackWallsInStock(wall);
 		}
@@ -1573,7 +1573,7 @@ public class CucumberStepDefinitions {
 		Game game = new Game(GameStatus.ReadyToStart, MoveMode.PlayerMove, quoridor);
 		return game;
 	}
-	
+
 	/** @author Luke Barber and Arneet Kalra */
 	// Method to convert String input data type into respective Direction type
 	private Direction stringToDirection(String direction) {
@@ -1610,7 +1610,7 @@ public class CucumberStepDefinitions {
 
 		return wallMoveCandidate;
 	}
-	
+
 	private Player createPlayer(String username) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		if(!User.hasWithName(username))
