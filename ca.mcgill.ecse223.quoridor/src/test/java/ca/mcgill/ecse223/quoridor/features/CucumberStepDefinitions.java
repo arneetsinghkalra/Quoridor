@@ -1525,7 +1525,11 @@ public class CucumberStepDefinitions {
 					opponentPosition.setTile(targetPosition);
 				}
 	}
-
+/**
+ * @author arneetkalra
+ * @param direction
+ * @param side
+ */
 	@And("There are no {string} walls {string} from the player nearby")
 	public void there_are_no_walls_from_the_player_nearby(String direction, String side) {
 		//Finish this one, its pretty much true 
@@ -1546,19 +1550,33 @@ public class CucumberStepDefinitions {
 		
 		
 	}
-
+/**
+ * @author arneetkalra
+ * @param string
+ * @param string2
+ */
 	@When("Player {string} initiates to move {string}")
 	public void player_initiates_to_move(String string, String string2) {
 		//When definition!!! Call a method in state machine
 		throw new cucumber.api.PendingException();
 	}
 
+	/**
+	 * @author arneetkalra
+	 * @param side
+	 * @param status
+	 */
 	@Then("The move {string} shall be {string}")
 	public void the_move_shall_be(String side, String status) {
 		// Write code here that turns the phrase above into concrete actions
 		throw new cucumber.api.PendingException();
 	}
 
+	/**
+	 * @author arneetkalra
+	 * @param nrow
+	 * @param ncol
+	 */
 	@And("Player's new position shall be {int}:{int}")
 	public void player_s_new_position_shall_be(Integer nrow, Integer ncol) {
 		// Get Player whose turn it is
@@ -1579,6 +1597,10 @@ public class CucumberStepDefinitions {
 		}
 	}
 
+	/**
+	 * @author arneetkalra
+	 * @param nplayers
+	 */
 	@Then("The next player to move shall become {string}")
 	public void the_next_player_to_move_shall_become(String nplayers) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
@@ -1589,6 +1611,12 @@ public class CucumberStepDefinitions {
 		}
 	}
 
+	/**
+	 * @author arneetkalra
+	 * @param dir
+	 * @param wrow
+	 * @param wcol
+	 */
 	@Given("There is a {string} wall at {int}:{int}")
 	public void there_is_a_wall_at(String dir, Integer wrow, Integer wcol) {
 		Game currentGame = QuoridorApplication.getQuordior().getCurrentGame();
@@ -1603,18 +1631,31 @@ public class CucumberStepDefinitions {
 
 				//Move Pawn  ------------------------
 
+	/**
+	 * @author arneetkalra
+	 * @param string
+	 * @param string2
+	 */
 	@Given("There are no {string} walls {string} from the player")
 	public void there_are_no_walls_from_the_player(String string, String string2) {
 		// Write code here that turns the phrase above into concrete actions
 		throw new cucumber.api.PendingException();
 	}
 
+	/**
+	 * @author arneetkalra
+	 * @param string
+	 */
 	@Given("The opponent is not {string} from the player")
 	public void the_opponent_is_not_from_the_player(String string) {
 		// Write code here that turns the phrase above into concrete actions
 		throw new cucumber.api.PendingException();
 	}
 
+	/**
+	 * @author arneetkalra
+	 * @param string
+	 */
 	@Given("My opponent is not {string} from the player")
 	public void my_opponent_is_not_from_the_player(String string) {
 		// Write code here that turns the phrase above into concrete actions
