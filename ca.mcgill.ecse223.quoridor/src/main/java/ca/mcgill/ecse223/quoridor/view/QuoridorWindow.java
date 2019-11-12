@@ -44,11 +44,6 @@ public class QuoridorWindow extends JFrame {
 	private JLabel currentPlayerName;
 	private JLabel blackPlayerName;
 	private JLabel whitePlayerName;
-	public Color wallCenterColor;
-	public Color hWallLeftColor;
-	public Color hWallRightColor;
-	public Color vWallDownColor;
-	public Color vWallUpColor;
 	private static boolean confirms = true;
 	private int[] playerView = { 0, 0, 0, 0 };
 	private static JFrame f;
@@ -764,7 +759,7 @@ public class QuoridorWindow extends JFrame {
 
 				if (i < 8 && j < 8) {
 					wallCenters[i][j] = new JButton();
-					wallCenters[i][j].setBackground(Color.white);
+					wallCenters[i][j].setBackground(Color.pink);
 					// For loop helper
 					@SuppressWarnings("deprecation")
 					final Integer xPos = new Integer(i);
@@ -773,20 +768,6 @@ public class QuoridorWindow extends JFrame {
 
 					wallCenters[i][j].addMouseListener(new MouseAdapter() {
 
-						public void setWallToBlack(Integer x, Integer y) {
-							if (Controller.returnWallMoveDirection() == Direction.Horizontal) { // Check if wall in hand
-																								// is horizontal Hover a
-																								// wall horizontally
-								hWalls[x][y].setBackground(Color.black);
-								wallCenters[x][y].setBackground(Color.black);
-								hWalls[x][y + 1].setBackground(Color.black);
-							} else { // Hover a wall vertically
-								vWalls[x][y].setBackground(Color.black);
-								wallCenters[x][y].setBackground(Color.black);
-								vWalls[x + 1][y].setBackground(Color.black);
-							}
-
-						}
 
 						void setWallToGreen(Integer x, Integer y) {
 							if (Controller.returnWallMoveDirection() == Direction.Horizontal) { // Check if the wall in
@@ -818,31 +799,7 @@ public class QuoridorWindow extends JFrame {
 							}
 						}
 
-						void setWallToRed(Integer x, Integer y) {
-							if (Controller.returnWallMoveDirection() == Direction.Horizontal) { // Check if the wall in
-																								// hand is horizontal
-																								// Hover a wall
-																								// horizontally
-								hWalls[x][y].setBackground(Color.red);
-								wallCenters[x][y].setBackground(Color.red);
-								hWalls[x][y + 1].setBackground(Color.red);
-							} else { // Hover a wall vertically
-								vWalls[x][y].setBackground(Color.red);
-								wallCenters[x][y].setBackground(Color.red);
-								vWalls[x + 1][y].setBackground(Color.red);
-							}
-						}
-
 						public void mouseEntered(MouseEvent e) {
-							// Get Initial Colours
-							wallCenterColor = wallCenters[xPos][yPos].getBackground();
-
-							hWallLeftColor = hWalls[xPos][yPos].getBackground();
-							hWallRightColor = hWalls[xPos][yPos + 1].getBackground();
-
-							vWallDownColor = vWalls[xPos][yPos].getBackground();
-							vWallUpColor = vWalls[xPos + 1][yPos].getBackground();
-
 							Tile currentTile = Controller.getDroppedWallTile(xPos, yPos);
 							// If there is a wall in hand
 							if (Controller.returnWallMoveCandidate() != null) { 
@@ -1082,15 +1039,6 @@ public class QuoridorWindow extends JFrame {
 									QuoridorWindow.notifyIllegalWallMove();
 								}
 							}
-
-							// Get Final Colours
-							wallCenterColor = wallCenters[xPos][yPos].getBackground();
-
-							hWallLeftColor = hWalls[xPos][yPos].getBackground();
-							hWallRightColor = hWalls[xPos][yPos + 1].getBackground();
-
-							vWallDownColor = vWalls[xPos][yPos].getBackground();
-							vWallUpColor = vWalls[xPos + 1][yPos].getBackground();
 						}
 					});
 					c.gridx = j * 2 + 1;
