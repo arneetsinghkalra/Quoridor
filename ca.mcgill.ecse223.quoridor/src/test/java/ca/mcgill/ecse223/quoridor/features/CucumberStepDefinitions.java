@@ -1541,7 +1541,7 @@ public class CucumberStepDefinitions {
 		
 		/**
 		 * Since this is a given statement, the board is not going to have any walls in the beginning anyways. 
-		 * So we dont have to hardcode anything on to the board anyways. 
+		 * So we dont have to hardcode anything on to the board. 
 		 */
 		
 		
