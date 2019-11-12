@@ -1538,16 +1538,11 @@ public class CucumberStepDefinitions {
 		//Convert String direction to Direction Type 
 		Direction dir = stringToDirection(direction);
 		
-		if (side == "left") {
-			currentPosition.getBlackPosition();
-			
-		}
-		if (side == "right") {
-		}
-		if (side == "up") {
-			
-		} else if (side == "down") {
-		}
+		
+		/**
+		 * Since this is a given statement, the board is not going to have any walls in the beginning anyways. 
+		 * So we dont have to hardcode anything on to the board anyways. 
+		 */
 		
 		
 	}
@@ -1596,8 +1591,14 @@ public class CucumberStepDefinitions {
 
 	@Given("There is a {string} wall at {int}:{int}")
 	public void there_is_a_wall_at(String dir, Integer wrow, Integer wcol) {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+		Game currentGame = QuoridorApplication.getQuordior().getCurrentGame();
+		Direction direction = stringToDirection(dir);
+		
+		WallMove newWallMove = createWallMoveCandidate(direction, wrow, wcol);
+		Wall aWall = newWallMove.getWallPlaced();		
+		
+		currentGame.getCurrentPosition().addWhiteWallsOnBoard(aWall);
+		
 	}
 
 				//Move Pawn  ------------------------
