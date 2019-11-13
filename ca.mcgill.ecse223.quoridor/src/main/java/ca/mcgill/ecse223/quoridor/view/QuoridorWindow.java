@@ -57,6 +57,7 @@ public class QuoridorWindow extends JFrame {
 	 * Create the frame.
 	 */
 	public QuoridorWindow() {
+		setResizable(false);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 90, 780, 600); // New dimensions
@@ -717,7 +718,7 @@ public class QuoridorWindow extends JFrame {
 			for (int j = 0; j < 9; j++) {
 
 				tiles[i][j] = new JButton();
-				tiles[i][j].setBackground(Color.YELLOW);
+				tiles[i][j].setBackground(Color.WHITE);
 				GridBagConstraints c = new GridBagConstraints();
 				c.gridx = j * 2;
 				c.gridy = i * 2;
@@ -1053,6 +1054,7 @@ public class QuoridorWindow extends JFrame {
 
 				}
 			}
+		}
 
 			Component horizontalStrut = Box.createHorizontalStrut(100);
 			horizontalStrut.setBackground(Color.PINK);
@@ -1062,7 +1064,7 @@ public class QuoridorWindow extends JFrame {
 			timeRemLabel.setFont(new Font("Cooper Black", Font.PLAIN, 14));
 			timeRemLabel.setHorizontalAlignment(SwingConstants.CENTER);
 			horizontalBox.add(timeRemLabel);
-		}
+		
 	}
 
 	public void movePlayer(int whitex, int whitey, int blackx, int blacky) {
