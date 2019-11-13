@@ -9,6 +9,8 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import org.junit.jupiter.api.Assertions;
@@ -1450,7 +1452,7 @@ public class CucumberStepDefinitions {
 	
 	/**********************
 	 * ***********************
-	 * Spring 4 Step Defintions
+	 * Sprint 4 Step Defintions
 	 * *********************
 	 * ********************/
 
@@ -1531,24 +1533,23 @@ public class CucumberStepDefinitions {
  * @param side
  */
 	@And("There are no {string} walls {string} from the player nearby")
-	public void there_are_no_walls_from_the_player_nearby(String direction, String side) {
-		//Finish this one, its pretty much true 
-		
+	public void there_are_no_walls_from_the_player_nearby(String direction, String side) {		
 		//Current Position variable
-		GamePosition currentPosition = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition();
-		currentPosition.getBlackPosition();
-
-		
-		//Convert String direction to Direction Type 
+		GamePosition currentGamePosition = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition();
 		Direction dir = stringToDirection(direction);
-		
-		
-		/**
-		 * Since this is a given statement, the board is not going to have any walls in the beginning anyways. 
-		 * So we dont have to hardcode anything on to the board. 
-		 */
-		
-		
+
+		if (side.equals("left") || side.equals("right") || side.equals("up") || side.equals("down")) {
+			// Get a list of all walls on the board
+			List<Wall> blackWallsOnBoard = currentGamePosition.getBlackWallsOnBoard();
+			List<Wall> whiteWallsOnBoard = currentGamePosition.getWhiteWallsOnBoard();
+
+			// Make one list for all walls on the board:
+			List<Wall> allWallsOnBoard = Stream.of(blackWallsOnBoard, whiteWallsOnBoard).flatMap(x -> x.stream())
+					.collect(Collectors.toList());
+
+			//Clear all walls on board
+			allWallsOnBoard.clear();
+		}
 	}
 /**
  * @author arneetkalra
@@ -1570,6 +1571,12 @@ public class CucumberStepDefinitions {
 	public void the_move_shall_be(String side, String status) {
 		// Write code here that turns the phrase above into concrete actions
 		throw new cucumber.api.PendingException();
+		
+		//assertEquals(MovePawn(side), status)
+		/*
+		 * Have the move pawn method in the state machine return "legal" if method succesfully moves the player
+		 * or return "illegal" if it doesnt. Then we can easily use the assertEquals statement above.
+		 */
 	}
 
 	/**
@@ -1626,7 +1633,6 @@ public class CucumberStepDefinitions {
 		Wall aWall = newWallMove.getWallPlaced();		
 		
 		currentGame.getCurrentPosition().addWhiteWallsOnBoard(aWall);
-		
 	}
 
 				//Move Pawn  ------------------------
@@ -1636,10 +1642,24 @@ public class CucumberStepDefinitions {
 	 * @param string
 	 * @param string2
 	 */
-	@Given("There are no {string} walls {string} from the player")
-	public void there_are_no_walls_from_the_player(String string, String string2) {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+	@And("There are no {string} walls {string} from the player")
+	public void there_are_no_walls_from_the_player(String direction, String side) {
+		// Current Position variable
+		GamePosition currentGamePosition = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition();
+		Direction dir = stringToDirection(direction);
+
+		if (side.equals("left") || side.equals("right") || side.equals("up") || side.equals("down")) {
+			// Get a list of all walls on the board
+			List<Wall> blackWallsOnBoard = currentGamePosition.getBlackWallsOnBoard();
+			List<Wall> whiteWallsOnBoard = currentGamePosition.getWhiteWallsOnBoard();
+
+			// Make one list for all walls on the board:
+			List<Wall> allWallsOnBoard = Stream.of(blackWallsOnBoard, whiteWallsOnBoard).flatMap(x -> x.stream())
+					.collect(Collectors.toList());
+
+			// Clear all walls on board
+			allWallsOnBoard.clear();
+		}
 	}
 
 	/**
@@ -1647,9 +1667,80 @@ public class CucumberStepDefinitions {
 	 * @param string
 	 */
 	@Given("The opponent is not {string} from the player")
-	public void the_opponent_is_not_from_the_player(String string) {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+	public void the_opponent_is_not_from_the_player(String side) {
+		
+		//Just verify my logic
+		Quoridor quoridor = QuoridorApplication.getQuordior();
+		Game currentGame = quoridor.getCurrentGame();
+		Player currentPlayer = currentGame.getCurrentPosition().getPlayerToMove();
+		Tile currentPlayerTile;
+		Tile opponentTile;
+		int column;
+		int row;
+		int currentPlayerTileIndex;
+		Player opponent;
+		
+		if(currentPlayer == currentGame.getBlackPlayer()) {
+			//Get current player tile
+			currentPlayerTile = currentGame.getCurrentPosition().getBlackPosition().getTile();
+			 column = currentPlayerTile.getColumn();
+			 row = currentPlayerTile.getRow();
+			currentPlayerTileIndex = (row -1) *9 + column -1;
+		
+			//Set opponent as other player
+			opponent = currentGame.getWhitePlayer();
+		} else {
+			//Get current player tile
+			currentPlayerTile = currentGame.getCurrentPosition().getWhitePosition().getTile();
+			 column = currentPlayerTile.getColumn();
+			 row = currentPlayerTile.getRow();
+			 currentPlayerTileIndex = (row -1) *9 + column -1;
+			
+			//Set opponent as other player
+			opponent = currentGame.getBlackPlayer();
+		}
+		
+		
+		if (opponent == currentGame.getBlackPlayer()) {
+			switch (side) {
+			case "left":
+				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex + 1);
+				currentGame.getCurrentPosition().getBlackPosition().setTile(opponentTile);
+
+			case "right":
+				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex - 1);
+				currentGame.getCurrentPosition().getBlackPosition().setTile(opponentTile);
+
+			case "up":
+				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex + 1);
+				currentGame.getCurrentPosition().getBlackPosition().setTile(opponentTile);
+
+			case "down":
+				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex - 1);
+				currentGame.getCurrentPosition().getBlackPosition().setTile(opponentTile);
+
+			}
+		}
+		//If opponent is white player
+		else {
+			switch (side) {
+			case "left":
+				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex + 1);
+				currentGame.getCurrentPosition().getWhitePosition().setTile(opponentTile);
+
+			case "right":
+				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex - 1);
+				currentGame.getCurrentPosition().getWhitePosition().setTile(opponentTile);
+
+			case "up":
+				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex + 1);
+				currentGame.getCurrentPosition().getWhitePosition().setTile(opponentTile);
+
+			case "down":
+				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex - 1);
+				currentGame.getCurrentPosition().getWhitePosition().setTile(opponentTile);
+			}
+		}
 	}
 
 	/**
@@ -1657,9 +1748,80 @@ public class CucumberStepDefinitions {
 	 * @param string
 	 */
 	@Given("My opponent is not {string} from the player")
-	public void my_opponent_is_not_from_the_player(String string) {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+	public void my_opponent_is_not_from_the_player(String side) {
+
+		//Just verify my logic
+		Quoridor quoridor = QuoridorApplication.getQuordior();
+		Game currentGame = quoridor.getCurrentGame();
+		Player currentPlayer = currentGame.getCurrentPosition().getPlayerToMove();
+		Tile currentPlayerTile;
+		Tile opponentTile;
+		int column;
+		int row;
+		int currentPlayerTileIndex;
+		Player opponent;
+		
+		if(currentPlayer == currentGame.getBlackPlayer()) {
+			//Get current player tile
+			currentPlayerTile = currentGame.getCurrentPosition().getBlackPosition().getTile();
+			 column = currentPlayerTile.getColumn();
+			 row = currentPlayerTile.getRow();
+			currentPlayerTileIndex = (row -1) *9 + column -1;
+		
+			//Set opponent as other player
+			opponent = currentGame.getWhitePlayer();
+		} else {
+			//Get current player tile
+			currentPlayerTile = currentGame.getCurrentPosition().getWhitePosition().getTile();
+			 column = currentPlayerTile.getColumn();
+			 row = currentPlayerTile.getRow();
+			 currentPlayerTileIndex = (row -1) *9 + column -1;
+			
+			//Set opponent as other player
+			opponent = currentGame.getBlackPlayer();
+		}
+		
+		
+		if (opponent == currentGame.getBlackPlayer()) {
+			switch (side) {
+			case "left":
+				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex + 1);
+				currentGame.getCurrentPosition().getBlackPosition().setTile(opponentTile);
+
+			case "right":
+				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex - 1);
+				currentGame.getCurrentPosition().getBlackPosition().setTile(opponentTile);
+
+			case "up":
+				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex + 1);
+				currentGame.getCurrentPosition().getBlackPosition().setTile(opponentTile);
+
+			case "down":
+				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex - 1);
+				currentGame.getCurrentPosition().getBlackPosition().setTile(opponentTile);
+
+			}
+		}
+		//If opponent is white player
+		else {
+			switch (side) {
+			case "left":
+				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex + 1);
+				currentGame.getCurrentPosition().getWhitePosition().setTile(opponentTile);
+
+			case "right":
+				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex - 1);
+				currentGame.getCurrentPosition().getWhitePosition().setTile(opponentTile);
+
+			case "up":
+				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex + 1);
+				currentGame.getCurrentPosition().getWhitePosition().setTile(opponentTile);
+
+			case "down":
+				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex - 1);
+				currentGame.getCurrentPosition().getWhitePosition().setTile(opponentTile);
+			}
+		}
 	}
 
 
