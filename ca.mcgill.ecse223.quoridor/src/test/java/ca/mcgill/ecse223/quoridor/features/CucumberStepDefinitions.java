@@ -1749,79 +1749,8 @@ public class CucumberStepDefinitions {
 	 */
 	@Given("My opponent is not {string} from the player")
 	public void my_opponent_is_not_from_the_player(String side) {
-
-		//Just verify my logic
-		Quoridor quoridor = QuoridorApplication.getQuordior();
-		Game currentGame = quoridor.getCurrentGame();
-		Player currentPlayer = currentGame.getCurrentPosition().getPlayerToMove();
-		Tile currentPlayerTile;
-		Tile opponentTile;
-		int column;
-		int row;
-		int currentPlayerTileIndex;
-		Player opponent;
-		
-		if(currentPlayer == currentGame.getBlackPlayer()) {
-			//Get current player tile
-			currentPlayerTile = currentGame.getCurrentPosition().getBlackPosition().getTile();
-			 column = currentPlayerTile.getColumn();
-			 row = currentPlayerTile.getRow();
-			currentPlayerTileIndex = (row -1) *9 + column -1;
-		
-			//Set opponent as other player
-			opponent = currentGame.getWhitePlayer();
-		} else {
-			//Get current player tile
-			currentPlayerTile = currentGame.getCurrentPosition().getWhitePosition().getTile();
-			 column = currentPlayerTile.getColumn();
-			 row = currentPlayerTile.getRow();
-			 currentPlayerTileIndex = (row -1) *9 + column -1;
-			
-			//Set opponent as other player
-			opponent = currentGame.getBlackPlayer();
-		}
-		
-		
-		if (opponent == currentGame.getBlackPlayer()) {
-			switch (side) {
-			case "left":
-				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex + 1);
-				currentGame.getCurrentPosition().getBlackPosition().setTile(opponentTile);
-
-			case "right":
-				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex - 1);
-				currentGame.getCurrentPosition().getBlackPosition().setTile(opponentTile);
-
-			case "up":
-				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex + 1);
-				currentGame.getCurrentPosition().getBlackPosition().setTile(opponentTile);
-
-			case "down":
-				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex - 1);
-				currentGame.getCurrentPosition().getBlackPosition().setTile(opponentTile);
-
-			}
-		}
-		//If opponent is white player
-		else {
-			switch (side) {
-			case "left":
-				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex + 1);
-				currentGame.getCurrentPosition().getWhitePosition().setTile(opponentTile);
-
-			case "right":
-				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex - 1);
-				currentGame.getCurrentPosition().getWhitePosition().setTile(opponentTile);
-
-			case "up":
-				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex + 1);
-				currentGame.getCurrentPosition().getWhitePosition().setTile(opponentTile);
-
-			case "down":
-				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex - 1);
-				currentGame.getCurrentPosition().getWhitePosition().setTile(opponentTile);
-			}
-		}
+		//Exact same logic as this step definition
+		the_opponent_is_not_from_the_player(side);
 	}
 
 
