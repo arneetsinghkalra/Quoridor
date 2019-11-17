@@ -445,7 +445,12 @@ public class PawnBehavior
   }
 
   // line 53 "../../../../../PawnStateMachine.ump"
-  public boolean movePlayer(MoveDirection dir){
+  public boolean movePawn(MoveDirection dir){
+    return false;
+  }
+
+  // line 55 "../../../../../PawnStateMachine.ump"
+  public boolean jumpPawn(MoveDirection dir){
     return false;
   }
 
