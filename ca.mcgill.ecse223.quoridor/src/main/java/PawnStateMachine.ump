@@ -50,5 +50,8 @@ class PawnBehavior {
     
     boolean isWallBehindOpponent(){return false;} 
     
-    boolean movePlayer(MoveDirection dir) {return false;}
+    boolean movePawn(MoveDirection dir) {return false;}
+    
+    boolean jumpPawn(MoveDirection dir) {return false;}
+    
 }
