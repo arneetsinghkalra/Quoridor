@@ -3,6 +3,7 @@
 
 package ca.mcgill.ecse223.quoridor.controller;
 import ca.mcgill.ecse223.quoridor.model.*;
+import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 
 // line 5 "../../../../../PawnStateMachine.ump"
 public class PawnBehavior
@@ -12,7 +13,7 @@ public class PawnBehavior
   // ENUMERATIONS
   //------------------------
 
-  public enum MoveDirection { East, South, West, North }
+  public enum MoveDirection { East, South, West, North, SouthEast, SouthWest, NorthEast, NorthWest }
 
   //------------------------
   // MEMBER VARIABLES
@@ -412,13 +413,7 @@ public class PawnBehavior
   }
 
 
-  /**
-   * Returns if it is legal to jump in the given direction
-   */
-  // line 38 "../../../../../PawnStateMachine.ump"
-  public boolean isLegalJump(MoveDirection dir){
-    return false;
-  }
+ 
 
 
   /**
@@ -450,8 +445,99 @@ public class PawnBehavior
   }
 
   // line 55 "../../../../../PawnStateMachine.ump"
-  public boolean jumpPawn(MoveDirection dir){
+  /**
+   * 
+   * @author William Wang
+   * Returns if it is legal to jump in the given direction
+   */
+  // line 38 "../../../../../PawnStateMachine.ump"
+  public static boolean isLegalJump(MoveDirection dir){
+	  Quoridor quoridor = QuoridorApplication.getQuordior();
+	  Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
+	  if(currentPlayer.hasGameAsBlack())
+	  if(isWallBehind(dir)) {
+			return false;
+	  }
+		return true;
+  }
+  
+  /**
+   * 
+   * @author William Wang
+   * Returns if it is there is a wall behind opponent
+   */
+  // line 38 "../../../../../PawnStateMachine.ump"
+  public static boolean isWallBehind(MoveDirection dir){
     return false;
+  }
+  
+  
+  /**
+	 * <p>
+	 * Jump Pawn
+	 * <p>
+	 * <p>
+	 * Jump Pawn towards target direction
+	 * <p>
+	 * 
+	 * @author William Wang
+	 * @param dir input target direction
+	 */
+  public static boolean jumpPawn(MoveDirection dir){
+    if(!isLegalJump(dir)) {
+    	return false;
+    }
+    
+    //legal jump
+    Quoridor quoridor = QuoridorApplication.getQuordior();
+    Game currentGame = quoridor.getCurrentGame();
+    GamePosition currentPosition = currentGame.getCurrentPosition();
+    Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
+    Tile targetTile = null;
+    if(currentPlayer.hasGameAsWhite()) {
+        int currentRow = currentPosition.getWhitePosition().getTile().getRow();
+        int currentColumn = currentPosition.getWhitePosition().getTile().getColumn();
+    	if(dir==MoveDirection.East) {
+    		targetTile = quoridor.getBoard().getTile((currentRow-1)*9+currentColumn+1);
+    		currentPosition.getWhitePosition().setTile(targetTile);
+    	}
+    	else if(dir == MoveDirection.West){
+    		targetTile = quoridor.getBoard().getTile((currentRow-1)*9+currentColumn-3);
+    		currentPosition.getWhitePosition().setTile(targetTile);
+    	}
+    	else if(dir == MoveDirection.South){
+    		targetTile = quoridor.getBoard().getTile((currentRow+1)*9+currentColumn-1);
+    		currentPosition.getWhitePosition().setTile(targetTile);
+    	}
+    	else if(dir == MoveDirection.North){
+    		targetTile = quoridor.getBoard().getTile((currentRow-3)*9+currentColumn-1);
+    		currentPosition.getWhitePosition().setTile(targetTile);
+    	}
+    }
+    else {
+    	int currentRow = currentPosition.getWhitePosition().getTile().getRow();
+        int currentColumn = currentPosition.getWhitePosition().getTile().getColumn();
+    	if(dir==MoveDirection.East) {
+    		targetTile = quoridor.getBoard().getTile((currentRow-1)*9+currentColumn+1);
+    		currentPosition.getWhitePosition().setTile(targetTile);
+    	}
+    	else if(dir == MoveDirection.West){
+    		targetTile = quoridor.getBoard().getTile((currentRow-1)*9+currentColumn-3);
+    		currentPosition.getWhitePosition().setTile(targetTile);
+    	}
+    	else if(dir == MoveDirection.South){
+    		targetTile = quoridor.getBoard().getTile((currentRow+1)*9+currentColumn-1);
+    		currentPosition.getWhitePosition().setTile(targetTile);
+    	}
+    	else if(dir == MoveDirection.North){
+    		targetTile = quoridor.getBoard().getTile((currentRow-3)*9+currentColumn-1);
+    		currentPosition.getWhitePosition().setTile(targetTile);
+    	}
+    }
+    Move lastMove = currentGame.getMove(currentGame.getMoves().size()-1);
+    currentGame.addMove(new JumpMove(lastMove.getMoveNumber()+1, lastMove.getRoundNumber()+1, currentPlayer, targetTile, currentGame));
+    Controller.switchCurrentPlayer();
+	return true;
   }
 
 }

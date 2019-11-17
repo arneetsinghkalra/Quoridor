@@ -16,6 +16,7 @@ import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import org.junit.jupiter.api.Assertions;
 
 import ca.mcgill.ecse223.quoridor.controller.Controller;
+import ca.mcgill.ecse223.quoridor.controller.PawnBehavior;
 import ca.mcgill.ecse223.quoridor.model.Board;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
@@ -44,9 +45,11 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+
 public class CucumberStepDefinitions {
 
 	private boolean validationResult = true;
+	private boolean legalMove = true;
 	private boolean userConfirms;
 	Wall returnedWall;
 	ArrayList<Player> createUsersAndPlayersLoad;
@@ -1552,25 +1555,41 @@ public class CucumberStepDefinitions {
 		}
 	}
 /**
- * @author arneetkalra
+ * @author William Wang
  * @param string
  * @param string2
  */
 	@When("Player {string} initiates to move {string}")
-	public void player_initiates_to_move(String string, String string2) {
+	public void player_initiates_to_move(String playerName, String jumpDirection) {
 		//When definition!!! Call a method in state machine
-		throw new cucumber.api.PendingException();
+		if(jumpDirection.equals("left")) {
+			legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.West);
+		}
+		else if(jumpDirection.equals("right")) {
+			legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.East);
+		}
+		else if(jumpDirection.equals("up")) {
+			legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.North);
+		}
+		else if(jumpDirection.equals("down")) {
+			legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.South);
+		}
 	}
 
 	/**
-	 * @author arneetkalra
+	 * @author William Wang
 	 * @param side
 	 * @param status
 	 */
 	@Then("The move {string} shall be {string}")
 	public void the_move_shall_be(String side, String status) {
 		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+		if(status.equals("illegal")) {
+			assertFalse(legalMove);
+		}
+		else {
+			assertTrue(legalMove);
+		}
 		
 		//assertEquals(MovePawn(side), status)
 		/*
