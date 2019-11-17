@@ -2,477 +2,593 @@
 /*This code was generated using the UMPLE 1.29.0.4181.a593105a9 modeling language!*/
 
 package ca.mcgill.ecse223.quoridor.controller;
+
 import ca.mcgill.ecse223.quoridor.model.*;
+
+import java.util.List;
+
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 
 // line 5 "../../../../../PawnStateMachine.ump"
-public class PawnBehavior
-{
+public class PawnBehavior {
 
-  //------------------------
-  // ENUMERATIONS
-  //------------------------
+	// ------------------------
+	// ENUMERATIONS
+	// ------------------------
 
-  public enum MoveDirection { East, South, West, North, SouthEast, SouthWest, NorthEast, NorthWest }
+	public enum MoveDirection {
+		East, South, West, North, SouthEast, SouthWest, NorthEast, NorthWest
+	}
 
-  //------------------------
-  // MEMBER VARIABLES
-  //------------------------
+	// ------------------------
+	// MEMBER VARIABLES
+	// ------------------------
 
-  //PawnBehavior State Machines
-  public enum PawnSM { NoAdjacentOpponent, AdjacentOpponent }
-  public enum PawnSMNoAdjacentOpponent { Null, NoAdjacentWall, AdjacentWall }
-  public enum PawnSMAdjacentOpponent { Null, WallBehindAdjacentOpponent }
-  private PawnSM pawnSM;
-  private PawnSMNoAdjacentOpponent pawnSMNoAdjacentOpponent;
-  private PawnSMAdjacentOpponent pawnSMAdjacentOpponent;
+	// PawnBehavior State Machines
+	public enum PawnSM {
+		NoAdjacentOpponent, AdjacentOpponent
+	}
 
-  //PawnBehavior Associations
-  private Game currentGame;
-  private Player player;
+	public enum PawnSMNoAdjacentOpponent {
+		Null, NoAdjacentWall, AdjacentWall
+	}
 
-  //------------------------
-  // CONSTRUCTOR
-  //------------------------
+	public enum PawnSMAdjacentOpponent {
+		Null, WallBehindAdjacentOpponent
+	}
 
-  public PawnBehavior()
-  {
-    setPawnSMNoAdjacentOpponent(PawnSMNoAdjacentOpponent.Null);
-    setPawnSMAdjacentOpponent(PawnSMAdjacentOpponent.Null);
-    setPawnSM(PawnSM.NoAdjacentOpponent);
-  }
+	private PawnSM pawnSM;
+	private PawnSMNoAdjacentOpponent pawnSMNoAdjacentOpponent;
+	private PawnSMAdjacentOpponent pawnSMAdjacentOpponent;
 
-  //------------------------
-  // INTERFACE
-  //------------------------
+	// PawnBehavior Associations
+	private Game currentGame;
+	private Player player;
 
-  public String getPawnSMFullName()
-  {
-    String answer = pawnSM.toString();
-    if (pawnSMNoAdjacentOpponent != PawnSMNoAdjacentOpponent.Null) { answer += "." + pawnSMNoAdjacentOpponent.toString(); }
-    if (pawnSMAdjacentOpponent != PawnSMAdjacentOpponent.Null) { answer += "." + pawnSMAdjacentOpponent.toString(); }
-    return answer;
-  }
+	// ------------------------
+	// CONSTRUCTOR
+	// ------------------------
 
-  public PawnSM getPawnSM()
-  {
-    return pawnSM;
-  }
+	public PawnBehavior() {
+		setPawnSMNoAdjacentOpponent(PawnSMNoAdjacentOpponent.Null);
+		setPawnSMAdjacentOpponent(PawnSMAdjacentOpponent.Null);
+		setPawnSM(PawnSM.NoAdjacentOpponent);
+	}
 
-  public PawnSMNoAdjacentOpponent getPawnSMNoAdjacentOpponent()
-  {
-    return pawnSMNoAdjacentOpponent;
-  }
+	// ------------------------
+	// INTERFACE
+	// ------------------------
 
-  public PawnSMAdjacentOpponent getPawnSMAdjacentOpponent()
-  {
-    return pawnSMAdjacentOpponent;
-  }
+	public String getPawnSMFullName() {
+		String answer = pawnSM.toString();
+		if (pawnSMNoAdjacentOpponent != PawnSMNoAdjacentOpponent.Null) {
+			answer += "." + pawnSMNoAdjacentOpponent.toString();
+		}
+		if (pawnSMAdjacentOpponent != PawnSMAdjacentOpponent.Null) {
+			answer += "." + pawnSMAdjacentOpponent.toString();
+		}
+		return answer;
+	}
 
-  private boolean __autotransition1__()
-  {
-    boolean wasEventProcessed = false;
-    
-    PawnSM aPawnSM = pawnSM;
-    switch (aPawnSM)
-    {
-      case NoAdjacentOpponent:
-        if (isAdjacentOpponent())
-        {
-          exitPawnSM();
-          setPawnSM(PawnSM.AdjacentOpponent);
-          wasEventProcessed = true;
-          break;
-        }
-        break;
-      default:
-        // Other states do respond to this event
-    }
+	public PawnSM getPawnSM() {
+		return pawnSM;
+	}
 
-    return wasEventProcessed;
-  }
+	public PawnSMNoAdjacentOpponent getPawnSMNoAdjacentOpponent() {
+		return pawnSMNoAdjacentOpponent;
+	}
 
-  private boolean __autotransition6__()
-  {
-    boolean wasEventProcessed = false;
-    
-    PawnSM aPawnSM = pawnSM;
-    switch (aPawnSM)
-    {
-      case AdjacentOpponent:
-        if (!(isAdjacentOpponent()))
-        {
-          exitPawnSM();
-          setPawnSM(PawnSM.NoAdjacentOpponent);
-          wasEventProcessed = true;
-          break;
-        }
-        break;
-      default:
-        // Other states do respond to this event
-    }
+	public PawnSMAdjacentOpponent getPawnSMAdjacentOpponent() {
+		return pawnSMAdjacentOpponent;
+	}
 
-    return wasEventProcessed;
-  }
+	private boolean __autotransition1__() {
+		boolean wasEventProcessed = false;
 
-  private boolean __autotransition7__()
-  {
-    boolean wasEventProcessed = false;
-    
-    PawnSM aPawnSM = pawnSM;
-    switch (aPawnSM)
-    {
-      case AdjacentOpponent:
-        if (isWallBehindOpponent())
-        {
-          exitPawnSMAdjacentOpponent();
-          setPawnSMAdjacentOpponent(PawnSMAdjacentOpponent.WallBehindAdjacentOpponent);
-          wasEventProcessed = true;
-          break;
-        }
-        break;
-      default:
-        // Other states do respond to this event
-    }
+		PawnSM aPawnSM = pawnSM;
+		switch (aPawnSM) {
+		case NoAdjacentOpponent:
+			if (isAdjacentOpponent()) {
+				exitPawnSM();
+				setPawnSM(PawnSM.AdjacentOpponent);
+				wasEventProcessed = true;
+				break;
+			}
+			break;
+		default:
+			// Other states do respond to this event
+		}
 
-    return wasEventProcessed;
-  }
+		return wasEventProcessed;
+	}
 
-  private boolean __autotransition2__()
-  {
-    boolean wasEventProcessed = false;
-    
-    PawnSMNoAdjacentOpponent aPawnSMNoAdjacentOpponent = pawnSMNoAdjacentOpponent;
-    switch (aPawnSMNoAdjacentOpponent)
-    {
-      case NoAdjacentWall:
-        if (isAdjacentWall())
-        {
-          exitPawnSMNoAdjacentOpponent();
-          setPawnSMNoAdjacentOpponent(PawnSMNoAdjacentOpponent.AdjacentWall);
-          wasEventProcessed = true;
-          break;
-        }
-        break;
-      default:
-        // Other states do respond to this event
-    }
+	private boolean __autotransition6__() {
+		boolean wasEventProcessed = false;
 
-    return wasEventProcessed;
-  }
+		PawnSM aPawnSM = pawnSM;
+		switch (aPawnSM) {
+		case AdjacentOpponent:
+			if (!(isAdjacentOpponent())) {
+				exitPawnSM();
+				setPawnSM(PawnSM.NoAdjacentOpponent);
+				wasEventProcessed = true;
+				break;
+			}
+			break;
+		default:
+			// Other states do respond to this event
+		}
 
-  private boolean __autotransition3__()
-  {
-    boolean wasEventProcessed = false;
-    
-    PawnSMNoAdjacentOpponent aPawnSMNoAdjacentOpponent = pawnSMNoAdjacentOpponent;
-    switch (aPawnSMNoAdjacentOpponent)
-    {
-      case NoAdjacentWall:
-        if (!(isAdjacentWall()))
-        {
-          exitPawnSMNoAdjacentOpponent();
-          setPawnSMNoAdjacentOpponent(PawnSMNoAdjacentOpponent.NoAdjacentWall);
-          wasEventProcessed = true;
-          break;
-        }
-        break;
-      default:
-        // Other states do respond to this event
-    }
+		return wasEventProcessed;
+	}
 
-    return wasEventProcessed;
-  }
+	private boolean __autotransition7__() {
+		boolean wasEventProcessed = false;
 
-  private boolean __autotransition4__()
-  {
-    boolean wasEventProcessed = false;
-    
-    PawnSMNoAdjacentOpponent aPawnSMNoAdjacentOpponent = pawnSMNoAdjacentOpponent;
-    switch (aPawnSMNoAdjacentOpponent)
-    {
-      case AdjacentWall:
-        if (isAdjacentWall())
-        {
-          exitPawnSMNoAdjacentOpponent();
-          setPawnSMNoAdjacentOpponent(PawnSMNoAdjacentOpponent.AdjacentWall);
-          wasEventProcessed = true;
-          break;
-        }
-        break;
-      default:
-        // Other states do respond to this event
-    }
+		PawnSM aPawnSM = pawnSM;
+		switch (aPawnSM) {
+		case AdjacentOpponent:
+			if (isWallBehindOpponent()) {
+				exitPawnSMAdjacentOpponent();
+				setPawnSMAdjacentOpponent(PawnSMAdjacentOpponent.WallBehindAdjacentOpponent);
+				wasEventProcessed = true;
+				break;
+			}
+			break;
+		default:
+			// Other states do respond to this event
+		}
 
-    return wasEventProcessed;
-  }
+		return wasEventProcessed;
+	}
 
-  private boolean __autotransition5__()
-  {
-    boolean wasEventProcessed = false;
-    
-    PawnSMNoAdjacentOpponent aPawnSMNoAdjacentOpponent = pawnSMNoAdjacentOpponent;
-    switch (aPawnSMNoAdjacentOpponent)
-    {
-      case AdjacentWall:
-        if (!(isAdjacentWall()))
-        {
-          exitPawnSMNoAdjacentOpponent();
-          setPawnSMNoAdjacentOpponent(PawnSMNoAdjacentOpponent.NoAdjacentWall);
-          wasEventProcessed = true;
-          break;
-        }
-        break;
-      default:
-        // Other states do respond to this event
-    }
+	private boolean __autotransition2__() {
+		boolean wasEventProcessed = false;
 
-    return wasEventProcessed;
-  }
+		PawnSMNoAdjacentOpponent aPawnSMNoAdjacentOpponent = pawnSMNoAdjacentOpponent;
+		switch (aPawnSMNoAdjacentOpponent) {
+		case NoAdjacentWall:
+			if (isAdjacentWall()) {
+				exitPawnSMNoAdjacentOpponent();
+				setPawnSMNoAdjacentOpponent(PawnSMNoAdjacentOpponent.AdjacentWall);
+				wasEventProcessed = true;
+				break;
+			}
+			break;
+		default:
+			// Other states do respond to this event
+		}
 
-  private boolean __autotransition8__()
-  {
-    boolean wasEventProcessed = false;
-    
-    PawnSMAdjacentOpponent aPawnSMAdjacentOpponent = pawnSMAdjacentOpponent;
-    switch (aPawnSMAdjacentOpponent)
-    {
-      case WallBehindAdjacentOpponent:
-        if (!(isAdjacentOpponent()))
-        {
-          exitPawnSM();
-          setPawnSM(PawnSM.NoAdjacentOpponent);
-          wasEventProcessed = true;
-          break;
-        }
-        break;
-      default:
-        // Other states do respond to this event
-    }
+		return wasEventProcessed;
+	}
 
-    return wasEventProcessed;
-  }
+	private boolean __autotransition3__() {
+		boolean wasEventProcessed = false;
 
-  private void exitPawnSM()
-  {
-    switch(pawnSM)
-    {
-      case NoAdjacentOpponent:
-        exitPawnSMNoAdjacentOpponent();
-        break;
-      case AdjacentOpponent:
-        exitPawnSMAdjacentOpponent();
-        break;
-    }
-  }
+		PawnSMNoAdjacentOpponent aPawnSMNoAdjacentOpponent = pawnSMNoAdjacentOpponent;
+		switch (aPawnSMNoAdjacentOpponent) {
+		case NoAdjacentWall:
+			if (!(isAdjacentWall())) {
+				exitPawnSMNoAdjacentOpponent();
+				setPawnSMNoAdjacentOpponent(PawnSMNoAdjacentOpponent.NoAdjacentWall);
+				wasEventProcessed = true;
+				break;
+			}
+			break;
+		default:
+			// Other states do respond to this event
+		}
 
-  private void setPawnSM(PawnSM aPawnSM)
-  {
-    pawnSM = aPawnSM;
+		return wasEventProcessed;
+	}
 
-    // entry actions and do activities
-    switch(pawnSM)
-    {
-      case NoAdjacentOpponent:
-        if (pawnSMNoAdjacentOpponent == PawnSMNoAdjacentOpponent.Null) { setPawnSMNoAdjacentOpponent(PawnSMNoAdjacentOpponent.NoAdjacentWall); }
-        __autotransition1__();
-        break;
-      case AdjacentOpponent:
-        if (pawnSMAdjacentOpponent == PawnSMAdjacentOpponent.Null) { setPawnSMAdjacentOpponent(PawnSMAdjacentOpponent.WallBehindAdjacentOpponent); }
-        __autotransition6__();
-        __autotransition7__();
-        break;
-    }
-  }
+	private boolean __autotransition4__() {
+		boolean wasEventProcessed = false;
 
-  private void exitPawnSMNoAdjacentOpponent()
-  {
-    switch(pawnSMNoAdjacentOpponent)
-    {
-      case NoAdjacentWall:
-        setPawnSMNoAdjacentOpponent(PawnSMNoAdjacentOpponent.Null);
-        break;
-      case AdjacentWall:
-        setPawnSMNoAdjacentOpponent(PawnSMNoAdjacentOpponent.Null);
-        break;
-    }
-  }
+		PawnSMNoAdjacentOpponent aPawnSMNoAdjacentOpponent = pawnSMNoAdjacentOpponent;
+		switch (aPawnSMNoAdjacentOpponent) {
+		case AdjacentWall:
+			if (isAdjacentWall()) {
+				exitPawnSMNoAdjacentOpponent();
+				setPawnSMNoAdjacentOpponent(PawnSMNoAdjacentOpponent.AdjacentWall);
+				wasEventProcessed = true;
+				break;
+			}
+			break;
+		default:
+			// Other states do respond to this event
+		}
 
-  private void setPawnSMNoAdjacentOpponent(PawnSMNoAdjacentOpponent aPawnSMNoAdjacentOpponent)
-  {
-    pawnSMNoAdjacentOpponent = aPawnSMNoAdjacentOpponent;
-    if (pawnSM != PawnSM.NoAdjacentOpponent && aPawnSMNoAdjacentOpponent != PawnSMNoAdjacentOpponent.Null) { setPawnSM(PawnSM.NoAdjacentOpponent); }
+		return wasEventProcessed;
+	}
 
-    // entry actions and do activities
-    switch(pawnSMNoAdjacentOpponent)
-    {
-      case NoAdjacentWall:
-        __autotransition2__();
-        __autotransition3__();
-        break;
-      case AdjacentWall:
-        __autotransition4__();
-        __autotransition5__();
-        break;
-    }
-  }
+	private boolean __autotransition5__() {
+		boolean wasEventProcessed = false;
 
-  private void exitPawnSMAdjacentOpponent()
-  {
-    switch(pawnSMAdjacentOpponent)
-    {
-      case WallBehindAdjacentOpponent:
-        setPawnSMAdjacentOpponent(PawnSMAdjacentOpponent.Null);
-        break;
-    }
-  }
+		PawnSMNoAdjacentOpponent aPawnSMNoAdjacentOpponent = pawnSMNoAdjacentOpponent;
+		switch (aPawnSMNoAdjacentOpponent) {
+		case AdjacentWall:
+			if (!(isAdjacentWall())) {
+				exitPawnSMNoAdjacentOpponent();
+				setPawnSMNoAdjacentOpponent(PawnSMNoAdjacentOpponent.NoAdjacentWall);
+				wasEventProcessed = true;
+				break;
+			}
+			break;
+		default:
+			// Other states do respond to this event
+		}
 
-  private void setPawnSMAdjacentOpponent(PawnSMAdjacentOpponent aPawnSMAdjacentOpponent)
-  {
-    pawnSMAdjacentOpponent = aPawnSMAdjacentOpponent;
-    if (pawnSM != PawnSM.AdjacentOpponent && aPawnSMAdjacentOpponent != PawnSMAdjacentOpponent.Null) { setPawnSM(PawnSM.AdjacentOpponent); }
+		return wasEventProcessed;
+	}
 
-    // entry actions and do activities
-    switch(pawnSMAdjacentOpponent)
-    {
-      case WallBehindAdjacentOpponent:
-        __autotransition8__();
-        break;
-    }
-  }
-  /* Code from template association_GetOne */
-  public Game getCurrentGame()
-  {
-    return currentGame;
-  }
+	private boolean __autotransition8__() {
+		boolean wasEventProcessed = false;
 
-  public boolean hasCurrentGame()
-  {
-    boolean has = currentGame != null;
-    return has;
-  }
-  /* Code from template association_GetOne */
-  public Player getPlayer()
-  {
-    return player;
-  }
+		PawnSMAdjacentOpponent aPawnSMAdjacentOpponent = pawnSMAdjacentOpponent;
+		switch (aPawnSMAdjacentOpponent) {
+		case WallBehindAdjacentOpponent:
+			if (!(isAdjacentOpponent())) {
+				exitPawnSM();
+				setPawnSM(PawnSM.NoAdjacentOpponent);
+				wasEventProcessed = true;
+				break;
+			}
+			break;
+		default:
+			// Other states do respond to this event
+		}
 
-  public boolean hasPlayer()
-  {
-    boolean has = player != null;
-    return has;
-  }
-  /* Code from template association_SetUnidirectionalOptionalOne */
-  public boolean setCurrentGame(Game aNewCurrentGame)
-  {
-    boolean wasSet = false;
-    currentGame = aNewCurrentGame;
-    wasSet = true;
-    return wasSet;
-  }
-  /* Code from template association_SetUnidirectionalOptionalOne */
-  public boolean setPlayer(Player aNewPlayer)
-  {
-    boolean wasSet = false;
-    player = aNewPlayer;
-    wasSet = true;
-    return wasSet;
-  }
+		return wasEventProcessed;
+	}
 
-  public void delete()
-  {
-    currentGame = null;
-    player = null;
-  }
+	private void exitPawnSM() {
+		switch (pawnSM) {
+		case NoAdjacentOpponent:
+			exitPawnSMNoAdjacentOpponent();
+			break;
+		case AdjacentOpponent:
+			exitPawnSMAdjacentOpponent();
+			break;
+		}
+	}
 
+	private void setPawnSM(PawnSM aPawnSM) {
+		pawnSM = aPawnSM;
 
-  /**
-   * Returns the current row number of the pawn
-   */
-  // line 32 "../../../../../PawnStateMachine.ump"
-  public int getCurrentPawnRow(){
-    return 0;
-  }
+		// entry actions and do activities
+		switch (pawnSM) {
+		case NoAdjacentOpponent:
+			if (pawnSMNoAdjacentOpponent == PawnSMNoAdjacentOpponent.Null) {
+				setPawnSMNoAdjacentOpponent(PawnSMNoAdjacentOpponent.NoAdjacentWall);
+			}
+			__autotransition1__();
+			break;
+		case AdjacentOpponent:
+			if (pawnSMAdjacentOpponent == PawnSMAdjacentOpponent.Null) {
+				setPawnSMAdjacentOpponent(PawnSMAdjacentOpponent.WallBehindAdjacentOpponent);
+			}
+			__autotransition6__();
+			__autotransition7__();
+			break;
+		}
+	}
 
+	private void exitPawnSMNoAdjacentOpponent() {
+		switch (pawnSMNoAdjacentOpponent) {
+		case NoAdjacentWall:
+			setPawnSMNoAdjacentOpponent(PawnSMNoAdjacentOpponent.Null);
+			break;
+		case AdjacentWall:
+			setPawnSMNoAdjacentOpponent(PawnSMNoAdjacentOpponent.Null);
+			break;
+		}
+	}
 
-  /**
-   * Returns the current column number of the pawn
-   */
-  // line 34 "../../../../../PawnStateMachine.ump"
-  public int getCurrentPawnColumn(){
-    return 0;
-  }
+	private void setPawnSMNoAdjacentOpponent(PawnSMNoAdjacentOpponent aPawnSMNoAdjacentOpponent) {
+		pawnSMNoAdjacentOpponent = aPawnSMNoAdjacentOpponent;
+		if (pawnSM != PawnSM.NoAdjacentOpponent && aPawnSMNoAdjacentOpponent != PawnSMNoAdjacentOpponent.Null) {
+			setPawnSM(PawnSM.NoAdjacentOpponent);
+		}
 
+		// entry actions and do activities
+		switch (pawnSMNoAdjacentOpponent) {
+		case NoAdjacentWall:
+			__autotransition2__();
+			__autotransition3__();
+			break;
+		case AdjacentWall:
+			__autotransition4__();
+			__autotransition5__();
+			break;
+		}
+	}
 
-  /**
-   * Returns if it is legal to step in the given direction
-   */
-  // line 36 "../../../../../PawnStateMachine.ump"
-  public boolean isLegalStep(MoveDirection dir){
-    return false;
-  }
+	private void exitPawnSMAdjacentOpponent() {
+		switch (pawnSMAdjacentOpponent) {
+		case WallBehindAdjacentOpponent:
+			setPawnSMAdjacentOpponent(PawnSMAdjacentOpponent.Null);
+			break;
+		}
+	}
 
+	private void setPawnSMAdjacentOpponent(PawnSMAdjacentOpponent aPawnSMAdjacentOpponent) {
+		pawnSMAdjacentOpponent = aPawnSMAdjacentOpponent;
+		if (pawnSM != PawnSM.AdjacentOpponent && aPawnSMAdjacentOpponent != PawnSMAdjacentOpponent.Null) {
+			setPawnSM(PawnSM.AdjacentOpponent);
+		}
 
- 
+		// entry actions and do activities
+		switch (pawnSMAdjacentOpponent) {
+		case WallBehindAdjacentOpponent:
+			__autotransition8__();
+			break;
+		}
+	}
 
+	/* Code from template association_GetOne */
+	public Game getCurrentGame() {
+		return currentGame;
+	}
 
-  /**
-   * Action to be called when an illegal move is attempted
-   */
-  // line 41 "../../../../../PawnStateMachine.ump"
-  public void illegalMove(){
-    
-  }
+	public boolean hasCurrentGame() {
+		boolean has = currentGame != null;
+		return has;
+	}
 
-  // line 47 "../../../../../PawnStateMachine.ump"
-  public boolean isAdjacentOpponent(){
-    return false;
-  }
+	/* Code from template association_GetOne */
+	public Player getPlayer() {
+		return player;
+	}
 
-  // line 49 "../../../../../PawnStateMachine.ump"
-  public boolean isAdjacentWall(){
-    return false;
-  }
+	public boolean hasPlayer() {
+		boolean has = player != null;
+		return has;
+	}
 
-  // line 51 "../../../../../PawnStateMachine.ump"
-  public boolean isWallBehindOpponent(){
-    return false;
-  }
+	/* Code from template association_SetUnidirectionalOptionalOne */
+	public boolean setCurrentGame(Game aNewCurrentGame) {
+		boolean wasSet = false;
+		currentGame = aNewCurrentGame;
+		wasSet = true;
+		return wasSet;
+	}
 
-  // line 53 "../../../../../PawnStateMachine.ump"
-  public boolean movePawn(MoveDirection dir){
-    return false;
-  }
+	/* Code from template association_SetUnidirectionalOptionalOne */
+	public boolean setPlayer(Player aNewPlayer) {
+		boolean wasSet = false;
+		player = aNewPlayer;
+		wasSet = true;
+		return wasSet;
+	}
 
-  // line 55 "../../../../../PawnStateMachine.ump"
-  /**
-   * 
-   * @author William Wang
-   * Returns if it is legal to jump in the given direction
-   */
-  // line 38 "../../../../../PawnStateMachine.ump"
-  public static boolean isLegalJump(MoveDirection dir){
-	  Quoridor quoridor = QuoridorApplication.getQuordior();
-	  Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
-	  if(currentPlayer.hasGameAsBlack())
-	  if(isWallBehind(dir)) {
+	public void delete() {
+		currentGame = null;
+		player = null;
+	}
+
+	/**
+	 * Returns the current row number of the pawn
+	 */
+	// line 32 "../../../../../PawnStateMachine.ump"
+	public int getCurrentPawnRow() {
+		return 0;
+	}
+
+	/**
+	 * Returns the current column number of the pawn
+	 */
+	// line 34 "../../../../../PawnStateMachine.ump"
+	public int getCurrentPawnColumn() {
+		return 0;
+	}
+
+	/**
+	 * Returns if it is legal to step in the given direction
+	 */
+	// line 36 "../../../../../PawnStateMachine.ump"
+	public boolean isLegalStep(MoveDirection dir) {
+		return false;
+	}
+
+	/**
+	 * Action to be called when an illegal move is attempted
+	 */
+	// line 41 "../../../../../PawnStateMachine.ump"
+	public void illegalMove() {
+
+	}
+
+	// line 47 "../../../../../PawnStateMachine.ump"
+	public boolean isAdjacentOpponent() {
+		return false;
+	}
+
+	// line 49 "../../../../../PawnStateMachine.ump"
+	public boolean isAdjacentWall() {
+		return false;
+	}
+
+	// line 51 "../../../../../PawnStateMachine.ump"
+	public boolean isWallBehindOpponent() {
+		return false;
+	}
+
+	// line 53 "../../../../../PawnStateMachine.ump"
+	public boolean movePawn(MoveDirection dir) {
+		return false;
+	}
+
+	// line 55 "../../../../../PawnStateMachine.ump"
+	/**
+	 * 
+	 * @author William Wang Returns if it is legal to jump in the given direction
+	 */
+	// line 38 "../../../../../PawnStateMachine.ump"
+	public static boolean isLegalJump(MoveDirection dir) {
+		Quoridor quoridor = QuoridorApplication.getQuordior();
+		Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
+		boolean isWhite = currentPlayer.hasGameAsWhite();
+		// opponent direction
+		MoveDirection oppDirection;
+		Tile blackTile = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile();
+		Tile whiteTile = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile();
+		
+		Tile currentTile = blackTile;
+		if(isWhite) {
+			currentTile = whiteTile;
+		}
+		
+		
+		
+		if ((whiteTile.getRow() == blackTile.getRow()) && (whiteTile.getColumn() - blackTile.getColumn()) == 1) {
+			if (isWhite) {
+				oppDirection = MoveDirection.West;
+			} else {
+				oppDirection = MoveDirection.East;
+			}
+		} else if ((whiteTile.getRow() == blackTile.getRow())
+				&& (whiteTile.getColumn() - blackTile.getColumn()) == -1) {
+			if (isWhite) {
+				oppDirection = MoveDirection.East;
+			} else {
+				oppDirection = MoveDirection.West;
+			}
+
+		} else if ((whiteTile.getColumn() == blackTile.getColumn()) && (whiteTile.getRow() - blackTile.getRow()) == 1) {
+			if (isWhite) {
+				oppDirection = MoveDirection.North;
+			} else {
+				oppDirection = MoveDirection.South;
+			}
+		} else if ((whiteTile.getColumn() == blackTile.getColumn())
+				&& (whiteTile.getRow() - blackTile.getRow()) == -1) {
+			if (isWhite) {
+				oppDirection = MoveDirection.South;
+			} else {
+				oppDirection = MoveDirection.North;
+			}
+
+		} else {
+			// not adjacent
 			return false;
-	  }
-		return true;
-  }
-  
-  /**
-   * 
-   * @author William Wang
-   * Returns if it is there is a wall behind opponent
-   */
-  // line 38 "../../../../../PawnStateMachine.ump"
-  public static boolean isWallBehind(MoveDirection dir){
-    return false;
-  }
-  
-  
-  /**
+		}
+
+		
+		//if legal
+		if (isWallBehind(oppDirection)) {
+			if(oppDirection == MoveDirection.East) {
+				if((dir == MoveDirection.NorthEast)||(dir==MoveDirection.SouthEast)) {
+					return true;
+				}
+			}
+			else if(oppDirection == MoveDirection.West) {
+				if((dir == MoveDirection.NorthWest)||(dir==MoveDirection.SouthWest)) {
+					return true;
+				}
+			}
+			else if(oppDirection == MoveDirection.North) {
+				if((dir == MoveDirection.NorthEast)||(dir==MoveDirection.NorthWest)) {
+					return true;
+				}
+			}
+			else if(oppDirection == MoveDirection.South) {
+				if((dir == MoveDirection.SouthWest)||(dir==MoveDirection.SouthEast)) {
+					return true;
+				}
+			}
+			return false;
+		} else {
+			if (dir == oppDirection) {
+				if(dir == MoveDirection.East) {
+					if(isWallAt(currentTile.getRow()-1,currentTile.getColumn(),Direction.Vertical))return false;
+					if(isWallAt(currentTile.getRow(),currentTile.getColumn(),Direction.Vertical))return false;
+				}
+				else if(dir == MoveDirection.West) {
+					if(isWallAt(currentTile.getRow()-1,currentTile.getColumn()-1,Direction.Vertical))return false;
+					if(isWallAt(currentTile.getRow(),currentTile.getColumn()-1,Direction.Vertical))return false;
+				}
+				else if(dir == MoveDirection.North) {
+					if(isWallAt(currentTile.getRow()-1,currentTile.getColumn()-1,Direction.Horizontal))return false;
+					if(isWallAt(currentTile.getRow()-1,currentTile.getColumn(),Direction.Horizontal))return false;
+				}
+				else if(dir == MoveDirection.South) {
+					if(isWallAt(currentTile.getRow(),currentTile.getColumn()-1,Direction.Horizontal))return false;
+					if(isWallAt(currentTile.getRow(),currentTile.getColumn(),Direction.Horizontal))return false;
+				}
+				return true;
+			}	else {
+				return false;
+			}
+		}
+	}
+	
+	public static boolean isWallAt(int row, int column, Direction dir) {
+		Quoridor quoridor = QuoridorApplication.getQuordior();
+		List<Wall> blackWalls = quoridor.getCurrentGame().getCurrentPosition().getBlackWallsOnBoard();
+		List<Wall> whiteWalls = quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsOnBoard();
+		for (Wall w: blackWalls) {
+			if(w.getMove().getTargetTile().getRow()==row &&
+					w.getMove().getTargetTile().getColumn()==column&&
+					w.getMove().getWallDirection()==dir) {
+				return true;
+			}
+		}
+		for (Wall w: whiteWalls) {
+			if(w.getMove().getTargetTile().getRow()==row &&
+					w.getMove().getTargetTile().getColumn()==column&&
+					w.getMove().getWallDirection()==dir) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * 
+	 * @author William Wang Returns if it is there is a wall or edge behind opponent
+	 */
+	// line 38 "../../../../../PawnStateMachine.ump"
+	public static boolean isWallBehind(MoveDirection dir) {
+		Quoridor quoridor = QuoridorApplication.getQuordior();
+		Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
+		boolean isWhite = currentPlayer.hasGameAsWhite();
+		//opponent position
+		PlayerPosition oppPosition;
+		if(isWhite) {
+			oppPosition = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition();
+		}
+		else {
+			oppPosition = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition();
+		}
+		Tile currentTile = oppPosition.getTile();
+		if(dir==MoveDirection.North) {
+			if(isWallAt(currentTile.getRow()-1,currentTile.getColumn()-1,Direction.Horizontal))return true;
+			if(isWallAt(currentTile.getRow()-1,currentTile.getColumn(),Direction.Horizontal))return true;
+			if(currentTile.getRow()==1) return true;
+		}
+		else if(dir==MoveDirection.South) {
+			if(isWallAt(currentTile.getRow(),currentTile.getColumn()-1,Direction.Horizontal))return true;
+			if(isWallAt(currentTile.getRow(),currentTile.getColumn(),Direction.Horizontal))return true;
+			if(currentTile.getRow()==9) return true;
+		}
+		else if(dir==MoveDirection.East) {
+			if(isWallAt(currentTile.getRow()-1,currentTile.getColumn(),Direction.Vertical))return true;
+			if(isWallAt(currentTile.getRow(),currentTile.getColumn(),Direction.Vertical))return true;
+			if(currentTile.getColumn()==9) return true;
+
+		}
+		else if(dir==MoveDirection.West) {
+			if(isWallAt(currentTile.getRow()-1,currentTile.getColumn()-1,Direction.Vertical))return true;
+			if(isWallAt(currentTile.getRow(),currentTile.getColumn()-1,Direction.Vertical))return true;
+			if(currentTile.getColumn()==1) return true;
+
+		}
+		
+		return false;
+	}
+
+	/**
 	 * <p>
 	 * Jump Pawn
 	 * <p>
@@ -483,61 +599,78 @@ public class PawnBehavior
 	 * @author William Wang
 	 * @param dir input target direction
 	 */
-  public static boolean jumpPawn(MoveDirection dir){
-    if(!isLegalJump(dir)) {
-    	return false;
-    }
-    
-    //legal jump
-    Quoridor quoridor = QuoridorApplication.getQuordior();
-    Game currentGame = quoridor.getCurrentGame();
-    GamePosition currentPosition = currentGame.getCurrentPosition();
-    Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
-    Tile targetTile = null;
-    if(currentPlayer.hasGameAsWhite()) {
-        int currentRow = currentPosition.getWhitePosition().getTile().getRow();
-        int currentColumn = currentPosition.getWhitePosition().getTile().getColumn();
-    	if(dir==MoveDirection.East) {
-    		targetTile = quoridor.getBoard().getTile((currentRow-1)*9+currentColumn+1);
-    		currentPosition.getWhitePosition().setTile(targetTile);
-    	}
-    	else if(dir == MoveDirection.West){
-    		targetTile = quoridor.getBoard().getTile((currentRow-1)*9+currentColumn-3);
-    		currentPosition.getWhitePosition().setTile(targetTile);
-    	}
-    	else if(dir == MoveDirection.South){
-    		targetTile = quoridor.getBoard().getTile((currentRow+1)*9+currentColumn-1);
-    		currentPosition.getWhitePosition().setTile(targetTile);
-    	}
-    	else if(dir == MoveDirection.North){
-    		targetTile = quoridor.getBoard().getTile((currentRow-3)*9+currentColumn-1);
-    		currentPosition.getWhitePosition().setTile(targetTile);
-    	}
-    }
-    else {
-    	int currentRow = currentPosition.getWhitePosition().getTile().getRow();
-        int currentColumn = currentPosition.getWhitePosition().getTile().getColumn();
-    	if(dir==MoveDirection.East) {
-    		targetTile = quoridor.getBoard().getTile((currentRow-1)*9+currentColumn+1);
-    		currentPosition.getWhitePosition().setTile(targetTile);
-    	}
-    	else if(dir == MoveDirection.West){
-    		targetTile = quoridor.getBoard().getTile((currentRow-1)*9+currentColumn-3);
-    		currentPosition.getWhitePosition().setTile(targetTile);
-    	}
-    	else if(dir == MoveDirection.South){
-    		targetTile = quoridor.getBoard().getTile((currentRow+1)*9+currentColumn-1);
-    		currentPosition.getWhitePosition().setTile(targetTile);
-    	}
-    	else if(dir == MoveDirection.North){
-    		targetTile = quoridor.getBoard().getTile((currentRow-3)*9+currentColumn-1);
-    		currentPosition.getWhitePosition().setTile(targetTile);
-    	}
-    }
-    Move lastMove = currentGame.getMove(currentGame.getMoves().size()-1);
-    currentGame.addMove(new JumpMove(lastMove.getMoveNumber()+1, lastMove.getRoundNumber()+1, currentPlayer, targetTile, currentGame));
-    Controller.switchCurrentPlayer();
-	return true;
-  }
+	public static boolean jumpPawn(MoveDirection dir) {
+		if (!isLegalJump(dir)) {
+			return false;
+		}
+
+		// legal jump
+		Quoridor quoridor = QuoridorApplication.getQuordior();
+		Game currentGame = quoridor.getCurrentGame();
+		GamePosition currentPosition = currentGame.getCurrentPosition();
+		Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
+		Tile targetTile = null;
+		if (currentPlayer.hasGameAsWhite()) {
+			int currentRow = currentPosition.getWhitePosition().getTile().getRow();
+			int currentColumn = currentPosition.getWhitePosition().getTile().getColumn();
+			if (dir == MoveDirection.East) {
+				targetTile = quoridor.getBoard().getTile((currentRow - 1) * 9 + currentColumn + 1);
+				currentPosition.getWhitePosition().setTile(targetTile);
+			} else if (dir == MoveDirection.West) {
+				targetTile = quoridor.getBoard().getTile((currentRow - 1) * 9 + currentColumn - 3);
+				currentPosition.getWhitePosition().setTile(targetTile);
+			} else if (dir == MoveDirection.South) {
+				targetTile = quoridor.getBoard().getTile((currentRow + 1) * 9 + currentColumn - 1);
+				currentPosition.getWhitePosition().setTile(targetTile);
+			} else if (dir == MoveDirection.North) {
+				targetTile = quoridor.getBoard().getTile((currentRow - 3) * 9 + currentColumn - 1);
+				currentPosition.getWhitePosition().setTile(targetTile);
+			} else if (dir == MoveDirection.NorthEast) {
+				targetTile = quoridor.getBoard().getTile((currentRow - 2) * 9 + currentColumn);
+				currentPosition.getWhitePosition().setTile(targetTile);
+			} else if (dir == MoveDirection.NorthWest) {
+				targetTile = quoridor.getBoard().getTile((currentRow - 2) * 9 + currentColumn - 2);
+				currentPosition.getWhitePosition().setTile(targetTile);
+			} else if (dir == MoveDirection.SouthEast) {
+				targetTile = quoridor.getBoard().getTile((currentRow) * 9 + currentColumn);
+				currentPosition.getWhitePosition().setTile(targetTile);
+			} else if (dir == MoveDirection.SouthWest) {
+				targetTile = quoridor.getBoard().getTile((currentRow) * 9 + currentColumn - 2);
+				currentPosition.getWhitePosition().setTile(targetTile);
+			}
+			currentGame.addMove(new JumpMove(0, 0, currentPlayer, targetTile, currentGame));
+		} else {
+			int currentRow = currentPosition.getBlackPosition().getTile().getRow();
+			int currentColumn = currentPosition.getBlackPosition().getTile().getColumn();
+			if (dir == MoveDirection.East) {
+				targetTile = quoridor.getBoard().getTile((currentRow - 1) * 9 + currentColumn + 1);
+				currentPosition.getBlackPosition().setTile(targetTile);
+			} else if (dir == MoveDirection.West) {
+				targetTile = quoridor.getBoard().getTile((currentRow - 1) * 9 + currentColumn - 3);
+				currentPosition.getBlackPosition().setTile(targetTile);
+			} else if (dir == MoveDirection.South) {
+				targetTile = quoridor.getBoard().getTile((currentRow + 1) * 9 + currentColumn - 1);
+				currentPosition.getBlackPosition().setTile(targetTile);
+			} else if (dir == MoveDirection.North) {
+				targetTile = quoridor.getBoard().getTile((currentRow - 3) * 9 + currentColumn - 1);
+				currentPosition.getBlackPosition().setTile(targetTile);
+			} else if (dir == MoveDirection.NorthEast) {
+				targetTile = quoridor.getBoard().getTile((currentRow - 2) * 9 + currentColumn);
+				currentPosition.getBlackPosition().setTile(targetTile);
+			} else if (dir == MoveDirection.NorthWest) {
+				targetTile = quoridor.getBoard().getTile((currentRow - 2) * 9 + currentColumn - 2);
+				currentPosition.getBlackPosition().setTile(targetTile);
+			} else if (dir == MoveDirection.SouthEast) {
+				targetTile = quoridor.getBoard().getTile((currentRow) * 9 + currentColumn);
+				currentPosition.getBlackPosition().setTile(targetTile);
+			} else if (dir == MoveDirection.SouthWest) {
+				targetTile = quoridor.getBoard().getTile((currentRow) * 9 + currentColumn - 2);
+				currentPosition.getBlackPosition().setTile(targetTile);
+			}
+			currentGame.addMove(new JumpMove(0, 0, currentPlayer, targetTile, currentGame));
+		}
+		Controller.switchCurrentPlayer();
+		return true;
+	}
 
 }

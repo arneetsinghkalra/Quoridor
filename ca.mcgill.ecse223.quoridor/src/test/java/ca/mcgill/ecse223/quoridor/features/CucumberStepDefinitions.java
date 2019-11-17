@@ -1474,7 +1474,7 @@ public class CucumberStepDefinitions {
 		//Calculate tile index of target tile
 		int tileIndex = ((prow - 1) * 9 + (pcol - 1));
 		Tile targetPosition = QuoridorApplication.getQuordior().getBoard().getTile(tileIndex);
-
+		
 		// If it is black players turn
 		if (currentPlayer == QuoridorApplication.getQuordior().getCurrentGame().getBlackPlayer()) {
 			//Set the players position to target position
@@ -1556,23 +1556,62 @@ public class CucumberStepDefinitions {
 	}
 /**
  * @author William Wang
- * @param string
- * @param string2
+
  */
 	@When("Player {string} initiates to move {string}")
 	public void player_initiates_to_move(String playerName, String jumpDirection) {
 		//When definition!!! Call a method in state machine
-		if(jumpDirection.equals("left")) {
-			legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.West);
+		if(playerName.equals("white")) {
+			if(jumpDirection.equals("left")) {
+				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.West);
+			}
+			else if(jumpDirection.equals("right")) {
+				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.West);
+			}
+			else if(jumpDirection.equals("up")) {
+				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.South);
+			}
+			else if(jumpDirection.equals("down")) {
+				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.South);
+			}
+			else if(jumpDirection.equals("upleft")) {
+				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.NorthWest);
+			}
+			else if(jumpDirection.equals("upright")) {
+				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.NorthEast);
+			}
+			else if(jumpDirection.equals("downleft")) {
+				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.SouthWest);
+			}
+			else if(jumpDirection.equals("downright")) {
+				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.SouthEast);
+			}
 		}
-		else if(jumpDirection.equals("right")) {
-			legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.East);
-		}
-		else if(jumpDirection.equals("up")) {
-			legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.North);
-		}
-		else if(jumpDirection.equals("down")) {
-			legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.South);
+		else {
+			if(jumpDirection.equals("left")) {
+				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.East);
+			}
+			else if(jumpDirection.equals("right")) {
+				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.East);
+			}
+			else if(jumpDirection.equals("up")) {
+				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.North);
+			}
+			else if(jumpDirection.equals("down")) {
+				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.North);
+			}
+			else if(jumpDirection.equals("upleft")) {
+				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.NorthWest);
+			}
+			else if(jumpDirection.equals("upright")) {
+				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.NorthEast);
+			}
+			else if(jumpDirection.equals("downleft")) {
+				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.SouthWest);
+			}
+			else if(jumpDirection.equals("downright")) {
+				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.SouthEast);
+			}
 		}
 	}
 
@@ -1584,6 +1623,8 @@ public class CucumberStepDefinitions {
 	@Then("The move {string} shall be {string}")
 	public void the_move_shall_be(String side, String status) {
 		// Write code here that turns the phrase above into concrete actions
+		
+		
 		if(status.equals("illegal")) {
 			assertFalse(legalMove);
 		}
@@ -1604,7 +1645,7 @@ public class CucumberStepDefinitions {
 	 * @param ncol
 	 */
 	@And("Player's new position shall be {int}:{int}")
-	public void player_s_new_position_shall_be(Integer nrow, Integer ncol) {
+	public void player_s_new_position_shall_be(int nrow, int ncol) {
 		// Get Player whose turn it is
 		Player currentPlayer = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getPlayerToMove();
 
@@ -1613,13 +1654,33 @@ public class CucumberStepDefinitions {
 		Tile targetPosition = QuoridorApplication.getQuordior().getBoard().getTile(tileIndex);
 
 		// If it is black players turn
-		if (currentPlayer == QuoridorApplication.getQuordior().getCurrentGame().getBlackPlayer()) {
-			assertEquals(currentPlayer.getGameAsBlack().getCurrentPosition().getBlackPosition().getTile(), targetPosition);
+		if(legalMove) {
+			if (currentPlayer.hasGameAsWhite()) {
+				assertEquals(QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow(), nrow);
+				assertEquals(QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn(), ncol);
+	
+			}
+	
+			// If it is white players turn
+			if (currentPlayer.hasGameAsBlack()) {
+				assertEquals(QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow(),nrow);
+				assertEquals(QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn(),ncol);
+	
+			}
 		}
-
-		// If it is white players turn
-		if (currentPlayer == QuoridorApplication.getQuordior().getCurrentGame().getWhitePlayer()) {
-			assertEquals(currentPlayer.getGameAsWhite().getCurrentPosition().getWhitePosition().getTile(),targetPosition);
+		else {
+			if (currentPlayer.hasGameAsBlack()) {
+				assertEquals(currentPlayer.getGameAsBlack().getCurrentPosition().getBlackPosition().getTile().getRow(), nrow);
+				assertEquals(currentPlayer.getGameAsBlack().getCurrentPosition().getBlackPosition().getTile().getColumn(), ncol);
+	
+			}
+	
+			// If it is white players turn
+			if (currentPlayer.hasGameAsWhite()) {
+				assertEquals(currentPlayer.getGameAsWhite().getCurrentPosition().getWhitePosition().getTile().getRow(),nrow);
+				assertEquals(currentPlayer.getGameAsWhite().getCurrentPosition().getWhitePosition().getTile().getColumn(),ncol);
+	
+			}
 		}
 	}
 
