@@ -16,6 +16,8 @@ import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import org.junit.jupiter.api.Assertions;
 
 import ca.mcgill.ecse223.quoridor.controller.Controller;
+import ca.mcgill.ecse223.quoridor.controller.PawnBehavior;
+import ca.mcgill.ecse223.quoridor.controller.PawnBehavior.MoveDirection;
 import ca.mcgill.ecse223.quoridor.model.Board;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
@@ -48,6 +50,7 @@ public class CucumberStepDefinitions {
 
 	private boolean validationResult = true;
 	private boolean userConfirms;
+	private boolean privateStatus = false;
 	Wall returnedWall;
 	ArrayList<Player> createUsersAndPlayersLoad;
 
@@ -1464,7 +1467,7 @@ public class CucumberStepDefinitions {
 	 * @param pcol
 	 */
 	@And("The player is located at {int}:{int}")
-	public void the_player_is_located_at(Integer prow, Integer pcol) {
+	public void the_player_is_located_at(int prow, int pcol) {
 		//Get Player whose turn it is
 		Player currentPlayer = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getPlayerToMove();
 		
@@ -1476,7 +1479,6 @@ public class CucumberStepDefinitions {
 		if (currentPlayer == QuoridorApplication.getQuordior().getCurrentGame().getBlackPlayer()) {
 			//Set the players position to target position
 			PlayerPosition currentPlayerPosition = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getBlackPosition();
-			currentPlayerPosition.setPlayer(currentPlayer);
 			currentPlayerPosition.setTile(targetPosition);
 		}
 
@@ -1484,7 +1486,6 @@ public class CucumberStepDefinitions {
 		if (currentPlayer == QuoridorApplication.getQuordior().getCurrentGame().getWhitePlayer()) {
 			//Set the players position to target position
 			PlayerPosition currentPlayerPosition = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getWhitePosition();
-			currentPlayerPosition.setPlayer(currentPlayer);
 			currentPlayerPosition.setTile(targetPosition);
 		}
 	}
@@ -1557,22 +1558,59 @@ public class CucumberStepDefinitions {
  * @param string2
  */
 	@When("Player {string} initiates to move {string}")
-	public void player_initiates_to_move(String string, String string2) {
-		//When definition!!! Call a method in state machine
-		throw new cucumber.api.PendingException();
+	public void player_initiates_to_move(String player, String side) {
+		Quoridor quoridor = QuoridorApplication.getQuordior();
+		Player playerToMove = quoridor.getCurrentGame().getWhitePlayer();
+		if(player.equals("white")) {
+			playerToMove = quoridor.getCurrentGame().getWhitePlayer();
+		}
+		else if (player.equals("black")) {
+			playerToMove = quoridor.getCurrentGame().getBlackPlayer();
+		}
+		quoridor.getCurrentGame().getCurrentPosition().setPlayerToMove(playerToMove);
+		MoveDirection moveSide = MoveDirection.North;
+		if(side.equals("up")){
+			moveSide= MoveDirection.North;
+		}
+		else if(side.equals("right")) {
+			moveSide= MoveDirection.East;
+		}
+		else if(side.equals("left")) {
+			moveSide= MoveDirection.West;
+		}
+		else if(side.equals("down")) {
+			moveSide= MoveDirection.South;
+		}
+		privateStatus = PawnBehavior.movePawn(moveSide);
 	}
 
 	/**
 	 * @author arneetkalra
 	 * @param side
 	 * @param status
+	 * @throws Exception 
 	 */
 	@Then("The move {string} shall be {string}")
-	public void the_move_shall_be(String side, String status) {
+	public void the_move_shall_be(String side, String status){
 		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
-		
-		//assertEquals(MovePawn(side), status)
+		MoveDirection moveSide = MoveDirection.North;
+		if(side.equals("up")){
+			moveSide= MoveDirection.North;
+		}
+		else if(side.equals("right")) {
+			moveSide= MoveDirection.East;
+		}
+		else if(side.equals("left")) {
+			moveSide= MoveDirection.West;
+		}
+		else if(side.equals("down")) {
+			moveSide= MoveDirection.South;
+		}
+		String resultString = "illegal";
+		if(privateStatus) {
+			resultString = "success";
+		}
+		assertTrue(resultString.equals(status));		
 		/*
 		 * Have the move pawn method in the state machine return "legal" if method succesfully moves the player
 		 * or return "illegal" if it doesnt. Then we can easily use the assertEquals statement above.
@@ -1588,19 +1626,26 @@ public class CucumberStepDefinitions {
 	public void player_s_new_position_shall_be(Integer nrow, Integer ncol) {
 		// Get Player whose turn it is
 		Player currentPlayer = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getPlayerToMove();
-
 		// Calculate tile index of target tile
-		int tileIndex = ((nrow - 1) * 9 + (ncol - 1));
-		Tile targetPosition = QuoridorApplication.getQuordior().getBoard().getTile(tileIndex);
-
-		// If it is black players turn
-		if (currentPlayer == QuoridorApplication.getQuordior().getCurrentGame().getBlackPlayer()) {
-			assertEquals(currentPlayer.getGameAsBlack().getCurrentPosition().getBlackPosition().getTile(), targetPosition);
-		}
-
-		// If it is white players turn
-		if (currentPlayer == QuoridorApplication.getQuordior().getCurrentGame().getWhitePlayer()) {
-			assertEquals(currentPlayer.getGameAsWhite().getCurrentPosition().getWhitePosition().getTile(),targetPosition);
+		if(privateStatus) {
+			// If it is black players turn
+			if (currentPlayer == QuoridorApplication.getQuordior().getCurrentGame().getBlackPlayer()) {
+				assertTrue(QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn()==ncol);
+				assertTrue(QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow()==nrow);		}
+			// If it is white players turn
+			else {
+				assertTrue(QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn()==ncol);
+				assertTrue(QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow()==nrow);
+			}
+		}else {
+			if (currentPlayer == QuoridorApplication.getQuordior().getCurrentGame().getWhitePlayer()) {
+				assertTrue(QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn()==ncol);
+				assertTrue(QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow()==nrow);		}
+			// If it is white players turn
+			else {
+				assertTrue(QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn()==ncol);
+				assertTrue(QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow()==nrow);
+			}
 		}
 	}
 
@@ -1630,8 +1675,8 @@ public class CucumberStepDefinitions {
 		Direction direction = stringToDirection(dir);
 		
 		WallMove newWallMove = createWallMoveCandidate(direction, wrow, wcol);
-		Wall aWall = newWallMove.getWallPlaced();		
-		
+		Wall aWall = currentGame.getCurrentPosition().getWhiteWallsInStock(0);
+		aWall.setMove(newWallMove);
 		currentGame.getCurrentPosition().addWhiteWallsOnBoard(aWall);
 	}
 
