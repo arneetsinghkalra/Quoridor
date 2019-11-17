@@ -8,6 +8,24 @@ class PawnBehavior {
     0..1 -> 0..1 Player player;
 
     pawnSM {
+	    NoAdjacentOpponent {
+	        [isAdjacentOpponent()] -> AdjacentOpponent;
+	        NoAdjacentWall {
+	          [isAdjacentWall()] -> AdjacentWall;
+  	          [!isAdjacentWall()] -> NoAdjacentWall;
+	        }
+	        AdjacentWall {
+          	  [isAdjacentWall()] -> AdjacentWall;	
+	          [!isAdjacentWall()] -> NoAdjacentWall;
+	        }
+	     }
+	     AdjacentOpponent {
+	       [!isAdjacentOpponent()] -> NoAdjacentOpponent;
+       	   [isWallBehindOpponent()] -> WallBehindAdjacentOpponent;
+	       WallBehindAdjacentOpponent{
+	          [!isAdjacentOpponent()] -> NoAdjacentOpponent;
+	       }
+	     }  
     }
 
     // Returns the current row number of the pawn
@@ -24,5 +42,13 @@ class PawnBehavior {
     
     // Enumeration for the possible moving directions
     // (directions are from the viewpoint of white player)
-    enum MoveDirection { East, South, West, North; }
+    enum MoveDirection { East, South, West, North}
+    
+    boolean isAdjacentOpponent(){return false;}
+    
+    boolean isAdjacentWall(){return false;}
+    
+    boolean isWallBehindOpponent(){return false;} 
+    
+    boolean movePlayer(MoveDirection dir) {return false;}
 }
