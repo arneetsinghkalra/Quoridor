@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Assertions;
 
 import ca.mcgill.ecse223.quoridor.controller.Controller;
 import ca.mcgill.ecse223.quoridor.controller.PawnBehavior;
+import ca.mcgill.ecse223.quoridor.controller.PawnBehavior.MoveDirection;
 import ca.mcgill.ecse223.quoridor.model.Board;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
@@ -51,6 +52,7 @@ public class CucumberStepDefinitions {
 	private boolean validationResult = true;
 	private boolean legalMove = true;
 	private boolean userConfirms;
+	private boolean privateStatus = false;
 	Wall returnedWall;
 	ArrayList<Player> createUsersAndPlayersLoad;
 
@@ -1467,7 +1469,7 @@ public class CucumberStepDefinitions {
 	 * @param pcol
 	 */
 	@And("The player is located at {int}:{int}")
-	public void the_player_is_located_at(Integer prow, Integer pcol) {
+	public void the_player_is_located_at(int prow, int pcol) {
 		//Get Player whose turn it is
 		Player currentPlayer = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getPlayerToMove();
 		
@@ -1479,7 +1481,6 @@ public class CucumberStepDefinitions {
 		if (currentPlayer == QuoridorApplication.getQuordior().getCurrentGame().getBlackPlayer()) {
 			//Set the players position to target position
 			PlayerPosition currentPlayerPosition = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getBlackPosition();
-			currentPlayerPosition.setPlayer(currentPlayer);
 			currentPlayerPosition.setTile(targetPosition);
 		}
 
@@ -1487,7 +1488,6 @@ public class CucumberStepDefinitions {
 		if (currentPlayer == QuoridorApplication.getQuordior().getCurrentGame().getWhitePlayer()) {
 			//Set the players position to target position
 			PlayerPosition currentPlayerPosition = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getWhitePosition();
-			currentPlayerPosition.setPlayer(currentPlayer);
 			currentPlayerPosition.setTile(targetPosition);
 		}
 	}
@@ -1563,54 +1563,54 @@ public class CucumberStepDefinitions {
 		//When definition!!! Call a method in state machine
 		if(playerName.equals("white")) {
 			if(jumpDirection.equals("left")) {
-				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.West);
+				legalMove = PawnBehavior.moveOrJump(PawnBehavior.MoveDirection.West);
 			}
 			else if(jumpDirection.equals("right")) {
-				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.West);
+				legalMove = PawnBehavior.moveOrJump(PawnBehavior.MoveDirection.East);
 			}
 			else if(jumpDirection.equals("up")) {
-				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.South);
+				legalMove = PawnBehavior.moveOrJump(PawnBehavior.MoveDirection.North);
 			}
 			else if(jumpDirection.equals("down")) {
-				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.South);
+				legalMove = PawnBehavior.moveOrJump(PawnBehavior.MoveDirection.South);
 			}
 			else if(jumpDirection.equals("upleft")) {
-				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.NorthWest);
+				legalMove = PawnBehavior.moveOrJump(PawnBehavior.MoveDirection.NorthWest);
 			}
 			else if(jumpDirection.equals("upright")) {
-				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.NorthEast);
+				legalMove = PawnBehavior.moveOrJump(PawnBehavior.MoveDirection.NorthEast);
 			}
 			else if(jumpDirection.equals("downleft")) {
-				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.SouthWest);
+				legalMove = PawnBehavior.moveOrJump(PawnBehavior.MoveDirection.SouthWest);
 			}
 			else if(jumpDirection.equals("downright")) {
-				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.SouthEast);
+				legalMove = PawnBehavior.moveOrJump(PawnBehavior.MoveDirection.SouthEast);
 			}
 		}
 		else {
 			if(jumpDirection.equals("left")) {
-				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.East);
+				legalMove = PawnBehavior.moveOrJump(PawnBehavior.MoveDirection.West);
 			}
 			else if(jumpDirection.equals("right")) {
-				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.East);
+				legalMove = PawnBehavior.moveOrJump(PawnBehavior.MoveDirection.East);
 			}
 			else if(jumpDirection.equals("up")) {
-				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.North);
+				legalMove = PawnBehavior.moveOrJump(PawnBehavior.MoveDirection.North);
 			}
 			else if(jumpDirection.equals("down")) {
-				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.North);
+				legalMove = PawnBehavior.moveOrJump(PawnBehavior.MoveDirection.South);
 			}
 			else if(jumpDirection.equals("upleft")) {
-				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.NorthWest);
+				legalMove = PawnBehavior.moveOrJump(PawnBehavior.MoveDirection.NorthWest);
 			}
 			else if(jumpDirection.equals("upright")) {
-				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.NorthEast);
+				legalMove = PawnBehavior.moveOrJump(PawnBehavior.MoveDirection.NorthEast);
 			}
 			else if(jumpDirection.equals("downleft")) {
-				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.SouthWest);
+				legalMove = PawnBehavior.moveOrJump(PawnBehavior.MoveDirection.SouthWest);
 			}
 			else if(jumpDirection.equals("downright")) {
-				legalMove = PawnBehavior.jumpPawn(PawnBehavior.MoveDirection.SouthEast);
+				legalMove = PawnBehavior.moveOrJump(PawnBehavior.MoveDirection.SouthEast);
 			}
 		}
 	}
@@ -1619,9 +1619,10 @@ public class CucumberStepDefinitions {
 	 * @author William Wang
 	 * @param side
 	 * @param status
+	 * @throws Exception 
 	 */
 	@Then("The move {string} shall be {string}")
-	public void the_move_shall_be(String side, String status) {
+	public void the_move_shall_be(String side, String status){
 		// Write code here that turns the phrase above into concrete actions
 		
 		
@@ -1648,7 +1649,6 @@ public class CucumberStepDefinitions {
 	public void player_s_new_position_shall_be(int nrow, int ncol) {
 		// Get Player whose turn it is
 		Player currentPlayer = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getPlayerToMove();
-
 		// Calculate tile index of target tile
 		int tileIndex = ((nrow - 1) * 9 + (ncol - 1));
 		Tile targetPosition = QuoridorApplication.getQuordior().getBoard().getTile(tileIndex);
@@ -1710,8 +1710,8 @@ public class CucumberStepDefinitions {
 		Direction direction = stringToDirection(dir);
 		
 		WallMove newWallMove = createWallMoveCandidate(direction, wrow, wcol);
-		Wall aWall = newWallMove.getWallPlaced();		
-		
+		Wall aWall = currentGame.getCurrentPosition().getWhiteWallsInStock(0);
+		aWall.setMove(newWallMove);
 		currentGame.getCurrentPosition().addWhiteWallsOnBoard(aWall);
 	}
 
