@@ -17,7 +17,7 @@ import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
 import ca.mcgill.ecse223.quoridor.persistence.QuoridorPersistence;
-import com.sun.org.apache.xpath.internal.operations.Quo;
+
 
 import java.awt.*;
 import java.awt.event.ActionListener;
