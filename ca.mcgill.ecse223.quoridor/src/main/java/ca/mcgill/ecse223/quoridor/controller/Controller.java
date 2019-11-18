@@ -253,7 +253,7 @@ public class Controller {
 		window.setCurrentPlayer(q.getCurrentGame().getWhitePlayer().getUser().getName());
 		window.setPlayerNames(q.getCurrentGame().getWhitePlayer().getUser().getName(),
 				q.getCurrentGame().getBlackPlayer().getUser().getName());
-		window.movePlayer(0, 4, 8, 4);
+		window.placePlayer(8, 4, 0, 4);
 	}
 
 	/**
@@ -946,7 +946,7 @@ public class Controller {
 			int blackColumn = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn();
 			int whiteRow = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow();
 			int whiteColumn = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn();
-			QuoridorApplication.quoridorWindow.movePlayer(blackRow - 1, blackColumn - 1, whiteRow - 1, whiteColumn - 1);
+			QuoridorApplication.quoridorWindow.placePlayer(blackRow - 1, blackColumn - 1, whiteRow - 1, whiteColumn - 1);
 			return quoridor;
 		} else {
 			throw new UnsupportedOperationException("Invalid position");
@@ -1243,6 +1243,10 @@ public class Controller {
 		game.addPosition(currentPosition);
 		game.setCurrentPosition(newPosition);
 		QuoridorWindow window = QuoridorApplication.quoridorWindow;
+		window.placePlayer(quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow()-1,
+				quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn()-1,
+				quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow()-1,
+				quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn()-1);
 		window.setCurrentPlayer(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getUser().getName());
 		window.setTimeRemaining(
 				(int) (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getRemainingTime().getTime()));

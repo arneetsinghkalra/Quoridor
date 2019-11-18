@@ -9,6 +9,7 @@ import javax.swing.filechooser.FileSystemView;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.Controller;
+import ca.mcgill.ecse223.quoridor.controller.PawnBehavior;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
@@ -16,6 +17,7 @@ import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
 import ca.mcgill.ecse223.quoridor.persistence.QuoridorPersistence;
+import com.sun.org.apache.xpath.internal.operations.Quo;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -716,9 +718,83 @@ public class QuoridorWindow extends JFrame {
 
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
-
+				int curI=i, curJ=j;
 				tiles[i][j] = new JButton();
 				tiles[i][j].setBackground(Color.WHITE);
+				tiles[i][j].addActionListener(new ActionListener() {
+					/** @author Sam Perreault */
+					public void actionPerformed(ActionEvent e) {
+						// Calls pawnBehavior's isLegalMove/Jump, and determines if legal
+						// Prompts user on failure
+						Player curPlayer = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getPlayerToMove();
+						int playerRow=-1, playerColumn=-1;
+						if(curPlayer.equals(QuoridorApplication.getQuordior().getCurrentGame().getBlackPlayer())) {
+							playerRow = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow()-1;
+							playerColumn = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn()-1;
+						}
+						else if(curPlayer.equals(QuoridorApplication.getQuordior().getCurrentGame().getWhitePlayer())) {
+							playerRow = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow()-1;
+							playerColumn = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn()-1;
+						}
+						int vertAbsDiff = Math.abs(playerRow- curI);
+						int vertDiff = curI-playerRow;
+						int horAbsDiff = Math.abs(playerColumn -curJ);
+						int horDiff = curJ-playerColumn;
+						if(vertAbsDiff+ horAbsDiff>2|| vertAbsDiff>2||horAbsDiff>2||vertAbsDiff+horAbsDiff==0) {
+							JOptionPane.showMessageDialog(null, "Illegal move. Please try a different square","Illegal Move",JOptionPane.WARNING_MESSAGE);
+							return;
+						}
+						PawnBehavior.MoveDirection dir = null;
+						switch(vertDiff) {
+							case 1:
+							case 2:
+								dir = PawnBehavior.MoveDirection.South;
+								break;
+							case -1:
+							case -2:
+								dir = PawnBehavior.MoveDirection.North;
+							default:
+								break;
+						}
+						switch(horDiff) {
+							case -1:
+								if(vertDiff<0) {
+									dir = PawnBehavior.MoveDirection.NorthWest;
+									break;
+								}
+								else if(vertDiff>0) {
+									dir = PawnBehavior.MoveDirection.SouthWest;
+									break;
+								}
+								else
+									dir = PawnBehavior.MoveDirection.West;
+								break;
+							case -2:
+								dir = PawnBehavior.MoveDirection.West;
+								break;
+							case 1:
+								if(vertDiff<0) {
+									dir = PawnBehavior.MoveDirection.NorthEast;
+									break;
+								}
+								else if(vertDiff>0) {
+									dir = PawnBehavior.MoveDirection.SouthEast;
+									break;
+								}
+								else
+									dir = PawnBehavior.MoveDirection.East;
+								break;
+							case 2:
+								dir = PawnBehavior.MoveDirection.East;
+								break;
+							default:
+								break;
+						}
+						// If dir isn't set to this point something went horribly wrong
+						if(!PawnBehavior.moveOrJump(dir))
+							JOptionPane.showMessageDialog(null, "Illegal move. Please select a different move", "Illegal Move", JOptionPane.WARNING_MESSAGE);
+					}
+				});
 				GridBagConstraints c = new GridBagConstraints();
 				c.gridx = j * 2;
 				c.gridy = i * 2;
@@ -1067,11 +1143,10 @@ public class QuoridorWindow extends JFrame {
 		
 	}
 
-	public void movePlayer(int whitex, int whitey, int blackx, int blacky) {
+	// Original Placement is 0,4,8,4
+	public void placePlayer(int whitex, int whitey, int blackx, int blacky) {
 		int blackChar = 0x2B24;
 		int whiteChar = 0x20DD;
-		tiles[whitex][whitey].setText("O");
-		tiles[blackx][blacky].setText("" + (char) blackChar);
 
 		tiles[playerView[0]][playerView[1]].setText("");
 		tiles[playerView[2]][playerView[3]].setText("");
@@ -1080,6 +1155,8 @@ public class QuoridorWindow extends JFrame {
 		playerView[1] = whitey;
 		playerView[2] = blackx;
 		playerView[3] = blacky;
+		tiles[whitex][whitey].setText("O");
+		tiles[blackx][blacky].setText("" + (char) blackChar);
 
 	}
 

@@ -651,28 +651,28 @@ public class PawnBehavior {
 					int column = currentGame.getCurrentPosition().getBlackPosition().getTile().getColumn();
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((newRow - 1) * 9 + column - 1);
 					currentGame.getCurrentPosition().getBlackPosition().setTile(newTile);
-					currentGame.getCurrentPosition().setPlayerToMove(currentGame.getWhitePlayer());
+					Controller.switchCurrentPlayer();
 					return true;
 				} else if (dir == MoveDirection.South) {
 					int newRow = currentGame.getCurrentPosition().getBlackPosition().getTile().getRow() + 1;
 					int column = currentGame.getCurrentPosition().getBlackPosition().getTile().getColumn();
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((newRow - 1) * 9 + column - 1);
 					currentGame.getCurrentPosition().getBlackPosition().setTile(newTile);
-					currentGame.getCurrentPosition().setPlayerToMove(currentGame.getWhitePlayer());
+					Controller.switchCurrentPlayer();
 					return true;
 				} else if (dir == MoveDirection.East) {
 					int Row = currentGame.getCurrentPosition().getBlackPosition().getTile().getRow();
 					int newColumn = currentGame.getCurrentPosition().getBlackPosition().getTile().getColumn() + 1;
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((Row - 1) * 9 + newColumn - 1);
 					currentGame.getCurrentPosition().getBlackPosition().setTile(newTile);
-					currentGame.getCurrentPosition().setPlayerToMove(currentGame.getWhitePlayer());
+					Controller.switchCurrentPlayer();
 					return true;
 				} else if (dir == MoveDirection.West) {
 					int Row = currentGame.getCurrentPosition().getBlackPosition().getTile().getRow();
 					int newColumn = currentGame.getCurrentPosition().getBlackPosition().getTile().getColumn() - 1;
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((Row - 1) * 9 + newColumn - 1);
 					currentGame.getCurrentPosition().getBlackPosition().setTile(newTile);
-					currentGame.getCurrentPosition().setPlayerToMove(currentGame.getWhitePlayer());
+					Controller.switchCurrentPlayer();
 					return true;
 				}
 			} else {
@@ -681,7 +681,7 @@ public class PawnBehavior {
 					int column = currentGame.getCurrentPosition().getWhitePosition().getTile().getColumn();
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((newRow - 1) * 9 + column - 1);
 					currentGame.getCurrentPosition().getWhitePosition().setTile(newTile);
-					currentGame.getCurrentPosition().setPlayerToMove(currentGame.getBlackPlayer());
+					Controller.switchCurrentPlayer();
 
 					return true;
 				} else if (dir == MoveDirection.South) {
@@ -689,21 +689,21 @@ public class PawnBehavior {
 					int column = currentGame.getCurrentPosition().getWhitePosition().getTile().getColumn();
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((newRow - 1) * 9 + column - 1);
 					currentGame.getCurrentPosition().getWhitePosition().setTile(newTile);
-					currentGame.getCurrentPosition().setPlayerToMove(currentGame.getBlackPlayer());
+					Controller.switchCurrentPlayer();
 					return true;
 				} else if (dir == MoveDirection.East) {
 					int Row = currentGame.getCurrentPosition().getWhitePosition().getTile().getRow();
 					int newColumn = currentGame.getCurrentPosition().getWhitePosition().getTile().getColumn() + 1;
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((Row - 1) * 9 + newColumn - 1);
 					currentGame.getCurrentPosition().getWhitePosition().setTile(newTile);
-					currentGame.getCurrentPosition().setPlayerToMove(currentGame.getBlackPlayer());
+					Controller.switchCurrentPlayer();
 					return true;
 				} else if (dir == MoveDirection.West) {
 					int Row = currentGame.getCurrentPosition().getWhitePosition().getTile().getRow();
 					int newColumn = currentGame.getCurrentPosition().getWhitePosition().getTile().getColumn() - 1;
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((Row - 1) * 9 + newColumn - 1);
 					currentGame.getCurrentPosition().getWhitePosition().setTile(newTile);
-					currentGame.getCurrentPosition().setPlayerToMove(currentGame.getBlackPlayer());
+					Controller.switchCurrentPlayer();
 					return true;
 				}
 			}

@@ -1786,19 +1786,19 @@ public class CucumberStepDefinitions {
 			case "left":
 				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex + 1);
 				currentGame.getCurrentPosition().getBlackPosition().setTile(opponentTile);
-
+				break;
 			case "right":
 				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex - 1);
 				currentGame.getCurrentPosition().getBlackPosition().setTile(opponentTile);
-
+				break;
 			case "up":
 				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex + 1);
 				currentGame.getCurrentPosition().getBlackPosition().setTile(opponentTile);
-
+				break;
 			case "down":
 				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex - 1);
 				currentGame.getCurrentPosition().getBlackPosition().setTile(opponentTile);
-
+				break;
 			}
 		}
 		//If opponent is white player
@@ -1807,18 +1807,19 @@ public class CucumberStepDefinitions {
 			case "left":
 				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex + 1);
 				currentGame.getCurrentPosition().getWhitePosition().setTile(opponentTile);
-
+				break;
 			case "right":
 				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex - 1);
 				currentGame.getCurrentPosition().getWhitePosition().setTile(opponentTile);
-
+				break;
 			case "up":
 				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex + 1);
 				currentGame.getCurrentPosition().getWhitePosition().setTile(opponentTile);
-
+				break;
 			case "down":
 				opponentTile = quoridor.getBoard().getTile(currentPlayerTileIndex - 1);
 				currentGame.getCurrentPosition().getWhitePosition().setTile(opponentTile);
+				break;
 			}
 		}
 	}
