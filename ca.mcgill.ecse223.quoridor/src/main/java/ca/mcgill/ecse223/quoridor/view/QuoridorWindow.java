@@ -1143,7 +1143,8 @@ public class QuoridorWindow extends JFrame {
 		
 	}
 
-	// Original Placement is 0,4,8,4
+	/**	Moves players graphically
+	 *  @author Sam Perreault */
 	public void placePlayer(int whitex, int whitey, int blackx, int blacky) {
 		int blackChar = 0x2B24;
 		int whiteChar = 0x20DD;
@@ -1160,19 +1161,23 @@ public class QuoridorWindow extends JFrame {
 
 	}
 
+	/** @author Sam Perreault */
 	public String getTurnLabel() {
 		return currentPlayerName.getText();
 	}
 
+	/** @author Sam Perreault */
 	public boolean getIsTimerActive() {
 		return secondTimer.isRunning();
 	}
 
+	/** @author Sam Perreault */
 	public void setPlayerNames(String white, String black) {
 		blackPlayerName.setText(black);
 		whitePlayerName.setText(white);
 	}
 
+	/** @author Sam Perreault */
 	public void setTimeRemaining(int timeRemaining) {
 		timeRemaining /= 1000;
 		int minutes, seconds;
@@ -1194,10 +1199,12 @@ public class QuoridorWindow extends JFrame {
 		timeRemLabel.setText(tr);
 	}
 
+	/** @author Sam Perreault */
 	public void setCurrentPlayer(String name) {
 		currentPlayerName.setText(name + "'s turn");
 	}
 
+	/** @author Sam Perreault */
 	public void subtractSecondFromView() {
 		// pull text from label
 		// get last 2 characters
@@ -1218,6 +1225,7 @@ public class QuoridorWindow extends JFrame {
 
 	}
 
+	/** @author Sam Perreault */
 	public void createSecondTimer() {
 		ActionListener listener = new ActionListener() {
 			@Override
