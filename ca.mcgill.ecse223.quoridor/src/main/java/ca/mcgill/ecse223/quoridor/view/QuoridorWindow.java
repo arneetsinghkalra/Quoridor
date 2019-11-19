@@ -1146,8 +1146,8 @@ public class QuoridorWindow extends JFrame {
 	/**	Moves players graphically
 	 *  @author Sam Perreault */
 	public void placePlayer(int whitex, int whitey, int blackx, int blacky) {
-		int blackChar = 0x2B24;
-		int whiteChar = 0x20DD;
+		int blackChar = 0x2605;
+		int whiteChar = 0x2606 ;
 
 		tiles[playerView[0]][playerView[1]].setText("");
 		tiles[playerView[2]][playerView[3]].setText("");
@@ -1156,7 +1156,7 @@ public class QuoridorWindow extends JFrame {
 		playerView[1] = whitey;
 		playerView[2] = blackx;
 		playerView[3] = blacky;
-		tiles[whitex][whitey].setText("O");
+		tiles[whitex][whitey].setText("" + (char) whiteChar);
 		tiles[blackx][blacky].setText("" + (char) blackChar);
 
 	}
