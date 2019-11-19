@@ -718,13 +718,11 @@ public class Controller {
 			// their stock
 		}
 		// Black player move
-		else if (player.equals(currentGame.getBlackPlayer())) {
+		else { //(player.equals(currentGame.getBlackPlayer())) {
 			currentGamePosition.addBlackWallsInStock(wallMove.getWallPlaced()); // Puts wall attempted to be placed back
 																				// in
 			// their stock
-		} else {
-			return false; // Some unexpected error
-		}
+		} 
 		// currentGame.setWallMoveCandidate(null);
 		return true;
 	}
