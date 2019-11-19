@@ -1239,10 +1239,17 @@ public class Controller {
 
 		for (Wall w : currentPosition.getBlackWallsOnBoard())
 			newPosition.addBlackWallsOnBoard(w);
-
+		
+		
 		game.addPosition(currentPosition);
 		game.setCurrentPosition(newPosition);
 		QuoridorWindow window = QuoridorApplication.quoridorWindow;
+		
+		if(game.hasWallMoveCandidate()) {
+			game.setWallMoveCandidate(null);
+		}
+		window.isGrabWall = true;
+		
 		window.placePlayer(quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow()-1,
 				quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn()-1,
 				quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow()-1,
