@@ -2046,38 +2046,41 @@ public class CucumberStepDefinitions {
 
 	@When("The game is no longer running")
 	public void the_game_is_no_longer_running() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
+		// Call a Controller Method here, it should pretty much do this ->
+		Controller.setGameToNotRunning();
 	}
 
 	@Then("The final result shall be displayed")
 	public void the_final_result_shall_be_displayed() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
+		Game currentGame = QuoridorApplication.getQuordior().getCurrentGame();
+		QuoridorApplication.quoridorWindow = new QuoridorWindow();
+		
+		//Change this to notify final result
+	    assertEquals(1,1);
 	}
 
 	@And("White's clock shall not be counting down")
 	public void white_s_clock_shall_not_be_counting_down() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+        QuoridorWindow window = QuoridorApplication.quoridorWindow;
+        assertFalse(window.getIsTimerActive());
 	}
 
 	@And("Black's clock shall not be counting down")
 	public void black_s_clock_shall_not_be_counting_down() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+        QuoridorWindow window = QuoridorApplication.quoridorWindow;
+        assertFalse(window.getIsTimerActive());
 	}
 
 	@And("White shall be unable to move")
 	public void white_shall_be_unable_to_move() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
+	    assertNotEquals(QuoridorApplication.getQuordior().getCurrentGame().getMoveMode(),MoveMode.PlayerMove);
 	}
 
 	@And("Black shall be unable to move")
 	public void black_shall_be_unable_to_move() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
+	    assertNotEquals(QuoridorApplication.getQuordior().getCurrentGame().getMoveMode(),MoveMode.PlayerMove);
 	}
 	
 	/********************
@@ -2086,20 +2089,26 @@ public class CucumberStepDefinitions {
 	
 	@When("Player initates to resign")
 	public void player_initates_to_resign() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
+		Controller.resignGame();
 	}
 
 	@Then("Game result shall be {string}")
-	public void game_result_shall_be(String string) {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
+	public void game_result_shall_be(String result) {
+		Player playerToMove =QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getPlayerToMove();
+		Player whitePlayer = QuoridorApplication.getQuordior().getCurrentGame().getWhitePlayer();
+
+		if(playerToMove == whitePlayer) {
+		assertEquals("BlackWon",result);
+		}
+		else {
+		assertEquals("WhiteWon",result);
+		}
 	}
 
 	@And("The game shall no longer be running")
 	public void the_game_shall_no_longer_be_running() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
+			Quoridor quoridor = QuoridorApplication.getQuoridor();
+			assertNotEquals(GameStatus.Running, quoridor.getCurrentGame().getGameStatus());
 	}
 
 	/********************

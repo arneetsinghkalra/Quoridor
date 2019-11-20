@@ -250,7 +250,7 @@ public class Controller {
 		QuoridorWindow window = QuoridorApplication.quoridorWindow;
 		window.setTimeRemaining((int) (q.getCurrentGame().getWhitePlayer().getRemainingTime().getTime()));
 		window.createSecondTimer();
-		window.setCurrentPlayer(q.getCurrentGame().getWhitePlayer().getUser().getName());
+		window.setCurrentPlayer(window.whitePawn+" "+q.getCurrentGame().getWhitePlayer().getUser().getName()+" "+ window.whitePawn);
 		window.setPlayerNames(q.getCurrentGame().getWhitePlayer().getUser().getName(),
 				q.getCurrentGame().getBlackPlayer().getUser().getName());
 		window.placePlayer(8, 4, 0, 4);
@@ -1252,7 +1252,14 @@ public class Controller {
 				quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn()-1,
 				quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow()-1,
 				quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn()-1);
-		window.setCurrentPlayer(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getUser().getName());
+		
+		if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove() == quoridor.getCurrentGame().getBlackPlayer()) {
+			window.setCurrentPlayer(window.blackPawn + " " +quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getUser().getName() + " "+ window.blackPawn);
+		}
+		else {
+			window.setCurrentPlayer(window.whitePawn + " " +quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getUser().getName() + " "+ window.whitePawn);
+		}
+		
 		window.setTimeRemaining(
 				(int) (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getRemainingTime().getTime()));
 
@@ -1373,4 +1380,49 @@ public class Controller {
 		return false; //Otherwise walls dont exist  
 	}
 	//Wack stuff
+
+	/**
+	 * @author arneetkalra
+	 */
+	public static void resignGame() {
+		Quoridor quoridor = QuoridorApplication.getQuordior();
+		Game currentGame = quoridor.getCurrentGame();
+		Player resignedPlayer = currentGame.getCurrentPosition().getPlayerToMove();
+		
+		//Set the current game status to the winner
+		if (resignedPlayer == currentGame.getBlackPlayer()) {
+		currentGame.setGameStatus(GameStatus.WhiteWon);
+		} 
+		else {
+		currentGame.setGameStatus(GameStatus.BlackWon);
+		}
+	}
+
+	public static Game setGameToNotRunning() {
+		
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game game = new Game(GameStatus.ReadyToStart, MoveMode.PlayerMove, quoridor);
+		return game;
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

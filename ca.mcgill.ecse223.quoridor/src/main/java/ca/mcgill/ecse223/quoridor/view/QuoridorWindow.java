@@ -54,6 +54,8 @@ public class QuoridorWindow extends JFrame {
 	private JButton[][] wallCenters = new JButton[8][8];
 	private Box[][] hWalls = new Box[9][9];
 	private Box[][] vWalls = new Box[9][9];
+	public char blackPawn = (char) 0x2605; 
+	public char whitePawn = (char) 0x2606;
 
 	/**
 	 * Create the frame.
@@ -1188,8 +1190,7 @@ public class QuoridorWindow extends JFrame {
 	/**	Moves players graphically
 	 *  @author Sam Perreault */
 	public void placePlayer(int whitex, int whitey, int blackx, int blacky) {
-		int blackChar = 0x2605;
-		int whiteChar = 0x2606 ;
+		
 
 		tiles[playerView[0]][playerView[1]].setText("");
 		tiles[playerView[2]][playerView[3]].setText("");
@@ -1198,8 +1199,8 @@ public class QuoridorWindow extends JFrame {
 		playerView[1] = whitey;
 		playerView[2] = blackx;
 		playerView[3] = blacky;
-		tiles[whitex][whitey].setText("" + (char) whiteChar);
-		tiles[blackx][blacky].setText("" + (char) blackChar);
+		tiles[whitex][whitey].setText("" + whitePawn);
+		tiles[blackx][blacky].setText("" + blackPawn);
 		
 
 	}
@@ -1215,9 +1216,9 @@ public class QuoridorWindow extends JFrame {
 	}
 
 	/** @author Sam Perreault */
-	public void setPlayerNames(String white, String black) {
-		blackPlayerName.setText(black);
-		whitePlayerName.setText(white);
+	public void setPlayerNames(String white, String black) {	
+		blackPlayerName.setText(blackPawn +" "+ black +" "+blackPawn);
+		whitePlayerName.setText(whitePawn +" "+ white +" "+whitePawn);
 	}
 
 	/** @author Sam Perreault */
