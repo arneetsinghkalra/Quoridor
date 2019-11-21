@@ -61,10 +61,11 @@ public class QuoridorWindow extends JFrame {
 	public char whitePawn = (char) 0x25A1;
 	//Main colors used everywhere
 	public Color mainScreenBackgroundColor = new Color(208,238,255); 
-	public Color boardBackgroundColor = mainScreenBackgroundColor;
+	public Color boardBackgroundColor = Color.DARK_GRAY;// mainScreenBackgroundColor;
 	public Color tileColor = new Color(255,206,202);
 	
 	public Color placedWallColor = Color.LIGHT_GRAY;
+	public Color validPositionColor = Color.green;
 	private int fontSize = 15;
 	private String font = "Raanana";
 
@@ -1285,9 +1286,34 @@ public class QuoridorWindow extends JFrame {
 		playerView[1] = whitey;
 		playerView[2] = blackx;
 		playerView[3] = blacky;
+		
 		tiles[whitex][whitey].setBackground(Color.white);
 		tiles[blackx][blacky].setBackground(Color.black);
-
+	}
+	
+	/**
+	 * @author arneetkalra
+	 */
+	public void placeValidPlayerPositions (int whitex, int whitey, int blackx, int blacky) {
+		
+		// A work in progress
+		
+		if (QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition()
+				.getPlayerToMove() == QuoridorApplication.getQuordior().getCurrentGame().getWhitePlayer()) {
+			if (whitex>0) tiles[whitex - 1][whitey].setBackground(validPositionColor);
+			if (whitex<9) tiles[whitex + 1][whitey].setBackground(validPositionColor);
+			if (whitey<9) tiles[whitex][whitey - 1].setBackground(validPositionColor);
+			if (whitex>0) tiles[whitex][whitey + 1].setBackground(validPositionColor);
+		} 
+		else {
+			if (blackx>0) tiles[blackx - 1][blacky].setBackground(validPositionColor);
+			if (blackx<9) tiles[blackx + 1][blacky].setBackground(validPositionColor);
+			if (blacky<9) tiles[blackx][blacky - 1].setBackground(validPositionColor);
+			if (blacky>0) tiles[blackx][blacky + 1].setBackground(validPositionColor);
+			
+			tiles[whitex][whitey].setBackground(Color.white);
+			tiles[blackx][blacky].setBackground(Color.black);
+		}
 	}
 
 	/** @author Sam Perreault */
