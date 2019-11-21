@@ -2,6 +2,8 @@ package ca.mcgill.ecse223.quoridor.view;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeListener;
@@ -70,10 +72,10 @@ public class QuoridorWindow extends JFrame {
 	 * Create the frame.
 	 */
 	public QuoridorWindow() {
-		setResizable(true);
+		setResizable(false);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 90, 780, 600); // New dimensions
+		setBounds(100, 90, 790, 611); // New dimensions
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(1, 1, 1, 1));
 		setContentPane(contentPane);
