@@ -54,14 +54,23 @@ public class QuoridorWindow extends JFrame {
 	private JButton[][] wallCenters = new JButton[8][8];
 	private Box[][] hWalls = new Box[9][9];
 	private Box[][] vWalls = new Box[9][9];
-	public char blackPawn = (char) 0x2605; 
-	public char whitePawn = (char) 0x2606;
+	//The shape of the pawn is as defined below
+	public char blackPawn = (char) 0x25A0; 
+	public char whitePawn = (char) 0x25A1;
+	//Main colors used everywhere
+	public Color mainScreenBackgroundColor = new Color(208,238,255); 
+	public Color boardBackgroundColor = mainScreenBackgroundColor;
+	public Color tileColor = new Color(255,206,202);
+	private int fontSize = 15;
+	private String font = "Raanana";
+
+
 
 	/**
 	 * Create the frame.
 	 */
 	public QuoridorWindow() {
-		setResizable(false);
+		setResizable(true);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 90, 780, 600); // New dimensions
@@ -183,49 +192,54 @@ public class QuoridorWindow extends JFrame {
 		 * SpringLayout.EAST, titleScreenPanel); titleLabel.setFont(new
 		 * Font("Cooper Black", Font.PLAIN, 40)); titleScreenPanel.add(titleLabel);
 		 */
+		
+		
 
-		JPanel activeGamePanel = new JPanel();
+		JPanel activeGamePanel = new JPanel();		
+		activeGamePanel.setBackground(mainScreenBackgroundColor);
+		activeGamePanel.setOpaque(true);
 		contentPane.add(activeGamePanel, "activeGamePanel");
 		activeGamePanel.setLayout(new BorderLayout(0, 0));
 
 		Box blackPlayerInfoVerticalBox = Box.createVerticalBox();
-		blackPlayerInfoVerticalBox.setBackground(Color.PINK);
 		activeGamePanel.add(blackPlayerInfoVerticalBox, BorderLayout.WEST);
 
 		lblBlackPlayerName = new JLabel("Black Player");
 		lblBlackPlayerName.setAlignmentX(Component.CENTER_ALIGNMENT);
-		lblBlackPlayerName.setFont(new Font("Raanana", Font.PLAIN, 13));
+		lblBlackPlayerName.setFont(new Font(font, Font.PLAIN, fontSize));
 		blackPlayerInfoVerticalBox.add(lblBlackPlayerName);
 		lblBlackPlayerName.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 
 		JLabel lblWallsLeft_Black = new JLabel("Walls Left = ");
 		lblWallsLeft_Black.setAlignmentX(Component.CENTER_ALIGNMENT);
-		lblWallsLeft_Black.setFont(new Font("Raanana", Font.PLAIN, 13));
+		lblWallsLeft_Black.setFont(new Font(font, Font.PLAIN, fontSize));
 		blackPlayerInfoVerticalBox.add(lblWallsLeft_Black);
 
-		JLabel lblTimeLeftBlack = new JLabel("     Total Time Left:     ");
+		JLabel lblTimeLeftBlack = new JLabel("    Total Time Left:    ");
 		lblTimeLeftBlack.setAlignmentX(Component.CENTER_ALIGNMENT);
-		lblTimeLeftBlack.setFont(new Font("Raanana", Font.PLAIN, 13));
+		lblTimeLeftBlack.setFont(new Font(font, Font.PLAIN, fontSize));
 		blackPlayerInfoVerticalBox.add(lblTimeLeftBlack);
 
-		JLabel lblExtraBlack = new JLabel(" ;");
-		lblExtraBlack.setFont(new Font("Raanana", Font.PLAIN, 13));
+		JLabel lblExtraBlack = new JLabel(" ... ");
+		lblExtraBlack.setFont(new Font(font, Font.PLAIN, fontSize));
 		blackPlayerInfoVerticalBox.add(lblExtraBlack);
 		
-
 		JButton btnGrabButtonBlack = new JButton("Grab wall");
 		btnGrabButtonBlack.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnGrabButtonBlack.setAlignmentY(Component.TOP_ALIGNMENT);
+		btnGrabButtonBlack.setFont(new Font(font, Font.PLAIN, fontSize));
 		blackPlayerInfoVerticalBox.add(btnGrabButtonBlack);
 		
 		JButton btnRotateButtonBlack = new JButton("Rotate Wall");
 		btnRotateButtonBlack.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnRotateButtonBlack.setAlignmentY(Component.TOP_ALIGNMENT);
+		btnRotateButtonBlack.setFont(new Font(font, Font.PLAIN, fontSize));
 		blackPlayerInfoVerticalBox.add(btnRotateButtonBlack);
 		
-		JButton btnResignGameBlack = new JButton("Resign Game");
+		JButton btnResignGameBlack = new JButton("Forfeit Game");
 		btnResignGameBlack.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnResignGameBlack.setAlignmentY(Component.TOP_ALIGNMENT);
+		btnResignGameBlack.setFont(new Font(font, Font.PLAIN, fontSize));	
 		blackPlayerInfoVerticalBox.add(btnResignGameBlack);
 		
 		/** @author Luke Barber */
@@ -271,42 +285,44 @@ public class QuoridorWindow extends JFrame {
 		// _________________ Start of White Player Info _________________________
 
 		Box whitePlayerInfoVerticalBox = Box.createVerticalBox();
-		whitePlayerInfoVerticalBox.setBackground(Color.PINK);
 		activeGamePanel.add(whitePlayerInfoVerticalBox, BorderLayout.EAST);
 		whitePlayerName = new JLabel("White Player");
 		whitePlayerName.setAlignmentX(Component.CENTER_ALIGNMENT);
-		whitePlayerName.setFont(new Font("Raanana", Font.PLAIN, 13));
+		whitePlayerName.setFont(new Font(font, Font.PLAIN, fontSize));
 		whitePlayerInfoVerticalBox.add(whitePlayerName);
 
 		JLabel lblWallsLeft_White = new JLabel("Walls Left = ");
 		lblWallsLeft_White.setAlignmentX(Component.CENTER_ALIGNMENT);
-		lblWallsLeft_White.setFont(new Font("Raanana", Font.PLAIN, 13));
+		lblWallsLeft_White.setFont(new Font(font, Font.PLAIN, fontSize));
 		whitePlayerInfoVerticalBox.add(lblWallsLeft_White);
 
-		JLabel lblTotalTimeLeftWhite = new JLabel("     Total Time Left:     ");
+		JLabel lblTotalTimeLeftWhite = new JLabel("    Total Time Left:    ");
 		lblTotalTimeLeftWhite.setAlignmentX(Component.CENTER_ALIGNMENT);
-		lblTotalTimeLeftWhite.setFont(new Font("Raanana", Font.PLAIN, 13));
+		lblTotalTimeLeftWhite.setFont(new Font(font, Font.PLAIN, fontSize));
 		whitePlayerInfoVerticalBox.add(lblTotalTimeLeftWhite);
 
 		JLabel lblExtraWhite = new JLabel(" ... ");
 		lblExtraWhite.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lblExtraWhite.setAlignmentY(Component.TOP_ALIGNMENT);
-		lblExtraWhite.setFont(new Font("Raanana", Font.PLAIN, 13));
+		lblExtraWhite.setFont(new Font(font, Font.PLAIN, fontSize));
 		whitePlayerInfoVerticalBox.add(lblExtraWhite);
 		
 		JButton btnGrabButtonWhite = new JButton("Grab wall");
 		btnGrabButtonWhite.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnGrabButtonWhite.setAlignmentY(Component.TOP_ALIGNMENT);
+		btnGrabButtonWhite.setFont(new Font(font, Font.PLAIN, fontSize));	
 		whitePlayerInfoVerticalBox.add(btnGrabButtonWhite);
 		
 		JButton btnRotateButtonWhite = new JButton("Rotate Wall");
 		btnRotateButtonWhite.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnRotateButtonWhite.setAlignmentY(Component.TOP_ALIGNMENT);
+		btnRotateButtonWhite.setFont(new Font(font, Font.PLAIN, fontSize));	
 		whitePlayerInfoVerticalBox.add(btnRotateButtonWhite);
 		
-		JButton btnResignGameWhite = new JButton("Resign Game");
+		JButton btnResignGameWhite = new JButton("Forfeit Game");
 		btnResignGameWhite.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnResignGameWhite.setAlignmentY(Component.TOP_ALIGNMENT);
+		btnResignGameWhite.setFont(new Font(font, Font.PLAIN, fontSize));	
 		whitePlayerInfoVerticalBox.add(btnResignGameWhite);
 		
 		/** @author Luke Barber */
@@ -356,24 +372,22 @@ public class QuoridorWindow extends JFrame {
 		horizontalBox.setBackground(Color.PINK);
 		gameOptionBox.add(horizontalBox);
 
-		
-		Box verticalBoxA = Box.createVerticalBox();
-		horizontalBox.add(verticalBoxA);
-		
-
 		Box verticalBox = Box.createVerticalBox();
 		horizontalBox.add(verticalBox);
 
 		JButton btnNewGame = new JButton("New Game");
-		btnNewGame.setBackground(Color.PINK);
-		verticalBox.add(btnNewGame);
 		btnNewGame.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnNewGame.setFont(new Font(font, Font.PLAIN, fontSize));			
+		verticalBox.add(btnNewGame);
 
 		JButton btnSaveGame = new JButton("Save Game");
-		verticalBox.add(btnSaveGame);
 		btnSaveGame.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnSaveGame.setFont(new Font(font, Font.PLAIN, fontSize));	
+		verticalBox.add(btnSaveGame);
 
 		JButton btnLoadGame = new JButton("Load Game");
+		btnLoadGame.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnLoadGame.setFont(new Font(font, Font.PLAIN, fontSize));	
 		verticalBox.add(btnLoadGame);
 
 		btnLoadGame.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -501,24 +515,26 @@ public class QuoridorWindow extends JFrame {
 		});
 
 		Box titleTimeBox = Box.createVerticalBox();
-		titleTimeBox.setBackground(Color.PINK);
+		//titleTimeBox.setBackground(Color.white);
 		activeGamePanel.add(titleTimeBox, BorderLayout.NORTH);
 
 		JLabel gameTitleLabel = new JLabel("QUORIDOR");
 		gameTitleLabel.setAlignmentX(0.5f);
 		gameTitleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		gameTitleLabel.setFont(new Font("Comic Sans MS", Font.PLAIN, 40));
+		//gameTitleLabel.setForeground(Color.BLUE);
 		titleTimeBox.add(gameTitleLabel);
 
 		currentPlayerName = new JLabel("Current Player : ");
 		currentPlayerName.setAlignmentX(0.4f);
 		currentPlayerName.setAlignmentY(1.5f);
-		currentPlayerName.setFont(new Font("Raanana", Font.PLAIN, 13));
+		currentPlayerName.setFont(new Font("Raanana", Font.PLAIN, 18));
 		titleTimeBox.add(currentPlayerName);
 
 		// board
 		JPanel gameBoardPanel = new JPanel();
-		gameBoardPanel.setBackground(Color.PINK);
+		gameBoardPanel.setBackground(boardBackgroundColor);
+		gameBoardPanel.setOpaque(true);
 		activeGamePanel.add(gameBoardPanel, BorderLayout.CENTER);
 		gameBoardPanel.setLayout(new GridBagLayout());
 
@@ -787,8 +803,12 @@ public class QuoridorWindow extends JFrame {
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
 				int curI=i, curJ=j;
-				tiles[i][j] = new JButton();
-				tiles[i][j].setBackground(Color.WHITE);
+				
+				tiles[i][j] = new JButton();	
+				tiles[i][j].setBounds(i, j, 20, 20);
+				tiles[i][j].setOpaque(true);				
+				tiles[i][j].setBackground(tileColor);
+				tiles[i][j].setBorderPainted(false);
 				tiles[i][j].addActionListener(new ActionListener() {
 					/** @author Sam Perreault */
 					public void actionPerformed(ActionEvent e) {
@@ -912,7 +932,8 @@ public class QuoridorWindow extends JFrame {
 				c.ipadx = 10;
 				c.ipady = 10;
 				c.fill = GridBagConstraints.BOTH;
-				// set click event for tiles here(eg.movepawn)
+				
+				
 				gameBoardPanel.add(tiles[i][j], c);
 
 				if (j < 8) {
@@ -945,7 +966,9 @@ public class QuoridorWindow extends JFrame {
 
 				if (i < 8 && j < 8) {
 					wallCenters[i][j] = new JButton();
-					wallCenters[i][j].setBackground(Color.pink);
+					wallCenters[i][j].setOpaque(true);
+					wallCenters[i][j].setBackground(boardBackgroundColor);
+					wallCenters[i][j].setBorderPainted(false);
 					// For loop helper
 					@SuppressWarnings("deprecation")
 					final Integer xPos = new Integer(i);
@@ -970,18 +993,18 @@ public class QuoridorWindow extends JFrame {
 							}
 						}
 
-						void setWallToPink(Integer x, Integer y) {
+						void setWallToBoardBackgroundColor(Integer x, Integer y) {
 							if (Controller.returnWallMoveDirection() == Direction.Horizontal) { // Check if the wall in
 																								// hand is horizontal
 																								// Hover a wall
 																								// horizontally
-								hWalls[x][y].setBackground(Color.pink);
-								wallCenters[x][y].setBackground(Color.pink);
-								hWalls[x][y + 1].setBackground(Color.pink);
+								hWalls[x][y].setBackground(boardBackgroundColor);
+								wallCenters[x][y].setBackground(boardBackgroundColor);
+								hWalls[x][y + 1].setBackground(boardBackgroundColor);
 							} else { // Hover a wall vertically
-								vWalls[x][y].setBackground(Color.pink);
-								wallCenters[x][y].setBackground(Color.pink);
-								vWalls[x + 1][y].setBackground(Color.pink);
+								vWalls[x][y].setBackground(boardBackgroundColor);
+								wallCenters[x][y].setBackground(boardBackgroundColor);
+								vWalls[x + 1][y].setBackground(boardBackgroundColor);
 							}
 						}
 
@@ -1067,8 +1090,8 @@ public class QuoridorWindow extends JFrame {
 								if (Controller.returnWallMoveDirection() == Direction.Horizontal) { 
 									//If horizontal wall is in a valid position
 									if (Controller.hoveredWallIsValid(currentTile, Direction.Horizontal) == true) { 
-										//Set it to pink
-										setWallToPink(xPos, yPos);
+										//Set it to board background color
+										setWallToBoardBackgroundColor(xPos, yPos);
 									}
 									//Else if it is in an invalid position
 									else if (Controller.hoveredWallIsValid(currentTile,Direction.Horizontal) == false) {
@@ -1097,8 +1120,8 @@ public class QuoridorWindow extends JFrame {
 								else { 
 									//If it is in a valid position
 									if (Controller.hoveredWallIsValid(currentTile, Direction.Vertical) == true) {
-										//Set the vertical wall to pink again
-										setWallToPink(xPos, yPos);
+										//Set the vertical wall to board background again
+										setWallToBoardBackgroundColor(xPos, yPos);
 									} 
 									//If it is an invalid position
 									else if (Controller.hoveredWallIsValid(currentTile,Direction.Vertical) == false) {
@@ -1128,16 +1151,13 @@ public class QuoridorWindow extends JFrame {
 							else { 
 
 								if (Controller.hoveredWallIsValid(currentTile, Direction.Horizontal) == true) {
-									hWalls[xPos][yPos].setBackground(Color.pink);
-									wallCenters[xPos][yPos].setBackground(Color.pink);
-									hWalls[xPos][yPos + 1].setBackground(Color.pink);
+									hWalls[xPos][yPos].setBackground(boardBackgroundColor);
+									wallCenters[xPos][yPos].setBackground(boardBackgroundColor);
+									hWalls[xPos][yPos + 1].setBackground(boardBackgroundColor);
 								} else if (Controller.hoveredWallIsValid(currentTile, Direction.Vertical) == true) {
-									vWalls[xPos][yPos].setBackground(Color.pink);
-									wallCenters[xPos][yPos].setBackground(Color.pink);
-									vWalls[xPos + 1][yPos].setBackground(Color.pink);
-
-									System.out.println("Gets here");
-
+									vWalls[xPos][yPos].setBackground(boardBackgroundColor);
+									wallCenters[xPos][yPos].setBackground(boardBackgroundColor);
+									vWalls[xPos + 1][yPos].setBackground(boardBackgroundColor);
 								}
 
 								else if (Controller.hoveredWallIsValid(currentTile, Direction.Horizontal) == false
@@ -1241,7 +1261,7 @@ public class QuoridorWindow extends JFrame {
 		}
 
 			Component horizontalStrut = Box.createHorizontalStrut(100);
-			horizontalStrut.setBackground(Color.PINK);
+			horizontalStrut.setBackground(Color.white);
 			horizontalBox.add(horizontalStrut);
 
 			timeRemLabel = new JLabel("Time remaining: 00:00");
@@ -1254,18 +1274,15 @@ public class QuoridorWindow extends JFrame {
 	/**	Moves players graphically
 	 *  @author Sam Perreault */
 	public void placePlayer(int whitex, int whitey, int blackx, int blacky) {
-		
-
-		tiles[playerView[0]][playerView[1]].setText("");
-		tiles[playerView[2]][playerView[3]].setText("");
+		tiles[playerView[0]][playerView[1]].setBackground(tileColor);
+		tiles[playerView[2]][playerView[3]].setBackground(tileColor);
 
 		playerView[0] = whitex;
 		playerView[1] = whitey;
 		playerView[2] = blackx;
 		playerView[3] = blacky;
-		tiles[whitex][whitey].setText("" + whitePawn);
-		tiles[blackx][blacky].setText("" + blackPawn);
-		
+		tiles[whitex][whitey].setBackground(Color.white);
+		tiles[blackx][blacky].setBackground(Color.black);
 
 	}
 
