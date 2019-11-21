@@ -63,6 +63,8 @@ public class QuoridorWindow extends JFrame {
 	public Color mainScreenBackgroundColor = new Color(208,238,255); 
 	public Color boardBackgroundColor = mainScreenBackgroundColor;
 	public Color tileColor = new Color(255,206,202);
+	
+	public Color placedWallColor = Color.LIGHT_GRAY;
 	private int fontSize = 15;
 	private String font = "Raanana";
 
@@ -1102,18 +1104,18 @@ public class QuoridorWindow extends JFrame {
 											//Set that conflict horizontal wall to black
 											int row = Controller.returnInvalidWallRow(currentTile, Direction.Horizontal); 
 											int column = Controller.returnInvalidWallColumn(currentTile,Direction.Horizontal); 
-											hWalls[row][column].setBackground(Color.black);
-											wallCenters[row][column].setBackground(Color.black);
-											hWalls[row][column + 1].setBackground(Color.black);
+											hWalls[row][column].setBackground(placedWallColor);
+											wallCenters[row][column].setBackground(placedWallColor);
+											hWalls[row][column + 1].setBackground(placedWallColor);
 										}
 										//Otherwise, it conflicts with a vertical wall
 										else if (Controller.returnInvalidWallDirection(currentTile,Direction.Horizontal) == Direction.Vertical) {
 											//Set that conflict vertical wall to black
 											int row = Controller.returnInvalidWallRow(currentTile, Direction.Vertical); 
 											int column = Controller.returnInvalidWallColumn(currentTile,Direction.Vertical); 
-											vWalls[row][column].setBackground(Color.black);
-											wallCenters[row][column].setBackground(Color.black);
-											vWalls[row + 1][column].setBackground(Color.black);
+											vWalls[row][column].setBackground(placedWallColor);
+											wallCenters[row][column].setBackground(placedWallColor);
+											vWalls[row + 1][column].setBackground(placedWallColor);
 										}
 									}
 								}
@@ -1132,18 +1134,18 @@ public class QuoridorWindow extends JFrame {
 											//Set that conflict horizontal wall to black
 											int row = Controller.returnInvalidWallRow(currentTile, Direction.Horizontal); 
 											int column = Controller.returnInvalidWallColumn(currentTile,Direction.Horizontal); 
-											hWalls[row][column].setBackground(Color.black);
-											wallCenters[row][column].setBackground(Color.black);
-											hWalls[row][column + 1].setBackground(Color.black);
+											hWalls[row][column].setBackground(placedWallColor);
+											wallCenters[row][column].setBackground(placedWallColor);
+											hWalls[row][column + 1].setBackground(placedWallColor);
 										}
 										//Otherwise, it conflicts with a vertical wall
 										else if (Controller.returnInvalidWallDirection(currentTile,Direction.Vertical) == Direction.Vertical) {
 											//Set that conflict vertical wall to black
 											int row = Controller.returnInvalidWallRow(currentTile, Direction.Vertical); 
 											int column = Controller.returnInvalidWallColumn(currentTile,Direction.Vertical); 
-											vWalls[row][column].setBackground(Color.black);
-											wallCenters[row][column].setBackground(Color.black);
-											vWalls[row + 1][column].setBackground(Color.black);
+											vWalls[row][column].setBackground(placedWallColor);
+											wallCenters[row][column].setBackground(placedWallColor);
+											vWalls[row + 1][column].setBackground(placedWallColor);
 										}
 									}
 								}
@@ -1170,9 +1172,9 @@ public class QuoridorWindow extends JFrame {
 										int column = Controller.returnInvalidWallColumn(currentTile,
 												Direction.Horizontal); // Get the column of the wall it conflicts with
 										// Set the conflict wall to black
-										hWalls[row][column].setBackground(Color.black);
-										wallCenters[row][column].setBackground(Color.black);
-										hWalls[row][column + 1].setBackground(Color.black);
+										hWalls[row][column].setBackground(placedWallColor);
+										wallCenters[row][column].setBackground(placedWallColor);
+										hWalls[row][column + 1].setBackground(placedWallColor);
 									}
 
 									else if (Controller.returnInvalidWallDirection(currentTile,
@@ -1189,9 +1191,9 @@ public class QuoridorWindow extends JFrame {
 										int column = Controller.returnInvalidWallColumn(currentTile,
 												Direction.Vertical); // Get the column of the wall it conflicts with
 										// Set the conflict wall to black
-										vWalls[row][column].setBackground(Color.black);
-										wallCenters[row][column].setBackground(Color.black);
-										vWalls[row + 1][column].setBackground(Color.black);
+										vWalls[row][column].setBackground(placedWallColor);
+										wallCenters[row][column].setBackground(placedWallColor);
+										vWalls[row + 1][column].setBackground(placedWallColor);
 									}
 
 								}
@@ -1217,9 +1219,9 @@ public class QuoridorWindow extends JFrame {
 								if (returnedWall != null) {
 									// Do drop wall and return the wall placed
 									// Make a wall horizontally
-									hWalls[xPos][yPos].setBackground(Color.black);
-									wallCenters[xPos][yPos].setBackground(Color.black);
-									hWalls[xPos][yPos + 1].setBackground(Color.black);
+									hWalls[xPos][yPos].setBackground(placedWallColor);
+									wallCenters[xPos][yPos].setBackground(placedWallColor);
+									hWalls[xPos][yPos + 1].setBackground(placedWallColor);
 									// Set Target tile to placed wall on board
 									isGrabWall = true;
 								} else {
@@ -1238,9 +1240,9 @@ public class QuoridorWindow extends JFrame {
 								if (returnedWall != null) {
 									// Do drop wall and return the wall placed
 									// Make a wall vertically
-									vWalls[xPos][yPos].setBackground(Color.black);
-									wallCenters[xPos][yPos].setBackground(Color.black);
-									vWalls[xPos + 1][yPos].setBackground(Color.black);
+									vWalls[xPos][yPos].setBackground(placedWallColor);
+									wallCenters[xPos][yPos].setBackground(placedWallColor);
+									vWalls[xPos + 1][yPos].setBackground(placedWallColor);
 
 									isGrabWall = true;
 								} else { // No wall move candidate exists
@@ -1438,13 +1440,13 @@ public class QuoridorWindow extends JFrame {
 
 	public void displayWall(int x, int y, Direction direction) {
 		if (direction == Direction.Horizontal) {
-			hWalls[x][y].setBackground(Color.black);
-			wallCenters[x][y].setBackground(Color.black);
-			hWalls[x][y + 1].setBackground(Color.black);
+			hWalls[x][y].setBackground(placedWallColor);
+			wallCenters[x][y].setBackground(placedWallColor);
+			hWalls[x][y + 1].setBackground(placedWallColor);
 		} else {
-			vWalls[x][y].setBackground(Color.black);
-			wallCenters[x][y].setBackground(Color.black);
-			vWalls[x + 1][y].setBackground(Color.black);
+			vWalls[x][y].setBackground(placedWallColor);
+			wallCenters[x][y].setBackground(placedWallColor);
+			vWalls[x + 1][y].setBackground(placedWallColor);
 		}
 
 	}
