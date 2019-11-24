@@ -6,10 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -168,7 +165,7 @@ public class Controller {
 	 * List of All Existing Usernames from the previous games
 	 * <p>
 	 * 
-	 * @return Array of Usernames that were previosuly used
+	 * @return Array of Usernames that were previously used
 	 * 
 	 * @author Ali Tapan
 	 * @version 1.0
@@ -529,6 +526,10 @@ public class Controller {
 			}
 		}
 
+
+		// Check validity of the new wall based on path existence
+        if(!checkIfPathExists(wallMoveCandidate.getTargetTile()))
+            return null;
 		// ----------- Now drop the wall -------
 
 		// Update parameters of game:
@@ -592,7 +593,7 @@ public class Controller {
 				System.out.println(hoveredTile);
 				System.out.println(candidateDirection);
 				System.out.println(wall);
-				if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove()) == true) {
+				if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove())|| !checkIfPathExists(hoveredTile)) {
 					
 
 					return false;
@@ -614,7 +615,7 @@ public class Controller {
 		// If there are walls on the board
 		if (getAllWallsOnBoard().size() > 0) {
 			for (Wall wall : allWallsOnBoard) {
-				if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove()) == true) {
+				if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove())) {
 					return wall.getMove().getTargetTile().getRow() - 1;
 				}
 			}
@@ -655,9 +656,9 @@ public class Controller {
 
 		List<Wall> allWallsOnBoard = getAllWallsOnBoard();
 		// If there are walls on the board
-		if (getAllWallsOnBoard().size() > 0) {
+		if (!getAllWallsOnBoard().isEmpty()) {
 			for (Wall wall : allWallsOnBoard) {
-				if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove()) == true) {
+				if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove())) {
 					return wall.getMove().getWallDirection();
 				}
 			}
@@ -733,7 +734,6 @@ public class Controller {
 	 * position
 	 * 
 	 * @author Yin
-	 * @param quoridor This is the quoridor you want to load the game into
 	 * @param fileName This is the name of the file which stores the game
 	 * 
 	 */
@@ -995,7 +995,7 @@ public class Controller {
 	 * <p>
 	 * <p>
 	 * validate if the player positions and wall positions are valid e.g.
-	 * overlapping walls or outof-track pawn or wall positions.
+	 * overlapping walls or out-of-track pawn or wall positions.
 	 * <p>
 	 * 
 	 * @author William Wang
@@ -1074,8 +1074,8 @@ public class Controller {
 	 *         wall is already placed where a new wall is wanting to be placed.
 	 *         Returns true if wall is already present.
 	 *
-	 * @param WallMove wallOnBoard
-	 * @param WallMove wallCandidate
+	 * @param wallOnBoard
+	 * @param wallCandidate
 	 * @return Boolean
 	 */
 	private static Boolean isWallAlreadyPresent(WallMove wallOnBoard, WallMove wallCandidate) {
@@ -1205,7 +1205,6 @@ public class Controller {
 	 * <p>
 	 * 
 	 * @author William Wang
-	 * @param game the current quoridor game
 	 */
 	public static void switchCurrentPlayer() {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
@@ -1263,6 +1262,37 @@ public class Controller {
 		window.setTimeRemaining(
 				(int) (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getRemainingTime().getTime()));
 
+	}
+
+	/**
+	 * Runs a path finding algorithm based on the wall move candidate location
+	 * to determine if both players are still able to reach their target destinations
+	 * from their current position
+     * @author Sam Perreault
+	 * @param hoveredTile associated with the move, to be assigned to the wall
+	 * @return true if the specified player can still reach their target destination
+	 */
+	public static boolean checkIfPathExists(Tile hoveredTile)
+	{
+	    Quoridor q = QuoridorApplication.getQuoridor();
+	    if(q.getCurrentGame().getWallMoveCandidate()==null)
+	        return false;
+	    Player p = q.getCurrentGame().getCurrentPosition().getPlayerToMove();
+	    WallMove wallMoveCandidate = q.getCurrentGame().getWallMoveCandidate();
+	    wallMoveCandidate.setTargetTile(hoveredTile);
+	    if(wallMoveCandidate.getPlayer().equals(q.getCurrentGame().getWhitePlayer()))
+	        q.getCurrentGame().getCurrentPosition().addWhiteWallsOnBoard(wallMoveCandidate.getWallPlaced());
+	    else
+	        q.getCurrentGame().getCurrentPosition().addBlackWallsOnBoard(wallMoveCandidate.getWallPlaced());
+
+	    boolean success = Controller.pathFinder(q.getCurrentGame().getWhitePlayer(), q.getCurrentGame().getCurrentPosition().getWhitePosition().getTile()) &&
+                 Controller.pathFinder(q.getCurrentGame().getBlackPlayer(), q.getCurrentGame().getCurrentPosition().getBlackPosition().getTile());
+
+	    if(wallMoveCandidate.getPlayer().equals(q.getCurrentGame().getWhitePlayer()))
+            q.getCurrentGame().getCurrentPosition().removeWhiteWallsOnBoard(wallMoveCandidate.getWallPlaced());
+        else
+            q.getCurrentGame().getCurrentPosition().removeBlackWallsOnBoard(wallMoveCandidate.getWallPlaced());
+        return success;
 	}
 
 	// Helper Methods ----------------------------
@@ -1404,25 +1434,206 @@ public class Controller {
 		Game game = new Game(GameStatus.ReadyToStart, MoveMode.PlayerMove, quoridor);
 		return game;
 	}
+
+	/**
+	 * Helper method for finding a path from the current location to the target destination
+	 * Performs recursive calls until the destination is reached, or until all possible options
+	 * from the starting square have been exhausted
+	 * @author Sam Perreault
+	 * @return a boolean value specifying whether you can or cannot reach the destination from
+	 *  the current position
+	 */
+	public static boolean pathFinder(Player p, Tile currentTile)
+	{
+        // Determine if vertical or horizontal
+        // Feed that information directly into the other methods
+        List<Wall> walls = Controller.getAllWallsOnBoard();
+        boolean[][] visited = new boolean[9][9];
+        for(boolean[] b: visited)
+        {
+            Arrays.fill(b, false);
+        }
+
+        if(p.getDestination().getDirection().equals(Direction.Vertical))
+            return pathFinderVert(p, currentTile.getRow(), currentTile.getColumn(), walls, visited);
+        else
+            return pathFinderHor(p, currentTile.getRow(), currentTile.getColumn(), walls, visited);
+	}
+
+	/**
+	 * Private helper method to calculate whether there exists a wall adjacent to the current tile
+	 * @param currentRow row of the queried tile
+	 * @param currentColumn column of the queried tile
+	 * @param walls a list of walls already placed on the board, and the candidate wall
+	 * @return a boolean array, ordering the values for the tile ABOVE, BELOW, EAST, and WEST of the
+	 * tile queried
+	 */
+	private static boolean[] checkAdjacentWalls(int currentRow, int currentColumn, List<Wall> walls)
+    {
+        // 0,1,2,3 above below,east,west
+        boolean[] sides= new boolean[4];
+        Arrays.fill(sides,false);
+        for(Wall w: walls)
+        {
+            int wCol= w.getMove().getTargetTile().getColumn();
+            int wRow= w.getMove().getTargetTile().getRow();
+            Direction dir = w.getMove().getWallDirection();
+            if(dir.equals(Direction.Horizontal) && (wCol==currentColumn-1 || wCol==currentColumn))
+            {
+                if(wRow==currentRow-1)
+                {
+                    sides[0] = true;
+                    continue;
+                }
+                if(wRow==currentRow) {
+                    sides[1] = true;
+                    continue;
+                }
+            }
+            else if(dir.equals(Direction.Vertical)&& (wRow==currentRow-1|| wRow==currentRow)) {
+                if(wCol==currentColumn-1)
+                {
+                    sides[3]=true;
+                    continue;
+                }
+                if(wCol==currentColumn)
+                {
+                    sides[2]=true;
+                    continue;
+                }
+            }
+        }
+        return sides;
+    }
+
+	/**
+	 * Helper method that searches for a path to the other side of the board
+	 * Optimizes movement for both vertical destination possibilities
+	 * @param p the current player to path to the end
+	 * @param currentRow the current row of the iteration
+	 * @param currentColumn the current column of the iteration
+	 * @param walls a list of already placed walls, as well as the candidate wall
+	 * @param visited a 2D matrix to reduce operations
+	 * @return a value of true if the current player can reach the destination
+	 */
+	private static boolean pathFinderVert(Player p, int currentRow, int currentColumn, List<Wall> walls, boolean[][] visited)
+    {
+        if(p.getDestination().getTargetNumber()==currentRow)
+            return true;
+        if(currentColumn==0|| currentColumn==10|| currentRow==0|| currentRow==10||visited[currentRow-1][currentColumn-1])
+            return false;
+        visited[currentRow-1][currentColumn-1]=true;
+        // Check the direction, then start checking for walls
+        boolean success=false;
+        boolean[] sides = Controller.checkAdjacentWalls(currentRow, currentColumn, walls);
+        boolean above=sides[0], below=sides[1], east=sides[2], west=sides[3];
+        //Towards the top of the board
+        // Check if walls above first, then sides after try
+
+        if(p.getDestination().getTargetNumber()==1)
+        {
+            // Tries each direction, and ends method calls if there is a successful path
+            if(!above)
+                success = pathFinderVert(p, currentRow-1, currentColumn, walls,visited);
+            if(success)
+                return true;
+            if(!east)
+                success = pathFinderVert(p, currentRow, currentColumn+1, walls,visited);
+            if(success)
+                return true;
+            if(!west)
+                success = pathFinderVert(p, currentRow, currentColumn-1, walls,visited);
+            if(success)
+                return true;
+            if(!below)
+                success = pathFinderVert(p, currentRow+1, currentColumn, walls,visited);
+            return success;
+        }
+        else if(p.getDestination().getTargetNumber()==9)
+        {
+            // Tries each direction, and ends method calls if there is a successful path
+            if(!below)
+                success = pathFinderVert(p, currentRow+1, currentColumn, walls,visited);
+            if(success)
+                return true;
+            if(!east)
+                success = pathFinderVert(p, currentRow, currentColumn+1, walls,visited);
+            if(success)
+                return true;
+            if(!west)
+                success = pathFinderVert(p, currentRow, currentColumn-1, walls,visited);
+            if(success)
+                return true;
+            if(!above)
+                success = pathFinderVert(p, currentRow-1, currentColumn, walls,visited);
+            return success;
+        }
+        // This line reach iff pathfinding fails
+        return false;
+    }
+
+	/**
+	 * Helper method that searches for a path to the other side of the board
+	 * Optimizes movement for both horizontal destination possibilities
+	 * @param p the current player to path to the end
+	 * @param currentRow the current row of the iteration
+	 * @param currentColumn the current column of the iteration
+	 * @param walls a list of already placed walls, as well as the candidate wall
+	 * @param visited a 2D matrix to reduce operations
+	 * @return a value of true if the current player can reach the destination
+	 */
+    private static boolean pathFinderHor(Player p, int currentRow, int currentColumn, List<Wall> walls, boolean[][] visited)
+    {
+        if(p.getDestination().getTargetNumber()==currentColumn)
+            return true;
+        if(visited[currentRow-1][currentColumn-1]||currentColumn==0|| currentColumn==10|| currentRow==0|| currentRow==10)
+            return false;
+        visited[currentRow-1][currentColumn-1]=true;
+        // Check the direction, then start checking for walls
+        boolean success=false;
+        boolean[] sides = Controller.checkAdjacentWalls(currentRow, currentColumn, walls);
+        boolean above=sides[0], below=sides[1], east=sides[2], west=sides[3];
+        //Towards the top of the board
+
+        if(p.getDestination().getTargetNumber()==1)
+        {
+            // Tries each direction, and ends method calls if there is a successful path
+            if(!west)
+                success = pathFinderHor(p, currentRow, currentColumn-1, walls,visited);
+            if(success)
+                return true;
+            if(!below)
+                success = pathFinderHor(p, currentRow+1, currentColumn, walls,visited);
+            if(success)
+                return true;
+            if(!above)
+                success = pathFinderHor(p, currentRow-1, currentColumn, walls,visited);
+            if(success)
+                return true;
+            if(!east)
+                success = pathFinderHor(p, currentRow, currentColumn+1, walls,visited);
+            return success;
+        }
+        else if(p.getDestination().getTargetNumber()==9)
+        {
+            // Tries each direction, and ends method calls if there is a successful path
+            if(!east)
+                success = pathFinderHor(p, currentRow, currentColumn+1, walls,visited);
+            if(success)
+                return true;
+            if(!below)
+                success = pathFinderHor(p, currentRow+1, currentColumn, walls,visited);
+            if(success)
+                return true;
+            if(!above)
+                success = pathFinderHor(p, currentRow-1, currentColumn, walls,visited);
+            if(success)
+                return true;
+            if(!west)
+                success = pathFinderHor(p, currentRow, currentColumn-1, walls,visited);
+            return success;
+        }
+        // This line reach iff pathfinding fails
+        return false;
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

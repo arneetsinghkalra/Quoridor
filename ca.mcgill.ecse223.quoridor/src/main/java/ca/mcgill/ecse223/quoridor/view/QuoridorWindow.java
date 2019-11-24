@@ -1019,7 +1019,7 @@ public class QuoridorWindow extends JFrame {
 								// If it s a horizontal wall in hand
 								if (Controller.returnWallMoveDirection() == Direction.Horizontal) { 
 									// If it is in a valid position
-									if (Controller.hoveredWallIsValid(currentTile,Controller.returnWallMoveDirection()) == true) { 
+									if (Controller.hoveredWallIsValid(currentTile, Controller.returnWallMoveDirection())) {
 										//Set it to Green 
 										setWallToGreen(xPos, yPos);
 									} 
@@ -1045,7 +1045,13 @@ public class QuoridorWindow extends JFrame {
 											wallCenters[row][column].setBackground(Color.red);
 											vWalls[row + 1][column].setBackground(Color.red);
 										}
-										
+										//Else if the conflict is due to blocking the path for either player, set vertical wall as red
+                                        else if(!Controller.checkIfPathExists(currentTile)) {
+                                            // Sets based on current location
+                                            hWalls[xPos][yPos].setBackground(Color.red);
+                                            wallCenters[xPos][yPos].setBackground(Color.red);
+                                            hWalls[xPos][yPos + 1].setBackground(Color.red);
+                                        }
 									}
 								}
 								
@@ -1078,6 +1084,13 @@ public class QuoridorWindow extends JFrame {
 											wallCenters[row][column].setBackground(Color.red);
 											vWalls[row + 1][column].setBackground(Color.red);
 										}
+										//Else if the conflict is due to blocking the path for either player, set vertical wall as red
+										else if(!Controller.checkIfPathExists(currentTile)) {
+											// Sets based on current location
+											vWalls[xPos][yPos].setBackground(Color.red);
+											wallCenters[xPos][yPos].setBackground(Color.red);
+											vWalls[xPos+1][yPos].setBackground(Color.red);
+										}
 									}
 								}
 							} else { // If no wall move candidate, do nothing
@@ -1093,7 +1106,7 @@ public class QuoridorWindow extends JFrame {
 								// If wall in hand is horizontal
 								if (Controller.returnWallMoveDirection() == Direction.Horizontal) { 
 									//If horizontal wall is in a valid position
-									if (Controller.hoveredWallIsValid(currentTile, Direction.Horizontal) == true) { 
+									if (Controller.hoveredWallIsValid(currentTile, Direction.Horizontal)|| !Controller.checkIfPathExists(currentTile)) {
 										//Set it to board background color
 										setWallToBoardBackgroundColor(xPos, yPos);
 									}
@@ -1123,7 +1136,7 @@ public class QuoridorWindow extends JFrame {
 								// Else the Wall in hand is Vertical 
 								else { 
 									//If it is in a valid position
-									if (Controller.hoveredWallIsValid(currentTile, Direction.Vertical) == true) {
+									if (Controller.hoveredWallIsValid(currentTile, Direction.Vertical) || !Controller.checkIfPathExists(currentTile)) {
 										//Set the vertical wall to board background again
 										setWallToBoardBackgroundColor(xPos, yPos);
 									} 
