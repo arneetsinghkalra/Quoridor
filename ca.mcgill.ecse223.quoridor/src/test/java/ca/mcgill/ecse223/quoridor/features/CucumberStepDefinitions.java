@@ -1472,23 +1472,23 @@ public class CucumberStepDefinitions {
 	@And("The player is located at {int}:{int}")
 	public void the_player_is_located_at(int prow, int pcol) {
 		//Get Player whose turn it is
-		Player currentPlayer = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getPlayerToMove();
+		Player currentPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
 		
 		//Calculate tile index of target tile
 		int tileIndex = ((prow - 1) * 9 + (pcol - 1));
-		Tile targetPosition = QuoridorApplication.getQuordior().getBoard().getTile(tileIndex);
+		Tile targetPosition = QuoridorApplication.getQuoridor().getBoard().getTile(tileIndex);
 		
 		// If it is black players turn
-		if (currentPlayer == QuoridorApplication.getQuordior().getCurrentGame().getBlackPlayer()) {
+		if (currentPlayer == QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer()) {
 			//Set the players position to target position
-			PlayerPosition currentPlayerPosition = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getBlackPosition();
+			PlayerPosition currentPlayerPosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition();
 			currentPlayerPosition.setTile(targetPosition);
 		}
 
 		// If it is white players turn
-		if (currentPlayer == QuoridorApplication.getQuordior().getCurrentGame().getWhitePlayer()) {
+		if (currentPlayer == QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer()) {
 			//Set the players position to target position
-			PlayerPosition currentPlayerPosition = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getWhitePosition();
+			PlayerPosition currentPlayerPosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition();
 			currentPlayerPosition.setTile(targetPosition);
 		}
 	}
@@ -1500,25 +1500,25 @@ public class CucumberStepDefinitions {
 	@And("The opponent is located at {int}:{int}")
 	public void the_opponent_is_located_at(Integer orow, Integer ocol) {
 		//Get Player whose turn it is
-				Player currentPlayer = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getPlayerToMove();
+				Player currentPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
 				Player opponent;
 				
 				//Set the opponent to the opposite of the current player to move
-				if (currentPlayer == QuoridorApplication.getQuordior().getCurrentGame().getBlackPlayer()) {
-					opponent = QuoridorApplication.getQuordior().getCurrentGame().getWhitePlayer(); 
+				if (currentPlayer == QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer()) {
+					opponent = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
 				}
 				else {
-					opponent = QuoridorApplication.getQuordior().getCurrentGame().getBlackPlayer(); 
+					opponent = QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer();
 				}
 				
 				//Calculate tile index of target tile
 				int tileIndex = ((orow - 1) * 9 + (ocol - 1));
-				Tile targetPosition = QuoridorApplication.getQuordior().getBoard().getTile(tileIndex);
+				Tile targetPosition = QuoridorApplication.getQuoridor().getBoard().getTile(tileIndex);
 
 				// If opponent is black, set their position
-				if (opponent == QuoridorApplication.getQuordior().getCurrentGame().getBlackPlayer()) {
+				if (opponent == QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer()) {
 					//Set the players position to target position
-					PlayerPosition opponentPosition = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getBlackPosition();
+					PlayerPosition opponentPosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition();
 					opponentPosition.setPlayer(currentPlayer);
 					opponentPosition.setTile(targetPosition);
 				}
@@ -1526,7 +1526,7 @@ public class CucumberStepDefinitions {
 				// If opponent is white, set their position.
 				else {
 					//Set the players position to target position
-					PlayerPosition opponentPosition = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getWhitePosition();
+					PlayerPosition opponentPosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition();
 					opponentPosition.setPlayer(currentPlayer);
 					opponentPosition.setTile(targetPosition);
 				}
@@ -1539,7 +1539,7 @@ public class CucumberStepDefinitions {
 	@And("There are no {string} walls {string} from the player nearby")
 	public void there_are_no_walls_from_the_player_nearby(String direction, String side) {		
 		//Current Position variable
-		GamePosition currentGamePosition = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition();
+		GamePosition currentGamePosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 		Direction dir = stringToDirection(direction);
 
 		if (side.equals("left") || side.equals("right") || side.equals("up") || side.equals("down")) {
@@ -1649,23 +1649,23 @@ public class CucumberStepDefinitions {
 	@And("Player's new position shall be {int}:{int}")
 	public void player_s_new_position_shall_be(int nrow, int ncol) {
 		// Get Player whose turn it is
-		Player currentPlayer = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getPlayerToMove();
+		Player currentPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
 		// Calculate tile index of target tile
 		int tileIndex = ((nrow - 1) * 9 + (ncol - 1));
-		Tile targetPosition = QuoridorApplication.getQuordior().getBoard().getTile(tileIndex);
+		Tile targetPosition = QuoridorApplication.getQuoridor().getBoard().getTile(tileIndex);
 
 		// If it is black players turn
 		if(legalMove) {
 			if (currentPlayer.hasGameAsWhite()) {
-				assertEquals(QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow(), nrow);
-				assertEquals(QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn(), ncol);
+				assertEquals(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow(), nrow);
+				assertEquals(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn(), ncol);
 	
 			}
 	
 			// If it is white players turn
 			if (currentPlayer.hasGameAsBlack()) {
-				assertEquals(QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow(),nrow);
-				assertEquals(QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn(),ncol);
+				assertEquals(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow(),nrow);
+				assertEquals(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn(),ncol);
 	
 			}
 		}
@@ -1707,7 +1707,7 @@ public class CucumberStepDefinitions {
 	 */
 	@Given("There is a {string} wall at {int}:{int}")
 	public void there_is_a_wall_at(String dir, Integer wrow, Integer wcol) {
-		Game currentGame = QuoridorApplication.getQuordior().getCurrentGame();
+		Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
 		Direction direction = stringToDirection(dir);
 		
 		WallMove newWallMove = createWallMoveCandidate(direction, wrow, wcol);
@@ -1726,7 +1726,7 @@ public class CucumberStepDefinitions {
 	@And("There are no {string} walls {string} from the player")
 	public void there_are_no_walls_from_the_player(String direction, String side) {
 		// Current Position variable
-		GamePosition currentGamePosition = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition();
+		GamePosition currentGamePosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 		Direction dir = stringToDirection(direction);
 
 		if (side.equals("left") || side.equals("right") || side.equals("up") || side.equals("down")) {
@@ -1751,7 +1751,7 @@ public class CucumberStepDefinitions {
 	public void the_opponent_is_not_from_the_player(String side) {
 		
 		//Just verify my logic
-		Quoridor quoridor = QuoridorApplication.getQuordior();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
 		Player currentPlayer = currentGame.getCurrentPosition().getPlayerToMove();
 		Tile currentPlayerTile;
@@ -2095,7 +2095,7 @@ public class CucumberStepDefinitions {
 
 	@Then("The final result shall be displayed")
 	public void the_final_result_shall_be_displayed() {
-		Game currentGame = QuoridorApplication.getQuordior().getCurrentGame();
+		Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
 		QuoridorApplication.quoridorWindow = new QuoridorWindow();
 		
 		//Change this to notify final result
@@ -2118,12 +2118,12 @@ public class CucumberStepDefinitions {
 
 	@And("White shall be unable to move")
 	public void white_shall_be_unable_to_move() {
-	    assertNotEquals(QuoridorApplication.getQuordior().getCurrentGame().getMoveMode(),MoveMode.PlayerMove);
+	    assertNotEquals(QuoridorApplication.getQuoridor().getCurrentGame().getMoveMode(),MoveMode.PlayerMove);
 	}
 
 	@And("Black shall be unable to move")
 	public void black_shall_be_unable_to_move() {
-	    assertNotEquals(QuoridorApplication.getQuordior().getCurrentGame().getMoveMode(),MoveMode.PlayerMove);
+	    assertNotEquals(QuoridorApplication.getQuoridor().getCurrentGame().getMoveMode(),MoveMode.PlayerMove);
 	}
 	
 	/********************
@@ -2137,8 +2137,8 @@ public class CucumberStepDefinitions {
 
 	@Then("Game result shall be {string}")
 	public void game_result_shall_be(String result) {
-		Player playerToMove =QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getPlayerToMove();
-		Player whitePlayer = QuoridorApplication.getQuordior().getCurrentGame().getWhitePlayer();
+		Player playerToMove =QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
+		Player whitePlayer = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
 
 		if(playerToMove == whitePlayer) {
 		assertEquals("BlackWon",result);

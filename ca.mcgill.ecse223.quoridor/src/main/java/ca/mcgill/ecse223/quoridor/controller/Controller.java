@@ -444,7 +444,7 @@ public class Controller {
 	 */
 	public static Direction returnWallMoveDirection() {
 
-		Direction direction = QuoridorApplication.getQuordior().getCurrentGame().getWallMoveCandidate()
+		Direction direction = QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate()
 				.getWallDirection();
 		return direction;
 	}
@@ -456,7 +456,7 @@ public class Controller {
 	 * @return WallMove wallMoveCandidate
 	 */
 	public static WallMove returnWallMoveCandidate() {
-		WallMove wallMoveCandidate = QuoridorApplication.getQuordior().getCurrentGame().getWallMoveCandidate();
+		WallMove wallMoveCandidate = QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate();
 		return wallMoveCandidate;
 	}
 
@@ -675,7 +675,7 @@ public class Controller {
 
 	public static void setDroppedWallTileToCandidate(int row, int col) {
 		Tile targetTile = QuoridorApplication.getQuoridor().getBoard().getTile((row) * 9 + col);
-		QuoridorApplication.getQuordior().getCurrentGame().getWallMoveCandidate().setTargetTile(targetTile);
+		QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate().setTargetTile(targetTile);
 	}
 	
 	/**
@@ -1372,7 +1372,7 @@ public class Controller {
 	public static boolean overlappingWallsExist(Integer row, Integer column) {
 
 		// Get all the walls already on the board
-		GamePosition currentGamePosition = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition();
+		GamePosition currentGamePosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 
 		List<Wall> blackWallsOnBoard = currentGamePosition.getBlackWallsOnBoard();
 		List<Wall> whiteWallsOnBoard = currentGamePosition.getWhiteWallsOnBoard();
@@ -1415,7 +1415,7 @@ public class Controller {
 	 * @author arneetkalra
 	 */
 	public static void resignGame() {
-		Quoridor quoridor = QuoridorApplication.getQuordior();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
 		Player resignedPlayer = currentGame.getCurrentPosition().getPlayerToMove();
 		

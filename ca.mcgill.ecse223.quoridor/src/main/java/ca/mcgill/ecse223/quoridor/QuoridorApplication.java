@@ -26,11 +26,11 @@ public class QuoridorApplication {
     });
 	}
 	
-	public static Quoridor getQuordior() {
-		if (quoridor == null) {
-			// load model
-			quoridor = QuoridorPersistence.load();
-		}
- 		return quoridor;
-	}
+//	public static Quoridor getQuordior() {
+//		if (quoridor == null) {
+//			// load model
+//			quoridor = QuoridorPersistence.load();
+//		}
+// 		return quoridor;
+//	}
 }
