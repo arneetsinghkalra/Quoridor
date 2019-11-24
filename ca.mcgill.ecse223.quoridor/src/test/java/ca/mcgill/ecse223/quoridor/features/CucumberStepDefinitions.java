@@ -53,6 +53,8 @@ public class CucumberStepDefinitions {
 	private boolean legalMove = true;
 	private boolean userConfirms;
 	private boolean privateStatus = false;
+	private boolean whitePathExists = false;
+	private boolean blackPathExists = false;
 	Wall returnedWall;
 	ArrayList<Player> createUsersAndPlayersLoad;
 
@@ -1062,7 +1064,6 @@ public class CucumberStepDefinitions {
 	 *
 	 * @author Yin Zhang 260726999
 	 * @param player
-	 * @param direction
 	 * @param row
 	 * @param column
 	 */
@@ -1719,8 +1720,8 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * @author arneetkalra
-	 * @param string
-	 * @param string2
+	 * @param direction
+	 * @param side
 	 */
 	@And("There are no {string} walls {string} from the player")
 	public void there_are_no_walls_from_the_player(String direction, String side) {
@@ -1744,7 +1745,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * @author arneetkalra
-	 * @param string
+	 * @param side
 	 */
 	@Given("The opponent is not {string} from the player")
 	public void the_opponent_is_not_from_the_player(String side) {
@@ -1826,7 +1827,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * @author arneetkalra
-	 * @param string
+	 * @param side
 	 */
 	@Given("My opponent is not {string} from the player")
 	public void my_opponent_is_not_from_the_player(String side) {
@@ -1837,39 +1838,81 @@ public class CucumberStepDefinitions {
 	/*****************************
 	 * Check if path exists feature
 	 *****************************/
+
+	/** @author Sam Perreault */
 	@Given("A {string} wall move candidate exists at position {int}:{int}")
 	public void a_wall_move_candidate_exists_at_position(String string, Integer int1, Integer int2) {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
+	    Quoridor q = QuoridorApplication.getQuoridor();
+	    q.getCurrentGame().getWhitePlayer().getDestination().setDirection(Direction.Vertical);
+	    q.getCurrentGame().getWhitePlayer().getDestination().setTargetNumber(1);
+	    q.getCurrentGame().getBlackPlayer().getDestination().setTargetNumber(9);
+	    q.getCurrentGame().getBlackPlayer().getDestination().setDirection(Direction.Vertical);
+	    WallMove wmc;
+		if(string.equals("vertical"))
+	    	wmc = this.createWallMoveCandidate(Direction.Vertical, int1, int2);
+		else
+			wmc = this.createWallMoveCandidate(Direction.Horizontal, int1, int2);
+		q.getCurrentGame().setWallMoveCandidate(wmc);
+		q.getCurrentGame().getCurrentPosition().addWhiteWallsOnBoard(wmc.getWallPlaced());
 	}
 
+	/** @author Sam Perreault */
 	@And("The black player is located at {int}:{int}")
-	public void the_black_player_is_located_at(Integer int1, Integer int2) {
+	public void the_black_player_is_located_at(Integer row, Integer col) {
 	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
+		Quoridor q = QuoridorApplication.getQuoridor();
+		Tile t = q.getBoard().getTile((row-1)*9+col-1);
+		PlayerPosition p= new PlayerPosition(q.getCurrentGame().getBlackPlayer(), t);
+		q.getCurrentGame().getCurrentPosition().setBlackPosition(p);
 	}
 
+	/** @author Sam Perreault */
 	@And("The white player is located at {int}:{int}")
-	public void the_white_player_is_located_at(Integer int1, Integer int2) {
+	public void the_white_player_is_located_at(Integer row, Integer col) {
 	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
+		Quoridor q = QuoridorApplication.getQuoridor();
+		Tile t = q.getBoard().getTile((row-1)*9+col-1);
+		PlayerPosition p= new PlayerPosition(q.getCurrentGame().getWhitePlayer(), t);
+		q.getCurrentGame().getCurrentPosition().setWhitePosition(p);
 	}
 
+	/** @author Sam Perreault */
 	@When("Check path existence is initiated")
 	public void check_path_existence_is_initiated() {
 	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
+		Quoridor q = QuoridorApplication.getQuoridor();
+		whitePathExists = Controller.pathFinder(q.getCurrentGame().getWhitePlayer(), q.getCurrentGame().getCurrentPosition().getWhitePosition().getTile());
+		blackPathExists = Controller.pathFinder(q.getCurrentGame().getBlackPlayer(), q.getCurrentGame().getCurrentPosition().getBlackPosition().getTile());
 	}
 
+	/** @author Sam Perreault */
 	@Then("Path is available for {string} player\\(s)")
 	public void path_is_available_for_player_s(String string) {
 	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
+	    switch(string) {
+			case "both":
+				assertTrue(whitePathExists&&blackPathExists);
+				break;
+			case "white":
+				assertTrue(whitePathExists);
+				assertFalse(blackPathExists);
+				break;
+			case "black":
+				assertTrue(blackPathExists);
+				assertFalse(whitePathExists);
+				break;
+			case "none":
+				assertFalse(whitePathExists||blackPathExists);
+				break;
+			default:
+				fail();
+				break;
+		}
 	}
 	
 
 	/*****************************
-	 * Check if path exists feature
+	 * Enter replay mode feature
 	 *****************************/
 
 	@When("I initiate replay mode")
@@ -2275,8 +2318,8 @@ public class CucumberStepDefinitions {
 		// Gets this Board for the Tile
 		Board currentBoard = quoridor.getBoard();
 
-		currentPlayer.numberOfWalls();
-		Wall currentWall = currentPlayer.getWall(1);
+		int numWalls = currentPlayer.numberOfWalls();
+		Wall currentWall = currentPlayer.getWall(numWalls-1);
 
 		Tile currentTile = currentBoard.getTile((row - 1) * 9 + col - 1);
 

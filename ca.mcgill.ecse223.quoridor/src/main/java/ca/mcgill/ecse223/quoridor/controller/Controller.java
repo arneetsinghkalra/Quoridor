@@ -1462,6 +1462,7 @@ public class Controller {
 
 	/**
 	 * Private helper method to calculate whether there exists a wall adjacent to the current tile
+	 * @author Sam Perreault
 	 * @param currentRow row of the queried tile
 	 * @param currentColumn column of the queried tile
 	 * @param walls a list of walls already placed on the board, and the candidate wall
@@ -1509,6 +1510,7 @@ public class Controller {
 	/**
 	 * Helper method that searches for a path to the other side of the board
 	 * Optimizes movement for both vertical destination possibilities
+	 * @author Sam Perreault
 	 * @param p the current player to path to the end
 	 * @param currentRow the current row of the iteration
 	 * @param currentColumn the current column of the iteration
@@ -1575,6 +1577,7 @@ public class Controller {
 	/**
 	 * Helper method that searches for a path to the other side of the board
 	 * Optimizes movement for both horizontal destination possibilities
+	 * @author Sam Perreault
 	 * @param p the current player to path to the end
 	 * @param currentRow the current row of the iteration
 	 * @param currentColumn the current column of the iteration
@@ -1586,7 +1589,7 @@ public class Controller {
     {
         if(p.getDestination().getTargetNumber()==currentColumn)
             return true;
-        if(visited[currentRow-1][currentColumn-1]||currentColumn==0|| currentColumn==10|| currentRow==0|| currentRow==10)
+        if(currentColumn==0|| currentColumn==10|| currentRow==0|| currentRow==10||visited[currentRow-1][currentColumn-1])
             return false;
         visited[currentRow-1][currentColumn-1]=true;
         // Check the direction, then start checking for walls
