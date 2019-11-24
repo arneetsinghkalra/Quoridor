@@ -2122,8 +2122,33 @@ public class CucumberStepDefinitions {
 	}
 	
 
-	
+	// **************************************************************************
+	// Feature - LoadGame - Implemented by Ali Tapan - 260556540
+	// **************************************************************************
 
+	
+	@When("I initiate to load a game in {string}")
+	public void i_initiate_to_load_a_game(String fileName) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		
+		Controller.loadGame(fileName);
+	}
+	
+	@And("Each game move is valid")
+	public void each_game_move_is_valid() {
+		
+	}
+	
+	@And("The game has no final results")
+	public void the_game_has_no_final_results() {
+		
+	}
+	
+	// **************************************************************************
+	// Feature - Enter Replay Mode - Implemented by Ali Tapan - 260556540
+	// **************************************************************************
+	
+	
 	// ***********************************************
 	// Clean up
 	// ***********************************************

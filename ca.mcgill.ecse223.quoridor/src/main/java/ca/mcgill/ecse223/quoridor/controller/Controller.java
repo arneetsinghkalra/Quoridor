@@ -1404,6 +1404,20 @@ public class Controller {
 		Game game = new Game(GameStatus.ReadyToStart, MoveMode.PlayerMove, quoridor);
 		return game;
 	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public static void loadGame(String fileName) {
+		// TODO Auto-generated method stub
+		
+	}
 }
 
 
