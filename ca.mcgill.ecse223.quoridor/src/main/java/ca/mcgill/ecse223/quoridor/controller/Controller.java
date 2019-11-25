@@ -1393,10 +1393,10 @@ public class Controller {
 		
 		//Set the current game status to the winner
 		if (resignedPlayer == currentGame.getBlackPlayer()) {
-		currentGame.setGameStatus(GameStatus.WhiteWon);
+			currentGame.setGameStatus(GameStatus.WhiteWon);
 		} 
 		else {
-		currentGame.setGameStatus(GameStatus.BlackWon);
+			currentGame.setGameStatus(GameStatus.BlackWon);
 		}
 		reportFinalResult();
 	}
@@ -1406,7 +1406,24 @@ public class Controller {
 	 */
 	public static void reportFinalResult() {
 		QuoridorWindow window = QuoridorApplication.quoridorWindow;
-		window.notifyFinalResult();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game currentGame = quoridor.getCurrentGame();
+
+		setGameToNotRunning();
+		
+		if (currentGame.getGameStatus() == GameStatus.WhiteWon) {
+			window.notifyWhiteWon();
+		}
+		else if (currentGame.getGameStatus() == GameStatus.BlackWon) {
+			window.notifyBlackWon();
+
+		}
+		else if (currentGame.getGameStatus() == GameStatus.Draw) {
+			window.notifyDraw();
+		} 
+		else {
+			System.out.println("Error");
+		}
 	}
 	
 	
@@ -1414,18 +1431,21 @@ public class Controller {
 	 * @author arneetkalra
 	 * @return
 	 */
-	
-	public static Game setGameToNotRunning() {
+	public static void setGameToNotRunning() {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game currentGame = quoridor.getCurrentGame();
+		GameStatus gameStatus = currentGame.getGameStatus();
+
 		
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		Game game = new Game(GameStatus.ReadyToStart, MoveMode.PlayerMove, quoridor);
-		return game;
-	}
-	
-	public static Quoridor setQuoridor() {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		return quoridor;
-	}
+		if ((gameStatus== GameStatus.BlackWon) ||  (gameStatus== GameStatus.WhiteWon) || (gameStatus== GameStatus.Draw) ) {
+			//Player cant move
+			currentGame.setMoveMode(MoveMode.WallMove);
+			
+		}
+		else {
+			//error
+		} 	
+	}	
 }
 
 

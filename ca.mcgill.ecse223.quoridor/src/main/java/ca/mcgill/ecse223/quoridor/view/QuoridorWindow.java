@@ -61,7 +61,7 @@ public class QuoridorWindow extends JFrame {
 	public char whitePawn = (char) 0x25A1;
 	//Main colors used everywhere
 	public Color mainScreenBackgroundColor = new Color(208,238,255); 
-	public Color boardBackgroundColor = Color.DARK_GRAY;// mainScreenBackgroundColor;
+	public Color boardBackgroundColor = mainScreenBackgroundColor;
 	public Color tileColor = new Color(255,206,202);
 	
 	public Color placedWallColor = Color.LIGHT_GRAY;
@@ -208,6 +208,10 @@ public class QuoridorWindow extends JFrame {
 
 		Box blackPlayerInfoVerticalBox = Box.createVerticalBox();
 		activeGamePanel.add(blackPlayerInfoVerticalBox, BorderLayout.WEST);
+		
+		JLabel lblExtraBlack = new JLabel(""+blackPawn);
+		lblExtraBlack.setFont(new Font(font, Font.PLAIN, fontSize));
+		blackPlayerInfoVerticalBox.add(lblExtraBlack);
 
 		lblBlackPlayerName = new JLabel("Black Player");
 		lblBlackPlayerName.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -225,9 +229,7 @@ public class QuoridorWindow extends JFrame {
 		lblTimeLeftBlack.setFont(new Font(font, Font.PLAIN, fontSize));
 		blackPlayerInfoVerticalBox.add(lblTimeLeftBlack);
 
-		JLabel lblExtraBlack = new JLabel(" ... ");
-		lblExtraBlack.setFont(new Font(font, Font.PLAIN, fontSize));
-		blackPlayerInfoVerticalBox.add(lblExtraBlack);
+		
 		
 		JButton btnGrabButtonBlack = new JButton("Grab wall");
 		btnGrabButtonBlack.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -314,11 +316,18 @@ public class QuoridorWindow extends JFrame {
 
 		Box whitePlayerInfoVerticalBox = Box.createVerticalBox();
 		activeGamePanel.add(whitePlayerInfoVerticalBox, BorderLayout.EAST);
+		
+		JLabel lblExtraWhite = new JLabel("White "+whitePawn);
+		lblExtraWhite.setAlignmentX(Component.CENTER_ALIGNMENT);
+		lblExtraWhite.setFont(new Font(font, Font.PLAIN, fontSize));
+		lblExtraWhite.setForeground(Color.white);
+		whitePlayerInfoVerticalBox.add(lblExtraWhite);
+		
 		whitePlayerName = new JLabel("White Player");
 		whitePlayerName.setAlignmentX(Component.CENTER_ALIGNMENT);
 		whitePlayerName.setFont(new Font(font, Font.PLAIN, fontSize));
 		whitePlayerInfoVerticalBox.add(whitePlayerName);
-
+		
 		JLabel lblWallsLeft_White = new JLabel("Walls Left = ");
 		lblWallsLeft_White.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lblWallsLeft_White.setFont(new Font(font, Font.PLAIN, fontSize));
@@ -329,11 +338,6 @@ public class QuoridorWindow extends JFrame {
 		lblTotalTimeLeftWhite.setFont(new Font(font, Font.PLAIN, fontSize));
 		whitePlayerInfoVerticalBox.add(lblTotalTimeLeftWhite);
 
-		JLabel lblExtraWhite = new JLabel(" ... ");
-		lblExtraWhite.setAlignmentX(Component.CENTER_ALIGNMENT);
-		lblExtraWhite.setAlignmentY(Component.TOP_ALIGNMENT);
-		lblExtraWhite.setFont(new Font(font, Font.PLAIN, fontSize));
-		whitePlayerInfoVerticalBox.add(lblExtraWhite);
 		
 		JButton btnGrabButtonWhite = new JButton("Grab wall");
 		btnGrabButtonWhite.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -1497,19 +1501,6 @@ public class QuoridorWindow extends JFrame {
 	public static void notifyGrabAWall() {
 		JOptionPane.showMessageDialog(null, "Grab a Wall First!", "", JOptionPane.PLAIN_MESSAGE);
 	}
-	
-	/**
-	 * @author arneetkalra
-	 */
-	public void notifyFinalResult() {
-		Object[] finalResultOptionButtons = {"3rd Option", "Replay Mode", "New Game"};
-		JOptionPane.showOptionDialog(null, "Game Over", "The Game's Over!",
-				JOptionPane.YES_NO_CANCEL_OPTION,
-				JOptionPane.PLAIN_MESSAGE,
-				null,
-				finalResultOptionButtons,
-				finalResultOptionButtons[2]);
-	}
 
 	class ImagePanel extends JPanel {
 
@@ -1547,5 +1538,52 @@ public class QuoridorWindow extends JFrame {
 		}
 
 	}
+
 	
+	
+	
+	
+	
+	
+	/**
+	 * @author arneetkalra
+	 */
+	public void notifyWhiteWon() {
+		Image whiteImage= new ImageIcon("src/main/resources/whitePawn.png").getImage().getScaledInstance(180, 300, Image.SCALE_SMOOTH);
+		ImageIcon whitePawnIcon = new ImageIcon(whiteImage);
+		
+		Object[] finalResultOptionButtons = {"3rd Option", "Replay Mode", "New Game"};
+		JOptionPane.showOptionDialog(null, "Congraulations White Player, you win!", "White Wins",
+				JOptionPane.YES_NO_CANCEL_OPTION,
+				JOptionPane.PLAIN_MESSAGE,
+				whitePawnIcon,
+				finalResultOptionButtons,
+				finalResultOptionButtons[2]);
+	}
+	public void notifyBlackWon() {
+		Image blackImage= new ImageIcon("src/main/resources/blackPawn.png").getImage().getScaledInstance(180, 300, Image.SCALE_SMOOTH);
+		ImageIcon blackPawnIcon = new ImageIcon(blackImage);
+		
+		Object[] finalResultOptionButtons = {"3rd Option", "Replay Mode", "New Game"};
+		JOptionPane.showOptionDialog(null,"Congraulations Black Player, you win!", "Black Wins",
+				JOptionPane.YES_NO_CANCEL_OPTION,
+				JOptionPane.PLAIN_MESSAGE,
+				blackPawnIcon,
+				finalResultOptionButtons,
+				finalResultOptionButtons[2]);
+	}
+
+	public void notifyDraw() {
+		Image drawImage= new ImageIcon("src/main/resources/draw.png").getImage().getScaledInstance(180, 300, Image.SCALE_SMOOTH);
+		ImageIcon drawIcon = new ImageIcon(drawImage);
+		
+		Object[] finalResultOptionButtons = {"3rd Option", "Replay Mode", "New Game"};
+
+		JOptionPane.showOptionDialog(null, "What a Game! It's a draw!", "Draw",
+				JOptionPane.YES_NO_CANCEL_OPTION,
+				JOptionPane.PLAIN_MESSAGE,
+				drawIcon,
+				finalResultOptionButtons,
+				finalResultOptionButtons[2]);
+	}	
 }

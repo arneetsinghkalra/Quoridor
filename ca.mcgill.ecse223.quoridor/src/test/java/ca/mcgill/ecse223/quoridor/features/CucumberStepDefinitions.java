@@ -2063,6 +2063,7 @@ public class CucumberStepDefinitions {
 	public void white_s_clock_shall_not_be_counting_down() {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
         QuoridorWindow window = QuoridorApplication.quoridorWindow;
+        
         assertFalse(window.getIsTimerActive());
 	}
 
@@ -2296,6 +2297,4 @@ public class CucumberStepDefinitions {
 		Player player = new Player(new Time(thinkingTime), User.getWithName(username), 9, Direction.Horizontal);
 		return player;
 	}
-
-
 }
