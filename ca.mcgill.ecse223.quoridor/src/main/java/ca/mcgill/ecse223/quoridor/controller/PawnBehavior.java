@@ -389,7 +389,7 @@ public class PawnBehavior {
 	 */
 	// line 36 "../../../../../PawnStateMachine.ump"
 	public static boolean isLegalStep(MoveDirection dir) {
-		Quoridor quoridor = QuoridorApplication.getQuordior();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		currentGame = quoridor.getCurrentGame();
 		int originalBlackColumn = currentGame.getCurrentPosition().getBlackPosition().getTile().getColumn();
 		int originalBlackRow = currentGame.getCurrentPosition().getBlackPosition().getTile().getRow();
@@ -756,7 +756,7 @@ public class PawnBehavior {
 	 */
 	// line 38 "../../../../../PawnStateMachine.ump"
 	public static boolean isLegalJump(MoveDirection dir) {
-		Quoridor quoridor = QuoridorApplication.getQuordior();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
 		boolean isWhite = currentPlayer.hasGameAsWhite();
 		// opponent direction
@@ -853,7 +853,7 @@ public class PawnBehavior {
 	}
 
 	public static boolean isWallAt(int row, int column, Direction dir) {
-		Quoridor quoridor = QuoridorApplication.getQuordior();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		List<Wall> blackWalls = quoridor.getCurrentGame().getCurrentPosition().getBlackWallsOnBoard();
 		List<Wall> whiteWalls = quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsOnBoard();
 		for (Wall w : blackWalls) {
@@ -877,7 +877,7 @@ public class PawnBehavior {
 	 */
 	// line 38 "../../../../../PawnStateMachine.ump"
 	public static boolean isWallBehind(MoveDirection dir) {
-		Quoridor quoridor = QuoridorApplication.getQuordior();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
 		boolean isWhite = currentPlayer.hasGameAsWhite();
 		// opponent position
@@ -940,7 +940,7 @@ public class PawnBehavior {
 		}
 
 		// legal jump
-		Quoridor quoridor = QuoridorApplication.getQuordior();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
 		GamePosition currentPosition = currentGame.getCurrentPosition();
 		Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
@@ -1012,7 +1012,7 @@ public class PawnBehavior {
 	public static boolean moveOrJump(MoveDirection dir) {
 		//if target direction has an opponent
 		boolean adjOpponent = false;
-		Quoridor quoridor = QuoridorApplication.getQuordior();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		boolean isWhite = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().hasGameAsWhite();
 		Tile playerTile = null;
 		Tile opponentTile = null;

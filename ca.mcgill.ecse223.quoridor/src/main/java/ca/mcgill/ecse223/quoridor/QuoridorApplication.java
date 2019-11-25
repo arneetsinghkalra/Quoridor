@@ -16,7 +16,7 @@ public class QuoridorApplication {
  		return quoridor;
 	}
 
-	// TODO add main method here
+
 	public static void main(String[] args) {
 	java.awt.EventQueue.invokeLater(new Runnable() {
         public void run() {
@@ -25,7 +25,7 @@ public class QuoridorApplication {
         }
     });
 	}
-	
+	/*
 	public static Quoridor getQuordior() {
 		if (quoridor == null) {
 			// load model
@@ -33,4 +33,5 @@ public class QuoridorApplication {
 		}
  		return quoridor;
 	}
+	*/
 }
