@@ -1455,11 +1455,13 @@ public class CucumberStepDefinitions {
 		}
 	}
 	
-	/**********************
-	 * ***********************
-	 * Sprint 4 Step Defintions
-	 * *********************
-	 * ********************/
+	//*****************************************************************************//
+	//*****************************************************************************//
+	
+	//------------------------- Sprint 4 Step Definitions -------------------------//
+	
+	//*****************************************************************************//
+	//*****************************************************************************//
 
 	// Jump Pawn Feature
 
@@ -1491,11 +1493,11 @@ public class CucumberStepDefinitions {
 			currentPlayerPosition.setTile(targetPosition);
 		}
 	}
-/**
- * @author arneetkalra
- * @param orow
- * @param ocol
- */
+	/**
+	 * @author arneetkalra
+	 * @param orow
+	 * @param ocol
+	 */
 	@And("The opponent is located at {int}:{int}")
 	public void the_opponent_is_located_at(Integer orow, Integer ocol) {
 		//Get Player whose turn it is
@@ -1530,11 +1532,11 @@ public class CucumberStepDefinitions {
 					opponentPosition.setTile(targetPosition);
 				}
 	}
-/**
- * @author arneetkalra
- * @param direction
- * @param side
- */
+	/**
+	 * @author arneetkalra
+	 * @param direction
+	 * @param side
+	 */
 	@And("There are no {string} walls {string} from the player nearby")
 	public void there_are_no_walls_from_the_player_nearby(String direction, String side) {		
 		//Current Position variable
@@ -1554,10 +1556,10 @@ public class CucumberStepDefinitions {
 			allWallsOnBoard.clear();
 		}
 	}
-/**
- * @author William Wang
-
- */
+	/**
+	 * @author William Wang
+	
+	 */
 	@When("Player {string} initiates to move {string}")
 	public void player_initiates_to_move(String playerName, String jumpDirection) {
 		//When definition!!! Call a method in state machine
@@ -1715,7 +1717,7 @@ public class CucumberStepDefinitions {
 		currentGame.getCurrentPosition().addWhiteWallsOnBoard(aWall);
 	}
 
-				//Move Pawn  ------------------------
+	//------------------------Move Pawn------------------------//
 
 	/**
 	 * @author arneetkalra
@@ -1868,75 +1870,7 @@ public class CucumberStepDefinitions {
 	}
 	
 
-	/*****************************
-	 * Check if path exists feature
-	 *****************************/
-
-	@When("I initiate replay mode")
-	public void i_initiate_replay_mode() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
-	}
-
-	@Then("The game shall be in replay mode")
-	public void the_game_shall_be_in_replay_mode() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
-	}
-
-	@Given("The game is replay mode")
-	public void the_game_is_replay_mode() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
-	}
-
-	@Given("The following moves have been played in game:")
-	public void the_following_moves_have_been_played_in_game(io.cucumber.datatable.DataTable dataTable) {
-		// Write code here that turns the phrase above into concrete actions
-		// For automatic transformation, change DataTable to one of
-		// E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or
-		// Map<K, List<V>>. E,K,V must be a String, Integer, Float,
-		// Double, Byte, Short, Long, BigInteger or BigDecimal.
-		//
-		// For other transformations you can register a DataTableType.
-		throw new cucumber.api.PendingException();
-	}
-
-	@And("The game does not have a final result")
-	public void the_game_does_not_have_a_final_result() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
-	}
-
-	@And("The next move is {double}")
-	public void the_next_move_is(Double double1) {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
-	}
-
-	@When("I initiate to continue game")
-	public void i_initiate_to_continue_game() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
-	}
-
-	@And("The remaining moves of the game shall be removed")
-	public void the_remaining_moves_of_the_game_shall_be_removed() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
-	}
-
-	@And("The game has a final result")
-	public void the_game_has_a_final_result() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
-	}
-
-	@And("I shall be notified that finished games cannot be continued")
-	public void i_shall_be_notified_that_finished_games_cannot_be_continued() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
-	}
+	
 	
 	/*****************************
 	 * Identify Game Drawn Feature
@@ -2121,7 +2055,82 @@ public class CucumberStepDefinitions {
 		throw new cucumber.api.PendingException();
 	}
 	
+	// **************************************************************************
+	// Feature - Enter Replay Mode - Implemented by Ali Tapan - 260556540
+	// **************************************************************************
+		
+		@When("I initiate replay mode")
+		public void i_initiate_replay_mode() {
+			Quoridor quoridor = QuoridorApplication.getQuordior();
+			Game currentGame = quoridor.getCurrentGame();
+			currentGame = Controller.initiateReplayMode();
+		}
 
+		@Then("The game shall be in replay mode")
+		public void the_game_shall_be_in_replay_mode() {
+			Quoridor quoridor = QuoridorApplication.getQuordior();
+			Game currentGame = quoridor.getCurrentGame();
+			assertEquals(GameStatus.Replay, currentGame.getGameStatus());
+		}
+
+		@Given("The game is replay mode")
+		public void the_game_is_replay_mode() {
+			Quoridor quoridor = QuoridorApplication.getQuordior();
+			Game currentGame = quoridor.getCurrentGame();
+			currentGame.setGameStatus(GameStatus.Replay);
+		}
+
+		@Given("The following moves have been played in game:")
+		public void the_following_moves_have_been_played_in_game(io.cucumber.datatable.DataTable dataTable) {
+			// Write code here that turns the phrase above into concrete actions
+			// For automatic transformation, change DataTable to one of
+			// E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or
+			// Map<K, List<V>>. E,K,V must be a String, Integer, Float,
+			// Double, Byte, Short, Long, BigInteger or BigDecimal.
+			//
+			// For other transformations you can register a DataTableType.
+			throw new cucumber.api.PendingException();
+		}
+
+		@And("The game does not have a final result")
+		public void the_game_does_not_have_a_final_result() {
+			// Write code here that turns the phrase above into concrete actions
+			throw new cucumber.api.PendingException();
+		}
+
+		@And("The next move is {double}")
+		public void the_next_move_is(Double double1) {
+			// Write code here that turns the phrase above into concrete actions
+			throw new cucumber.api.PendingException();
+		}
+
+		@When("I initiate to continue game")
+		public void i_initiate_to_continue_game() {
+			Quoridor quoridor = QuoridorApplication.getQuordior();
+			Controller.initiateContinueGame();
+		}
+
+		@And("The remaining moves of the game shall be removed")
+		public void the_remaining_moves_of_the_game_shall_be_removed() {
+			// Write code here that turns the phrase above into concrete actions
+			throw new cucumber.api.PendingException();
+		}
+
+		@And("The game has a final result")
+		public void the_game_has_a_final_result() {
+			// Write code here that turns the phrase above into concrete actions
+			throw new cucumber.api.PendingException();
+		}
+
+		@And("I shall be notified that finished games cannot be continued")
+		public void i_shall_be_notified_that_finished_games_cannot_be_continued() {
+			Quoridor quoridor = QuoridorApplication.getQuoridor();
+			Game currentGame = quoridor.getCurrentGame();
+			
+			currentGame = Controller.initiateContinueGame(currentGame);
+			//assertEquals(GameStatus.Replay, check);
+		}
+		
 	// **************************************************************************
 	// Feature - LoadGame - Implemented by Ali Tapan - 260556540
 	// **************************************************************************
@@ -2130,23 +2139,36 @@ public class CucumberStepDefinitions {
 	@When("I initiate to load a game in {string}")
 	public void i_initiate_to_load_a_game(String fileName) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		
 		Controller.loadGame(fileName);
 	}
 	
 	@And("Each game move is valid")
 	public void each_game_move_is_valid() {
-		
+		boolean isValid = Controller.validateMoves();
 	}
 	
 	@And("The game has no final results")
 	public void the_game_has_no_final_results() {
+		Quoridor quoridor = QuoridorApplication.getQuordior();
+		Game currentGame = quoridor.getCurrentGame();
+		currentGame()
+	}
+	
+	
+	//----//
+	
+	
+	@And("The game to load has an invalid move")
+	public void the_game_to_load_has_an_invalid_move() {
 		
 	}
 	
-	// **************************************************************************
-	// Feature - Enter Replay Mode - Implemented by Ali Tapan - 260556540
-	// **************************************************************************
+	@Then("The game shall notify the user that the game file is invalid")
+	public void the_game_shall_notify_the_user_that_the_game_file_is_invalid() {
+		
+	}
+	
+	
 	
 	
 	// ***********************************************

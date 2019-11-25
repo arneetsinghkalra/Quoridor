@@ -1408,15 +1408,31 @@ public class Controller {
 	
 	
 	
-	
-	
-	
-	
-	
-	
+
 	public static void loadGame(String fileName) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public static Game initiateReplayMode() {
+		Quoridor quoridor = QuoridorApplication.getQuordior();
+		Game currentGame = quoridor.getCurrentGame();
+		currentGame.setGameStatus(GameStatus.Replay);
+		return currentGame;
+	}
+
+	public static Game initiateContinueGame(Game game) {
+		Quoridor quoridor = QuoridorApplication.getQuordior();
+		if(!identifyIfGameWon())
+		{	
+			game.setGameStatus(GameStatus.Running);
+		}
+		return game;
+	}
+
+	public static boolean validateMoves() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
 
