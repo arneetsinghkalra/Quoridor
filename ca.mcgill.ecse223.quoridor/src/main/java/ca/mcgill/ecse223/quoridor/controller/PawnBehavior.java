@@ -399,6 +399,7 @@ public class PawnBehavior {
 				.getTile((originalBlackRow - 1) * 9 + originalBlackColumn - 1);
 		Tile originalWhiteTile = currentGame.getQuoridor().getBoard()
 				.getTile((originalWhiteRow - 1) * 9 + originalWhiteColumn - 1);
+		
 		if (currentGame.getCurrentPosition().getPlayerToMove().equals(currentGame.getBlackPlayer())) {
 			if (dir == MoveDirection.North) {
 				int newRow = currentGame.getCurrentPosition().getBlackPosition().getTile().getRow() - 1;
@@ -503,7 +504,10 @@ public class PawnBehavior {
 					}
 				}
 			}
-		} else {
+		}
+		 
+		//White Player Logic
+		else {
 			if (dir == MoveDirection.North) {
 				int newRow = currentGame.getCurrentPosition().getWhitePosition().getTile().getRow() - 1;
 				if (newRow < 1) {
@@ -530,6 +534,7 @@ public class PawnBehavior {
 					return false;
 				}
 			}
+			
 			for (int i = 0; i < currentGame.getCurrentPosition().getBlackWallsOnBoard().size(); i++) {
 				Tile wallTile = currentGame.getCurrentPosition().getBlackWallsOnBoard().get(i).getMove()
 						.getTargetTile();
@@ -614,7 +619,6 @@ public class PawnBehavior {
 				}
 			}
 		}
-
 		return true;
 	}
 

@@ -12,6 +12,7 @@ import javax.swing.filechooser.FileSystemView;
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.Controller;
 import ca.mcgill.ecse223.quoridor.controller.PawnBehavior;
+import ca.mcgill.ecse223.quoridor.controller.PawnBehavior.MoveDirection;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
@@ -876,6 +877,204 @@ public class QuoridorWindow extends JFrame {
 				tiles[i][j].setOpaque(true);				
 				tiles[i][j].setBackground(tileColor);
 				tiles[i][j].setBorderPainted(false);
+				
+				tiles[i][j].addMouseListener(new MouseAdapter() {
+					public void mouseEntered(MouseEvent e) {
+						// Calls pawnBehavior's isLegalMove/Jump, and determines if legal
+						// Prompts user on failure
+						Player curPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
+								.getPlayerToMove();
+						int playerRow = -1, playerColumn = -1;
+						if (curPlayer.equals(QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer())) {
+							playerRow = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
+									.getBlackPosition().getTile().getRow() - 1;
+							playerColumn = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
+									.getBlackPosition().getTile().getColumn() - 1;
+						} else if (curPlayer
+								.equals(QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer())) {
+							playerRow = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
+									.getWhitePosition().getTile().getRow() - 1;
+							playerColumn = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
+									.getWhitePosition().getTile().getColumn() - 1;
+						}
+						int vertAbsDiff = Math.abs(playerRow - curI);
+						int vertDiff = curI - playerRow;
+						int horAbsDiff = Math.abs(playerColumn - curJ);
+						int horDiff = curJ - playerColumn;
+						
+						
+						System.out.println("White row "+playerRow);
+						System.out.println("White col "+playerColumn);
+						System.out.println("current row "+curI);
+						System.out.println("current col "+curJ);
+
+
+						if ((tiles[curI][curJ].getBackground() == Color.BLACK) || (tiles[curI][curJ].getBackground() == Color.WHITE)) {
+							// If its a player there, then its better not to change anything
+						} 
+						
+						//There isnt a player already at the tile, it is empty 
+						else {
+							PawnBehavior.MoveDirection dir = null;
+
+							
+							if (vertAbsDiff + horAbsDiff > 2 || vertAbsDiff > 2 || horAbsDiff > 2
+									|| vertAbsDiff + horAbsDiff == 0) {
+								tiles[curI][curJ].setBackground(Color.red);
+								
+								return;
+							}
+							
+							
+							switch (vertDiff) {
+							case 1: 
+								if (PawnBehavior.isLegalStep(dir)) {
+									tiles[curI][curJ].setBackground(Color.green);
+									break;
+								}
+								else {
+									tiles[curI][curJ].setBackground(Color.red);
+									break;
+								}
+
+
+							case 2:
+								dir = PawnBehavior.MoveDirection.South;
+								if (PawnBehavior.isLegalJump(dir)) {
+									tiles[curI][curJ].setBackground(Color.green);
+								} else {
+									tiles[curI][curJ].setBackground(Color.red);
+								}
+								break;
+									
+							case -1: 
+								if (PawnBehavior.isLegalStep(dir)) {
+									tiles[curI][curJ].setBackground(Color.green);
+								}
+								else {
+									tiles[curI][curJ].setBackground(Color.red);
+								}
+								break;
+
+
+							case -2:
+								dir = PawnBehavior.MoveDirection.North;
+								if (PawnBehavior.isLegalJump(dir)) {
+									tiles[curI][curJ].setBackground(Color.green);
+								} else {
+									tiles[curI][curJ].setBackground(Color.red);
+								}
+
+							default:
+								break;
+							}
+							
+							
+							switch (horDiff) {
+							case -1:
+								if (vertDiff < 0) {
+									dir = PawnBehavior.MoveDirection.NorthWest;
+									if (PawnBehavior.isLegalJump(dir)) {
+										tiles[curI][curJ].setBackground(Color.green);
+									}
+									else {
+										tiles[curI][curJ].setBackground(Color.red);
+									}
+									break;
+								} else if (vertDiff > 0) {
+									dir = PawnBehavior.MoveDirection.SouthWest;
+									if (PawnBehavior.isLegalJump(dir)) {
+										tiles[curI][curJ].setBackground(Color.green);
+									}
+									else {
+										tiles[curI][curJ].setBackground(Color.red);
+									}
+									break;
+								} else {
+									dir = PawnBehavior.MoveDirection.West;
+									if (PawnBehavior.isLegalStep(dir)) {
+										tiles[curI][curJ].setBackground(Color.green);
+									}
+									else {
+										tiles[curI][curJ].setBackground(Color.red);
+									}
+								}
+								break;
+								
+							case -2:
+								dir = PawnBehavior.MoveDirection.West;
+								if (PawnBehavior.isLegalJump(dir)) {
+									tiles[curI][curJ].setBackground(Color.green);
+								} 
+								else  {
+									tiles[curI][curJ].setBackground(Color.red);
+								}
+								break;
+								
+							case 1:
+								if (vertDiff < 0) {
+									dir = PawnBehavior.MoveDirection.NorthEast;
+									if (PawnBehavior.isLegalJump(dir)) {
+										tiles[curI][curJ].setBackground(Color.green);
+									}
+									else {
+										tiles[curI][curJ].setBackground(Color.red);
+									}
+									break;
+								} else if (vertDiff > 0) {
+									dir = PawnBehavior.MoveDirection.SouthEast;
+									if (PawnBehavior.isLegalJump(dir)) {
+										tiles[curI][curJ].setBackground(Color.green);
+									}
+									else {
+										tiles[curI][curJ].setBackground(Color.red);
+									}
+									break;
+								} else {
+									dir = PawnBehavior.MoveDirection.East;
+									if (PawnBehavior.isLegalStep(dir)) {
+										tiles[curI][curJ].setBackground(Color.green);
+									}
+									else {
+										tiles[curI][curJ].setBackground(Color.red);
+									}
+								}
+
+								break;
+								
+							case 2:
+								dir = PawnBehavior.MoveDirection.East;
+								if (PawnBehavior.isLegalJump(dir)) {
+									tiles[curI][curJ].setBackground(Color.green);
+								} 
+								else  {
+									tiles[curI][curJ].setBackground(Color.red);
+								}
+								break;
+
+							default:
+								break;
+							}
+
+						}
+
+						
+
+					}
+
+					public void mouseExited(MouseEvent e) {
+						if (tiles[curI][curJ].getBackground() == Color.BLACK) {
+							tiles[curI][curJ].setBackground(Color.BLACK);
+						} else if (tiles[curI][curJ].getBackground() == Color.WHITE) {
+							tiles[curI][curJ].setBackground(Color.WHITE);
+						} else {
+							tiles[curI][curJ].setBackground(tileColor);
+						}
+						
+						PawnBehavior.MoveDirection dir = null;
+					}
+				});
+				
 				tiles[i][j].addActionListener(new ActionListener() {
 					/** @author Sam Perreault */
 					public void actionPerformed(ActionEvent e) {
@@ -1538,12 +1737,6 @@ public class QuoridorWindow extends JFrame {
 		}
 
 	}
-
-	
-	
-	
-	
-	
 	
 	/**
 	 * @author arneetkalra
@@ -1560,6 +1753,9 @@ public class QuoridorWindow extends JFrame {
 				finalResultOptionButtons,
 				finalResultOptionButtons[2]);
 	}
+	/**
+	 * @author arneetkalra
+	 */
 	public void notifyBlackWon() {
 		Image blackImage= new ImageIcon("src/main/resources/blackPawn.png").getImage().getScaledInstance(180, 300, Image.SCALE_SMOOTH);
 		ImageIcon blackPawnIcon = new ImageIcon(blackImage);
@@ -1573,6 +1769,9 @@ public class QuoridorWindow extends JFrame {
 				finalResultOptionButtons[2]);
 	}
 
+	/**
+	 * @author arneetkalra
+	 */
 	public void notifyDraw() {
 		Image drawImage= new ImageIcon("src/main/resources/draw.png").getImage().getScaledInstance(180, 300, Image.SCALE_SMOOTH);
 		ImageIcon drawIcon = new ImageIcon(drawImage);
