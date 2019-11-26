@@ -338,6 +338,7 @@ public class QuoridorWindow extends JFrame {
 		lblTotalTimeLeftWhite.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lblTotalTimeLeftWhite.setFont(new Font(font, Font.PLAIN, fontSize));
 		whitePlayerInfoVerticalBox.add(lblTotalTimeLeftWhite);
+		
 
 		
 		JButton btnGrabButtonWhite = new JButton("Grab wall");
@@ -1534,6 +1535,8 @@ public class QuoridorWindow extends JFrame {
 					// TODO: set click event for walls here--eg.dropwall
 					gameBoardPanel.add(wallCenters[i][j], c);
 					
+					
+					
 					//Add listener to new game button on playable screen
 					btnNewGame.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent a) {
@@ -1545,7 +1548,7 @@ public class QuoridorWindow extends JFrame {
 							CardLayout layout = (CardLayout) (contentPane.getLayout());
 							layout.show(contentPane, "titleScreenPanel");
 							//Delete all application data
-							QuoridorApplication.getQuoridor().delete();
+							Controller.destroyCurrentGame();
 						}
 					});
 				}
@@ -1774,13 +1777,29 @@ public class QuoridorWindow extends JFrame {
 		Image whiteImage= new ImageIcon("src/main/resources/whitePawn.png").getImage().getScaledInstance(180, 300, Image.SCALE_SMOOTH);
 		ImageIcon whitePawnIcon = new ImageIcon(whiteImage);
 		
-		Object[] finalResultOptionButtons = {"3rd Option", "Replay Mode", "New Game"};
-		JOptionPane.showOptionDialog(null, "Congraulations White Player, you win!", "White Wins",
-				JOptionPane.YES_NO_CANCEL_OPTION,
+		int finalResultBotton = JOptionPane.YES_NO_CANCEL_OPTION;
+		
+		Object[] finalResultOptionButtons = {"Load Game", "Replay Mode", "Home Screen"}; 
+		int finalResult = JOptionPane.showOptionDialog(null, "Congraulations White Player, you win!", "White Wins",
+				finalResultBotton,
 				JOptionPane.PLAIN_MESSAGE,
 				whitePawnIcon,
 				finalResultOptionButtons,
 				finalResultOptionButtons[2]);
+		
+		// Load Game Button
+		if (finalResult == JOptionPane.YES_OPTION) {
+		}
+		//Replay mode Button
+		else if(finalResult == JOptionPane.NO_OPTION) {
+            System.out.println("No");
+
+		}
+		//Home Screen button
+		else {
+			homeScreenButton();
+		}
+		
 	}
 	/**
 	 * @author arneetkalra
@@ -1788,14 +1807,25 @@ public class QuoridorWindow extends JFrame {
 	public void notifyBlackWon() {
 		Image blackImage= new ImageIcon("src/main/resources/blackPawn.png").getImage().getScaledInstance(180, 300, Image.SCALE_SMOOTH);
 		ImageIcon blackPawnIcon = new ImageIcon(blackImage);
+		int finalResultBotton = JOptionPane.YES_NO_CANCEL_OPTION;
+		Object[] finalResultOptionButtons = {"Load Game", "Replay Mode", "Home Screen"};
 		
-		Object[] finalResultOptionButtons = {"3rd Option", "Replay Mode", "New Game"};
-		JOptionPane.showOptionDialog(null,"Congraulations Black Player, you win!", "Black Wins",
-				JOptionPane.YES_NO_CANCEL_OPTION,
-				JOptionPane.PLAIN_MESSAGE,
-				blackPawnIcon,
-				finalResultOptionButtons,
+		int finalResult = JOptionPane.showOptionDialog(null, "Congraulations Black Player, you win!", "Black Wins",
+				finalResultBotton, JOptionPane.PLAIN_MESSAGE, blackPawnIcon, finalResultOptionButtons,
 				finalResultOptionButtons[2]);
+
+		// Load Game Button
+		if (finalResult == JOptionPane.YES_OPTION) {
+		}
+		// Replay mode Button
+		else if (finalResult == JOptionPane.NO_OPTION) {
+			System.out.println("No");
+
+		}
+		// Home Screen button
+		else {
+			homeScreenButton();
+		}
 	}
 
 	/**
@@ -1804,16 +1834,46 @@ public class QuoridorWindow extends JFrame {
 	public void notifyDraw() {
 		Image drawImage= new ImageIcon("src/main/resources/draw.png").getImage().getScaledInstance(180, 300, Image.SCALE_SMOOTH);
 		ImageIcon drawIcon = new ImageIcon(drawImage);
+		int finalResultBotton = JOptionPane.YES_NO_CANCEL_OPTION;
 		
-		Object[] finalResultOptionButtons = {"3rd Option", "Replay Mode", "New Game"};
+		Object[] finalResultOptionButtons = {"Load Game", "Replay Mode", "Home Screen"}; 
 
-		JOptionPane.showOptionDialog(null, "What a Game! It's a draw!", "Draw",
-				JOptionPane.YES_NO_CANCEL_OPTION,
+		int finalResult = JOptionPane.showOptionDialog(null, "What a Game! It's a draw!", "Draw",
+				finalResultBotton,
 				JOptionPane.PLAIN_MESSAGE,
 				drawIcon,
-				finalResultOptionButtons,
-				finalResultOptionButtons[2]);
-	}	
+				finalResultOptionButtons, finalResultOptionButtons[2]);
+
+		// Load Game Button
+		if (finalResult == JOptionPane.YES_OPTION) {
+		}
+		// Replay mode Button
+		else if (finalResult == JOptionPane.NO_OPTION) {
+			System.out.println("No");
+
+		}
+		// Home Screen button
+		else {
+			homeScreenButton();
+		}
+	}
 	
-	
+	/**
+	 * @author arneetkalra
+	 */
+	public void homeScreenButton() {
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				// Erase Colouring of board
+				wallCenters[i][j].setBackground(boardBackgroundColor);
+				hWalls[i][j].setBackground(boardBackgroundColor);
+				vWalls[i][j].setBackground(boardBackgroundColor);
+			}
+		}
+		// Go back to main Screen
+		CardLayout layout = (CardLayout) (contentPane.getLayout());
+		layout.show(contentPane, "titleScreenPanel");
+		// Delete all application data
+		Controller.destroyCurrentGame();
+	}
 }

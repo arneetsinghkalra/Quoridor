@@ -1486,9 +1486,8 @@ public class Controller {
 	 * @author arneetkalra
 	 * @return
 	 */
-	public static void destroyGame() {
-		QuoridorApplication.getQuoridor().delete();
-
+	public static void destroyCurrentGame() {
+		QuoridorApplication.getQuoridor().delete();	
 	}
 }
 
