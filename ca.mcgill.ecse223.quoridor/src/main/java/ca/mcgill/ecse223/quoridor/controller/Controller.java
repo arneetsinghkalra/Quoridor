@@ -1412,13 +1412,15 @@ public class Controller {
 		
 		
 		if (currentGame.getGameStatus() == GameStatus.WhiteWon) {
+			quoridor.delete();
 			window.notifyWhiteWon();
 		}
 		else if (currentGame.getGameStatus() == GameStatus.BlackWon) {
+			quoridor.delete();
 			window.notifyBlackWon();
-
 		}
 		else if (currentGame.getGameStatus() == GameStatus.Draw) {
+			quoridor.delete();
 			window.notifyDraw();
 		} 
 		else {
@@ -1426,28 +1428,6 @@ public class Controller {
 		}
 	}
 	
-	
-	/**
-	 * @author arneetkalra
-	 * @return
-	 */
-	public static void setGameToNotRunning() {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		Game currentGame = quoridor.getCurrentGame();
-		GameStatus gameStatus = currentGame.getGameStatus();
-
-		
-		if ((gameStatus== GameStatus.BlackWon) ||  (gameStatus== GameStatus.WhiteWon) || (gameStatus== GameStatus.Draw) ) {
-			//Player cant move
-			currentGame.setMoveMode(MoveMode.WallMove);
-			
-		}
-		else {
-			//error
-		} 	
-	}	
-	
-
 	/**
 	 * @author arneetkalra
 	 * @return
@@ -1499,7 +1479,9 @@ public class Controller {
 		
 		Time whitePlayerTime = currentGame.getWhitePlayer().getRemainingTime();
 		
+		@SuppressWarnings("deprecation")
 		int seconds = whitePlayerTime.getSeconds();
+		@SuppressWarnings("deprecation")
 		int minutes = whitePlayerTime.getMinutes();
 		
 		String whiteDisplayedTime = minutes+":"+seconds+"  ";
@@ -1516,7 +1498,9 @@ public class Controller {
 		
 		Time blackPlayerTime = currentGame.getBlackPlayer().getRemainingTime();
 		
+		@SuppressWarnings("deprecation")
 		int seconds = blackPlayerTime.getSeconds();
+		@SuppressWarnings("deprecation")
 		int minutes = blackPlayerTime.getMinutes();
 		
 		String whiteDisplayedTime = minutes+":"+seconds+"  ";

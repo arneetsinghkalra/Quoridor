@@ -2047,7 +2047,7 @@ public class CucumberStepDefinitions {
 	@When("The game is no longer running")
 	public void the_game_is_no_longer_running() {
 		// Call a Controller Method here, it should pretty much do this ->
-		Controller.setGameToNotRunning();
+		Controller.reportFinalResult();
 	}
 
 	@Then("The final result shall be displayed")

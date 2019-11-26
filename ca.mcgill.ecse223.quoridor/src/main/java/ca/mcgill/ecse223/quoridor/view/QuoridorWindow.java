@@ -1765,8 +1765,7 @@ public class QuoridorWindow extends JFrame {
 		}
 		//Replay mode Button
 		else if(finalResult == JOptionPane.NO_OPTION) {
-            System.out.println("No");
-
+			//Do replay mode here
 		}
 		//Home Screen button
 		else {
@@ -1793,7 +1792,7 @@ public class QuoridorWindow extends JFrame {
 		}
 		// Replay mode Button
 		else if (finalResult == JOptionPane.NO_OPTION) {
-			System.out.println("No");
+			//Do replay mode here 
 
 		}
 		// Home Screen button
@@ -1824,8 +1823,7 @@ public class QuoridorWindow extends JFrame {
 		}
 		// Replay mode Button
 		else if (finalResult == JOptionPane.NO_OPTION) {
-			System.out.println("No");
-
+			//Do replay mode here
 		}
 		// Home Screen button
 		else {
@@ -1837,6 +1835,7 @@ public class QuoridorWindow extends JFrame {
 	 * @author arneetkalra
 	 */
 	public void homeScreen() {
+		
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				// Erase Colouring of board
