@@ -2053,34 +2053,48 @@ public class CucumberStepDefinitions {
 		throw new cucumber.api.PendingException();
 	}
 
-	@Then("The next move shall be {double}")
-	public void the_next_move_shall_be(Double double1) {
+    @When("Jump to final position is initiated")
+    public void jump_to_final_position_is_initiated() {
+        // Write code here that turns the phrase above into concrete actions
+        throw new cucumber.api.PendingException();
+    }
+
+	@Then("The next move shall be {int}.{int}")
+	public void the_next_move_shall_be(int nmov, int nrnd) {
 		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+        Quoridor q = QuoridorApplication.getQuoridor();
+        assertEquals(nmov, q.getCurrentGame().indexOfPosition(q.getCurrentGame().getCurrentPosition())/2+1);
+        assertEquals(nrnd%2, (q.getCurrentGame().indexOfPosition(q.getCurrentGame().getCurrentPosition())+1)%2);
 	}
 
-	@And("White player's position shall be \\({double})")
-	public void white_player_s_position_shall_be(Double double1) {
+	@And("White player's position shall be \\({int}, {int})")
+	public void white_player_s_position_shall_be(int wrow, int wcol) {
 		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+        Quoridor q = QuoridorApplication.getQuoridor();
+        assertEquals(wrow, q.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow());
+        assertEquals(wcol, q.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn());
 	}
 
-	@And("Black player's position shall be \\({double})")
-	public void black_player_s_position_shall_be(Double double1) {
+	@And("Black player's position shall be \\({int}, {int})")
+	public void black_player_s_position_shall_be(int brow, int bcol) {
 		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+        Quoridor q = QuoridorApplication.getQuoridor();
+        assertEquals(brow, q.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow());
+        assertEquals(bcol, q.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn());
 	}
 
-	@And("White has <wwallno> on stock")
-	public void white_has_wwallno_on_stock() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+    /** @author Sam Perreault */
+	@And("White has {int} on stock")
+	public void white_has_wwallno_on_stock(int nbWalls) {
+        Quoridor q = QuoridorApplication.getQuoridor();
+        assertEquals(nbWalls, q.getCurrentGame().getCurrentPosition().getWhiteWallsInStock().size());
 	}
 
+	/** @author Sam Perreault */
 	@And("Black has {int} on stock")
-	public void black_has_on_stock(Integer int1) {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+	public void black_has_on_stock(int nbWalls) {
+        Quoridor q = QuoridorApplication.getQuoridor();
+        assertEquals(nbWalls, q.getCurrentGame().getCurrentPosition().getBlackWallsInStock().size());
 	}
 
 	/*****************************
