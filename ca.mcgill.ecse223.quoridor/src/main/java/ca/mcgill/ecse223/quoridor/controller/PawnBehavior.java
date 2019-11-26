@@ -810,14 +810,14 @@ public class PawnBehavior {
 		if (isWallBehind(oppDirection)) {
 			if (oppDirection == MoveDirection.East) {
 				if (dir == MoveDirection.NorthEast) {
-					if (isWallAt(currentTile.getRow() - 1, currentTile.getColumn() - 1, Direction.Horizontal))
+					if (isWallAt(currentTile.getRow() - 1, currentTile.getColumn() + 1, Direction.Horizontal))
 						return false;
 					if (isWallAt(currentTile.getRow() - 1, currentTile.getColumn(), Direction.Horizontal))
 						return false;
 					return true;
 				}
 				else if(dir == MoveDirection.SouthEast) {
-					if (isWallAt(currentTile.getRow(), currentTile.getColumn() - 1, Direction.Horizontal))
+					if (isWallAt(currentTile.getRow(), currentTile.getColumn() + 1, Direction.Horizontal))
 						return false;
 					if (isWallAt(currentTile.getRow(), currentTile.getColumn(), Direction.Horizontal))
 						return false;
@@ -827,14 +827,14 @@ public class PawnBehavior {
 				if ((dir == MoveDirection.NorthWest) ) {
 					if (isWallAt(currentTile.getRow() - 1, currentTile.getColumn() - 1, Direction.Horizontal))
 						return false;
-					if (isWallAt(currentTile.getRow() - 1, currentTile.getColumn(), Direction.Horizontal))
+					if (isWallAt(currentTile.getRow() - 1, currentTile.getColumn() -2, Direction.Horizontal))
 						return false;
 					return true;
 				}
 				else if((dir == MoveDirection.SouthWest)) {
 					if (isWallAt(currentTile.getRow(), currentTile.getColumn() - 1, Direction.Horizontal))
 						return false;
-					if (isWallAt(currentTile.getRow(), currentTile.getColumn(), Direction.Horizontal))
+					if (isWallAt(currentTile.getRow(), currentTile.getColumn() - 2, Direction.Horizontal))
 						return false;
 					return true;
 				}
@@ -842,27 +842,27 @@ public class PawnBehavior {
 				if ((dir == MoveDirection.NorthEast) ) {
 					if (isWallAt(currentTile.getRow() - 1, currentTile.getColumn(), Direction.Vertical))
 						return false;
-					if (isWallAt(currentTile.getRow(), currentTile.getColumn(), Direction.Vertical))
+					if (isWallAt(currentTile.getRow() - 2, currentTile.getColumn(), Direction.Vertical))
 						return false;
 					return true;
 				}
 				else if( (dir == MoveDirection.NorthWest)) {
 					if (isWallAt(currentTile.getRow() - 1, currentTile.getColumn() - 1, Direction.Vertical))
 						return false;
-					if (isWallAt(currentTile.getRow(), currentTile.getColumn() - 1, Direction.Vertical))
+					if (isWallAt(currentTile.getRow() - 2, currentTile.getColumn() - 1, Direction.Vertical))
 						return false;
 					return true;
 				}
 			} else if (oppDirection == MoveDirection.South) {
 				if ((dir == MoveDirection.SouthWest) ) {
-					if (isWallAt(currentTile.getRow() - 1, currentTile.getColumn() - 1, Direction.Vertical))
+					if (isWallAt(currentTile.getRow() + 1, currentTile.getColumn() - 1, Direction.Vertical))
 						return false;
 					if (isWallAt(currentTile.getRow(), currentTile.getColumn() - 1, Direction.Vertical))
 						return false;
 					return true;
 				}
 				else if((dir == MoveDirection.SouthEast)){
-					if (isWallAt(currentTile.getRow() - 1, currentTile.getColumn(), Direction.Vertical))
+					if (isWallAt(currentTile.getRow() + 1, currentTile.getColumn(), Direction.Vertical))
 						return false;
 					if (isWallAt(currentTile.getRow(), currentTile.getColumn(), Direction.Vertical))
 						return false;
