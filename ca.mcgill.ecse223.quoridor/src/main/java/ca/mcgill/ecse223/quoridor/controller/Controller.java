@@ -1409,8 +1409,7 @@ public class Controller {
 		QuoridorWindow window = QuoridorApplication.quoridorWindow;
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
-
-		setGameToNotRunning();
+		
 		
 		if (currentGame.getGameStatus() == GameStatus.WhiteWon) {
 			window.notifyWhiteWon();
@@ -1488,6 +1487,40 @@ public class Controller {
 	 */
 	public static void destroyCurrentGame() {
 		QuoridorApplication.getQuoridor().delete();	
+	}
+	
+	/**
+	 * @author arneetkalra
+	 * @return
+	 */
+	public static String displayRemainingTimeWhite() {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game currentGame = quoridor.getCurrentGame();
+		
+		Time whitePlayerTime = currentGame.getWhitePlayer().getRemainingTime();
+		
+		int seconds = whitePlayerTime.getSeconds();
+		int minutes = whitePlayerTime.getMinutes();
+		
+		String whiteDisplayedTime = minutes+":"+seconds+"  ";
+		return whiteDisplayedTime;
+	}
+	
+	/**
+	 * @author arneetkalra
+	 * @return
+	 */
+	public static String displayRemainingTimeBlack() {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game currentGame = quoridor.getCurrentGame();
+		
+		Time blackPlayerTime = currentGame.getBlackPlayer().getRemainingTime();
+		
+		int seconds = blackPlayerTime.getSeconds();
+		int minutes = blackPlayerTime.getMinutes();
+		
+		String whiteDisplayedTime = minutes+":"+seconds+"  ";
+		return whiteDisplayedTime;
 	}
 }
 
