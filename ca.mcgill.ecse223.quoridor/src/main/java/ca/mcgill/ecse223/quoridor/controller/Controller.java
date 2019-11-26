@@ -1471,7 +1471,6 @@ public class Controller {
 	 * @return
 	 */
 	public static boolean isWhitePlayerTurn() {
-
 		Player currentPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
 				.getPlayerToMove();
 		Player whitePlayer = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
@@ -1481,6 +1480,15 @@ public class Controller {
 		} else {
 			return false;
 		}
+	}
+	
+	/**
+	 * @author arneetkalra
+	 * @return
+	 */
+	public static void destroyGame() {
+		QuoridorApplication.getQuoridor().delete();
+
 	}
 }
 

@@ -87,7 +87,7 @@ public class QuoridorWindow extends JFrame {
 		// titleScreenPanel.setBackground(new Color(255, 255, 0));
 
 		ImagePanel titleScreenPanel = new ImagePanel(new ImageIcon("src/main/resources/quoridor.png").getImage());
-		contentPane.add(titleScreenPanel, "name_1049600133434900");
+		contentPane.add(titleScreenPanel, "titleScreenPanel");
 		SpringLayout sl_titleScreenPanel = new SpringLayout();
 		titleScreenPanel.setLayout(sl_titleScreenPanel);
 
@@ -435,18 +435,22 @@ public class QuoridorWindow extends JFrame {
 		btnNewGame.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnNewGame.setFont(new Font(font, Font.PLAIN, fontSize));			
 		verticalBox.add(btnNewGame);
-		
+		/*
 		btnNewGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent a) {
-				/*
-				QuoridorApplication.getQuoridor().setCurrentGame(null);
-				Controller.setQuoridor();
-				*/
-				
+				//Delete all application data
+				QuoridorApplication.getQuoridor().delete();
+				//Erase Colouring of board 
+				activeGamePanel.setBackground(mainScreenBackgroundColor);
+				gameBoardPanel.setBackground(boardBackgroundColor);
+
+				//Go back to main Screen
 				CardLayout layout = (CardLayout) (contentPane.getLayout());
-				layout.show(contentPane, "setupPanel");
+				layout.show(contentPane, "titleScreenPanel");
+				
 			}
 		});
+		*/
 		
 		JButton btnSaveGame = new JButton("Save Game");
 		btnSaveGame.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -581,6 +585,8 @@ public class QuoridorWindow extends JFrame {
 			}
 
 		});
+		
+		
 
 		Box titleTimeBox = Box.createVerticalBox();
 		//titleTimeBox.setBackground(Color.white);
@@ -1071,17 +1077,16 @@ public class QuoridorWindow extends JFrame {
 				tiles[i][j].addActionListener(new ActionListener() {
 					/** @author Sam Perreault */
 					public void actionPerformed(ActionEvent e) {
-						//Makes buttons dissapear if not your turn
-						btnGrabButtonBlack.setVisible(Controller.isBlackPlayerTurn());
-						btnRotateButtonBlack.setVisible(Controller.isBlackPlayerTurn());
-						btnResignGameBlack.setVisible(Controller.isBlackPlayerTurn());
+/*						btnGrabButtonBlack.setVisible(Controller.isBlackPlayerTurn() && !Controller.isWhitePlayerTurn() );
+						btnRotateButtonBlack.setVisible(Controller.isBlackPlayerTurn() && !Controller.isWhitePlayerTurn() );
+						btnResignGameBlack.setVisible(Controller.isBlackPlayerTurn() && !Controller.isWhitePlayerTurn() );
 
-						btnGrabButtonWhite.setVisible(Controller.isWhitePlayerTurn());
-						btnRotateButtonWhite.setVisible(Controller.isWhitePlayerTurn());
-						btnResignGameWhite.setVisible(Controller.isWhitePlayerTurn());
+						btnGrabButtonWhite.setVisible(Controller.isWhitePlayerTurn()&& !Controller.isBlackPlayerTurn());
+						btnRotateButtonWhite.setVisible(Controller.isWhitePlayerTurn() && !Controller.isBlackPlayerTurn()) ;
+						btnResignGameWhite.setVisible(Controller.isWhitePlayerTurn() && !Controller.isBlackPlayerTurn());
+						*/
 
 						
-
 						// Calls pawnBehavior's isLegalMove/Jump, and determines if legal
 						// Prompts user on failure
 						Player curPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
@@ -1517,6 +1522,8 @@ public class QuoridorWindow extends JFrame {
 							}
 						}
 					});
+					
+					
 					c.gridx = j * 2 + 1;
 					c.gridy = i * 2 + 1;
 					c.weightx = 1;
@@ -1526,8 +1533,25 @@ public class QuoridorWindow extends JFrame {
 					c.fill = GridBagConstraints.BOTH;
 					// TODO: set click event for walls here--eg.dropwall
 					gameBoardPanel.add(wallCenters[i][j], c);
+					
+					//Add listener to new game button on playable screen
+					btnNewGame.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent a) {
+							//Erase Colouring of board 
+							wallCenters[curI][curJ].setBackground(boardBackgroundColor);
+							hWalls[curI][curJ].setBackground(boardBackgroundColor);
+							vWalls[curI][curJ].setBackground(boardBackgroundColor);
+							//Go back to main Screen
+							CardLayout layout = (CardLayout) (contentPane.getLayout());
+							layout.show(contentPane, "titleScreenPanel");
+							//Delete all application data
+							QuoridorApplication.getQuoridor().delete();
+						}
+					});
 				}
 			}
+			
+			
 		}
 
 			Component horizontalStrut = Box.createHorizontalStrut(100);
@@ -1540,6 +1564,7 @@ public class QuoridorWindow extends JFrame {
 			horizontalBox.add(timeRemLabel);
 		
 	}
+	
 
 	/**	Moves players graphically
 	 *  @author Sam Perreault */
@@ -1789,4 +1814,6 @@ public class QuoridorWindow extends JFrame {
 				finalResultOptionButtons,
 				finalResultOptionButtons[2]);
 	}	
+	
+	
 }

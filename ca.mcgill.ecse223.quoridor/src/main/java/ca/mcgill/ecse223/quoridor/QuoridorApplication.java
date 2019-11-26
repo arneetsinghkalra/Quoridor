@@ -6,7 +6,7 @@ import ca.mcgill.ecse223.quoridor.persistence.QuoridorPersistence;
 
 public class QuoridorApplication {
 
-	private static Quoridor quoridor;
+	public static Quoridor quoridor;
 	/** @author Luke Barber */
 	public static QuoridorWindow quoridorWindow;
 	public static Quoridor getQuoridor() {
@@ -25,13 +25,4 @@ public class QuoridorApplication {
         }
     });
 	}
-	/*
-	public static Quoridor getQuordior() {
-		if (quoridor == null) {
-			// load model
-			quoridor = QuoridorPersistence.load();
-		}
- 		return quoridor;
-	}
-	*/
 }
