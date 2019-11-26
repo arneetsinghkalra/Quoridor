@@ -70,8 +70,6 @@ public class QuoridorWindow extends JFrame {
 	private int fontSize = 15;
 	private String font = "Raanana";
 
-
-
 	/**
 	 * Create the frame.
 	 */
@@ -210,6 +208,7 @@ public class QuoridorWindow extends JFrame {
 		Box blackPlayerInfoVerticalBox = Box.createVerticalBox();
 		activeGamePanel.add(blackPlayerInfoVerticalBox, BorderLayout.WEST);
 		
+
 		JLabel lblExtraBlack = new JLabel(""+blackPawn);
 		lblExtraBlack.setFont(new Font(font, Font.PLAIN, fontSize));
 		blackPlayerInfoVerticalBox.add(lblExtraBlack);
@@ -242,6 +241,7 @@ public class QuoridorWindow extends JFrame {
 		btnRotateButtonBlack.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnRotateButtonBlack.setAlignmentY(Component.TOP_ALIGNMENT);
 		btnRotateButtonBlack.setFont(new Font(font, Font.PLAIN, fontSize));
+
 		blackPlayerInfoVerticalBox.add(btnRotateButtonBlack);
 		
 		JButton btnResignGameBlack = new JButton("Forfeit Game");
@@ -901,13 +901,6 @@ public class QuoridorWindow extends JFrame {
 						int vertDiff = curI - playerRow;
 						int horAbsDiff = Math.abs(playerColumn - curJ);
 						int horDiff = curJ - playerColumn;
-						
-						
-						System.out.println("White row "+playerRow);
-						System.out.println("White col "+playerColumn);
-						System.out.println("current row "+curI);
-						System.out.println("current col "+curJ);
-
 
 						if ((tiles[curI][curJ].getBackground() == Color.BLACK) || (tiles[curI][curJ].getBackground() == Color.WHITE)) {
 							// If its a player there, then its better not to change anything
@@ -1078,6 +1071,17 @@ public class QuoridorWindow extends JFrame {
 				tiles[i][j].addActionListener(new ActionListener() {
 					/** @author Sam Perreault */
 					public void actionPerformed(ActionEvent e) {
+						//Makes buttons dissapear if not your turn
+						btnGrabButtonBlack.setVisible(Controller.isBlackPlayerTurn());
+						btnRotateButtonBlack.setVisible(Controller.isBlackPlayerTurn());
+						btnResignGameBlack.setVisible(Controller.isBlackPlayerTurn());
+
+						btnGrabButtonWhite.setVisible(Controller.isWhitePlayerTurn());
+						btnRotateButtonWhite.setVisible(Controller.isWhitePlayerTurn());
+						btnResignGameWhite.setVisible(Controller.isWhitePlayerTurn());
+
+						
+
 						// Calls pawnBehavior's isLegalMove/Jump, and determines if legal
 						// Prompts user on failure
 						Player curPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();

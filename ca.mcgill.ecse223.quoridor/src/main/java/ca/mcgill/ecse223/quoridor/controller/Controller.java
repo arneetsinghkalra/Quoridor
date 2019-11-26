@@ -21,6 +21,7 @@ import ca.mcgill.ecse223.quoridor.persistence.QuoridorPersistence;
 import ca.mcgill.ecse223.quoridor.view.QuoridorWindow;
 
 public class Controller {
+	
 
 	/**
 	 * <p>
@@ -1446,6 +1447,41 @@ public class Controller {
 			//error
 		} 	
 	}	
+	
+
+	/**
+	 * @author arneetkalra
+	 * @return
+	 */
+	public static boolean isBlackPlayerTurn() {
+
+		Player currentPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
+				.getPlayerToMove();
+		Player blackPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer();
+
+		if (currentPlayer == blackPlayer) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * @author arneetkalra
+	 * @return
+	 */
+	public static boolean isWhitePlayerTurn() {
+
+		Player currentPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
+				.getPlayerToMove();
+		Player whitePlayer = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
+
+		if (currentPlayer == whitePlayer) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
 
 
