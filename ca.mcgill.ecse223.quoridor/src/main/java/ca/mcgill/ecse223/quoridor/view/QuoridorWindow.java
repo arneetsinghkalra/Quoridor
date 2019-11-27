@@ -310,7 +310,7 @@ public class QuoridorWindow extends JFrame {
 				Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
 				
 				if (currentPlayer.equals(quoridor.getCurrentGame().getBlackPlayer())) {
-					Controller.resignGame();
+					Controller.forfeitGame();
 				}
 				else {
 					notifyNotYourTurn();
@@ -423,7 +423,7 @@ public class QuoridorWindow extends JFrame {
 				Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
 				
 				if (currentPlayer.equals(quoridor.getCurrentGame().getWhitePlayer())) {
-					Controller.resignGame();
+					Controller.forfeitGame();
 				}
 				else {
 					notifyNotYourTurn();
@@ -1029,17 +1029,63 @@ public class QuoridorWindow extends JFrame {
 				tiles[i][j].addActionListener(new ActionListener() {
 					/** @author Sam Perreault */
 					public void actionPerformed(ActionEvent e) {
+						//Manipulate Buttons when changing players
+						/**
+						 * @author arneetkalra
+						 */
+						if (!Controller.isBlackPlayerTurn()) {
+							btnGrabButtonBlack.setBackground(mainScreenBackgroundColor);
+							btnRotateButtonBlack.setBackground(mainScreenBackgroundColor);
+							btnResignGameBlack.setBackground(mainScreenBackgroundColor);
+							btnGrabButtonBlack.setForeground(placedWallColor);
+							btnRotateButtonBlack.setForeground(placedWallColor);
+							btnResignGameBlack.setForeground(placedWallColor);							
+							btnGrabButtonBlack.setOpaque(true);
+							btnRotateButtonBlack.setOpaque(true);
+							btnResignGameBlack.setOpaque(true);
+							btnGrabButtonBlack.setBorderPainted(false);
+							btnRotateButtonBlack.setBorderPainted(false);
+							btnResignGameBlack.setBorderPainted(false);
+						} else {
+							btnGrabButtonBlack.setOpaque(false);
+							btnRotateButtonBlack.setOpaque(false);
+							btnResignGameBlack.setOpaque(false);
+							btnGrabButtonBlack.setBorderPainted(true);
+							btnRotateButtonBlack.setBorderPainted(true);
+							btnResignGameBlack.setBorderPainted(true);
+							btnGrabButtonBlack.setForeground(Color.black);
+							btnRotateButtonBlack.setForeground(Color.black);
+							btnResignGameBlack.setForeground(Color.black);
+						}
+						/**
+						 * @author arneetkalra
+						 */
+						if (!Controller.isWhitePlayerTurn()) {
+							btnGrabButtonWhite.setBackground(mainScreenBackgroundColor);
+							btnRotateButtonWhite.setBackground(mainScreenBackgroundColor);
+							btnResignGameWhite.setBackground(mainScreenBackgroundColor);
+							btnGrabButtonWhite.setForeground(placedWallColor);
+							btnRotateButtonWhite.setForeground(placedWallColor);
+							btnResignGameWhite.setForeground(placedWallColor);							
+							btnGrabButtonWhite.setOpaque(true);
+							btnRotateButtonWhite.setOpaque(true);
+							btnResignGameWhite.setOpaque(true);
+							btnGrabButtonWhite.setBorderPainted(false);
+							btnRotateButtonWhite.setBorderPainted(false);
+							btnResignGameWhite.setBorderPainted(false);
+						} else {
+							btnGrabButtonWhite.setOpaque(false);
+							btnRotateButtonWhite.setOpaque(false);
+							btnResignGameWhite.setOpaque(false);
+							btnGrabButtonWhite.setBorderPainted(true);
+							btnRotateButtonWhite.setBorderPainted(true);
+							btnResignGameWhite.setBorderPainted(true);
+							btnGrabButtonWhite.setForeground(Color.black);
+							btnRotateButtonWhite.setForeground(Color.black);
+							btnResignGameWhite.setForeground(Color.black);
+						}
 						
-/*						btnGrabButtonBlack.setVisible(Controller.isBlackPlayerTurn() && !Controller.isWhitePlayerTurn() );
-						btnRotateButtonBlack.setVisible(Controller.isBlackPlayerTurn() && !Controller.isWhitePlayerTurn() );
-						btnResignGameBlack.setVisible(Controller.isBlackPlayerTurn() && !Controller.isWhitePlayerTurn() );
 
-						btnGrabButtonWhite.setVisible(Controller.isWhitePlayerTurn()&& !Controller.isBlackPlayerTurn());
-						btnRotateButtonWhite.setVisible(Controller.isWhitePlayerTurn() && !Controller.isBlackPlayerTurn()) ;
-						btnResignGameWhite.setVisible(Controller.isWhitePlayerTurn() && !Controller.isBlackPlayerTurn());
-						*/
-
-						
 						// Calls pawnBehavior's isLegalMove/Jump, and determines if legal
 						// Prompts user on failure
 						Player curPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
@@ -1457,6 +1503,62 @@ public class QuoridorWindow extends JFrame {
 									lblTimeWhite.setText(Controller.displayRemainingTimeWhite());
 									lblTimeBlack.setText(Controller.displayRemainingTimeBlack());
 									
+									//Manipulate Buttons when changing players
+									/**
+									 * @author arneetkalra
+									 */
+									if (Controller.isBlackPlayerTurn()) {
+										btnGrabButtonBlack.setBackground(mainScreenBackgroundColor);
+										btnRotateButtonBlack.setBackground(mainScreenBackgroundColor);
+										btnResignGameBlack.setBackground(mainScreenBackgroundColor);
+										btnGrabButtonBlack.setForeground(placedWallColor);
+										btnRotateButtonBlack.setForeground(placedWallColor);
+										btnResignGameBlack.setForeground(placedWallColor);							
+										btnGrabButtonBlack.setOpaque(true);
+										btnRotateButtonBlack.setOpaque(true);
+										btnResignGameBlack.setOpaque(true);
+										btnGrabButtonBlack.setBorderPainted(false);
+										btnRotateButtonBlack.setBorderPainted(false);
+										btnResignGameBlack.setBorderPainted(false);
+									} else {
+										btnGrabButtonBlack.setOpaque(false);
+										btnRotateButtonBlack.setOpaque(false);
+										btnResignGameBlack.setOpaque(false);
+										btnGrabButtonBlack.setBorderPainted(true);
+										btnRotateButtonBlack.setBorderPainted(true);
+										btnResignGameBlack.setBorderPainted(true);
+										btnGrabButtonBlack.setForeground(Color.black);
+										btnRotateButtonBlack.setForeground(Color.black);
+										btnResignGameBlack.setForeground(Color.black);
+									}
+									/**
+									 * @author arneetkalra
+									 */
+									if (Controller.isWhitePlayerTurn()) {
+										btnGrabButtonWhite.setBackground(mainScreenBackgroundColor);
+										btnRotateButtonWhite.setBackground(mainScreenBackgroundColor);
+										btnResignGameWhite.setBackground(mainScreenBackgroundColor);
+										btnGrabButtonWhite.setForeground(placedWallColor);
+										btnRotateButtonWhite.setForeground(placedWallColor);
+										btnResignGameWhite.setForeground(placedWallColor);							
+										btnGrabButtonWhite.setOpaque(true);
+										btnRotateButtonWhite.setOpaque(true);
+										btnResignGameWhite.setOpaque(true);
+										btnGrabButtonWhite.setBorderPainted(false);
+										btnRotateButtonWhite.setBorderPainted(false);
+										btnResignGameWhite.setBorderPainted(false);
+									} else {
+										btnGrabButtonWhite.setOpaque(false);
+										btnRotateButtonWhite.setOpaque(false);
+										btnResignGameWhite.setOpaque(false);
+										btnGrabButtonWhite.setBorderPainted(true);
+										btnRotateButtonWhite.setBorderPainted(true);
+										btnResignGameWhite.setBorderPainted(true);
+										btnGrabButtonWhite.setForeground(Color.black);
+										btnRotateButtonWhite.setForeground(Color.black);
+										btnResignGameWhite.setForeground(Color.black);
+									}
+									
 								} else {
 									QuoridorWindow.notifyIllegalWallMove();
 								}
@@ -1482,6 +1584,63 @@ public class QuoridorWindow extends JFrame {
 									//Update Total Time Left Labels
 									lblTimeWhite.setText(Controller.displayRemainingTimeWhite());
 									lblTimeBlack.setText(Controller.displayRemainingTimeBlack());
+									
+									//Manipulate Buttons when changing players
+									/**
+									 * @author arneetkalra
+									 */
+									if (Controller.isBlackPlayerTurn()) {
+										btnGrabButtonBlack.setBackground(mainScreenBackgroundColor);
+										btnRotateButtonBlack.setBackground(mainScreenBackgroundColor);
+										btnResignGameBlack.setBackground(mainScreenBackgroundColor);
+										btnGrabButtonBlack.setForeground(placedWallColor);
+										btnRotateButtonBlack.setForeground(placedWallColor);
+										btnResignGameBlack.setForeground(placedWallColor);							
+										btnGrabButtonBlack.setOpaque(true);
+										btnRotateButtonBlack.setOpaque(true);
+										btnResignGameBlack.setOpaque(true);
+										btnGrabButtonBlack.setBorderPainted(false);
+										btnRotateButtonBlack.setBorderPainted(false);
+										btnResignGameBlack.setBorderPainted(false);
+									} else {
+										btnGrabButtonBlack.setOpaque(false);
+										btnRotateButtonBlack.setOpaque(false);
+										btnResignGameBlack.setOpaque(false);
+										btnGrabButtonBlack.setBorderPainted(true);
+										btnRotateButtonBlack.setBorderPainted(true);
+										btnResignGameBlack.setBorderPainted(true);
+										btnGrabButtonBlack.setForeground(Color.black);
+										btnRotateButtonBlack.setForeground(Color.black);
+										btnResignGameBlack.setForeground(Color.black);
+									}
+									/**
+									 * @author arneetkalra
+									 */
+									if (Controller.isWhitePlayerTurn()) {
+										btnGrabButtonWhite.setBackground(mainScreenBackgroundColor);
+										btnRotateButtonWhite.setBackground(mainScreenBackgroundColor);
+										btnResignGameWhite.setBackground(mainScreenBackgroundColor);
+										btnGrabButtonWhite.setForeground(placedWallColor);
+										btnRotateButtonWhite.setForeground(placedWallColor);
+										btnResignGameWhite.setForeground(placedWallColor);							
+										btnGrabButtonWhite.setOpaque(true);
+										btnRotateButtonWhite.setOpaque(true);
+										btnResignGameWhite.setOpaque(true);
+										btnGrabButtonWhite.setBorderPainted(false);
+										btnRotateButtonWhite.setBorderPainted(false);
+										btnResignGameWhite.setBorderPainted(false);
+									} else {
+										btnGrabButtonWhite.setOpaque(false);
+										btnRotateButtonWhite.setOpaque(false);
+										btnResignGameWhite.setOpaque(false);
+										btnGrabButtonWhite.setBorderPainted(true);
+										btnRotateButtonWhite.setBorderPainted(true);
+										btnResignGameWhite.setBorderPainted(true);
+										btnGrabButtonWhite.setForeground(Color.black);
+										btnRotateButtonWhite.setForeground(Color.black);
+										btnResignGameWhite.setForeground(Color.black);
+									}
+									
 								} else { // No wall move candidate exists
 									QuoridorWindow.notifyIllegalWallMove();
 								}
@@ -1650,13 +1809,15 @@ public class QuoridorWindow extends JFrame {
 		ActionListener listener = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// Deduct a second from view
-				subtractSecondFromView();
-				// Deduct a second from model
-				Controller.subtractSecond();
+				if(Controller.gameIsStillRunning()) {
+					// Deduct a second from view
+					subtractSecondFromView();
+					// Deduct a second from model
+					Controller.subtractSecond();
+				}
 			}
 		};
-
+		
 		secondTimer = new Timer(1000, listener);
 		secondTimer.setRepeats(true);
 		secondTimer.start();
