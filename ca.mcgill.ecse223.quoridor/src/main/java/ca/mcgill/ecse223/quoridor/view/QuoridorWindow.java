@@ -1,17 +1,17 @@
 package ca.mcgill.ecse223.quoridor.view;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileSystemView;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.Controller;
 import ca.mcgill.ecse223.quoridor.controller.PawnBehavior;
 import ca.mcgill.ecse223.quoridor.model.Direction;
+import ca.mcgill.ecse223.quoridor.model.GamePosition;
 import ca.mcgill.ecse223.quoridor.model.Player;
+import ca.mcgill.ecse223.quoridor.model.PlayerPosition;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
 import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.Wall;
@@ -23,17 +23,20 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.awt.event.ActionEvent;
+import java.util.List;;
 
 public class QuoridorWindow extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static JPanel contentPane;
 	private JTextField player1Field;
 	private JTextField player2Field;
@@ -44,25 +47,46 @@ public class QuoridorWindow extends JFrame {
 	private Timer secondTimer;
 	private JLabel timeRemLabel;
 	private JLabel currentPlayerName;
-	private JLabel blackPlayerName;
+	private JLabel lblBlackPlayerName;
 	private JLabel whitePlayerName;
+	private JLabel lblTimeBlack;
+	private JLabel lblTimeWhite;
+	private JLabel lblWallsLeftBlack;
+	private JLabel lblWallsLeftWhite;
 	private static boolean confirms = true;
 	private int[] playerView = { 0, 0, 0, 0 };
-	private static JFrame f;
 	// for the boards,tiles, and walls
 	private JButton[][] tiles = new JButton[9][9];
 	private JButton[][] wallCenters = new JButton[8][8];
 	private Box[][] hWalls = new Box[9][9];
 	private Box[][] vWalls = new Box[9][9];
+	//The shape of the pawn is as defined below
+	public char blackPawn = (char) 0x25A0; 
+	public char whitePawn = (char) 0x25A1;
+	//Main colors used everywhere
+	public Color mainScreenBackgroundColor = new Color(208,238,255); 
+	public Color boardBackgroundColor = mainScreenBackgroundColor;
+	public Color tileColor = new Color(255,206,202);
+	
+	public Color placedWallColor = Color.LIGHT_GRAY;
+	public Color validPositionColor = Color.green;
+	private int fontSize = 15;
+	private String font = "Raanana";
+	public boolean timerRunning = false;
+	public boolean resultBeingDisplayed = false;
+	
+
 
 	/**
 	 * Create the frame.
 	 */
+	@SuppressWarnings("unchecked")
 	public QuoridorWindow() {
+		
 		setResizable(false);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 90, 780, 600); // New dimensions
+		setBounds(100, 90, 790, 611); // New dimensions
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(1, 1, 1, 1));
 		setContentPane(contentPane);
@@ -72,7 +96,7 @@ public class QuoridorWindow extends JFrame {
 		// titleScreenPanel.setBackground(new Color(255, 255, 0));
 
 		ImagePanel titleScreenPanel = new ImagePanel(new ImageIcon("src/main/resources/quoridor.png").getImage());
-		contentPane.add(titleScreenPanel, "name_1049600133434900");
+		contentPane.add(titleScreenPanel, "titleScreenPanel");
 		SpringLayout sl_titleScreenPanel = new SpringLayout();
 		titleScreenPanel.setLayout(sl_titleScreenPanel);
 
@@ -143,7 +167,7 @@ public class QuoridorWindow extends JFrame {
 					}
 				}
 				if (!wrong) {
-					Quoridor quoridor = QuoridorApplication.getQuordior();
+					Quoridor quoridor = QuoridorApplication.getQuoridor();
 					for (int i = 0; i < quoridor.getCurrentGame().getCurrentPosition()
 							.numberOfBlackWallsOnBoard(); i++) {
 						WallMove move = quoridor.getCurrentGame().getCurrentPosition().getBlackWallsOnBoard(i)
@@ -169,6 +193,7 @@ public class QuoridorWindow extends JFrame {
 		});
 
 		titleScreenPanel.add(loadGameButton);
+		
 
 		/*
 		 * JLabel titleLabel = new JLabel("QUORIDOR");
@@ -180,69 +205,181 @@ public class QuoridorWindow extends JFrame {
 		 * SpringLayout.EAST, titleScreenPanel); titleLabel.setFont(new
 		 * Font("Cooper Black", Font.PLAIN, 40)); titleScreenPanel.add(titleLabel);
 		 */
+		
+		
 
-		JPanel activeGamePanel = new JPanel();
+		JPanel activeGamePanel = new JPanel();		
+		activeGamePanel.setBackground(mainScreenBackgroundColor);
+		activeGamePanel.setOpaque(true);
 		contentPane.add(activeGamePanel, "activeGamePanel");
 		activeGamePanel.setLayout(new BorderLayout(0, 0));
 
-		Box verticalBox_2 = Box.createVerticalBox();
-		verticalBox_2.setBackground(Color.PINK);
-		activeGamePanel.add(verticalBox_2, BorderLayout.WEST);
+		Box blackPlayerInfoVerticalBox = Box.createVerticalBox();
+		activeGamePanel.add(blackPlayerInfoVerticalBox, BorderLayout.WEST);
+		
 
-		blackPlayerName = new JLabel("Black Player");
-		blackPlayerName.setAlignmentX(Component.CENTER_ALIGNMENT);
-		blackPlayerName.setFont(new Font("Raanana", Font.PLAIN, 13));
-		verticalBox_2.add(blackPlayerName);
-		blackPlayerName.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+		JLabel lblExtraBlack = new JLabel(""+blackPawn);
+		lblExtraBlack.setFont(new Font(font, Font.PLAIN, fontSize));
+		blackPlayerInfoVerticalBox.add(lblExtraBlack);
 
-		JLabel lblWallsLeft = new JLabel("Walls Left = ");
-		lblWallsLeft.setAlignmentX(Component.CENTER_ALIGNMENT);
-		lblWallsLeft.setFont(new Font("Raanana", Font.PLAIN, 13));
-		verticalBox_2.add(lblWallsLeft);
+		lblBlackPlayerName = new JLabel("Black Player");
+		lblBlackPlayerName.setAlignmentX(Component.CENTER_ALIGNMENT);
+		lblBlackPlayerName.setFont(new Font(font, Font.PLAIN, fontSize));
+		blackPlayerInfoVerticalBox.add(lblBlackPlayerName);
+		lblBlackPlayerName.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 
-		JLabel lblTimeLeft = new JLabel("     Total Time Left:     ");
-		lblTimeLeft.setAlignmentX(Component.CENTER_ALIGNMENT);
-		lblTimeLeft.setFont(new Font("Raanana", Font.PLAIN, 13));
-		verticalBox_2.add(lblTimeLeft);
+		lblWallsLeftBlack = new JLabel("Walls Left = 10");
+		lblWallsLeftBlack.setAlignmentX(Component.CENTER_ALIGNMENT);
+		lblWallsLeftBlack.setFont(new Font(font, Font.PLAIN, fontSize));
+		blackPlayerInfoVerticalBox.add(lblWallsLeftBlack);
 
-		JLabel lblNewLabel_2 = new JLabel(" ;");
-		lblNewLabel_2.setFont(new Font("Raanana", Font.PLAIN, 13));
-		verticalBox_2.add(lblNewLabel_2);
+		JLabel lblTotalTimeLeftBlack = new JLabel("    Total Time Left:    ");
+		lblTotalTimeLeftBlack.setAlignmentX(Component.CENTER_ALIGNMENT);
+		lblTotalTimeLeftBlack.setFont(new Font(font, Font.PLAIN, fontSize));
+		blackPlayerInfoVerticalBox.add(lblTotalTimeLeftBlack);
+		
+		lblTimeBlack = new JLabel("     ");
+		lblTimeBlack.setAlignmentX(Component.CENTER_ALIGNMENT);
+		lblTimeBlack.setFont(new Font(font, Font.PLAIN, fontSize));
+		blackPlayerInfoVerticalBox.add(lblTimeBlack);
 
-		Box verticalBox_3 = Box.createVerticalBox();
-		verticalBox_3.setBackground(Color.PINK);
-		activeGamePanel.add(verticalBox_3, BorderLayout.EAST);
+		
+		
+		JButton btnGrabButtonBlack = new JButton("Grab wall");
+		btnGrabButtonBlack.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnGrabButtonBlack.setAlignmentY(Component.TOP_ALIGNMENT);
+		btnGrabButtonBlack.setFont(new Font(font, Font.PLAIN, fontSize));
+		blackPlayerInfoVerticalBox.add(btnGrabButtonBlack);
+		
+		JButton btnRotateButtonBlack = new JButton("Rotate Wall");
+		btnRotateButtonBlack.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnRotateButtonBlack.setAlignmentY(Component.TOP_ALIGNMENT);
+		btnRotateButtonBlack.setFont(new Font(font, Font.PLAIN, fontSize));
+
+		blackPlayerInfoVerticalBox.add(btnRotateButtonBlack);
+		
+		JButton btnResignGameBlack = new JButton("Forfeit Game");
+		btnResignGameBlack.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnResignGameBlack.setAlignmentY(Component.TOP_ALIGNMENT);
+		btnResignGameBlack.setFont(new Font(font, Font.PLAIN, fontSize));	
+		blackPlayerInfoVerticalBox.add(btnResignGameBlack);
+		
+		/** @author Luke Barber */
+		btnGrabButtonBlack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Quoridor quoridor = QuoridorApplication.getQuoridor();
+				Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
+				if (isGrabWall) {
+					if (currentPlayer.equals(quoridor.getCurrentGame().getWhitePlayer())) {
+						notifyNotYourTurn();
+						return;
+
+					} else if (currentPlayer.equals(quoridor.getCurrentGame().getBlackPlayer())) {
+						if (quoridor.getCurrentGame().getCurrentPosition().getBlackWallsInStock().size() == 0) {
+							warningNoMoreWalls();
+						} else {
+							Controller.grabWall(quoridor.getCurrentGame().getCurrentPosition().getBlackWallsInStock(
+									quoridor.getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock() - 1));
+							lblWallsLeftBlack.setText("Walls Left = "
+									+ quoridor.getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock());
+						}
+					}
+					isGrabWall = false;
+					setWallSelected(true);
+				} else {
+					warningInvalidGrabWall();
+				}
+			}
+
+		});		
+		
+		btnRotateButtonBlack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Quoridor quoridor = QuoridorApplication.getQuoridor();
+				Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
+				
+				if (currentPlayer.equals(quoridor.getCurrentGame().getBlackPlayer())) {
+				Controller.rotateWall(quoridor.getCurrentGame().getWallMoveCandidate().getWallPlaced());
+				}
+				else {
+					notifyNotYourTurn();
+				}
+				/*
+				JOptionPane.showMessageDialog(null,
+						"The current direction is "
+								+ quoridor.getCurrentGame().getWallMoveCandidate().getWallDirection(),
+						"", JOptionPane.PLAIN_MESSAGE);
+						*/
+			}
+		});
+		
+		btnResignGameBlack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Quoridor quoridor = QuoridorApplication.getQuoridor();
+				Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
+				
+				if (currentPlayer.equals(quoridor.getCurrentGame().getBlackPlayer())) {
+					Controller.forfeitGame();
+				}
+				else {
+					notifyNotYourTurn();
+				}
+			}
+		});
+		
+		// _________________ Start of White Player Info _________________________
+
+		Box whitePlayerInfoVerticalBox = Box.createVerticalBox();
+		activeGamePanel.add(whitePlayerInfoVerticalBox, BorderLayout.EAST);
+		
+		JLabel lblExtraWhite = new JLabel(""+whitePawn);
+		lblExtraWhite.setAlignmentX(Component.CENTER_ALIGNMENT);
+		lblExtraWhite.setFont(new Font(font, Font.PLAIN, fontSize));
+		lblExtraWhite.setForeground(Color.white);
+		whitePlayerInfoVerticalBox.add(lblExtraWhite);
+		
 		whitePlayerName = new JLabel("White Player");
 		whitePlayerName.setAlignmentX(Component.CENTER_ALIGNMENT);
-		whitePlayerName.setFont(new Font("Raanana", Font.PLAIN, 13));
-		verticalBox_3.add(whitePlayerName);
+		whitePlayerName.setFont(new Font(font, Font.PLAIN, fontSize));
+		whitePlayerInfoVerticalBox.add(whitePlayerName);
+		
+		lblWallsLeftWhite = new JLabel("Walls Left = 10");
+		lblWallsLeftWhite.setAlignmentX(Component.CENTER_ALIGNMENT);
+		lblWallsLeftWhite.setFont(new Font(font, Font.PLAIN, fontSize));
+		whitePlayerInfoVerticalBox.add(lblWallsLeftWhite);
 
-		JLabel lblWallsLeft_1 = new JLabel("Walls Left = ");
-		lblWallsLeft_1.setAlignmentX(Component.CENTER_ALIGNMENT);
-		lblWallsLeft_1.setFont(new Font("Raanana", Font.PLAIN, 13));
-		verticalBox_3.add(lblWallsLeft_1);
+		JLabel lblTotalTimeLeftWhite = new JLabel("    Total Time Left:    ");
+		lblTotalTimeLeftWhite.setAlignmentX(Component.CENTER_ALIGNMENT);
+		lblTotalTimeLeftWhite.setFont(new Font(font, Font.PLAIN, fontSize));
+		whitePlayerInfoVerticalBox.add(lblTotalTimeLeftWhite);
+		
+		lblTimeWhite = new JLabel("     ");
+		lblTimeWhite.setAlignmentX(Component.CENTER_ALIGNMENT);
+		lblTimeWhite.setFont(new Font(font, Font.PLAIN, fontSize));
+		whitePlayerInfoVerticalBox.add(lblTimeWhite);
+		
 
-		JLabel lblTotalTimeLeft = new JLabel("     Total Time Left:     ");
-		lblTotalTimeLeft.setAlignmentX(Component.CENTER_ALIGNMENT);
-		lblTotalTimeLeft.setFont(new Font("Raanana", Font.PLAIN, 13));
-		verticalBox_3.add(lblTotalTimeLeft);
-
-		JLabel label_2 = new JLabel(";");
-		label_2.setAlignmentX(Component.CENTER_ALIGNMENT);
-		label_2.setAlignmentY(Component.TOP_ALIGNMENT);
-		label_2.setFont(new Font("Raanana", Font.PLAIN, 13));
-		verticalBox_3.add(label_2);
-
-		Box gameOptionBox = Box.createVerticalBox();
-		activeGamePanel.add(gameOptionBox, BorderLayout.SOUTH);
-
-		Box horizontalBox = Box.createHorizontalBox();
-		horizontalBox.setBackground(Color.PINK);
-		gameOptionBox.add(horizontalBox);
-
+		
+		JButton btnGrabButtonWhite = new JButton("Grab wall");
+		btnGrabButtonWhite.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnGrabButtonWhite.setAlignmentY(Component.TOP_ALIGNMENT);
+		btnGrabButtonWhite.setFont(new Font(font, Font.PLAIN, fontSize));	
+		whitePlayerInfoVerticalBox.add(btnGrabButtonWhite);
+		
+		JButton btnRotateButtonWhite = new JButton("Rotate Wall");
+		btnRotateButtonWhite.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnRotateButtonWhite.setAlignmentY(Component.TOP_ALIGNMENT);
+		btnRotateButtonWhite.setFont(new Font(font, Font.PLAIN, fontSize));	
+		whitePlayerInfoVerticalBox.add(btnRotateButtonWhite);
+		
+		JButton btnResignGameWhite = new JButton("Forfeit Game");
+		btnResignGameWhite.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnResignGameWhite.setAlignmentY(Component.TOP_ALIGNMENT);
+		btnResignGameWhite.setFont(new Font(font, Font.PLAIN, fontSize));	
+		whitePlayerInfoVerticalBox.add(btnResignGameWhite);
+		
 		/** @author Luke Barber */
-		JButton btnGrabButton = new JButton("Grab wall");
-		btnGrabButton.addActionListener(new ActionListener() {
+		btnGrabButtonWhite.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Quoridor quoridor = QuoridorApplication.getQuoridor();
 				Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
@@ -253,18 +390,12 @@ public class QuoridorWindow extends JFrame {
 						} else {
 							Controller.grabWall(quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock(
 									quoridor.getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock() - 1));
-							lblWallsLeft_1.setText("Walls Left = "
-									+ quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock().size());
+							lblWallsLeftWhite.setText("Walls Left = "
+									+ quoridor.getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock());
 						}
 					} else if (currentPlayer.equals(quoridor.getCurrentGame().getBlackPlayer())) {
-						if (quoridor.getCurrentGame().getCurrentPosition().getBlackWallsInStock().size() == 0) {
-							warningNoMoreWalls();
-						} else {
-							Controller.grabWall(quoridor.getCurrentGame().getCurrentPosition().getBlackWallsInStock(
-									quoridor.getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock() - 1));
-							lblWallsLeft.setText("Walls Left = "
-									+ quoridor.getCurrentGame().getCurrentPosition().getBlackWallsInStock().size());
-						}
+						notifyNotYourTurn();
+						return;
 					}
 					isGrabWall = false;
 					setWallSelected(true);
@@ -273,71 +404,78 @@ public class QuoridorWindow extends JFrame {
 				}
 			}
 
+		});		
+		
+		btnRotateButtonWhite.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Quoridor quoridor = QuoridorApplication.getQuoridor();
+				Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
+				
+				if (currentPlayer.equals(quoridor.getCurrentGame().getWhitePlayer())) {
+				Controller.rotateWall(quoridor.getCurrentGame().getWallMoveCandidate().getWallPlaced());
+				}
+				else {
+					notifyNotYourTurn();
+				}
+				/*
+				JOptionPane.showMessageDialog(null,
+						"The current direction is "
+								+ quoridor.getCurrentGame().getWallMoveCandidate().getWallDirection(),
+						"", JOptionPane.PLAIN_MESSAGE);
+						*/
+			}
 		});
-		horizontalBox.add(btnGrabButton);
+		
+		btnResignGameWhite.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Quoridor quoridor = QuoridorApplication.getQuoridor();
+				Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
+				
+				if (currentPlayer.equals(quoridor.getCurrentGame().getWhitePlayer())) {
+					Controller.forfeitGame();
+				}
+				else {
+					notifyNotYourTurn();
+				}
+			}
+		});
+		
+		
+		Box gameOptionBox = Box.createVerticalBox();
+		activeGamePanel.add(gameOptionBox, BorderLayout.SOUTH);
+
+		Box horizontalBox = Box.createHorizontalBox();
+		horizontalBox.setBackground(Color.PINK);
+		gameOptionBox.add(horizontalBox);
 
 		Box verticalBox = Box.createVerticalBox();
 		horizontalBox.add(verticalBox);
 
 		JButton btnNewGame = new JButton("New Game");
-		btnNewGame.setBackground(Color.PINK);
-		verticalBox.add(btnNewGame);
 		btnNewGame.setAlignmentX(Component.CENTER_ALIGNMENT);
-
+		btnNewGame.setFont(new Font(font, Font.PLAIN, fontSize));			
+		verticalBox.add(btnNewGame);
+		
+		btnNewGame.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent a) {
+				homeScreen();
+			}
+		});
+		
 		JButton btnSaveGame = new JButton("Save Game");
-		verticalBox.add(btnSaveGame);
 		btnSaveGame.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnSaveGame.setFont(new Font(font, Font.PLAIN, fontSize));	
+		verticalBox.add(btnSaveGame);
 
 		JButton btnLoadGame = new JButton("Load Game");
+		btnLoadGame.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnLoadGame.setFont(new Font(font, Font.PLAIN, fontSize));	
 		verticalBox.add(btnLoadGame);
 
 		btnLoadGame.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnLoadGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent a) {
-				JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-				int returnValue = jfc.showOpenDialog(null);
-
-				if (returnValue == JFileChooser.APPROVE_OPTION) {
-					File selectedFile = jfc.getSelectedFile();
-					try {
-						Controller.loadPosition(selectedFile.getName());
-					} catch (UnsupportedOperationException e) {
-						JFrame f = new JFrame();
-						JTextField tf1;
-						JButton b1;
-						tf1 = new JTextField();
-						tf1.setText("Cannot load game due to invalid position");
-						tf1.setEditable(false);
-						b1 = new JButton("OK");
-						tf1.setBounds(50, 100, 350, 50);
-						b1.setBounds(100, 200, 100, 50);
-						f.getContentPane().add(tf1);
-						f.getContentPane().add(b1);
-						f.setSize(400, 400);
-						f.getContentPane().setLayout(null);
-						f.setVisible(true);
-						b1.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent b) {
-								f.setVisible(false);
-							}
-						});
-					}
-					Quoridor quoridor = QuoridorApplication.getQuordior();
-					for (int i = 0; i < quoridor.getCurrentGame().getCurrentPosition()
-							.numberOfBlackWallsOnBoard(); i++) {
-						WallMove move = quoridor.getCurrentGame().getCurrentPosition().getBlackWallsOnBoard(i)
-								.getMove();
-						QuoridorApplication.quoridorWindow.displayWall(move.getTargetTile().getRow(),
-								move.getTargetTile().getColumn(), move.getWallDirection());
-					}
-					for (int i = 0; i < quoridor.getCurrentGame().getCurrentPosition()
-							.numberOfWhiteWallsOnBoard(); i++) {
-						WallMove move = quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsOnBoard(i)
-								.getMove();
-						QuoridorApplication.quoridorWindow.displayWall(move.getTargetTile().getRow(),
-								move.getTargetTile().getColumn(), move.getWallDirection());
-					}
-				}
+				loadGame();
 			}
 		});
 
@@ -411,43 +549,30 @@ public class QuoridorWindow extends JFrame {
 			}
 
 		});
-
-		/** @author Luke Barber */
-		JButton btnRotateButton = new JButton("Rotate Wall");
-		btnRotateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Quoridor quoridor = QuoridorApplication.getQuoridor();
-				Controller.rotateWall(quoridor.getCurrentGame().getWallMoveCandidate().getWallPlaced());
-				JOptionPane.showMessageDialog(null,
-						"The current direction is "
-								+ quoridor.getCurrentGame().getWallMoveCandidate().getWallDirection(),
-						"", JOptionPane.WARNING_MESSAGE);
-			}
-		});
-
-		horizontalBox.add(btnRotateButton);
-		Box horizontalBox_1 = Box.createHorizontalBox();
-		gameOptionBox.add(horizontalBox_1);
+		
+		
 
 		Box titleTimeBox = Box.createVerticalBox();
-		titleTimeBox.setBackground(Color.PINK);
+		//titleTimeBox.setBackground(Color.white);
 		activeGamePanel.add(titleTimeBox, BorderLayout.NORTH);
 
 		JLabel gameTitleLabel = new JLabel("QUORIDOR");
 		gameTitleLabel.setAlignmentX(0.5f);
 		gameTitleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		gameTitleLabel.setFont(new Font("Comic Sans MS", Font.PLAIN, 40));
+		//gameTitleLabel.setForeground(Color.BLUE);
 		titleTimeBox.add(gameTitleLabel);
 
 		currentPlayerName = new JLabel("Current Player : ");
 		currentPlayerName.setAlignmentX(0.4f);
 		currentPlayerName.setAlignmentY(1.5f);
-		currentPlayerName.setFont(new Font("Raanana", Font.PLAIN, 13));
+		currentPlayerName.setFont(new Font("Raanana", Font.PLAIN, 18));
 		titleTimeBox.add(currentPlayerName);
 
 		// board
 		JPanel gameBoardPanel = new JPanel();
-		gameBoardPanel.setBackground(Color.PINK);
+		gameBoardPanel.setBackground(boardBackgroundColor);
+		gameBoardPanel.setOpaque(true);
 		activeGamePanel.add(gameBoardPanel, BorderLayout.CENTER);
 		gameBoardPanel.setLayout(new GridBagLayout());
 
@@ -716,22 +841,272 @@ public class QuoridorWindow extends JFrame {
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
 				int curI=i, curJ=j;
-				tiles[i][j] = new JButton();
-				tiles[i][j].setBackground(Color.WHITE);
+				
+				tiles[i][j] = new JButton();	
+				tiles[i][j].setBounds(i, j, 20, 20);
+				tiles[i][j].setOpaque(true);				
+				tiles[i][j].setBackground(tileColor);
+				tiles[i][j].setBorderPainted(false);
+				
+				tiles[i][j].addMouseListener(new MouseAdapter() {
+					public void mouseEntered(MouseEvent e) {
+						// Calls pawnBehavior's isLegalMove/Jump, and determines if legal
+						// Prompts user on failure
+						Player curPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
+								.getPlayerToMove();
+						int playerRow = -1, playerColumn = -1;
+						if (curPlayer.equals(QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer())) {
+							playerRow = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
+									.getBlackPosition().getTile().getRow() - 1;
+							playerColumn = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
+									.getBlackPosition().getTile().getColumn() - 1;
+						} else if (curPlayer
+								.equals(QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer())) {
+							playerRow = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
+									.getWhitePosition().getTile().getRow() - 1;
+							playerColumn = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
+									.getWhitePosition().getTile().getColumn() - 1;
+						}
+						int vertAbsDiff = Math.abs(playerRow - curI);
+						int vertDiff = curI - playerRow;
+						int horAbsDiff = Math.abs(playerColumn - curJ);
+						int horDiff = curJ - playerColumn;
+
+						if ((tiles[curI][curJ].getBackground() == Color.BLACK) || (tiles[curI][curJ].getBackground() == Color.WHITE)) {
+							// If its a player there, then its better not to change anything
+						} 
+						
+						//There isnt a player already at the tile, it is empty 
+						else {
+							PawnBehavior.MoveDirection dir = null;
+
+							
+							if (vertAbsDiff + horAbsDiff > 2 || vertAbsDiff > 2 || horAbsDiff > 2
+									|| vertAbsDiff + horAbsDiff == 0) {
+								tiles[curI][curJ].setBackground(Color.red);
+								
+								return;
+							}
+							
+							
+							switch (vertDiff) {
+							case 1: 
+								if (PawnBehavior.isLegalStep(dir)) {
+									tiles[curI][curJ].setBackground(Color.green);
+									break;
+								}
+								else {
+									tiles[curI][curJ].setBackground(Color.red);
+									break;
+								}
+
+
+							case 2:
+								dir = PawnBehavior.MoveDirection.South;
+								if (PawnBehavior.isLegalJump(dir)) {
+									tiles[curI][curJ].setBackground(Color.green);
+								} else {
+									tiles[curI][curJ].setBackground(Color.red);
+								}
+								break;
+									
+							case -1: 
+								if (PawnBehavior.isLegalStep(dir)) {
+									tiles[curI][curJ].setBackground(Color.green);
+								}
+								else {
+									tiles[curI][curJ].setBackground(Color.red);
+								}
+								break;
+
+
+							case -2:
+								dir = PawnBehavior.MoveDirection.North;
+								if (PawnBehavior.isLegalJump(dir)) {
+									tiles[curI][curJ].setBackground(Color.green);
+								} else {
+									tiles[curI][curJ].setBackground(Color.red);
+								}
+
+							default:
+								break;
+							}
+							
+							
+							switch (horDiff) {
+							case -1:
+								if (vertDiff < 0) {
+									dir = PawnBehavior.MoveDirection.NorthWest;
+									if (PawnBehavior.isLegalJump(dir)) {
+										tiles[curI][curJ].setBackground(Color.green);
+									}
+									else {
+										tiles[curI][curJ].setBackground(Color.red);
+									}
+									break;
+								} else if (vertDiff > 0) {
+									dir = PawnBehavior.MoveDirection.SouthWest;
+									if (PawnBehavior.isLegalJump(dir)) {
+										tiles[curI][curJ].setBackground(Color.green);
+									}
+									else {
+										tiles[curI][curJ].setBackground(Color.red);
+									}
+									break;
+								} else {
+									dir = PawnBehavior.MoveDirection.West;
+									if (PawnBehavior.isLegalStep(dir)) {
+										tiles[curI][curJ].setBackground(Color.green);
+									}
+									else {
+										tiles[curI][curJ].setBackground(Color.red);
+									}
+								}
+								break;
+								
+							case -2:
+								dir = PawnBehavior.MoveDirection.West;
+								if (PawnBehavior.isLegalJump(dir)) {
+									tiles[curI][curJ].setBackground(Color.green);
+								} 
+								else  {
+									tiles[curI][curJ].setBackground(Color.red);
+								}
+								break;
+								
+							case 1:
+								if (vertDiff < 0) {
+									dir = PawnBehavior.MoveDirection.NorthEast;
+									if (PawnBehavior.isLegalJump(dir)) {
+										tiles[curI][curJ].setBackground(Color.green);
+									}
+									else {
+										tiles[curI][curJ].setBackground(Color.red);
+									}
+									break;
+								} else if (vertDiff > 0) {
+									dir = PawnBehavior.MoveDirection.SouthEast;
+									if (PawnBehavior.isLegalJump(dir)) {
+										tiles[curI][curJ].setBackground(Color.green);
+									}
+									else {
+										tiles[curI][curJ].setBackground(Color.red);
+									}
+									break;
+								} else {
+									dir = PawnBehavior.MoveDirection.East;
+									if (PawnBehavior.isLegalStep(dir)) {
+										tiles[curI][curJ].setBackground(Color.green);
+									}
+									else {
+										tiles[curI][curJ].setBackground(Color.red);
+									}
+								}
+
+								break;
+								
+							case 2:
+								dir = PawnBehavior.MoveDirection.East;
+								if (PawnBehavior.isLegalJump(dir)) {
+									tiles[curI][curJ].setBackground(Color.green);
+								} 
+								else  {
+									tiles[curI][curJ].setBackground(Color.red);
+								}
+								break;
+
+							default:
+								break;
+							}
+
+						}
+
+						
+
+					}
+
+					public void mouseExited(MouseEvent e) {
+						if (tiles[curI][curJ].getBackground() == Color.BLACK) {
+							tiles[curI][curJ].setBackground(Color.BLACK);
+						} else if (tiles[curI][curJ].getBackground() == Color.WHITE) {
+							tiles[curI][curJ].setBackground(Color.WHITE);
+						} else {
+							tiles[curI][curJ].setBackground(tileColor);
+						}
+					}
+				});
+				
 				tiles[i][j].addActionListener(new ActionListener() {
 					/** @author Sam Perreault */
 					public void actionPerformed(ActionEvent e) {
+						//Manipulate Buttons when changing players
+						/**
+						 * @author arneetkalra
+						 */
+						if (!Controller.isBlackPlayerTurn()) {
+							btnGrabButtonBlack.setBackground(mainScreenBackgroundColor);
+							btnRotateButtonBlack.setBackground(mainScreenBackgroundColor);
+							btnResignGameBlack.setBackground(mainScreenBackgroundColor);
+							btnGrabButtonBlack.setForeground(placedWallColor);
+							btnRotateButtonBlack.setForeground(placedWallColor);
+							btnResignGameBlack.setForeground(placedWallColor);							
+							btnGrabButtonBlack.setOpaque(true);
+							btnRotateButtonBlack.setOpaque(true);
+							btnResignGameBlack.setOpaque(true);
+							btnGrabButtonBlack.setBorderPainted(false);
+							btnRotateButtonBlack.setBorderPainted(false);
+							btnResignGameBlack.setBorderPainted(false);
+						} else {
+							btnGrabButtonBlack.setOpaque(false);
+							btnRotateButtonBlack.setOpaque(false);
+							btnResignGameBlack.setOpaque(false);
+							btnGrabButtonBlack.setBorderPainted(true);
+							btnRotateButtonBlack.setBorderPainted(true);
+							btnResignGameBlack.setBorderPainted(true);
+							btnGrabButtonBlack.setForeground(Color.black);
+							btnRotateButtonBlack.setForeground(Color.black);
+							btnResignGameBlack.setForeground(Color.black);
+						}
+						/**
+						 * @author arneetkalra
+						 */
+						if (!Controller.isWhitePlayerTurn()) {
+							btnGrabButtonWhite.setBackground(mainScreenBackgroundColor);
+							btnRotateButtonWhite.setBackground(mainScreenBackgroundColor);
+							btnResignGameWhite.setBackground(mainScreenBackgroundColor);
+							btnGrabButtonWhite.setForeground(placedWallColor);
+							btnRotateButtonWhite.setForeground(placedWallColor);
+							btnResignGameWhite.setForeground(placedWallColor);							
+							btnGrabButtonWhite.setOpaque(true);
+							btnRotateButtonWhite.setOpaque(true);
+							btnResignGameWhite.setOpaque(true);
+							btnGrabButtonWhite.setBorderPainted(false);
+							btnRotateButtonWhite.setBorderPainted(false);
+							btnResignGameWhite.setBorderPainted(false);
+						} else {
+							btnGrabButtonWhite.setOpaque(false);
+							btnRotateButtonWhite.setOpaque(false);
+							btnResignGameWhite.setOpaque(false);
+							btnGrabButtonWhite.setBorderPainted(true);
+							btnRotateButtonWhite.setBorderPainted(true);
+							btnResignGameWhite.setBorderPainted(true);
+							btnGrabButtonWhite.setForeground(Color.black);
+							btnRotateButtonWhite.setForeground(Color.black);
+							btnResignGameWhite.setForeground(Color.black);
+						}
+						
+
 						// Calls pawnBehavior's isLegalMove/Jump, and determines if legal
 						// Prompts user on failure
-						Player curPlayer = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getPlayerToMove();
+						Player curPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
 						int playerRow=-1, playerColumn=-1;
-						if(curPlayer.equals(QuoridorApplication.getQuordior().getCurrentGame().getBlackPlayer())) {
-							playerRow = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow()-1;
-							playerColumn = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn()-1;
+						if(curPlayer.equals(QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer())) {
+							playerRow = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow()-1;
+							playerColumn = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn()-1;
 						}
-						else if(curPlayer.equals(QuoridorApplication.getQuordior().getCurrentGame().getWhitePlayer())) {
-							playerRow = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow()-1;
-							playerColumn = QuoridorApplication.getQuordior().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn()-1;
+						else if(curPlayer.equals(QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer())) {
+							playerRow = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow()-1;
+							playerColumn = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn()-1;
 						}
 						int vertAbsDiff = Math.abs(playerRow- curI);
 						int vertDiff = curI-playerRow;
@@ -746,10 +1121,18 @@ public class QuoridorWindow extends JFrame {
 							case 1:
 							case 2:
 								dir = PawnBehavior.MoveDirection.South;
+								lblWallsLeftWhite.setText("Walls Left = "
+										+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock());
+								lblWallsLeftBlack.setText("Walls Left = "
+										+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock());
 								break;
 							case -1:
 							case -2:
 								dir = PawnBehavior.MoveDirection.North;
+								lblWallsLeftWhite.setText("Walls Left = "
+										+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock());
+								lblWallsLeftBlack.setText("Walls Left = "
+										+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock());
 							default:
 								break;
 						}
@@ -757,32 +1140,64 @@ public class QuoridorWindow extends JFrame {
 							case -1:
 								if(vertDiff<0) {
 									dir = PawnBehavior.MoveDirection.NorthWest;
+									lblWallsLeftWhite.setText("Walls Left = "
+											+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock());
+									lblWallsLeftBlack.setText("Walls Left = "
+											+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock());
 									break;
 								}
 								else if(vertDiff>0) {
 									dir = PawnBehavior.MoveDirection.SouthWest;
+									lblWallsLeftWhite.setText("Walls Left = "
+											+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock());
+									lblWallsLeftBlack.setText("Walls Left = "
+											+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock());
 									break;
 								}
 								else
 									dir = PawnBehavior.MoveDirection.West;
+								lblWallsLeftWhite.setText("Walls Left = "
+										+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock());
+								lblWallsLeftBlack.setText("Walls Left = "
+										+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock());
 								break;
 							case -2:
 								dir = PawnBehavior.MoveDirection.West;
+								lblWallsLeftWhite.setText("Walls Left = "
+										+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock());
+								lblWallsLeftBlack.setText("Walls Left = "
+										+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock());
 								break;
 							case 1:
 								if(vertDiff<0) {
 									dir = PawnBehavior.MoveDirection.NorthEast;
+									lblWallsLeftWhite.setText("Walls Left = "
+											+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock());
+									lblWallsLeftBlack.setText("Walls Left = "
+											+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock());
 									break;
 								}
 								else if(vertDiff>0) {
 									dir = PawnBehavior.MoveDirection.SouthEast;
+									lblWallsLeftWhite.setText("Walls Left = "
+											+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock());
+									lblWallsLeftBlack.setText("Walls Left = "
+											+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock());
 									break;
 								}
 								else
 									dir = PawnBehavior.MoveDirection.East;
+								lblWallsLeftWhite.setText("Walls Left = "
+										+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock());
+								lblWallsLeftBlack.setText("Walls Left = "
+										+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock());
 								break;
 							case 2:
 								dir = PawnBehavior.MoveDirection.East;
+								lblWallsLeftWhite.setText("Walls Left = "
+										+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock());
+								lblWallsLeftBlack.setText("Walls Left = "
+										+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock());
 								break;
 							default:
 								break;
@@ -790,7 +1205,12 @@ public class QuoridorWindow extends JFrame {
 						// If dir isn't set to this point something went horribly wrong
 						if(!PawnBehavior.moveOrJump(dir))
 							JOptionPane.showMessageDialog(null, "Illegal move. Please select a different move", "Illegal Move", JOptionPane.WARNING_MESSAGE);
+					
+						//Update Total Time Left Labels
+						lblTimeWhite.setText(Controller.displayRemainingTimeWhite());
+						lblTimeBlack.setText(Controller.displayRemainingTimeBlack());
 					}
+					
 				});
 				GridBagConstraints c = new GridBagConstraints();
 				c.gridx = j * 2;
@@ -800,7 +1220,8 @@ public class QuoridorWindow extends JFrame {
 				c.ipadx = 10;
 				c.ipady = 10;
 				c.fill = GridBagConstraints.BOTH;
-				// set click event for tiles here(eg.movepawn)
+				
+				
 				gameBoardPanel.add(tiles[i][j], c);
 
 				if (j < 8) {
@@ -833,7 +1254,9 @@ public class QuoridorWindow extends JFrame {
 
 				if (i < 8 && j < 8) {
 					wallCenters[i][j] = new JButton();
-					wallCenters[i][j].setBackground(Color.pink);
+					wallCenters[i][j].setOpaque(true);
+					wallCenters[i][j].setBackground(boardBackgroundColor);
+					wallCenters[i][j].setBorderPainted(false);
 					// For loop helper
 					@SuppressWarnings("deprecation")
 					final Integer xPos = new Integer(i);
@@ -858,18 +1281,18 @@ public class QuoridorWindow extends JFrame {
 							}
 						}
 
-						void setWallToPink(Integer x, Integer y) {
+						void setWallToBoardBackgroundColor(Integer x, Integer y) {
 							if (Controller.returnWallMoveDirection() == Direction.Horizontal) { // Check if the wall in
 																								// hand is horizontal
 																								// Hover a wall
 																								// horizontally
-								hWalls[x][y].setBackground(Color.pink);
-								wallCenters[x][y].setBackground(Color.pink);
-								hWalls[x][y + 1].setBackground(Color.pink);
+								hWalls[x][y].setBackground(boardBackgroundColor);
+								wallCenters[x][y].setBackground(boardBackgroundColor);
+								hWalls[x][y + 1].setBackground(boardBackgroundColor);
 							} else { // Hover a wall vertically
-								vWalls[x][y].setBackground(Color.pink);
-								wallCenters[x][y].setBackground(Color.pink);
-								vWalls[x + 1][y].setBackground(Color.pink);
+								vWalls[x][y].setBackground(boardBackgroundColor);
+								wallCenters[x][y].setBackground(boardBackgroundColor);
+								vWalls[x + 1][y].setBackground(boardBackgroundColor);
 							}
 						}
 
@@ -955,8 +1378,8 @@ public class QuoridorWindow extends JFrame {
 								if (Controller.returnWallMoveDirection() == Direction.Horizontal) { 
 									//If horizontal wall is in a valid position
 									if (Controller.hoveredWallIsValid(currentTile, Direction.Horizontal) == true) { 
-										//Set it to pink
-										setWallToPink(xPos, yPos);
+										//Set it to board background color
+										setWallToBoardBackgroundColor(xPos, yPos);
 									}
 									//Else if it is in an invalid position
 									else if (Controller.hoveredWallIsValid(currentTile,Direction.Horizontal) == false) {
@@ -965,18 +1388,18 @@ public class QuoridorWindow extends JFrame {
 											//Set that conflict horizontal wall to black
 											int row = Controller.returnInvalidWallRow(currentTile, Direction.Horizontal); 
 											int column = Controller.returnInvalidWallColumn(currentTile,Direction.Horizontal); 
-											hWalls[row][column].setBackground(Color.black);
-											wallCenters[row][column].setBackground(Color.black);
-											hWalls[row][column + 1].setBackground(Color.black);
+											hWalls[row][column].setBackground(placedWallColor);
+											wallCenters[row][column].setBackground(placedWallColor);
+											hWalls[row][column + 1].setBackground(placedWallColor);
 										}
 										//Otherwise, it conflicts with a vertical wall
 										else if (Controller.returnInvalidWallDirection(currentTile,Direction.Horizontal) == Direction.Vertical) {
 											//Set that conflict vertical wall to black
 											int row = Controller.returnInvalidWallRow(currentTile, Direction.Vertical); 
 											int column = Controller.returnInvalidWallColumn(currentTile,Direction.Vertical); 
-											vWalls[row][column].setBackground(Color.black);
-											wallCenters[row][column].setBackground(Color.black);
-											vWalls[row + 1][column].setBackground(Color.black);
+											vWalls[row][column].setBackground(placedWallColor);
+											wallCenters[row][column].setBackground(placedWallColor);
+											vWalls[row + 1][column].setBackground(placedWallColor);
 										}
 									}
 								}
@@ -985,8 +1408,8 @@ public class QuoridorWindow extends JFrame {
 								else { 
 									//If it is in a valid position
 									if (Controller.hoveredWallIsValid(currentTile, Direction.Vertical) == true) {
-										//Set the vertical wall to pink again
-										setWallToPink(xPos, yPos);
+										//Set the vertical wall to board background again
+										setWallToBoardBackgroundColor(xPos, yPos);
 									} 
 									//If it is an invalid position
 									else if (Controller.hoveredWallIsValid(currentTile,Direction.Vertical) == false) {
@@ -995,18 +1418,18 @@ public class QuoridorWindow extends JFrame {
 											//Set that conflict horizontal wall to black
 											int row = Controller.returnInvalidWallRow(currentTile, Direction.Horizontal); 
 											int column = Controller.returnInvalidWallColumn(currentTile,Direction.Horizontal); 
-											hWalls[row][column].setBackground(Color.black);
-											wallCenters[row][column].setBackground(Color.black);
-											hWalls[row][column + 1].setBackground(Color.black);
+											hWalls[row][column].setBackground(placedWallColor);
+											wallCenters[row][column].setBackground(placedWallColor);
+											hWalls[row][column + 1].setBackground(placedWallColor);
 										}
 										//Otherwise, it conflicts with a vertical wall
 										else if (Controller.returnInvalidWallDirection(currentTile,Direction.Vertical) == Direction.Vertical) {
 											//Set that conflict vertical wall to black
 											int row = Controller.returnInvalidWallRow(currentTile, Direction.Vertical); 
 											int column = Controller.returnInvalidWallColumn(currentTile,Direction.Vertical); 
-											vWalls[row][column].setBackground(Color.black);
-											wallCenters[row][column].setBackground(Color.black);
-											vWalls[row + 1][column].setBackground(Color.black);
+											vWalls[row][column].setBackground(placedWallColor);
+											wallCenters[row][column].setBackground(placedWallColor);
+											vWalls[row + 1][column].setBackground(placedWallColor);
 										}
 									}
 								}
@@ -1016,16 +1439,13 @@ public class QuoridorWindow extends JFrame {
 							else { 
 
 								if (Controller.hoveredWallIsValid(currentTile, Direction.Horizontal) == true) {
-									hWalls[xPos][yPos].setBackground(Color.pink);
-									wallCenters[xPos][yPos].setBackground(Color.pink);
-									hWalls[xPos][yPos + 1].setBackground(Color.pink);
+									hWalls[xPos][yPos].setBackground(boardBackgroundColor);
+									wallCenters[xPos][yPos].setBackground(boardBackgroundColor);
+									hWalls[xPos][yPos + 1].setBackground(boardBackgroundColor);
 								} else if (Controller.hoveredWallIsValid(currentTile, Direction.Vertical) == true) {
-									vWalls[xPos][yPos].setBackground(Color.pink);
-									wallCenters[xPos][yPos].setBackground(Color.pink);
-									vWalls[xPos + 1][yPos].setBackground(Color.pink);
-
-									System.out.println("Gets here");
-
+									vWalls[xPos][yPos].setBackground(boardBackgroundColor);
+									wallCenters[xPos][yPos].setBackground(boardBackgroundColor);
+									vWalls[xPos + 1][yPos].setBackground(boardBackgroundColor);
 								}
 
 								else if (Controller.hoveredWallIsValid(currentTile, Direction.Horizontal) == false
@@ -1036,9 +1456,9 @@ public class QuoridorWindow extends JFrame {
 										int column = Controller.returnInvalidWallColumn(currentTile,
 												Direction.Horizontal); // Get the column of the wall it conflicts with
 										// Set the conflict wall to black
-										hWalls[row][column].setBackground(Color.black);
-										wallCenters[row][column].setBackground(Color.black);
-										hWalls[row][column + 1].setBackground(Color.black);
+										hWalls[row][column].setBackground(placedWallColor);
+										wallCenters[row][column].setBackground(placedWallColor);
+										hWalls[row][column + 1].setBackground(placedWallColor);
 									}
 
 									else if (Controller.returnInvalidWallDirection(currentTile,
@@ -1055,9 +1475,9 @@ public class QuoridorWindow extends JFrame {
 										int column = Controller.returnInvalidWallColumn(currentTile,
 												Direction.Vertical); // Get the column of the wall it conflicts with
 										// Set the conflict wall to black
-										vWalls[row][column].setBackground(Color.black);
-										wallCenters[row][column].setBackground(Color.black);
-										vWalls[row + 1][column].setBackground(Color.black);
+										vWalls[row][column].setBackground(placedWallColor);
+										wallCenters[row][column].setBackground(placedWallColor);
+										vWalls[row + 1][column].setBackground(placedWallColor);
 									}
 
 								}
@@ -1083,11 +1503,72 @@ public class QuoridorWindow extends JFrame {
 								if (returnedWall != null) {
 									// Do drop wall and return the wall placed
 									// Make a wall horizontally
-									hWalls[xPos][yPos].setBackground(Color.black);
-									wallCenters[xPos][yPos].setBackground(Color.black);
-									hWalls[xPos][yPos + 1].setBackground(Color.black);
+									hWalls[xPos][yPos].setBackground(placedWallColor);
+									wallCenters[xPos][yPos].setBackground(placedWallColor);
+									hWalls[xPos][yPos + 1].setBackground(placedWallColor);
 									// Set Target tile to placed wall on board
 									isGrabWall = true;
+									
+									//Update Total Time Left Labels
+									lblTimeWhite.setText(Controller.displayRemainingTimeWhite());
+									lblTimeBlack.setText(Controller.displayRemainingTimeBlack());
+									
+									//Manipulate Buttons when changing players
+									/**
+									 * @author arneetkalra
+									 */
+									if (Controller.isBlackPlayerTurn()) {
+										btnGrabButtonBlack.setBackground(mainScreenBackgroundColor);
+										btnRotateButtonBlack.setBackground(mainScreenBackgroundColor);
+										btnResignGameBlack.setBackground(mainScreenBackgroundColor);
+										btnGrabButtonBlack.setForeground(placedWallColor);
+										btnRotateButtonBlack.setForeground(placedWallColor);
+										btnResignGameBlack.setForeground(placedWallColor);							
+										btnGrabButtonBlack.setOpaque(true);
+										btnRotateButtonBlack.setOpaque(true);
+										btnResignGameBlack.setOpaque(true);
+										btnGrabButtonBlack.setBorderPainted(false);
+										btnRotateButtonBlack.setBorderPainted(false);
+										btnResignGameBlack.setBorderPainted(false);
+									} else {
+										btnGrabButtonBlack.setOpaque(false);
+										btnRotateButtonBlack.setOpaque(false);
+										btnResignGameBlack.setOpaque(false);
+										btnGrabButtonBlack.setBorderPainted(true);
+										btnRotateButtonBlack.setBorderPainted(true);
+										btnResignGameBlack.setBorderPainted(true);
+										btnGrabButtonBlack.setForeground(Color.black);
+										btnRotateButtonBlack.setForeground(Color.black);
+										btnResignGameBlack.setForeground(Color.black);
+									}
+									/**
+									 * @author arneetkalra
+									 */
+									if (Controller.isWhitePlayerTurn()) {
+										btnGrabButtonWhite.setBackground(mainScreenBackgroundColor);
+										btnRotateButtonWhite.setBackground(mainScreenBackgroundColor);
+										btnResignGameWhite.setBackground(mainScreenBackgroundColor);
+										btnGrabButtonWhite.setForeground(placedWallColor);
+										btnRotateButtonWhite.setForeground(placedWallColor);
+										btnResignGameWhite.setForeground(placedWallColor);							
+										btnGrabButtonWhite.setOpaque(true);
+										btnRotateButtonWhite.setOpaque(true);
+										btnResignGameWhite.setOpaque(true);
+										btnGrabButtonWhite.setBorderPainted(false);
+										btnRotateButtonWhite.setBorderPainted(false);
+										btnResignGameWhite.setBorderPainted(false);
+									} else {
+										btnGrabButtonWhite.setOpaque(false);
+										btnRotateButtonWhite.setOpaque(false);
+										btnResignGameWhite.setOpaque(false);
+										btnGrabButtonWhite.setBorderPainted(true);
+										btnRotateButtonWhite.setBorderPainted(true);
+										btnResignGameWhite.setBorderPainted(true);
+										btnGrabButtonWhite.setForeground(Color.black);
+										btnRotateButtonWhite.setForeground(Color.black);
+										btnResignGameWhite.setForeground(Color.black);
+									}
+									
 								} else {
 									QuoridorWindow.notifyIllegalWallMove();
 								}
@@ -1104,17 +1585,80 @@ public class QuoridorWindow extends JFrame {
 								if (returnedWall != null) {
 									// Do drop wall and return the wall placed
 									// Make a wall vertically
-									vWalls[xPos][yPos].setBackground(Color.black);
-									wallCenters[xPos][yPos].setBackground(Color.black);
-									vWalls[xPos + 1][yPos].setBackground(Color.black);
+									vWalls[xPos][yPos].setBackground(placedWallColor);
+									wallCenters[xPos][yPos].setBackground(placedWallColor);
+									vWalls[xPos + 1][yPos].setBackground(placedWallColor);
 
 									isGrabWall = true;
+									
+									//Update Total Time Left Labels
+									lblTimeWhite.setText(Controller.displayRemainingTimeWhite());
+									lblTimeBlack.setText(Controller.displayRemainingTimeBlack());
+									
+									//Manipulate Buttons when changing players
+									/**
+									 * @author arneetkalra
+									 */
+									if (Controller.isBlackPlayerTurn()) {
+										btnGrabButtonBlack.setBackground(mainScreenBackgroundColor);
+										btnRotateButtonBlack.setBackground(mainScreenBackgroundColor);
+										btnResignGameBlack.setBackground(mainScreenBackgroundColor);
+										btnGrabButtonBlack.setForeground(placedWallColor);
+										btnRotateButtonBlack.setForeground(placedWallColor);
+										btnResignGameBlack.setForeground(placedWallColor);							
+										btnGrabButtonBlack.setOpaque(true);
+										btnRotateButtonBlack.setOpaque(true);
+										btnResignGameBlack.setOpaque(true);
+										btnGrabButtonBlack.setBorderPainted(false);
+										btnRotateButtonBlack.setBorderPainted(false);
+										btnResignGameBlack.setBorderPainted(false);
+									} else {
+										btnGrabButtonBlack.setOpaque(false);
+										btnRotateButtonBlack.setOpaque(false);
+										btnResignGameBlack.setOpaque(false);
+										btnGrabButtonBlack.setBorderPainted(true);
+										btnRotateButtonBlack.setBorderPainted(true);
+										btnResignGameBlack.setBorderPainted(true);
+										btnGrabButtonBlack.setForeground(Color.black);
+										btnRotateButtonBlack.setForeground(Color.black);
+										btnResignGameBlack.setForeground(Color.black);
+									}
+									/**
+									 * @author arneetkalra
+									 */
+									if (Controller.isWhitePlayerTurn()) {
+										btnGrabButtonWhite.setBackground(mainScreenBackgroundColor);
+										btnRotateButtonWhite.setBackground(mainScreenBackgroundColor);
+										btnResignGameWhite.setBackground(mainScreenBackgroundColor);
+										btnGrabButtonWhite.setForeground(placedWallColor);
+										btnRotateButtonWhite.setForeground(placedWallColor);
+										btnResignGameWhite.setForeground(placedWallColor);							
+										btnGrabButtonWhite.setOpaque(true);
+										btnRotateButtonWhite.setOpaque(true);
+										btnResignGameWhite.setOpaque(true);
+										btnGrabButtonWhite.setBorderPainted(false);
+										btnRotateButtonWhite.setBorderPainted(false);
+										btnResignGameWhite.setBorderPainted(false);
+									} else {
+										btnGrabButtonWhite.setOpaque(false);
+										btnRotateButtonWhite.setOpaque(false);
+										btnResignGameWhite.setOpaque(false);
+										btnGrabButtonWhite.setBorderPainted(true);
+										btnRotateButtonWhite.setBorderPainted(true);
+										btnResignGameWhite.setBorderPainted(true);
+										btnGrabButtonWhite.setForeground(Color.black);
+										btnRotateButtonWhite.setForeground(Color.black);
+										btnResignGameWhite.setForeground(Color.black);
+									}
+									
 								} else { // No wall move candidate exists
 									QuoridorWindow.notifyIllegalWallMove();
 								}
 							}
 						}
 					});
+					
+					
 					c.gridx = j * 2 + 1;
 					c.gridy = i * 2 + 1;
 					c.weightx = 1;
@@ -1124,13 +1668,14 @@ public class QuoridorWindow extends JFrame {
 					c.fill = GridBagConstraints.BOTH;
 					// TODO: set click event for walls here--eg.dropwall
 					gameBoardPanel.add(wallCenters[i][j], c);
-
 				}
 			}
+			
+			
 		}
 
 			Component horizontalStrut = Box.createHorizontalStrut(100);
-			horizontalStrut.setBackground(Color.PINK);
+			horizontalStrut.setBackground(Color.white);
 			horizontalBox.add(horizontalStrut);
 
 			timeRemLabel = new JLabel("Time remaining: 00:00");
@@ -1139,37 +1684,66 @@ public class QuoridorWindow extends JFrame {
 			horizontalBox.add(timeRemLabel);
 		
 	}
+	
 
-	// Original Placement is 0,4,8,4
+	/**	Moves players graphically
+	 *  @author Sam Perreault */
 	public void placePlayer(int whitex, int whitey, int blackx, int blacky) {
-		int blackChar = 0x2B24;
-		int whiteChar = 0x20DD;
-
-		tiles[playerView[0]][playerView[1]].setText("");
-		tiles[playerView[2]][playerView[3]].setText("");
+		tiles[playerView[0]][playerView[1]].setBackground(tileColor);
+		tiles[playerView[2]][playerView[3]].setBackground(tileColor);
 
 		playerView[0] = whitex;
 		playerView[1] = whitey;
 		playerView[2] = blackx;
 		playerView[3] = blacky;
-		tiles[whitex][whitey].setText("O");
-		tiles[blackx][blacky].setText("" + (char) blackChar);
-
+		
+		tiles[whitex][whitey].setBackground(Color.white);
+		tiles[blackx][blacky].setBackground(Color.black);
+		
+	}
+	
+	/**
+	 * @author arneetkalra
+	 */
+	public void placeValidPlayerPositions (int whitex, int whitey, int blackx, int blacky) {
+		
+		// A work in progress
+		
+		if (QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
+				.getPlayerToMove() == QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer()) {
+			if (whitex>0) tiles[whitex - 1][whitey].setBackground(validPositionColor);
+			if (whitex<9) tiles[whitex + 1][whitey].setBackground(validPositionColor);
+			if (whitey<9) tiles[whitex][whitey - 1].setBackground(validPositionColor);
+			if (whitex>0) tiles[whitex][whitey + 1].setBackground(validPositionColor);
+		} 
+		else {
+			if (blackx>0) tiles[blackx - 1][blacky].setBackground(validPositionColor);
+			if (blackx<9) tiles[blackx + 1][blacky].setBackground(validPositionColor);
+			if (blacky<9) tiles[blackx][blacky - 1].setBackground(validPositionColor);
+			if (blacky>0) tiles[blackx][blacky + 1].setBackground(validPositionColor);
+			
+			tiles[whitex][whitey].setBackground(Color.white);
+			tiles[blackx][blacky].setBackground(Color.black);
+		}
 	}
 
+	/** @author Sam Perreault */
 	public String getTurnLabel() {
 		return currentPlayerName.getText();
 	}
 
+	/** @author Sam Perreault */
 	public boolean getIsTimerActive() {
 		return secondTimer.isRunning();
 	}
 
-	public void setPlayerNames(String white, String black) {
-		blackPlayerName.setText(black);
-		whitePlayerName.setText(white);
+	/** @author Sam Perreault */
+	public void setPlayerNames(String white, String black) {	
+		lblBlackPlayerName.setText(blackPawn +" "+ black +" "+blackPawn);
+		whitePlayerName.setText(whitePawn +" "+ white +" "+whitePawn);
 	}
 
+	/** @author Sam Perreault */
 	public void setTimeRemaining(int timeRemaining) {
 		timeRemaining /= 1000;
 		int minutes, seconds;
@@ -1191,10 +1765,12 @@ public class QuoridorWindow extends JFrame {
 		timeRemLabel.setText(tr);
 	}
 
+	/** @author Sam Perreault */
 	public void setCurrentPlayer(String name) {
 		currentPlayerName.setText(name + "'s turn");
 	}
 
+	/** @author Sam Perreault */
 	public void subtractSecondFromView() {
 		// pull text from label
 		// get last 2 characters
@@ -1215,38 +1791,52 @@ public class QuoridorWindow extends JFrame {
 
 	}
 
+	/** @author Sam Perreault */
 	public void createSecondTimer() {
 		ActionListener listener = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// Deduct a second from view
-				subtractSecondFromView();
-				// Deduct a second from model
-				Controller.subtractSecond();
+				if(Controller.gameIsStillRunning()) {
+					// Deduct a second from view
+					subtractSecondFromView();
+					// Deduct a second from model
+					Controller.subtractSecond();
+				}
 			}
 		};
-
-		secondTimer = new Timer(1000, listener);
-		secondTimer.setRepeats(true);
-		secondTimer.start();
+		if (Controller.gameIsStillRunning()) {
+			secondTimer = new Timer(1000, listener);
+			secondTimer.setRepeats(true);
+			secondTimer.start();
+			timerRunning = true;
+		}
 	}
 
 	/**
 	 * @author arneetkalra
 	 */
 	public static void notifyIllegalWallMove() {
-		JOptionPane.showMessageDialog(null, "Illegal Wall Move!", "", JOptionPane.WARNING_MESSAGE);
+		JOptionPane.showMessageDialog(null, "Illegal Wall Move!", "Do you even have eyes?", JOptionPane.WARNING_MESSAGE);
 	}
 
 	/** @author Luke Barber */
 	public static void warningNoMoreWalls() {
-		JOptionPane.showMessageDialog(null, "No More Walls Available in Stock!", "", JOptionPane.WARNING_MESSAGE);
+		JOptionPane.showMessageDialog(null, "No More Walls Available in Stock! You have to move your player instead.", "Uh-oh...", JOptionPane.WARNING_MESSAGE);
 	}
 
 	/** @author Luke Barber */
 	public static void warningInvalidGrabWall() {
-		JOptionPane.showMessageDialog(null, "Already Grabbed Wall!", "", JOptionPane.WARNING_MESSAGE);
+		JOptionPane.showMessageDialog(null, "Already Grabbed Wall!", "You're good to go!", JOptionPane.PLAIN_MESSAGE);
 	}
+	
+	/**
+	 * @author arneetkalra
+	 */
+	public static void notifyNotYourTurn() {
+		JOptionPane.showMessageDialog(null, "It's not your turn!", "Wait your turn bro", JOptionPane.PLAIN_MESSAGE);
+	}
+	
+	
 
 	/** @author Luke Barber */
 	public void setWallSelected(boolean selected) {
@@ -1262,11 +1852,15 @@ public class QuoridorWindow extends JFrame {
 	 * @author arneetkalra
 	 */
 	public static void notifyGrabAWall() {
-		JOptionPane.showMessageDialog(null, "Grab a Wall First!", "", JOptionPane.WARNING_MESSAGE);
+		JOptionPane.showMessageDialog(null, "Grab a Wall First!", "", JOptionPane.PLAIN_MESSAGE);
 	}
 
 	class ImagePanel extends JPanel {
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private Image img;
 
 		public ImagePanel(String img) {
@@ -1291,14 +1885,240 @@ public class QuoridorWindow extends JFrame {
 
 	public void displayWall(int x, int y, Direction direction) {
 		if (direction == Direction.Horizontal) {
-			hWalls[x][y].setBackground(Color.black);
-			wallCenters[x][y].setBackground(Color.black);
-			hWalls[x][y + 1].setBackground(Color.black);
+			hWalls[x][y].setBackground(placedWallColor);
+			wallCenters[x][y].setBackground(placedWallColor);
+			hWalls[x][y + 1].setBackground(placedWallColor);
 		} else {
-			vWalls[x][y].setBackground(Color.black);
-			wallCenters[x][y].setBackground(Color.black);
-			vWalls[x + 1][y].setBackground(Color.black);
+			vWalls[x][y].setBackground(placedWallColor);
+			wallCenters[x][y].setBackground(placedWallColor);
+			vWalls[x + 1][y].setBackground(placedWallColor);
 		}
 
+	}
+	
+	/**
+	 * @author arneetkalra
+	 */
+	public void notifyWhiteWon() {
+		Image whiteImage= new ImageIcon("src/main/resources/whitePawn.png").getImage().getScaledInstance(180, 300, Image.SCALE_SMOOTH);
+		ImageIcon whitePawnIcon = new ImageIcon(whiteImage);
+		
+		int finalResultBotton = JOptionPane.YES_NO_CANCEL_OPTION;
+		
+		Object[] finalResultOptionButtons = {"Load Game", "Replay Mode", "Home Screen"}; 
+		int finalResult = JOptionPane.showOptionDialog(null, "Congraulations White Player, you win!", "White Wins",
+				finalResultBotton,
+				JOptionPane.PLAIN_MESSAGE,
+				whitePawnIcon,
+				finalResultOptionButtons,
+				finalResultOptionButtons[2]);
+		
+		// Load Game Button
+		if (finalResult == JOptionPane.YES_OPTION) {
+			loadGame();
+		}
+		//Replay mode Button
+		else if(finalResult == JOptionPane.NO_OPTION) {
+			//Do replay mode here
+		}
+		//Home Screen button
+		else {
+			homeScreen();
+		}
+		
+	}
+	/**
+	 * @author arneetkalra
+	 */
+	public void notifyBlackWon() {
+		Image blackImage= new ImageIcon("src/main/resources/blackPawn.png").getImage().getScaledInstance(180, 300, Image.SCALE_SMOOTH);
+		ImageIcon blackPawnIcon = new ImageIcon(blackImage);
+		int finalResultBotton = JOptionPane.YES_NO_CANCEL_OPTION;
+		Object[] finalResultOptionButtons = {"Load Game", "Replay Mode", "Home Screen"};
+		
+		int finalResult = JOptionPane.showOptionDialog(null, "Congraulations Black Player, you win!", "Black Wins",
+				finalResultBotton, JOptionPane.PLAIN_MESSAGE, blackPawnIcon, finalResultOptionButtons,
+				finalResultOptionButtons[2]);
+
+		// Load Game Button
+		if (finalResult == JOptionPane.YES_OPTION) {
+			loadGame();
+		}
+		// Replay mode Button
+		else if (finalResult == JOptionPane.NO_OPTION) {
+			//Do replay mode here 
+
+		}
+		// Home Screen button
+		else {
+			homeScreen();
+		}
+	}
+
+	/**
+	 * @author arneetkalra
+	 */
+	public void notifyDraw() {
+		Image drawImage= new ImageIcon("src/main/resources/draw.png").getImage().getScaledInstance(180, 300, Image.SCALE_SMOOTH);
+		ImageIcon drawIcon = new ImageIcon(drawImage);
+		int finalResultBotton = JOptionPane.YES_NO_CANCEL_OPTION;
+		
+		Object[] finalResultOptionButtons = {"Load Game", "Replay Mode", "Home Screen"}; 
+
+		int finalResult = JOptionPane.showOptionDialog(null, "What a Game! It's a draw!", "Draw",
+				finalResultBotton,
+				JOptionPane.PLAIN_MESSAGE,
+				drawIcon,
+				finalResultOptionButtons, finalResultOptionButtons[2]);
+
+		// Load Game Button
+		if (finalResult == JOptionPane.YES_OPTION) {
+			loadGame();
+		}
+		// Replay mode Button
+		else if (finalResult == JOptionPane.NO_OPTION) {
+			//Do replay mode here
+		}
+		// Home Screen button
+		else {
+			homeScreen();
+		}
+	}
+	
+	/**
+	 * @author arneetkalra
+	 */
+	public void homeScreen() {
+		
+		//Reset Previous inputs
+		player1Field.setText("");
+		player2Field.setText("");
+		minuteField.setText("");
+		secondField.setText("");
+
+		//Reset the board:
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				// Erase Colouring of board
+				wallCenters[i][j].setBackground(boardBackgroundColor);
+				hWalls[i][j].setBackground(boardBackgroundColor);
+				vWalls[i][j].setBackground(boardBackgroundColor);
+			}
+		}
+		
+		//Reset Labels
+		lblTimeWhite.setText("   ");
+		lblTimeBlack.setText("   ");
+		lblWallsLeftBlack.setText("Walls Left = 10");
+		lblWallsLeftWhite.setText("Walls Left = 10");
+		
+		// Go back to main Screen
+		CardLayout layout = (CardLayout) (contentPane.getLayout());
+		layout.show(contentPane, "titleScreenPanel");
+		// Delete all application data
+		Controller.destroyCurrentGame();
+	}
+	
+	/**
+	 * @author arneetkalra
+	 */
+	public void loadGame() {
+		homeScreen();
+		
+		Controller.startNewGame();
+		Controller.initBlackPlayer("Black");
+		Controller.initWhitePlayer("White");
+		Controller.setTotalThinkingTime("00:03:00");
+		Controller.startClock();
+		Controller.createBoard();
+		Controller.initializeBoard();
+		boolean wrong = false;
+		JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+		int returnValue = jfc.showOpenDialog(null);
+
+		if (returnValue == JFileChooser.APPROVE_OPTION) {
+			File selectedFile = jfc.getSelectedFile();
+			try {
+				Controller.loadPosition(selectedFile.getName());
+			} catch (UnsupportedOperationException e) {
+				JFrame f = new JFrame();
+				JTextField tf1;
+				JButton b1;
+				tf1 = new JTextField();
+				tf1.setText("Cannot load game due to invalid position");
+				tf1.setEditable(false);
+				b1 = new JButton("OK");
+				tf1.setBounds(50, 100, 350, 50);
+				b1.setBounds(100, 200, 100, 50);
+				f.getContentPane().add(tf1);
+				f.getContentPane().add(b1);
+				f.setSize(400, 400);
+				f.getContentPane().setLayout(null);
+				f.setVisible(true);
+				b1.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent b) {
+						f.setVisible(false);
+					}
+				});
+				wrong = true;
+				e.printStackTrace();
+			}
+		}
+		if (!wrong) {
+			Quoridor quoridor = QuoridorApplication.getQuoridor();
+			for (int i = 0; i < quoridor.getCurrentGame().getCurrentPosition()
+					.numberOfBlackWallsOnBoard(); i++) {
+				WallMove move = quoridor.getCurrentGame().getCurrentPosition().getBlackWallsOnBoard(i)
+						.getMove();
+				QuoridorApplication.quoridorWindow.displayWall(move.getTargetTile().getRow(),
+						move.getTargetTile().getColumn(), move.getWallDirection());
+			}
+			for (int i = 0; i < quoridor.getCurrentGame().getCurrentPosition()
+					.numberOfWhiteWallsOnBoard(); i++) {
+				WallMove move = quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsOnBoard(i)
+						.getMove();
+				QuoridorApplication.quoridorWindow.displayWall(move.getTargetTile().getRow(),
+						move.getTargetTile().getColumn(), move.getWallDirection());
+			}
+			CardLayout layout = (CardLayout) (contentPane.getLayout());
+			layout.show(contentPane, "activeGamePanel");
+		} else {
+			Quoridor quoridor = QuoridorApplication.getQuoridor();
+			quoridor.delete();
+			quoridor = new Quoridor();
+		}
+	}
+	
+	
+	/**
+	 * @author William Wang
+	 */
+	public void updatePositions() {
+		
+		//Reset the board:
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				// Erase Colouring of board
+				wallCenters[i][j].setBackground(boardBackgroundColor);
+				hWalls[i][j].setBackground(boardBackgroundColor);
+				vWalls[i][j].setBackground(boardBackgroundColor);
+			}
+		}
+		
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		GamePosition currentPosition = quoridor.getCurrentGame().getCurrentPosition();
+		
+		PlayerPosition WhitePosition = currentPosition.getWhitePosition();
+		PlayerPosition BlackPosition = currentPosition.getWhitePosition();
+		List<Wall> whiteWalls = currentPosition.getWhiteWallsOnBoard();
+		List<Wall> blackWalls = currentPosition.getBlackWallsOnBoard();
+		
+		placePlayer(WhitePosition.getTile().getRow()-1, WhitePosition.getTile().getColumn()-1, 
+				BlackPosition.getTile().getRow()-1, BlackPosition.getTile().getColumn()-1);
+		for(Wall wall: whiteWalls) {
+			displayWall(wall.getMove().getTargetTile().getRow()-1,wall.getMove().getTargetTile().getColumn()-1,
+					wall.getMove().getWallDirection());
+		}
+		
 	}
 }

@@ -4,6 +4,7 @@
 package ca.mcgill.ecse223.quoridor.controller;
 
 import ca.mcgill.ecse223.quoridor.model.*;
+import ca.mcgill.ecse223.quoridor.view.QuoridorWindow;
 
 import java.util.List;
 
@@ -388,7 +389,7 @@ public class PawnBehavior {
 	 */
 	// line 36 "../../../../../PawnStateMachine.ump"
 	public static boolean isLegalStep(MoveDirection dir) {
-		Quoridor quoridor = QuoridorApplication.getQuordior();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		currentGame = quoridor.getCurrentGame();
 		int originalBlackColumn = currentGame.getCurrentPosition().getBlackPosition().getTile().getColumn();
 		int originalBlackRow = currentGame.getCurrentPosition().getBlackPosition().getTile().getRow();
@@ -398,6 +399,7 @@ public class PawnBehavior {
 				.getTile((originalBlackRow - 1) * 9 + originalBlackColumn - 1);
 		Tile originalWhiteTile = currentGame.getQuoridor().getBoard()
 				.getTile((originalWhiteRow - 1) * 9 + originalWhiteColumn - 1);
+
 		if (currentGame.getCurrentPosition().getPlayerToMove().equals(currentGame.getBlackPlayer())) {
 			if (dir == MoveDirection.North) {
 				int newRow = currentGame.getCurrentPosition().getBlackPosition().getTile().getRow() - 1;
@@ -502,7 +504,10 @@ public class PawnBehavior {
 					}
 				}
 			}
-		} else {
+		}
+
+		// White Player Logic
+		else {
 			if (dir == MoveDirection.North) {
 				int newRow = currentGame.getCurrentPosition().getWhitePosition().getTile().getRow() - 1;
 				if (newRow < 1) {
@@ -529,6 +534,7 @@ public class PawnBehavior {
 					return false;
 				}
 			}
+
 			for (int i = 0; i < currentGame.getCurrentPosition().getBlackWallsOnBoard().size(); i++) {
 				Tile wallTile = currentGame.getCurrentPosition().getBlackWallsOnBoard().get(i).getMove()
 						.getTargetTile();
@@ -613,7 +619,6 @@ public class PawnBehavior {
 				}
 			}
 		}
-
 		return true;
 	}
 
@@ -641,9 +646,27 @@ public class PawnBehavior {
 	}
 
 	// line 53 "../../../../../PawnStateMachine.ump"
+
 	// line 53 "../../../../../PawnStateMachine.ump"
+	public static void ensureGrabWallDeleted() {
+		Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
+		GamePosition currentGamePosition = currentGame.getCurrentPosition();
+		currentGame.getCurrentPosition().getPlayerToMove();
+		QuoridorApplication.getQuoridor().getBoard();
+
+		// Get current Wall Move and it's player
+		WallMove wallMove = currentGame.getWallMoveCandidate();
+		Player player = currentGamePosition.getPlayerToMove();
+		QuoridorWindow window = QuoridorApplication.quoridorWindow;
+
+		if (window.isGrabWall) {
+			Controller.cancelWallMove();
+
+		}
+	}
+
 	public static boolean movePawn(MoveDirection dir) {
-		
+
 		if (isLegalStep(dir)) {
 			if (currentGame.getCurrentPosition().getPlayerToMove().equals(currentGame.getBlackPlayer())) {
 				if (dir == MoveDirection.North) {
@@ -652,12 +675,16 @@ public class PawnBehavior {
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((newRow - 1) * 9 + column - 1);
 					currentGame.getCurrentPosition().getBlackPosition().setTile(newTile);
 					Controller.switchCurrentPlayer();
+					ensureGrabWallDeleted();
+
 					return true;
 				} else if (dir == MoveDirection.South) {
 					int newRow = currentGame.getCurrentPosition().getBlackPosition().getTile().getRow() + 1;
 					int column = currentGame.getCurrentPosition().getBlackPosition().getTile().getColumn();
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((newRow - 1) * 9 + column - 1);
 					currentGame.getCurrentPosition().getBlackPosition().setTile(newTile);
+					ensureGrabWallDeleted();
+
 					Controller.switchCurrentPlayer();
 					return true;
 				} else if (dir == MoveDirection.East) {
@@ -665,6 +692,8 @@ public class PawnBehavior {
 					int newColumn = currentGame.getCurrentPosition().getBlackPosition().getTile().getColumn() + 1;
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((Row - 1) * 9 + newColumn - 1);
 					currentGame.getCurrentPosition().getBlackPosition().setTile(newTile);
+					ensureGrabWallDeleted();
+
 					Controller.switchCurrentPlayer();
 					return true;
 				} else if (dir == MoveDirection.West) {
@@ -672,6 +701,8 @@ public class PawnBehavior {
 					int newColumn = currentGame.getCurrentPosition().getBlackPosition().getTile().getColumn() - 1;
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((Row - 1) * 9 + newColumn - 1);
 					currentGame.getCurrentPosition().getBlackPosition().setTile(newTile);
+					ensureGrabWallDeleted();
+
 					Controller.switchCurrentPlayer();
 					return true;
 				}
@@ -681,6 +712,8 @@ public class PawnBehavior {
 					int column = currentGame.getCurrentPosition().getWhitePosition().getTile().getColumn();
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((newRow - 1) * 9 + column - 1);
 					currentGame.getCurrentPosition().getWhitePosition().setTile(newTile);
+					ensureGrabWallDeleted();
+
 					Controller.switchCurrentPlayer();
 					//currentGame.addMove(new Move());
 					return true;
@@ -689,6 +722,8 @@ public class PawnBehavior {
 					int column = currentGame.getCurrentPosition().getWhitePosition().getTile().getColumn();
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((newRow - 1) * 9 + column - 1);
 					currentGame.getCurrentPosition().getWhitePosition().setTile(newTile);
+					ensureGrabWallDeleted();
+
 					Controller.switchCurrentPlayer();
 					return true;
 				} else if (dir == MoveDirection.East) {
@@ -696,6 +731,8 @@ public class PawnBehavior {
 					int newColumn = currentGame.getCurrentPosition().getWhitePosition().getTile().getColumn() + 1;
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((Row - 1) * 9 + newColumn - 1);
 					currentGame.getCurrentPosition().getWhitePosition().setTile(newTile);
+					ensureGrabWallDeleted();
+
 					Controller.switchCurrentPlayer();
 					return true;
 				} else if (dir == MoveDirection.West) {
@@ -703,6 +740,8 @@ public class PawnBehavior {
 					int newColumn = currentGame.getCurrentPosition().getWhitePosition().getTile().getColumn() - 1;
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((Row - 1) * 9 + newColumn - 1);
 					currentGame.getCurrentPosition().getWhitePosition().setTile(newTile);
+					ensureGrabWallDeleted();
+
 					Controller.switchCurrentPlayer();
 					return true;
 				}
@@ -720,7 +759,7 @@ public class PawnBehavior {
 	 */
 	// line 38 "../../../../../PawnStateMachine.ump"
 	public static boolean isLegalJump(MoveDirection dir) {
-		Quoridor quoridor = QuoridorApplication.getQuordior();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
 		boolean isWhite = currentPlayer.hasGameAsWhite();
 		// opponent direction
@@ -769,19 +808,61 @@ public class PawnBehavior {
 		// if legal
 		if (isWallBehind(oppDirection)) {
 			if (oppDirection == MoveDirection.East) {
-				if ((dir == MoveDirection.NorthEast) || (dir == MoveDirection.SouthEast)) {
+				if (dir == MoveDirection.NorthEast) {
+					if (isWallAt(currentTile.getRow() - 1, currentTile.getColumn() + 1, Direction.Horizontal))
+						return false;
+					if (isWallAt(currentTile.getRow() - 1, currentTile.getColumn(), Direction.Horizontal))
+						return false;
+					return true;
+				}
+				else if(dir == MoveDirection.SouthEast) {
+					if (isWallAt(currentTile.getRow(), currentTile.getColumn() + 1, Direction.Horizontal))
+						return false;
+					if (isWallAt(currentTile.getRow(), currentTile.getColumn(), Direction.Horizontal))
+						return false;
 					return true;
 				}
 			} else if (oppDirection == MoveDirection.West) {
-				if ((dir == MoveDirection.NorthWest) || (dir == MoveDirection.SouthWest)) {
+				if ((dir == MoveDirection.NorthWest)) {
+					if (isWallAt(currentTile.getRow() - 1, currentTile.getColumn() - 1, Direction.Horizontal))
+						return false;
+					if (isWallAt(currentTile.getRow() - 1, currentTile.getColumn() -2, Direction.Horizontal))
+						return false;
+					return true;
+				} else if ((dir == MoveDirection.SouthWest)) {
+					if (isWallAt(currentTile.getRow(), currentTile.getColumn() - 1, Direction.Horizontal))
+						return false;
+					if (isWallAt(currentTile.getRow(), currentTile.getColumn() - 2, Direction.Horizontal))
+						return false;
 					return true;
 				}
 			} else if (oppDirection == MoveDirection.North) {
-				if ((dir == MoveDirection.NorthEast) || (dir == MoveDirection.NorthWest)) {
+				if ((dir == MoveDirection.NorthEast)) {
+					if (isWallAt(currentTile.getRow() - 1, currentTile.getColumn(), Direction.Vertical))
+						return false;
+					if (isWallAt(currentTile.getRow() - 2, currentTile.getColumn(), Direction.Vertical))
+						return false;
+					return true;
+				} else if ((dir == MoveDirection.NorthWest)) {
+					if (isWallAt(currentTile.getRow() - 1, currentTile.getColumn() - 1, Direction.Vertical))
+						return false;
+					if (isWallAt(currentTile.getRow() - 2, currentTile.getColumn() - 1, Direction.Vertical))
+						return false;
 					return true;
 				}
 			} else if (oppDirection == MoveDirection.South) {
-				if ((dir == MoveDirection.SouthWest) || (dir == MoveDirection.SouthEast)) {
+				if ((dir == MoveDirection.SouthWest) ) {
+					if (isWallAt(currentTile.getRow() + 1, currentTile.getColumn() - 1, Direction.Vertical))
+						return false;
+					if (isWallAt(currentTile.getRow(), currentTile.getColumn() - 1, Direction.Vertical))
+						return false;
+					return true;
+				}
+				else if((dir == MoveDirection.SouthEast)){
+					if (isWallAt(currentTile.getRow() + 1, currentTile.getColumn(), Direction.Vertical))
+						return false;
+					if (isWallAt(currentTile.getRow(), currentTile.getColumn(), Direction.Vertical))
+						return false;
 					return true;
 				}
 			}
@@ -817,7 +898,7 @@ public class PawnBehavior {
 	}
 
 	public static boolean isWallAt(int row, int column, Direction dir) {
-		Quoridor quoridor = QuoridorApplication.getQuordior();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		List<Wall> blackWalls = quoridor.getCurrentGame().getCurrentPosition().getBlackWallsOnBoard();
 		List<Wall> whiteWalls = quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsOnBoard();
 		for (Wall w : blackWalls) {
@@ -841,7 +922,7 @@ public class PawnBehavior {
 	 */
 	// line 38 "../../../../../PawnStateMachine.ump"
 	public static boolean isWallBehind(MoveDirection dir) {
-		Quoridor quoridor = QuoridorApplication.getQuordior();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
 		boolean isWhite = currentPlayer.hasGameAsWhite();
 		// opponent position
@@ -904,10 +985,16 @@ public class PawnBehavior {
 		}
 
 		// legal jump
-		Quoridor quoridor = QuoridorApplication.getQuordior();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
 		GamePosition currentPosition = currentGame.getCurrentPosition();
 		Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
+		int moveNumber = -1;
+		int roundNumber = -1;
+		if(currentGame.hasMoves()) {
+			moveNumber = currentGame.getMove(currentGame.getMoves().size()-1).getMoveNumber();
+			roundNumber = currentGame.getMove(currentGame.getMoves().size()-1).getRoundNumber();
+		}
 		Tile targetTile = null;
 		if (currentPlayer.hasGameAsWhite()) {
 			int currentRow = currentPosition.getWhitePosition().getTile().getRow();
@@ -937,7 +1024,7 @@ public class PawnBehavior {
 				targetTile = quoridor.getBoard().getTile((currentRow) * 9 + currentColumn - 2);
 				currentPosition.getWhitePosition().setTile(targetTile);
 			}
-			currentGame.addMove(new JumpMove(0, 0, currentPlayer, targetTile, currentGame));
+			currentGame.addMove(new JumpMove(moveNumber+1, roundNumber+1, currentPlayer, targetTile, currentGame));
 		} else {
 			int currentRow = currentPosition.getBlackPosition().getTile().getRow();
 			int currentColumn = currentPosition.getBlackPosition().getTile().getColumn();
@@ -966,47 +1053,50 @@ public class PawnBehavior {
 				targetTile = quoridor.getBoard().getTile((currentRow) * 9 + currentColumn - 2);
 				currentPosition.getBlackPosition().setTile(targetTile);
 			}
-			currentGame.addMove(new JumpMove(0, 0, currentPlayer, targetTile, currentGame));
+			currentGame.addMove(new JumpMove(moveNumber+1, roundNumber, currentPlayer, targetTile, currentGame));
 		}
+		ensureGrabWallDeleted();
 		Controller.switchCurrentPlayer();
 		return true;
 	}
 
 	public static boolean moveOrJump(MoveDirection dir) {
-		//if target direction has an opponent
+		// if target direction has an opponent
 		boolean adjOpponent = false;
-		Quoridor quoridor = QuoridorApplication.getQuordior();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		boolean isWhite = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().hasGameAsWhite();
 		Tile playerTile = null;
 		Tile opponentTile = null;
-		if(isWhite) {
+		if (isWhite) {
 			playerTile = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile();
 			opponentTile = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile();
-		}
-		else {
+		} else {
 			playerTile = quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile();
 			opponentTile = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile();
 		}
-		if(dir == MoveDirection.East) {
-			if(((playerTile.getRow()-opponentTile.getRow())==0)&&((playerTile.getColumn()-opponentTile.getColumn())==-1)) adjOpponent = true;
-		}
-		else if(dir == MoveDirection.West) {
-			if(((playerTile.getRow()-opponentTile.getRow())==0)&&((playerTile.getColumn()-opponentTile.getColumn())==1)) adjOpponent = true;
-		}
-		else if(dir == MoveDirection.North) {
-			if(((playerTile.getRow()-opponentTile.getRow())==1)&&((playerTile.getColumn()-opponentTile.getColumn())==0)) adjOpponent = true;
-		}
-		else if(dir == MoveDirection.South) {
-			if(((playerTile.getRow()-opponentTile.getRow())==-1)&&((playerTile.getColumn()-opponentTile.getColumn())==0)) adjOpponent = true;
-		}
-		else {
+		if (dir == MoveDirection.East) {
+			if (((playerTile.getRow() - opponentTile.getRow()) == 0)
+					&& ((playerTile.getColumn() - opponentTile.getColumn()) == -1))
+				adjOpponent = true;
+		} else if (dir == MoveDirection.West) {
+			if (((playerTile.getRow() - opponentTile.getRow()) == 0)
+					&& ((playerTile.getColumn() - opponentTile.getColumn()) == 1))
+				adjOpponent = true;
+		} else if (dir == MoveDirection.North) {
+			if (((playerTile.getRow() - opponentTile.getRow()) == 1)
+					&& ((playerTile.getColumn() - opponentTile.getColumn()) == 0))
+				adjOpponent = true;
+		} else if (dir == MoveDirection.South) {
+			if (((playerTile.getRow() - opponentTile.getRow()) == -1)
+					&& ((playerTile.getColumn() - opponentTile.getColumn()) == 0))
+				adjOpponent = true;
+		} else {
 			adjOpponent = true;
 		}
-		
+
 		if (adjOpponent) {
 			return jumpPawn(dir);
-		}
-		else {
+		} else {
 			return movePawn(dir);
 		}
 	}

@@ -14,16 +14,17 @@ Feature: Move Player
     Then The move "<side>" shall be "<status>" 
     And Player's new position shall be <nrow>:<ncol>
     And The next player to move shall become "<nplayer>"
+    
     Examples: 
       | player	| row | col | dir 				| side 	| status 	| nrow 	| ncol	 | nplayer	|
-      | white		| 3 	| 3		| vertical 		| left	|	success | 3			| 2	 		 | black		|
-      | white		| 3 	| 1		| vertical 		| left	|	illegal	| 3			| 1	 		 | white		|
-      | white		| 6 	| 6		| vertical 		| right	|	success | 6			| 7	 		 | black		|
-      | white		| 6 	| 9		| vertical 		| right	|	illegal	| 6			| 9	 		 | white		|
-      | white		| 3 	| 3		| horizontal	| up		|	success | 2			| 3	 		 | black		|
-      | white		| 1 	| 3		| horizontal	| up		|	illegal	| 1			| 3	 		 | white		|
-      | white		| 6 	| 6		| horizontal	| down	|	success | 7			| 6	 		 | black		|
-      | white		| 9 	| 6		| horizontal	| up		|	illegal	| 9			| 6	 		 | white		|
+      | white		|  3 	|   3 | vertical 		| left	|	success | 3			| 2	 		 | black		|
+      | white		|  3 	|   1 | vertical 		| left	|	illegal	| 3			| 1	 		 | white		|
+      | white		|  6 	|   6 | vertical 		| right	|	success | 6			| 7	 		 | black		|
+      | white		|  6 	|   9 | vertical 		| right	|	illegal	| 6			| 9	 		 | white		|
+      | white		|  3 	|   3 | horizontal	| up		|	success | 2			| 3	 		 | black		|
+      | white		|  1 	|   3 | horizontal	| up		|	illegal	| 1			| 3	 		 | white		|
+      | white		|  6 	|   6 | horizontal	| down	|	success | 7			| 6	 		 | black		|
+      | white		|  9 	|   6 | horizontal	| up		|	illegal	| 9			| 6	 		 | white		|
 
   
   Scenario Outline: Move of player blocked by wall

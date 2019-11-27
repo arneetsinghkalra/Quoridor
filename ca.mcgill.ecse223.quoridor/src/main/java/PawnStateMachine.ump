@@ -7,25 +7,36 @@ class PawnBehavior {
     0..1 -> 0..1 Game currentGame;
     0..1 -> 0..1 Player player;
 
+   /**
+    * @author Luke Barber
+    */
+
     pawnSM {
 	    NoAdjacentOpponent {
-	        [isAdjacentOpponent()] -> AdjacentOpponent;
+	        moveOrJump[isAdjacentOpponent()] -> AdjacentOpponent;
 	        NoAdjacentWall {
-	          [isAdjacentWall()] -> AdjacentWall;
-  	          [!isAdjacentWall()] -> NoAdjacentWall;
+	          movePawn[isAdjacentWall()] -> AdjacentWall;
+              Controller.dropWall[isAdjacentWall()] -> AdjacentWall;
+  	        movePawn[!isAdjacentWall()] -> NoAdjacentWall;
 	        }
 	        AdjacentWall {
-          	  [isAdjacentWall()] -> AdjacentWall;	
-	          [!isAdjacentWall()] -> NoAdjacentWall;
+          	movePawn[isAdjacentWall()] -> AdjacentWall;
+	          movePawn[!isAdjacentWall()] -> NoAdjacentWall;
 	        }
 	     }
 	     AdjacentOpponent {
-	       [!isAdjacentOpponent()] -> NoAdjacentOpponent;
-       	   [isWallBehindOpponent()] -> WallBehindAdjacentOpponent;
-	       WallBehindAdjacentOpponent{
-	          [!isAdjacentOpponent()] -> NoAdjacentOpponent;
+             moveOrJump[!isAdjacentOpponent()] -> NoAdjacentOpponent;
+       	  jumpPawn[isWallBehindOpponent()] -> WallBehindAdjacentOpponent;
+             jumpPawn[!isWallBehindOpponent()] -> NoWallBehindAdjacentOpponent;
+           NoWallBehindAdjacentOpponent{
+	          jumpPawn[isWallBehindOpponent()] -> WallBehindAdjacentOpponent;
+              jumpPawn[!isWallBehindOpponent()] -> NoWallBehindAdjacentOpponent;
 	       }
-	     }  
+           WallBehindAdjacentOpponent{
+              jumpPawn[isWallBehindOpponent()] -> WallBehindAdjacentOpponent;
+              jumpPawn[!isWallBehindOpponent()] -> NoWallBehindAdjacentOpponent
+	       }
+	     }
     }
 
     // Returns the current row number of the pawn
@@ -38,20 +49,20 @@ class PawnBehavior {
     boolean isLegalJump(MoveDirection dir) { return false; }
 
     // Action to be called when an illegal move is attempted
-    void illegalMove() { }
-    
+    void illegalMove() {}
+
     // Enumeration for the possible moving directions
     // (directions are from the viewpoint of white player)
     enum MoveDirection { East, South, West, North}
-    
+
     boolean isAdjacentOpponent(){return false;}
-    
+
     boolean isAdjacentWall(){return false;}
-    
-    boolean isWallBehindOpponent(){return false;} 
-    
+
+    boolean isWallBehindOpponent(){return false;}
+
     boolean movePawn(MoveDirection dir) {return false;}
-    
+
     boolean jumpPawn(MoveDirection dir) {return false;}
-    
+
 }
