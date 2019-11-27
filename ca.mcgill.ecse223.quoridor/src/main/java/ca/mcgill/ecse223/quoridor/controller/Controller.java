@@ -1562,7 +1562,7 @@ public class Controller {
 		boolean isGameRunning;
 
 		if ((currentGameStatus == GameStatus.BlackWon) || (currentGameStatus == GameStatus.WhiteWon)
-				|| (currentGameStatus == GameStatus.Draw)) {
+				|| (currentGameStatus == GameStatus.Draw) || (currentGameStatus == GameStatus.Replay)) {
 			isGameRunning = false;
 		}
 
