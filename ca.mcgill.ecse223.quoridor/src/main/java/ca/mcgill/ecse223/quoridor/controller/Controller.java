@@ -1572,9 +1572,4 @@ public class Controller {
 
 		return isGameRunning;
 	}
-
-	public static void setGameNotRunning() {
-			
-	}
-
 }
