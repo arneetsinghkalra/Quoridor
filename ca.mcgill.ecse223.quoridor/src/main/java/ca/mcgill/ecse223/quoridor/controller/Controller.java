@@ -1406,7 +1406,6 @@ public class Controller {
 		} else {
 			currentGame.setGameStatus(GameStatus.BlackWon);
 		}
-		//reportFinalResult();
 	}
 	
 	/**
@@ -1420,23 +1419,54 @@ public class Controller {
 	/**
 	 * @author arneetkalra
 	 */
+	public static void whenGameIsNoLongerRunning() {
+		QuoridorWindow window = QuoridorApplication.quoridorWindow;
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game currentGame = quoridor.getCurrentGame();
+		
+		resignGame();
+		
+		if (currentGame.getGameStatus() != GameStatus.Running) {
+			QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer().setGameAsBlack(null);
+			QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().setGameAsWhite(null);	
+		}
+		
+
+		if (currentGame.getGameStatus() == GameStatus.WhiteWon) {
+			//window.notifyWhiteWon();
+		} else if (currentGame.getGameStatus() == GameStatus.BlackWon) {
+			//window.notifyBlackWon();
+		} else if (currentGame.getGameStatus() == GameStatus.Draw) {
+			//window.notifyDraw();
+		} 
+		
+		window.resultBeingDisplayed = true;
+	}
+	
+	/**
+	 * @author arneetkalra
+	 */
 	public static void reportFinalResult() {
 		QuoridorWindow window = QuoridorApplication.quoridorWindow;
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
+		
+		resignGame();
+		
+		if (currentGame.getGameStatus() != GameStatus.Running) {
+			QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer().setGameAsBlack(null);
+			QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().setGameAsWhite(null);	
+		}
 
 		if (currentGame.getGameStatus() == GameStatus.WhiteWon) {
-		//	quoridor.delete();
 			window.notifyWhiteWon();
 		} else if (currentGame.getGameStatus() == GameStatus.BlackWon) {
-		//	quoridor.delete();
 			window.notifyBlackWon();
 		} else if (currentGame.getGameStatus() == GameStatus.Draw) {
-		//	quoridor.delete();
 			window.notifyDraw();
-		} else {
-			System.out.println("Error");
-		}
+		} 
+		
+		window.resultBeingDisplayed = true;
 	}
 
 	/**
@@ -1520,10 +1550,6 @@ public class Controller {
 		return whiteDisplayedTime;
 	}
 
-	public static void setGameNotRunning() {
-		Quoridor q = QuoridorApplication.getQuoridor();
-		Game g = q.getCurrentGame();
-	}
 	
 	/**
 	 * @author arneetkalra
@@ -1545,6 +1571,10 @@ public class Controller {
 		}
 
 		return isGameRunning;
+	}
+
+	public static void setGameNotRunning() {
+			
 	}
 
 }

@@ -54,6 +54,7 @@ public class CucumberStepDefinitions {
 	private boolean privateStatus = false;
 	Wall returnedWall;
 	ArrayList<Player> createUsersAndPlayersLoad;
+	QuoridorWindow window = QuoridorApplication.quoridorWindow;
 
 	// ***********************************************
 	// Background step definitions
@@ -488,6 +489,7 @@ public class CucumberStepDefinitions {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		QuoridorWindow window = QuoridorApplication.quoridorWindow;
 		assertTrue(window.getIsTimerActive());
+		assertTrue(window.timerRunning);
 	}
 
 	/** @author Sam Perreault */
@@ -2052,58 +2054,75 @@ public class CucumberStepDefinitions {
 	 * REPORT FINAL RESULT FEATURE
 	 *****************************/
 
+	/**
+	 * @author arneetkalra
+	 */
 	@When("The game is no longer running")
 	public void the_game_is_no_longer_running() {
 		// Call a Controller Method here, it should pretty much do this ->
-		Controller.setGameNotRunning();
-		//Controller.reportFinalResult();
+		Controller.whenGameIsNoLongerRunning();
 	}
 
+	/**
+	 * @author arneetkalra
+	 */
 	@Then("The final result shall be displayed")
 	public void the_final_result_shall_be_displayed() {
-		Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
-		QuoridorApplication.quoridorWindow = new QuoridorWindow();
-
-		// Change this to notify final result
-		assertEquals(1, 1);
+		QuoridorWindow window = QuoridorApplication.quoridorWindow;
+		assertTrue(window.resultBeingDisplayed);
 	}
 
+	/**
+	 * @author arneetkalra
+	 */
 	@And("White's clock shall not be counting down")
 	public void white_s_clock_shall_not_be_counting_down() {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		QuoridorWindow window = QuoridorApplication.quoridorWindow;
-
-		assertFalse(window.getIsTimerActive());
+		assertFalse(window.timerRunning);
 	}
 
+	/**
+	 * @author arneetkalra
+	 */
 	@And("Black's clock shall not be counting down")
 	public void black_s_clock_shall_not_be_counting_down() {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		QuoridorWindow window = QuoridorApplication.quoridorWindow;
-		assertFalse(window.getIsTimerActive());
+		assertFalse(window.timerRunning);
+
 	}
 
+	/**
+	 * @author arneetkalra
+	 */
 	@And("White shall be unable to move")
 	public void white_shall_be_unable_to_move() {
-		assertNotEquals(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove(),
-				QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer());
+		assertNull(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsWhite());
 	}
 
+	/**
+	 * @author arneetkalra
+	 */
 	@And("Black shall be unable to move")
 	public void black_shall_be_unable_to_move() {
-		assertNotEquals(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove(),
-				QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer());
+		assertNull(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsBlack());
 	}
 
 	/********************
 	 * RESIGN GAME FEATURE
 	 *********************/
 
+	/**
+	 * @author arneetkalra
+	 */
 	@When("Player initates to resign")
 	public void player_initates_to_resign() {
 		Controller.resignGame();
 	}
 
+	/**
+	 * @author arneetkalra
+	 * @param result
+	 */
 	@Then("Game result shall be {string}")
 	public void game_result_shall_be(String result) {
 		Player playerToMove = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
@@ -2117,6 +2136,9 @@ public class CucumberStepDefinitions {
 		}
 	}
 
+	/**
+	 * @author arneetkalra
+	 */
 	@And("The game shall no longer be running")
 	public void the_game_shall_no_longer_be_running() {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();

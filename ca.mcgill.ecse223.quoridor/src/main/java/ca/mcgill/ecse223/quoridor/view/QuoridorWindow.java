@@ -1,33 +1,23 @@
 package ca.mcgill.ecse223.quoridor.view;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileSystemView;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.Controller;
 import ca.mcgill.ecse223.quoridor.controller.PawnBehavior;
-import ca.mcgill.ecse223.quoridor.controller.PawnBehavior.MoveDirection;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
 import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
-import ca.mcgill.ecse223.quoridor.persistence.QuoridorPersistence;
-
-
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -37,6 +27,10 @@ import java.awt.event.ActionEvent;
 
 public class QuoridorWindow extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static JPanel contentPane;
 	private JTextField player1Field;
 	private JTextField player2Field;
@@ -51,7 +45,6 @@ public class QuoridorWindow extends JFrame {
 	private JLabel whitePlayerName;
 	private static boolean confirms = true;
 	private int[] playerView = { 0, 0, 0, 0 };
-	private static JFrame f;
 	// for the boards,tiles, and walls
 	private JButton[][] tiles = new JButton[9][9];
 	private JButton[][] wallCenters = new JButton[8][8];
@@ -69,11 +62,17 @@ public class QuoridorWindow extends JFrame {
 	public Color validPositionColor = Color.green;
 	private int fontSize = 15;
 	private String font = "Raanana";
+	public boolean timerRunning = false;
+	public boolean resultBeingDisplayed = false;
+	
+
 
 	/**
 	 * Create the frame.
 	 */
+	@SuppressWarnings("unchecked")
 	public QuoridorWindow() {
+		
 		setResizable(false);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -1021,8 +1020,6 @@ public class QuoridorWindow extends JFrame {
 						} else {
 							tiles[curI][curJ].setBackground(tileColor);
 						}
-						
-						PawnBehavior.MoveDirection dir = null;
 					}
 				});
 				
@@ -1817,10 +1814,12 @@ public class QuoridorWindow extends JFrame {
 				}
 			}
 		};
-		
-		secondTimer = new Timer(1000, listener);
-		secondTimer.setRepeats(true);
-		secondTimer.start();
+		if (Controller.gameIsStillRunning()) {
+			secondTimer = new Timer(1000, listener);
+			secondTimer.setRepeats(true);
+			secondTimer.start();
+			timerRunning = true;
+		}
 	}
 
 	/**
@@ -1868,6 +1867,10 @@ public class QuoridorWindow extends JFrame {
 
 	class ImagePanel extends JPanel {
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private Image img;
 
 		public ImagePanel(String img) {
