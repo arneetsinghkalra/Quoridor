@@ -2059,6 +2059,7 @@ public class CucumberStepDefinitions {
         throw new cucumber.api.PendingException();
     }
 
+    /** @author Sam Perreault */
 	@Then("The next move shall be {int}.{int}")
 	public void the_next_move_shall_be(int nmov, int nrnd) {
 		// Write code here that turns the phrase above into concrete actions
@@ -2067,6 +2068,7 @@ public class CucumberStepDefinitions {
         assertEquals(nrnd%2, (q.getCurrentGame().indexOfPosition(q.getCurrentGame().getCurrentPosition())+1)%2);
 	}
 
+    /** @author Sam Perreault */
 	@And("White player's position shall be \\({int}, {int})")
 	public void white_player_s_position_shall_be(int wrow, int wcol) {
 		// Write code here that turns the phrase above into concrete actions
@@ -2075,6 +2077,7 @@ public class CucumberStepDefinitions {
         assertEquals(wcol, q.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn());
 	}
 
+    /** @author Sam Perreault */
 	@And("Black player's position shall be \\({int}, {int})")
 	public void black_player_s_position_shall_be(int brow, int bcol) {
 		// Write code here that turns the phrase above into concrete actions
