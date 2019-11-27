@@ -1572,4 +1572,16 @@ public class Controller {
 
 		return isGameRunning;
 	}
+	
+	/**
+	 * @author arneetkalra
+	 * @return
+	 */
+	public static boolean isInReplayMode() {
+		Quoridor q = QuoridorApplication.getQuoridor();
+		if (q.getCurrentGame().getGameStatus() == GameStatus.Replay) {
+			return true;
+		}
+		return false;
+	}
 }

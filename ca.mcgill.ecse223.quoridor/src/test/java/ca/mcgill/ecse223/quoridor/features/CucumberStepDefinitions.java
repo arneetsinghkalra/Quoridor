@@ -1918,8 +1918,8 @@ public class CucumberStepDefinitions {
 		throw new cucumber.api.PendingException();
 	}
 
-	@And("The next move is {double}")
-	public void the_next_move_is(Double double1) {
+	@And("The next move is {int}")
+	public void the_next_move_is(int double1) {
 		// Write code here that turns the phrase above into concrete actions
 		throw new cucumber.api.PendingException();
 	}

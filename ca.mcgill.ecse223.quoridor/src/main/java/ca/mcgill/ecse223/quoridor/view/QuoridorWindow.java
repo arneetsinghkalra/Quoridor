@@ -14,6 +14,8 @@ import ca.mcgill.ecse223.quoridor.model.Quoridor;
 import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
+import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -52,6 +54,10 @@ public class QuoridorWindow extends JFrame {
 	// for the boards,tiles, and walls
 	private JButton[][] tiles = new JButton[9][9];
 	private JButton[][] wallCenters = new JButton[8][8];
+	private JButton btnReplayMode;
+	private JButton btnReplayBackwards;
+	private JButton btnReplayForwards;
+
 	private Box[][] hWalls = new Box[9][9];
 	private Box[][] vWalls = new Box[9][9];
 	//The shape of the pawn is as defined below
@@ -465,6 +471,55 @@ public class QuoridorWindow extends JFrame {
 		btnLoadGame.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnLoadGame.setFont(new Font(font, Font.PLAIN, fontSize));	
 		verticalBox.add(btnLoadGame);
+			
+		btnReplayBackwards = new JButton(""+(char) 0x2b60);
+		btnReplayBackwards.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnReplayBackwards.setFont(new Font(font, Font.PLAIN, fontSize));			
+		horizontalBox.add(btnReplayBackwards);
+		
+		btnReplayBackwards.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent a) {
+				if(!Controller.isInReplayMode()) {
+					notifyNotInReplayMode();
+				}
+				else {
+					//Go backwards method
+				}
+			}
+		});
+		
+		btnReplayMode = new JButton("Replay Mode");
+		btnReplayMode.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnReplayMode.setFont(new Font(font, Font.PLAIN, fontSize));			
+		horizontalBox.add(btnReplayMode);
+		
+		btnReplayMode.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent a) {
+				if(!Controller.isInReplayMode()) {
+					//Go into Replay mode 
+				}
+				else {
+					notifyAlreadyInReplayMode();
+				}
+			}
+		});
+		
+		btnReplayForwards = new JButton(""+(char) 0x2b62);
+		btnReplayForwards.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnReplayForwards.setFont(new Font(font, Font.PLAIN, fontSize));			
+		horizontalBox.add(btnReplayForwards);
+		
+		btnReplayForwards.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent a) {
+				if(!Controller.isInReplayMode()) {
+					notifyNotInReplayMode();
+				}
+				else {
+					//Go forwards method
+				}
+			}
+		});
+		
 
 		btnLoadGame.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnLoadGame.addActionListener(new ActionListener() {
@@ -1832,6 +1887,21 @@ public class QuoridorWindow extends JFrame {
 	public static void notifyNotYourTurn() {
 		JOptionPane.showMessageDialog(null, "It's not your turn!", "Wait your turn bro", JOptionPane.PLAIN_MESSAGE);
 	}
+	
+	/**
+	 * @author arneetkalra
+	 */
+	public static void notifyNotInReplayMode() {
+		JOptionPane.showMessageDialog(null, "Enter Replay Mode if you want to do this!","Not in Replay Mode", JOptionPane.PLAIN_MESSAGE);
+	}
+	
+	/**
+	 * @author arneetkalra
+	 */
+	public static void notifyAlreadyInReplayMode() {
+		JOptionPane.showMessageDialog(null,"You're already in replay mode!", "Already Done", JOptionPane.PLAIN_MESSAGE);
+	}
+	
 	
 	
 
