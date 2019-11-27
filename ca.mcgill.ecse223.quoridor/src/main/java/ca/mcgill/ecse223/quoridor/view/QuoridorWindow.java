@@ -9,7 +9,9 @@ import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.Controller;
 import ca.mcgill.ecse223.quoridor.controller.PawnBehavior;
 import ca.mcgill.ecse223.quoridor.model.Direction;
+import ca.mcgill.ecse223.quoridor.model.GamePosition;
 import ca.mcgill.ecse223.quoridor.model.Player;
+import ca.mcgill.ecse223.quoridor.model.PlayerPosition;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
 import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.Wall;
@@ -24,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.awt.event.ActionEvent;
+import java.util.List;;
 
 public class QuoridorWindow extends JFrame {
 
@@ -2084,5 +2087,38 @@ public class QuoridorWindow extends JFrame {
 			quoridor.delete();
 			quoridor = new Quoridor();
 		}
+	}
+	
+	
+	/**
+	 * @author William Wang
+	 */
+	public void updatePositions() {
+		
+		//Reset the board:
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				// Erase Colouring of board
+				wallCenters[i][j].setBackground(boardBackgroundColor);
+				hWalls[i][j].setBackground(boardBackgroundColor);
+				vWalls[i][j].setBackground(boardBackgroundColor);
+			}
+		}
+		
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		GamePosition currentPosition = quoridor.getCurrentGame().getCurrentPosition();
+		
+		PlayerPosition WhitePosition = currentPosition.getWhitePosition();
+		PlayerPosition BlackPosition = currentPosition.getWhitePosition();
+		List<Wall> whiteWalls = currentPosition.getWhiteWallsOnBoard();
+		List<Wall> blackWalls = currentPosition.getBlackWallsOnBoard();
+		
+		placePlayer(WhitePosition.getTile().getRow()-1, WhitePosition.getTile().getColumn()-1, 
+				BlackPosition.getTile().getRow()-1, BlackPosition.getTile().getColumn()-1);
+		for(Wall wall: whiteWalls) {
+			displayWall(wall.getMove().getTargetTile().getRow()-1,wall.getMove().getTargetTile().getColumn()-1,
+					wall.getMove().getWallDirection());
+		}
+		
 	}
 }

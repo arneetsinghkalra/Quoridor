@@ -989,6 +989,12 @@ public class PawnBehavior {
 		Game currentGame = quoridor.getCurrentGame();
 		GamePosition currentPosition = currentGame.getCurrentPosition();
 		Player currentPlayer = quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove();
+		int moveNumber = -1;
+		int roundNumber = -1;
+		if(currentGame.hasMoves()) {
+			moveNumber = currentGame.getMove(currentGame.getMoves().size()-1).getMoveNumber();
+			roundNumber = currentGame.getMove(currentGame.getMoves().size()-1).getRoundNumber();
+		}
 		Tile targetTile = null;
 		if (currentPlayer.hasGameAsWhite()) {
 			int currentRow = currentPosition.getWhitePosition().getTile().getRow();
@@ -1018,7 +1024,7 @@ public class PawnBehavior {
 				targetTile = quoridor.getBoard().getTile((currentRow) * 9 + currentColumn - 2);
 				currentPosition.getWhitePosition().setTile(targetTile);
 			}
-			currentGame.addMove(new JumpMove(0, 0, currentPlayer, targetTile, currentGame));
+			currentGame.addMove(new JumpMove(moveNumber+1, roundNumber+1, currentPlayer, targetTile, currentGame));
 		} else {
 			int currentRow = currentPosition.getBlackPosition().getTile().getRow();
 			int currentColumn = currentPosition.getBlackPosition().getTile().getColumn();
@@ -1047,7 +1053,7 @@ public class PawnBehavior {
 				targetTile = quoridor.getBoard().getTile((currentRow) * 9 + currentColumn - 2);
 				currentPosition.getBlackPosition().setTile(targetTile);
 			}
-			currentGame.addMove(new JumpMove(0, 0, currentPlayer, targetTile, currentGame));
+			currentGame.addMove(new JumpMove(moveNumber+1, roundNumber, currentPlayer, targetTile, currentGame));
 		}
 		ensureGrabWallDeleted();
 		Controller.switchCurrentPlayer();

@@ -2011,7 +2011,9 @@ public class CucumberStepDefinitions {
 	@Given("The game is in replay mode")
 	public void the_game_is_in_replay_mode() {
 		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		quoridor.getCurrentGame().setGameStatus(GameStatus.Replay);
+		
 	}
 
 	@When("Jump to start position is initiated")

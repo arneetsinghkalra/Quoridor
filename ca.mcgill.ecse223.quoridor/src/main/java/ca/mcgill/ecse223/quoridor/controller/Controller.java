@@ -1218,7 +1218,6 @@ public class Controller {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game game = quoridor.getCurrentGame();
 		GamePosition currentPosition = quoridor.getCurrentGame().getCurrentPosition();
-		List<GamePosition> positions = quoridor.getCurrentGame().getPositions();
 		GamePosition newPosition;
 		PlayerPosition player1Position = new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(),
 				currentPosition.getWhitePosition().getTile());
@@ -1275,6 +1274,43 @@ public class Controller {
 
 	}
 
+	/**
+	 * <p>
+	 * Step forward
+	 * <p>
+	 * @author William Wang
+	 */
+	public static void stepForward() {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game game = quoridor.getCurrentGame();
+		GamePosition currentPosition = game.getCurrentPosition();
+		try {
+			GamePosition nextPosition = game.getPosition(currentPosition.getId()+1);
+			game.setCurrentPosition(nextPosition);
+		}
+		catch(IndexOutOfBoundsException e) {
+			
+		}
+	}
+	
+	/**
+	 * <p>
+	 * Step backward
+	 * <p>
+	 * @author William Wang
+	 */
+	public static void stepBackward() {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game game = quoridor.getCurrentGame();
+		GamePosition currentPosition = game.getCurrentPosition();
+		try {
+			GamePosition nextPosition = game.getPosition(currentPosition.getId()+1);
+			game.setCurrentPosition(nextPosition);
+		}
+		catch(IndexOutOfBoundsException e) {
+			
+		}
+	}
 	// Helper Methods ----------------------------
 
 	private static int convertToInt(String letter) {
