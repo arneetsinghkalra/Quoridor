@@ -57,6 +57,7 @@ public class QuoridorWindow extends JFrame {
 	private JButton btnReplayMode;
 	private JButton btnReplayBackwards;
 	private JButton btnReplayForwards;
+	private JButton btnContinuePlaying;
 
 	private Box[][] hWalls = new Box[9][9];
 	private Box[][] vWalls = new Box[9][9];
@@ -474,8 +475,9 @@ public class QuoridorWindow extends JFrame {
 			
 		btnReplayBackwards = new JButton(""+(char) 0x2b60);
 		btnReplayBackwards.setAlignmentX(Component.CENTER_ALIGNMENT);
-		btnReplayBackwards.setFont(new Font(font, Font.PLAIN, fontSize));			
+		btnReplayBackwards.setFont(new Font(font, Font.PLAIN, fontSize));
 		horizontalBox.add(btnReplayBackwards);
+		btnReplayBackwards.setVisible(false);
 		
 		btnReplayBackwards.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent a) {
@@ -493,13 +495,41 @@ public class QuoridorWindow extends JFrame {
 		btnReplayMode.setFont(new Font(font, Font.PLAIN, fontSize));			
 		horizontalBox.add(btnReplayMode);
 		
+		
 		btnReplayMode.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent a) {
 				if(!Controller.isInReplayMode()) {
-					//Go into Replay mode 
+					btnReplayMode.setVisible(false);
+					btnReplayForwards.setVisible(true);
+					btnReplayBackwards.setVisible(true);
+					btnContinuePlaying.setVisible(true);
+					//Replay method goes here
+					QuoridorApplication.getQuoridor().getCurrentGame().setGameStatus(GameStatus.Replay);
 				}
 				else {
 					notifyAlreadyInReplayMode();
+				}
+			}
+		});
+		
+		btnContinuePlaying = new JButton("Continue from here");
+		btnContinuePlaying.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnContinuePlaying.setFont(new Font(font, Font.PLAIN, fontSize));			
+		horizontalBox.add(btnContinuePlaying);
+		btnContinuePlaying.setVisible(false);
+
+		btnContinuePlaying.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent a) {
+				if(!Controller.isInReplayMode()) {
+					notifyNotInReplayMode();
+				}
+				else {
+					btnReplayMode.setVisible(true);
+					btnReplayForwards.setVisible(false);
+					btnReplayBackwards.setVisible(false);
+					btnContinuePlaying.setVisible(false);
+					//Go back to playing mode , put continue method here
+					QuoridorApplication.getQuoridor().getCurrentGame().setGameStatus(GameStatus.Running);
 				}
 			}
 		});
@@ -508,6 +538,7 @@ public class QuoridorWindow extends JFrame {
 		btnReplayForwards.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnReplayForwards.setFont(new Font(font, Font.PLAIN, fontSize));			
 		horizontalBox.add(btnReplayForwards);
+		btnReplayForwards.setVisible(false);
 		
 		btnReplayForwards.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent a) {
