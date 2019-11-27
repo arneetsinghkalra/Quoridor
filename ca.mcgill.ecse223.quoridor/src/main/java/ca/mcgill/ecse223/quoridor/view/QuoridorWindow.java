@@ -17,7 +17,7 @@ import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
 import ca.mcgill.ecse223.quoridor.persistence.QuoridorPersistence;
-import com.sun.org.apache.xpath.internal.operations.Quo;
+//import com.sun.org.apache.xpath.internal.operations.Quo;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -359,7 +359,7 @@ public class QuoridorWindow extends JFrame {
 				b1.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent b) {
 						f.setVisible(false);
-						Path path = Paths.get("src/test/resources/savePosition/" + tf1.getText());
+						Path path = Paths.get("src/test/resources/saveGame/" + tf1.getText());
 						if (Files.exists(path)) {
 							JFrame f = new JFrame();
 							JTextField tf1;
@@ -384,9 +384,7 @@ public class QuoridorWindow extends JFrame {
 									confirms = true;
 									f.setVisible(false);
 									try {
-										Controller.savePosition(tf1.getText(),
-												QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition(),
-												confirms);
+										Controller.saveGame(tf1.getText(),confirms);
 									} catch (IOException e) {
 										// TODO Auto-generated catch block
 										e.printStackTrace();
@@ -401,8 +399,7 @@ public class QuoridorWindow extends JFrame {
 							});
 						} else {
 							try {
-								Controller.savePosition(tf1.getText(),
-										QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition(),
+								Controller.saveGame(tf1.getText(),
 										confirms);
 
 							} catch (IOException e) {

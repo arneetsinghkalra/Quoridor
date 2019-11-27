@@ -983,6 +983,31 @@ public class Controller {
 			Files.write(path, data.getBytes());
 		}
 	}
+	public static void saveGame(String fileName, boolean confirms) throws IOException {
+		String data = "";
+		Quoridor quoridor = QuoridorApplication.getQuordior();
+		int num = quoridor.getCurrentGame().getMoves().size();
+		int roundNum = (num+1)/2;
+		int numIndex = 0;
+		for(int i =0; i<numIndex; i++) {
+			data += i+"."+ " " + moveData(quoridor.getCurrentGame().getMove(numIndex));
+			numIndex++;
+			data += moveData(quoridor.getCurrentGame().getMove(numIndex));
+			numIndex++;
+		}
+		Path path = Paths.get("src/test/resources/saveGame/" + fileName);
+		if (Files.exists(path)) {
+			if (confirms) {
+				Files.delete(path);
+				Files.createFile(path);
+				Files.write(path, data.getBytes());
+			}
+		} else {
+			Files.createDirectories(path.getParent());
+			Files.createFile(path);
+			Files.write(path, data.getBytes());
+		}
+	}
 
 	/**
 	 * @author Yin Zhang 260726999 The user confirm whether to overwrite the
@@ -1318,6 +1343,17 @@ public class Controller {
 		default:
 			return null;
 		}
+	}
+	
+	private static String moveData(Move move){
+		String data = "";
+		data += (char) (move.getTargetTile().getColumn() + 96);
+		data += String.valueOf((move.getTargetTile().getRow()));
+		if(move.getClass()==WallMove.class) {
+			WallMove move2 = (WallMove) move;
+			data+= move2.getWallDirection();
+		}
+		return data;
 	}
 
 	/**

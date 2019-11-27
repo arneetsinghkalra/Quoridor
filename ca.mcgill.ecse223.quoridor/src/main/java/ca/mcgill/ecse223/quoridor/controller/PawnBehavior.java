@@ -682,7 +682,7 @@ public class PawnBehavior {
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((newRow - 1) * 9 + column - 1);
 					currentGame.getCurrentPosition().getWhitePosition().setTile(newTile);
 					Controller.switchCurrentPlayer();
-
+					//currentGame.addMove(new Move());
 					return true;
 				} else if (dir == MoveDirection.South) {
 					int newRow = currentGame.getCurrentPosition().getWhitePosition().getTile().getRow() + 1;
