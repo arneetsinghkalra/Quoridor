@@ -990,7 +990,7 @@ public class Controller {
 	}
 	public static void saveGame(String fileName, boolean confirms) throws IOException {
 		String data = "";
-		Quoridor quoridor = QuoridorApplication.getQuordior();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		int num = quoridor.getCurrentGame().getMoves().size();
 		int roundNum = (num+1)/2;
 		int numIndex = 0;
