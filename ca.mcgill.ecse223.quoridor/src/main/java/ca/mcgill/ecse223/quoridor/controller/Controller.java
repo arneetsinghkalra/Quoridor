@@ -541,18 +541,22 @@ public class Controller {
 		if (player.equals(currentGame.getWhitePlayer())) {
 			currentGamePosition.addWhiteWallsOnBoard(wallMoveCandidate.getWallPlaced());// Also increments number of //
 																						// walls on board
+		int moveNumber = currentGame.numberOfMoves();
+			System.out.println(moveNumber);
+
+			currentGame.addMove(wallMoveCandidate);
 			switchCurrentPlayer();
-			// currentGamePosition.setPlayerToMove(currentGame.getBlackPlayer());// Update
-			// player to black player)
 			currentGame.setWallMoveCandidate(null);// Refreshes wall move candidate
 			return wallMoveCandidate.getWallPlaced();
 
 		} else if (player.equals(currentGame.getBlackPlayer())) {
 			currentGamePosition.addBlackWallsOnBoard(wallMoveCandidate.getWallPlaced());
-			// currentGamePosition.setPlayerToMove(currentGame.getWhitePlayer()); // Update
-			// player to white player
+			int moveNumber = currentGame.numberOfMoves();
+			System.out.println(moveNumber);
+			currentGame.addMove(wallMoveCandidate);
 			switchCurrentPlayer();
 			currentGame.setWallMoveCandidate(null);// Refreshes wall move candidate
+			
 			return wallMoveCandidate.getWallPlaced();
 		} else {
 			return null;
@@ -594,9 +598,6 @@ public class Controller {
 		// If there are walls on the board
 		if (getAllWallsOnBoard().size() > 0) {
 			for (Wall wall : allWallsOnBoard) {
-				System.out.println(hoveredTile);
-				System.out.println(candidateDirection);
-				System.out.println(wall);
 				if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove()) == true) {
 
 					return false;

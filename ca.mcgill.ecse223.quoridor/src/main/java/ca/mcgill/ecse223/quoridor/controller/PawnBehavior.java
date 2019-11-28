@@ -674,8 +674,10 @@ public class PawnBehavior {
 					int column = currentGame.getCurrentPosition().getBlackPosition().getTile().getColumn();
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((newRow - 1) * 9 + column - 1);
 					currentGame.getCurrentPosition().getBlackPosition().setTile(newTile);
-					Controller.switchCurrentPlayer();
+					currentGame.addMove(createStepMove(newTile));
 					ensureGrabWallDeleted();
+
+					Controller.switchCurrentPlayer();
 
 					return true;
 				} else if (dir == MoveDirection.South) {
@@ -684,6 +686,7 @@ public class PawnBehavior {
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((newRow - 1) * 9 + column - 1);
 					currentGame.getCurrentPosition().getBlackPosition().setTile(newTile);
 					ensureGrabWallDeleted();
+					currentGame.addMove(createStepMove(newTile));
 
 					Controller.switchCurrentPlayer();
 					return true;
@@ -693,6 +696,7 @@ public class PawnBehavior {
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((Row - 1) * 9 + newColumn - 1);
 					currentGame.getCurrentPosition().getBlackPosition().setTile(newTile);
 					ensureGrabWallDeleted();
+					currentGame.addMove(createStepMove(newTile));
 
 					Controller.switchCurrentPlayer();
 					return true;
@@ -702,6 +706,7 @@ public class PawnBehavior {
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((Row - 1) * 9 + newColumn - 1);
 					currentGame.getCurrentPosition().getBlackPosition().setTile(newTile);
 					ensureGrabWallDeleted();
+					currentGame.addMove(createStepMove(newTile));
 
 					Controller.switchCurrentPlayer();
 					return true;
@@ -713,6 +718,7 @@ public class PawnBehavior {
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((newRow - 1) * 9 + column - 1);
 					currentGame.getCurrentPosition().getWhitePosition().setTile(newTile);
 					ensureGrabWallDeleted();
+					currentGame.addMove(createStepMove(newTile));
 
 					Controller.switchCurrentPlayer();
 
@@ -723,6 +729,7 @@ public class PawnBehavior {
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((newRow - 1) * 9 + column - 1);
 					currentGame.getCurrentPosition().getWhitePosition().setTile(newTile);
 					ensureGrabWallDeleted();
+					currentGame.addMove(createStepMove(newTile));
 
 					Controller.switchCurrentPlayer();
 					return true;
@@ -732,6 +739,7 @@ public class PawnBehavior {
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((Row - 1) * 9 + newColumn - 1);
 					currentGame.getCurrentPosition().getWhitePosition().setTile(newTile);
 					ensureGrabWallDeleted();
+					currentGame.addMove(createStepMove(newTile));
 
 					Controller.switchCurrentPlayer();
 					return true;
@@ -741,7 +749,8 @@ public class PawnBehavior {
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((Row - 1) * 9 + newColumn - 1);
 					currentGame.getCurrentPosition().getWhitePosition().setTile(newTile);
 					ensureGrabWallDeleted();
-
+					
+					currentGame.addMove(createStepMove(newTile));
 					Controller.switchCurrentPlayer();
 					return true;
 				}
@@ -750,6 +759,20 @@ public class PawnBehavior {
 		} else {
 			return false;
 		}
+	}
+	
+	/**
+	 * @author arneetkalra
+	 * @param tile
+	 * @return
+	 */
+	public static StepMove createStepMove(Tile tile) {
+		int aMoveNumber = QuoridorApplication.getQuoridor().getCurrentGame().numberOfMoves();
+		int aRoundNumber = QuoridorApplication.getQuoridor().getCurrentGame().numberOfMoves() / 2;
+		Player currentPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
+		Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
+		StepMove movePawn = new StepMove( aMoveNumber,  aRoundNumber,  currentPlayer,  tile,  currentGame);
+		return movePawn;
 	}
 
 	// line 55 "../../../../../PawnStateMachine.ump"
