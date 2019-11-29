@@ -141,7 +141,7 @@ public class QuoridorWindow extends JFrame {
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
 					File selectedFile = jfc.getSelectedFile();
 					try {
-						Controller.loadPosition(selectedFile.getName());
+						Controller.loadGame(selectedFile.getName());
 					} catch (UnsupportedOperationException e) {
 						JFrame f = new JFrame();
 						JTextField tf1;
@@ -500,18 +500,18 @@ public class QuoridorWindow extends JFrame {
 						Path path = Paths.get("src/test/resources/saveGame/" + tf1.getText());
 						if (Files.exists(path)) {
 							JFrame f = new JFrame();
-							JTextField tf1;
+							JTextField tf2;
 							JButton b1;
 							JButton b2;
-							tf1 = new JTextField();
-							tf1.setText("confirms to overwrite");
-							tf1.setBounds(50, 50, 150, 20);
-							tf1.setEditable(false);
+							tf2 = new JTextField();
+							tf2.setText("confirms to overwrite");
+							tf2.setBounds(50, 50, 150, 20);
+							tf2.setEditable(false);
 							b1 = new JButton("Yes");
 							b1.setBounds(50, 200, 100, 50);
 							b2 = new JButton("No");
 							b2.setBounds(150, 200, 100, 50);
-							f.getContentPane().add(tf1);
+							f.getContentPane().add(tf2);
 							f.getContentPane().add(b1);
 							f.getContentPane().add(b2);
 							f.setSize(300, 300);
@@ -2039,7 +2039,7 @@ public class QuoridorWindow extends JFrame {
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 			File selectedFile = jfc.getSelectedFile();
 			try {
-				Controller.loadPosition(selectedFile.getName());
+				Controller.loadGame(selectedFile.getName());
 			} catch (UnsupportedOperationException e) {
 				JFrame f = new JFrame();
 				JTextField tf1;

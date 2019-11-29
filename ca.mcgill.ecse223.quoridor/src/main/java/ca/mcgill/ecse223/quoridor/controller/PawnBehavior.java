@@ -668,6 +668,12 @@ public class PawnBehavior {
 	public static boolean movePawn(MoveDirection dir) {
 
 		if (isLegalStep(dir)) {
+			int moveNumber = -1;
+			int roundNumber = -1;
+			if(currentGame.hasMoves()) {
+				moveNumber = currentGame.getMove(currentGame.getMoves().size()-1).getMoveNumber();
+				roundNumber = currentGame.getMove(currentGame.getMoves().size()-1).getRoundNumber();
+			}
 			if (currentGame.getCurrentPosition().getPlayerToMove().equals(currentGame.getBlackPlayer())) {
 				if (dir == MoveDirection.North) {
 					int newRow = currentGame.getCurrentPosition().getBlackPosition().getTile().getRow() - 1;
@@ -676,7 +682,8 @@ public class PawnBehavior {
 					currentGame.getCurrentPosition().getBlackPosition().setTile(newTile);
 					Controller.switchCurrentPlayer();
 					ensureGrabWallDeleted();
-
+					
+					currentGame.addMove(new StepMove(moveNumber+1, roundNumber, currentGame.getCurrentPosition().getPlayerToMove(), newTile, currentGame));
 					return true;
 				} else if (dir == MoveDirection.South) {
 					int newRow = currentGame.getCurrentPosition().getBlackPosition().getTile().getRow() + 1;
@@ -684,7 +691,8 @@ public class PawnBehavior {
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((newRow - 1) * 9 + column - 1);
 					currentGame.getCurrentPosition().getBlackPosition().setTile(newTile);
 					ensureGrabWallDeleted();
-
+					
+					currentGame.addMove(new StepMove(moveNumber+1, roundNumber, currentGame.getCurrentPosition().getPlayerToMove(), newTile, currentGame));
 					Controller.switchCurrentPlayer();
 					return true;
 				} else if (dir == MoveDirection.East) {
@@ -694,6 +702,7 @@ public class PawnBehavior {
 					currentGame.getCurrentPosition().getBlackPosition().setTile(newTile);
 					ensureGrabWallDeleted();
 
+					currentGame.addMove(new StepMove(moveNumber+1, roundNumber, currentGame.getCurrentPosition().getPlayerToMove(), newTile, currentGame));
 					Controller.switchCurrentPlayer();
 					return true;
 				} else if (dir == MoveDirection.West) {
@@ -702,7 +711,8 @@ public class PawnBehavior {
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((Row - 1) * 9 + newColumn - 1);
 					currentGame.getCurrentPosition().getBlackPosition().setTile(newTile);
 					ensureGrabWallDeleted();
-
+					
+					currentGame.addMove(new StepMove(moveNumber+1, roundNumber, currentGame.getCurrentPosition().getPlayerToMove(), newTile, currentGame));
 					Controller.switchCurrentPlayer();
 					return true;
 				}
@@ -714,6 +724,7 @@ public class PawnBehavior {
 					currentGame.getCurrentPosition().getWhitePosition().setTile(newTile);
 					ensureGrabWallDeleted();
 
+					currentGame.addMove(new StepMove(moveNumber+1, roundNumber+1, currentGame.getCurrentPosition().getPlayerToMove(), newTile, currentGame));
 					Controller.switchCurrentPlayer();
 					//currentGame.addMove(new Move());
 					return true;
@@ -724,6 +735,7 @@ public class PawnBehavior {
 					currentGame.getCurrentPosition().getWhitePosition().setTile(newTile);
 					ensureGrabWallDeleted();
 
+					currentGame.addMove(new StepMove(moveNumber+1, roundNumber+1, currentGame.getCurrentPosition().getPlayerToMove(), newTile, currentGame));
 					Controller.switchCurrentPlayer();
 					return true;
 				} else if (dir == MoveDirection.East) {
@@ -733,6 +745,7 @@ public class PawnBehavior {
 					currentGame.getCurrentPosition().getWhitePosition().setTile(newTile);
 					ensureGrabWallDeleted();
 
+					currentGame.addMove(new StepMove(moveNumber+1, roundNumber+1, currentGame.getCurrentPosition().getPlayerToMove(), newTile, currentGame));
 					Controller.switchCurrentPlayer();
 					return true;
 				} else if (dir == MoveDirection.West) {
@@ -742,6 +755,7 @@ public class PawnBehavior {
 					currentGame.getCurrentPosition().getWhitePosition().setTile(newTile);
 					ensureGrabWallDeleted();
 
+					currentGame.addMove(new StepMove(moveNumber+1, roundNumber+1, currentGame.getCurrentPosition().getPlayerToMove(), newTile, currentGame));
 					Controller.switchCurrentPlayer();
 					return true;
 				}
