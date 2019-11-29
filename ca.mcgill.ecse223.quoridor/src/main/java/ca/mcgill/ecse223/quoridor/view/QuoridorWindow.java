@@ -179,7 +179,7 @@ public class QuoridorWindow extends JFrame {
 					}
 				}
 				if (!wrong) {
-					Quoridor quoridor = QuoridorApplication.getQuordior();
+					Quoridor quoridor = QuoridorApplication.getQuoridor();
 					for (int i = 0; i < quoridor.getCurrentGame().getCurrentPosition()
 							.numberOfBlackWallsOnBoard(); i++) {
 						WallMove move = quoridor.getCurrentGame().getCurrentPosition().getBlackWallsOnBoard(i)
