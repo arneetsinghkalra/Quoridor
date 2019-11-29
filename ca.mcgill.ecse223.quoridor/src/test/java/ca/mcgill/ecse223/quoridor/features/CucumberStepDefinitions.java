@@ -53,6 +53,8 @@ public class CucumberStepDefinitions {
 	private boolean legalMove = true;
 	private boolean userConfirms;
 	private boolean privateStatus = false;
+	private boolean whitePathExists = false;
+	private boolean blackPathExists = false;
 	Wall returnedWall;
 	ArrayList<Player> createUsersAndPlayersLoad;
 	QuoridorWindow window = QuoridorApplication.quoridorWindow;
@@ -89,31 +91,31 @@ public class CucumberStepDefinitions {
 		/*
 		 * Quoridor quoridor = QuoridorApplication.getQuoridor(); Game currentGame =
 		 * quoridor.getCurrentGame(); Board currentBoard = quoridor.getBoard();
-		 * 
+		 *
 		 * // First wall placed Player whitePlayer =
 		 * quoridor.getCurrentGame().getWhitePlayer(); Tile aNewTargetTile1 =
 		 * currentBoard.getTile((1 - 1) * 9 + (1 - 1)); Direction direction1 =
 		 * Direction.Horizontal; Wall wall1 = whitePlayer.getWall(0); wall1.setId(0);
-		 * 
+		 *
 		 * WallMove wallMove1 = new WallMove(0, 0, whitePlayer, aNewTargetTile1,
 		 * currentGame, direction1, wall1); wall1.setMove(wallMove1);
-		 * 
+		 *
 		 * // Second wall placed Player blackPlayer =
 		 * quoridor.getCurrentGame().getBlackPlayer(); Tile aNewTargetTile2 =
 		 * currentBoard.getTile((7 - 1) * 9 + (4 - 1)); Direction direction2 =
 		 * Direction.Vertical; Wall wall2 = blackPlayer.getWall(0); wall2.setId(0);
-		 * 
+		 *
 		 * WallMove wallMove2 = new WallMove(0, 0, blackPlayer, aNewTargetTile2,
 		 * currentGame, direction2, wall2); wall2.setMove(wallMove2);
-		 * 
+		 *
 		 * // Make a 3rd wall to make step definition work for last case - something
 		 * wrong with given step defintion // Second wall placed Tile aNewTargetTile3 =
 		 * currentBoard.getTile((6 - 1) * 9 + (6 - 1)); Direction direction3 =
 		 * Direction.Horizontal; Wall wall3 = blackPlayer.getWall(1); wall2.setId(0);
-		 * 
+		 *
 		 * WallMove wallMove3 = new WallMove(0, 0, blackPlayer, aNewTargetTile3,
 		 * currentGame, direction3, wall3); wall3.setMove(wallMove3);
-		 * 
+		 *
 		 * quoridor.getCurrentGame().getCurrentPosition().removeWhiteWallsInStock(wall1)
 		 * ; quoridor.getCurrentGame().getCurrentPosition().addWhiteWallsOnBoard(wall1);
 		 * quoridor.getCurrentGame().getCurrentPosition().removeBlackWallsInStock(wall2)
@@ -1059,7 +1061,6 @@ public class CucumberStepDefinitions {
 	 *
 	 * @author Yin Zhang 260726999
 	 * @param player
-	 * @param direction
 	 * @param row
 	 * @param column
 	 */
@@ -1486,7 +1487,6 @@ public class CucumberStepDefinitions {
 		// Calculate tile index of target tile
 		int tileIndex = ((prow - 1) * 9 + (pcol - 1));
 		Tile targetPosition = QuoridorApplication.getQuoridor().getBoard().getTile(tileIndex);
-
 		// If it is black players turn
 		if (currentPlayer == QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer()) {
 			// Set the players position to target position
@@ -1573,7 +1573,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * @author William Wang
-	 * 
+	 *
 	 */
 	@When("Player {string} initiates to move {string}")
 	public void player_initiates_to_move(String playerName, String jumpDirection) {
@@ -1662,7 +1662,6 @@ public class CucumberStepDefinitions {
 						.getTile().getRow(), nrow);
 				assertEquals(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition()
 						.getTile().getColumn(), ncol);
-
 			}
 
 			// If it is white players turn
@@ -1671,7 +1670,6 @@ public class CucumberStepDefinitions {
 						.getTile().getRow(), nrow);
 				assertEquals(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition()
 						.getTile().getColumn(), ncol);
-
 			}
 		} else {
 			if (currentPlayer.hasGameAsBlack()) {
@@ -1732,8 +1730,8 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * @author arneetkalra
-	 * @param string
-	 * @param string2
+	 * @param direction
+	 * @param side
 	 */
 	@And("There are no {string} walls {string} from the player")
 	public void there_are_no_walls_from_the_player(String direction, String side) {
@@ -1757,7 +1755,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * @author arneetkalra
-	 * @param string
+	 * @param side
 	 */
 	@Given("The opponent is not {string} from the player")
 	public void the_opponent_is_not_from_the_player(String side) {
@@ -1838,7 +1836,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * @author arneetkalra
-	 * @param string
+	 * @param side
 	 */
 	@Given("My opponent is not {string} from the player")
 	public void my_opponent_is_not_from_the_player(String side) {
@@ -1849,34 +1847,76 @@ public class CucumberStepDefinitions {
 	/*****************************
 	 * Check if path exists feature
 	 *****************************/
+
+	/** @author Sam Perreault */
 	@Given("A {string} wall move candidate exists at position {int}:{int}")
 	public void a_wall_move_candidate_exists_at_position(String string, Integer int1, Integer int2) {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+		Quoridor q = QuoridorApplication.getQuoridor();
+	    q.getCurrentGame().getWhitePlayer().getDestination().setDirection(Direction.Vertical);
+	    q.getCurrentGame().getWhitePlayer().getDestination().setTargetNumber(1);
+	    q.getCurrentGame().getBlackPlayer().getDestination().setTargetNumber(9);
+	    q.getCurrentGame().getBlackPlayer().getDestination().setDirection(Direction.Vertical);
+	    WallMove wmc;
+		if(string.equals("vertical"))
+	    	wmc = this.createWallMoveCandidate(Direction.Vertical, int1, int2);
+		else
+			wmc = this.createWallMoveCandidate(Direction.Horizontal, int1, int2);
+		q.getCurrentGame().setWallMoveCandidate(wmc);
+		q.getCurrentGame().getCurrentPosition().addWhiteWallsOnBoard(wmc.getWallPlaced());
 	}
 
+	/** @author Sam Perreault */
 	@And("The black player is located at {int}:{int}")
-	public void the_black_player_is_located_at(Integer int1, Integer int2) {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+	public void the_black_player_is_located_at(Integer row, Integer col) {
+	    // Write code here that turns the phrase above into concrete actions
+		Quoridor q = QuoridorApplication.getQuoridor();
+		Tile t = q.getBoard().getTile((row-1)*9+col-1);
+		PlayerPosition p= new PlayerPosition(q.getCurrentGame().getBlackPlayer(), t);
+		q.getCurrentGame().getCurrentPosition().setBlackPosition(p);
 	}
 
+	/** @author Sam Perreault */
 	@And("The white player is located at {int}:{int}")
-	public void the_white_player_is_located_at(Integer int1, Integer int2) {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+	public void the_white_player_is_located_at(Integer row, Integer col) {
+	    // Write code here that turns the phrase above into concrete actions
+		Quoridor q = QuoridorApplication.getQuoridor();
+		Tile t = q.getBoard().getTile((row-1)*9+col-1);
+		PlayerPosition p= new PlayerPosition(q.getCurrentGame().getWhitePlayer(), t);
+		q.getCurrentGame().getCurrentPosition().setWhitePosition(p);
 	}
 
+	/** @author Sam Perreault */
 	@When("Check path existence is initiated")
 	public void check_path_existence_is_initiated() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+	    // Write code here that turns the phrase above into concrete actions
+		Quoridor q = QuoridorApplication.getQuoridor();
+		whitePathExists = Controller.pathFinder(q.getCurrentGame().getWhitePlayer(), q.getCurrentGame().getCurrentPosition().getWhitePosition().getTile());
+		blackPathExists = Controller.pathFinder(q.getCurrentGame().getBlackPlayer(), q.getCurrentGame().getCurrentPosition().getBlackPosition().getTile());
 	}
 
+	/** @author Sam Perreault */
 	@Then("Path is available for {string} player\\(s)")
 	public void path_is_available_for_player_s(String string) {
 		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+		switch(string) {
+			case "both":
+				assertTrue(whitePathExists&&blackPathExists);
+				break;
+			case "white":
+				assertTrue(whitePathExists);
+				assertFalse(blackPathExists);
+				break;
+			case "black":
+				assertTrue(blackPathExists);
+				assertFalse(whitePathExists);
+				break;
+			case "none":
+				assertFalse(whitePathExists||blackPathExists);
+				break;
+			default:
+				fail();
+				break;
+		}
 	}
 
 	/*******************************************************************
@@ -1885,7 +1925,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * @author Ali Tapan
-	 * 
+	 *
 	 */
 	@When("I initiate replay mode")
 	public void i_initiate_replay_mode() {
@@ -1896,7 +1936,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * @author Ali Tapan
-	 * 
+	 *
 	 */
 	@Then("The game shall be in replay mode")
 	public void the_game_shall_be_in_replay_mode() {
@@ -1907,7 +1947,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * @author Ali Tapan
-	 * 
+	 *
 	 */
 	@Given("The game is replay mode")
 	public void the_game_is_replay_mode() {
@@ -1918,17 +1958,17 @@ public class CucumberStepDefinitions {
 		Game newGame = new Game(GameStatus.Replay, MoveMode.PlayerMove, quoridor);
 		newGame.setWhitePlayer(player1);
 		newGame.setBlackPlayer(player2);
-		
+
 	}
 
 	/**
 	 * @author Ali Tapan
 	 * @param dataTable
-	 * 
+	 *
 	 */
 	@Given("The following moves have been played in game:")
 	public void the_following_moves_have_been_played_in_game(io.cucumber.datatable.DataTable dataTable) {
-		
+
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game game = quoridor.getCurrentGame();
 		Player[] players = { quoridor.getCurrentGame().getWhitePlayer(), quoridor.getCurrentGame().getBlackPlayer() };
@@ -1940,32 +1980,32 @@ public class CucumberStepDefinitions {
 		PlayerPosition player2Position = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), player2StartPos);
 		GamePosition initialPosition = new GamePosition(0, player1Position, player2Position, players[0], game);
 		game.setCurrentPosition(initialPosition);
-		
+
 		//player1Position.setBlackInGame(initialPosition);
 		//player2Position.setWhiteInGame(initialPosition);
 		game.addPosition(initialPosition);
-		
+
 		List<Map<String, String>> valueMaps = dataTable.asMaps();
-		
+
 		int playerIdx = 0;
 		int wallId = 10;
-		
+
 		for (Map<String, String> map : valueMaps) {
 			Integer mv = Integer.decode(map.get("mv"));
 			Integer rnd = Integer.decode(map.get("rnd"));
 			String move = map.get("move");
-			
+
 			if(move.length() == 2)
 			{
 			int row = Character.getNumericValue(move.charAt(1));
 			int col = (Character.getNumericValue(move.charAt(0)))-9;
-			
+
 			Tile tile = new Tile(row, col, quoridor.getBoard());
 			StepMove newMove = new StepMove(mv, rnd, players[playerIdx%2], tile, game);
 			game.addMove(newMove);
 			playerIdx++;
 			}
-			
+
 			//Check if the move argument is 3 characters long --> this indicates its either the game is over
 			//or a wall is placed on the wall
 			else if(move.length() == 3)
@@ -1995,28 +2035,28 @@ public class CucumberStepDefinitions {
 					int row = Character.getNumericValue(move.charAt(1));
 					int col = (Character.getNumericValue(move.charAt(0)))-9;
 					char wallAllignment = move.charAt(2);
-					
+
 					Tile tile = new Tile(row, col, quoridor.getBoard());
 					Wall newWall = new Wall(wallId, players[playerIdx%2]);
 					wallId--;
-					
+
 					if(wallAllignment == 'v')
 					{
 						WallMove newWallMove = new WallMove(mv, rnd, players[playerIdx%2], tile, game, Direction.Vertical, newWall);
 						game.addMove(newWallMove);
-						
-						
+
+
 					}
 					else
 					{
 						WallMove newWallMove = new WallMove(mv, rnd, players[playerIdx%2], tile, game, Direction.Horizontal, newWall);
 						game.addMove(newWallMove);
-						
-						
+
+
 					}
 					playerIdx++;
 				}
-			}	
+			}
 		}
 	}
 
@@ -2063,7 +2103,7 @@ public class CucumberStepDefinitions {
 			currentGame.getCurrentPosition().setPlayerToMove(currentGame.getBlackPlayer());
 			try {
 				currentGame.getMove(index);
-			} 
+			}
 			catch (IndexOutOfBoundsException e)
 			{
 				//Game is over
@@ -2079,12 +2119,12 @@ public class CucumberStepDefinitions {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
 		Controller.initiateContinueGame(currentGame);
-	
+
 	}
 
 	/**
 	 * @author Ali Tapan
-	 * 
+	 *
 	 */
 	@And("The remaining moves of the game shall be removed")
 	public void the_remaining_moves_of_the_game_shall_be_removed() {
@@ -2092,28 +2132,28 @@ public class CucumberStepDefinitions {
 		Game currentGame = quoridor.getCurrentGame();
 		//currentGame.getMove(index);
 		for(Move move :currentGame.getMoves()) {
-			
+
 		}
-		//currentGame.removePosition(currentGame.getCurrentPosition());			
+		//currentGame.removePosition(currentGame.getCurrentPosition());
 	}
 
 	/**
 	 * @author Ali Tapan
-	 * 
+	 *
 	 */
 	@And("The game has a final result")
 	public void the_game_has_a_final_result() {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
-		assertTrue((currentGame.getGameStatus() == GameStatus.BlackWon) 
+		assertTrue((currentGame.getGameStatus() == GameStatus.BlackWon)
 				||(currentGame.getGameStatus() == GameStatus.WhiteWon)
 				||(currentGame.getGameStatus() == GameStatus.Draw));
-		
+
 	}
 
 	/**
 	 * @author Ali Tapan
-	 * 
+	 *
 	 */
 	@And("I shall be notified that finished games cannot be continued")
 	public void i_shall_be_notified_that_finished_games_cannot_be_continued() {
@@ -2181,9 +2221,9 @@ public class CucumberStepDefinitions {
 	/***************************************************************
 	 * Jump to Final Feature - Implemented by Ali Tapan - 260556540
 	 * *************************************************************/
-	
+
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 */
 	@Given("The game is in replay mode")
@@ -2199,7 +2239,7 @@ public class CucumberStepDefinitions {
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 */
 	@When("Jump to final position is initiated")
@@ -2209,9 +2249,9 @@ public class CucumberStepDefinitions {
 		Controller.jumpToFinalPosition(currentGame);
 	}
 
-	
+
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 * @param nmov
 	 * @param nrnd
@@ -2220,19 +2260,19 @@ public class CucumberStepDefinitions {
 	public void the_next_move_shall_be(int nmov, int nrnd) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
-		
+
 		//nmov for final move is always 1 more greater than number of moves
 		//the reason why we divide number of moves 2 is the way feature is given to us:
 		//number of moves increment every 2 rounds
 		assertEquals(nmov, currentGame.numberOfMoves()/2 + 1);
-		
+
 		//check number of moves, if its even then the next move shall be white's turn,
 		//otherwise it is black's turn.
-		assertEquals(nrnd, currentGame.numberOfMoves()%2 + 1);	
+		assertEquals(nrnd, currentGame.numberOfMoves()%2 + 1);
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 * @param data
 	 */
@@ -2242,14 +2282,14 @@ public class CucumberStepDefinitions {
 		int wcol = (int) (((data/10) - wrow)*10);
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
-		
+
 		Tile whiteTile = currentGame.getCurrentPosition().getWhitePosition().getTile();
 		assertEquals(wrow, whiteTile.getRow());
 		assertEquals(wcol, whiteTile.getColumn());
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 * @param data
 	 */
@@ -2259,14 +2299,14 @@ public class CucumberStepDefinitions {
 		int wcol = (int) (((data/10) - wrow)*10);
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
-		
+
 		Tile blackTile = currentGame.getCurrentPosition().getBlackPosition().getTile();
 		assertEquals(wrow, blackTile.getRow());
 		assertEquals(wcol, blackTile.getColumn());
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 * @param wwallno
 	 */
@@ -2278,7 +2318,7 @@ public class CucumberStepDefinitions {
 		assertEquals((int) wwallno, 10 - currentGame.getWhitePlayer().getWalls().size());
 	}
 	/**
-	 * 
+	 *
 	 * @author Ali Tapan
 	 * @param bwallno
 	 */
@@ -2288,11 +2328,10 @@ public class CucumberStepDefinitions {
 		Game currentGame = quoridor.getCurrentGame();
 		assertEquals((int) bwallno, 10 - currentGame.getBlackPlayer().getWalls().size());
 	}
-	
+
 	/*****************************
 	 * Jump to Start Feature
 	 *****************************/
-
 
 	@When("Jump to start position is initiated")
 	public void jump_to_start_position_is_initiated() {
@@ -2377,8 +2416,8 @@ public class CucumberStepDefinitions {
 	public void game_result_shall_be(String result) {
 		Player playerToMove = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
 		Player whitePlayer = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
-	
-		
+
+
 		if (playerToMove == whitePlayer) {
 			assertEquals("BlackWon", result);
 		} else {
@@ -2553,8 +2592,8 @@ public class CucumberStepDefinitions {
 		// Gets this Board for the Tile
 		Board currentBoard = quoridor.getBoard();
 
-		currentPlayer.numberOfWalls();
-		Wall currentWall = currentPlayer.getWall(1);
+		int numWalls = currentPlayer.numberOfWalls();
+		Wall currentWall = currentPlayer.getWall(numWalls-1);
 
 		Tile currentTile = currentBoard.getTile((row - 1) * 9 + col - 1);
 
