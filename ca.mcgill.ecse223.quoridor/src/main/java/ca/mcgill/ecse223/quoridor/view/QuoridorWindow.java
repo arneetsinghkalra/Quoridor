@@ -64,6 +64,10 @@ public class QuoridorWindow extends JFrame {
 	private static JButton btnRotateWallWhite;
 	private static JButton btnResignGameBlack;
 	private static JButton btnResignGameWhite;
+	
+	private static JButton btnReplayJumpToFinal;
+	private static JButton btnReplayJumpToStart;
+
 
 	private Box[][] hWalls = new Box[9][9];
 	private Box[][] vWalls = new Box[9][9];
@@ -479,6 +483,24 @@ public class QuoridorWindow extends JFrame {
 		btnLoadGame.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnLoadGame.setFont(new Font(font, Font.PLAIN, fontSize));	
 		verticalBox.add(btnLoadGame);
+		
+		
+		btnReplayJumpToStart = new JButton((char) 0x2b60+" Jump to Start");
+		btnReplayJumpToStart.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnReplayJumpToStart.setFont(new Font(font, Font.PLAIN, fontSize));
+		horizontalBox.add(btnReplayJumpToStart);
+		btnReplayJumpToStart.setVisible(false);
+		
+		btnReplayJumpToStart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent a) {
+				if(!Controller.isInReplayMode()) {
+					notifyNotInReplayMode();
+				}
+				else {
+					//Go backwards method
+				}
+			}
+		});
 			
 		btnReplayBackwards = new JButton(""+(char) 0x2b60);
 		btnReplayBackwards.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -533,6 +555,24 @@ public class QuoridorWindow extends JFrame {
 				}
 				else {
 					//Go forwards method
+				}
+			}
+		});
+		
+
+		btnReplayJumpToFinal = new JButton("Jump to Final "+(char) 0x2b62);
+		btnReplayJumpToFinal.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnReplayJumpToFinal.setFont(new Font(font, Font.PLAIN, fontSize));
+		horizontalBox.add(btnReplayJumpToFinal);
+		btnReplayJumpToFinal.setVisible(false);
+		
+		btnReplayJumpToFinal.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent a) {
+				if(!Controller.isInReplayMode()) {
+					notifyNotInReplayMode();
+				}
+				else {
+					//Go backwards method
 				}
 			}
 		});
@@ -2170,6 +2210,8 @@ public class QuoridorWindow extends JFrame {
 		btnReplayForwards.setVisible(true);
 		btnReplayBackwards.setVisible(true);
 		btnContinuePlaying.setVisible(true);
+		btnReplayJumpToStart.setVisible(true);
+		btnReplayJumpToFinal.setVisible(true);
 	
 		//Make board unplayable for now
 		for (int i = 0; i < 9; i++) {
@@ -2203,6 +2245,9 @@ public class QuoridorWindow extends JFrame {
 	btnReplayForwards.setVisible(false);
 	btnReplayBackwards.setVisible(false);
 	btnContinuePlaying.setVisible(false);
+	btnReplayJumpToStart.setVisible(false);
+	btnReplayJumpToFinal.setVisible(false);
+
 	
 	//Make board unplayable for now
 	for (int i = 0; i < 9; i++) {
