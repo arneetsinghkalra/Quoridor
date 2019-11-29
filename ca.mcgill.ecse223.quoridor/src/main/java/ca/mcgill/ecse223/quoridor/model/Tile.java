@@ -33,7 +33,7 @@ public class Tile
     }
     if (aRow<1||aRow>9)
     {
-      throw new RuntimeException("Please provide a valid row [row>=1&&row<=9]");
+      throw new RuntimeException("Please provide a valid row [row>=1&&row<=9]" + aRow);
     }
     if (aColumn<1||aColumn>9)
     {

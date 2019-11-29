@@ -1,6 +1,7 @@
 Feature: Enter Replay Mode
 As a player, I wish to review a past game in replay mode to walk through the moves.
 
+	
 	Scenario: Entering replay mode 
 		Given The game is not running
 		When I initiate replay mode

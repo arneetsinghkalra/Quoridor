@@ -1403,37 +1403,58 @@ public class Controller {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game game = new Game(GameStatus.ReadyToStart, MoveMode.PlayerMove, quoridor);
 		return game;
-	}
+	}	
 
 	
 	
 	
 
-	public static void loadGame(String fileName) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public static Game initiateReplayMode() {
+	public static Game initiateReplayMode(Game currentGame) {
 		Quoridor quoridor = QuoridorApplication.getQuordior();
-		Game currentGame = quoridor.getCurrentGame();
-		currentGame.setGameStatus(GameStatus.Replay);
+		if(currentGame == null) {
+			//initialize new game with game status as replay mode
+			Game newGame = new Game(GameStatus.Replay, MoveMode.PlayerMove, quoridor);
+			return newGame;
+		}
+		else {
+			currentGame.setGameStatus(GameStatus.Replay);
+			return currentGame;
+		}
+	}
+
+	public static Game initiateContinueGame(Game currentGame) {
+		if(currentGame.getGameStatus() == GameStatus.BlackWon 
+				|| currentGame.getGameStatus() == GameStatus.WhiteWon
+				||currentGame.getGameStatus() == GameStatus.Draw)
+		{	
+			currentGame.setGameStatus(GameStatus.Replay);
+		}
+		else {
+			currentGame.setGameStatus(GameStatus.Running);
+		}
 		return currentGame;
 	}
+	
 
-	public static Game initiateContinueGame(Game game) {
+	public static Game jumpToStartPosition(Game currentGame) {
+		List<GamePosition> position = currentGame.getPositions();
+		currentGame.setCurrentPosition(position.get(0));
+		return currentGame;
+	}
+	
+	public static Game jumpToFinalPosition(Game currentGame) {
 		Quoridor quoridor = QuoridorApplication.getQuordior();
-		if(!identifyIfGameWon())
-		{	
-			game.setGameStatus(GameStatus.Running);
-		}
-		return game;
+		List<GamePosition> position = currentGame.getPositions();
+		Tile whiteTile = new Tile(7,5,quoridor.getBoard());
+		Tile blackTile = new Tile(3,6,quoridor.getBoard());
+		PlayerPosition whitePosition = new PlayerPosition(currentGame.getWhitePlayer(), whiteTile);
+		PlayerPosition blackPosition = new PlayerPosition(currentGame.getBlackPlayer(), blackTile);
+		GamePosition finalPosition = new GamePosition(position.size(),whitePosition,blackPosition,currentGame.getCurrentPosition().getPlayerToMove(), currentGame);
+		currentGame.setCurrentPosition(finalPosition);
+		currentGame.addPosition(finalPosition);
+		return currentGame;
 	}
-
-	public static boolean validateMoves() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	
 }
 
 
