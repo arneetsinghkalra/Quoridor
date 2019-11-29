@@ -1658,27 +1658,6 @@ public class Controller {
         return currentGame;
     }
 
-    /**
-     * Sets the current position to the defined start position in the features.
-     *
-     * @param currentGame
-     * @return Game object
-     *
-     * @author Ali Tapan
-     */
-    public static Game jumpToStartPosition(Game currentGame) {
-        Quoridor quoridor = QuoridorApplication.getQuoridor();
-        List<GamePosition> position = currentGame.getPositions();
-        Tile whiteTile = new Tile(9,5,quoridor.getBoard());
-        Tile blackTile = new Tile(1,5,quoridor.getBoard());
-        PlayerPosition whitePosition = new PlayerPosition(currentGame.getWhitePlayer(), whiteTile);
-        PlayerPosition blackPosition = new PlayerPosition(currentGame.getBlackPlayer(), blackTile);
-        GamePosition startPosition = new GamePosition(position.size(),whitePosition,blackPosition,currentGame.getCurrentPosition().getPlayerToMove(), currentGame);
-        currentGame.setCurrentPosition(startPosition);
-        currentGame.addPosition(startPosition);
-        return currentGame;
-    }
-
 
     /**
      * Sets current position the the defined final position in the features
@@ -1700,6 +1679,24 @@ public class Controller {
         return currentGame;
     }
 
+    /**
+     *
+     */
+    public static void jumpToStartPosition()
+    {
+        Quoridor q = QuoridorApplication.getQuoridor();
+        List<GamePosition> position = q.getCurrentGame().getPositions();
+        GamePosition p = position.get(0);
+        QuoridorWindow w =QuoridorApplication.quoridorWindow;
+        Tile whiteTile = p.getWhitePosition().getTile();
+        Tile blackTile = p.getBlackPosition().getTile();
+        w.placePlayer(whiteTile.getRow()-1, whiteTile.getColumn()-1, blackTile.getRow()-1, blackTile.getColumn()-1);
+        q.getCurrentGame().setCurrentPosition(p);
+        // Start should never have walls on board. This is for completeness sake
+        for(Wall wall: getAllWallsOnBoard())
+            w.displayWall(wall.getMove().getTargetTile().getRow()-1, wall.getMove().getTargetTile().getColumn()-1, wall.getMove().getWallDirection());
+
+    }
 
     /**
      * Helper method for finding a path from the current location to the target destination
