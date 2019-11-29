@@ -1905,4 +1905,13 @@ public class Controller {
         // This line reach iff pathfinding fails
         return false;
     }
+    
+    /**
+     * @author arneetkalra
+     * @return
+     */
+    public static Game getCurrentGame() {
+    	Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
+    	return currentGame;
+    }
 }
