@@ -1659,7 +1659,7 @@ public class Controller {
     }
 
     /**
-     * Sets the current position to the defined start position in the features.
+     * Sets the current position to the first position from the array of positions in the game.
      *
      * @param currentGame
      * @return Game object
@@ -1667,6 +1667,8 @@ public class Controller {
      * @author Ali Tapan
      */
     public static Game jumpToStartPosition(Game currentGame) {
+    	
+    	
         Quoridor quoridor = QuoridorApplication.getQuoridor();
         List<GamePosition> position = currentGame.getPositions();
         Tile whiteTile = new Tile(9,5,quoridor.getBoard());
@@ -1681,23 +1683,15 @@ public class Controller {
 
 
     /**
-     * Sets current position the the defined final position in the features
+     * Sets current position the the final position from the array of positions in the game.
      * @param currentGame
      * @return Game object
      *
      * @author Ali Tapan
      */
     public static Game jumpToFinalPosition(Game currentGame) {
-        Quoridor quoridor = QuoridorApplication.getQuoridor();
-        List<GamePosition> position = currentGame.getPositions();
-        Tile whiteTile = new Tile(7,5,quoridor.getBoard());
-        Tile blackTile = new Tile(3,6,quoridor.getBoard());
-        PlayerPosition whitePosition = new PlayerPosition(currentGame.getWhitePlayer(), whiteTile);
-        PlayerPosition blackPosition = new PlayerPosition(currentGame.getBlackPlayer(), blackTile);
-        GamePosition finalPosition = new GamePosition(position.size(),whitePosition,blackPosition,currentGame.getCurrentPosition().getPlayerToMove(), currentGame);
-        currentGame.setCurrentPosition(finalPosition);
-        currentGame.addPosition(finalPosition);
-        return currentGame;
+    	currentGame.setCurrentPosition(currentGame.getPositions().get(currentGame.getPositions().size()-1));
+    	return currentGame;
     }
 
 
