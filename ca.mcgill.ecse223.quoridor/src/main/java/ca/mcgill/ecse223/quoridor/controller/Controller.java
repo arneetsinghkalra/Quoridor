@@ -1585,4 +1585,89 @@ public class Controller {
 		}
 		return false;
 	}
+	
+	
+	/**
+	 * Initiate the Replay Mode for the current game.
+	 * 
+	 * @param currentGame
+	 * @return Game object with GameStatus set as Replay Mode.
+	 * @author Ali Tapan
+	 */
+	public static Game initiateReplayMode(Game currentGame) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		if(currentGame == null) {
+			//initialize new game with game status as replay mode
+			Game newGame = new Game(GameStatus.Replay, MoveMode.PlayerMove, quoridor);
+			return newGame;
+		}
+		else {
+			currentGame.setGameStatus(GameStatus.Replay);
+			return currentGame;
+		}
+	}
+
+	/**
+	 * Switch back to the running game when the current user is in Replay mode.
+	 * If the current game is over, the user stays in Replay mode.
+	 * 
+	 * @param currentGame
+	 * @return Game object with GameStatus set appropriately.
+	 * @author Ali Tapan
+	 */
+	public static Game initiateContinueGame(Game currentGame) {
+		if(currentGame.getGameStatus() == GameStatus.BlackWon 
+				|| currentGame.getGameStatus() == GameStatus.WhiteWon
+				||currentGame.getGameStatus() == GameStatus.Draw)
+		{	
+			currentGame.setGameStatus(GameStatus.Replay);
+		}
+		else {
+			currentGame.setGameStatus(GameStatus.Running);
+		}
+		return currentGame;
+	}
+	
+	/**
+	 * Sets the current position to the defined start position in the features.
+	 * 
+	 * @param currentGame
+	 * @return Game object
+	 * 
+	 * @author Ali Tapan
+	 */
+	public static Game jumpToStartPosition(Game currentGame) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		List<GamePosition> position = currentGame.getPositions();
+		Tile whiteTile = new Tile(9,5,quoridor.getBoard());
+		Tile blackTile = new Tile(1,5,quoridor.getBoard());
+		PlayerPosition whitePosition = new PlayerPosition(currentGame.getWhitePlayer(), whiteTile);
+		PlayerPosition blackPosition = new PlayerPosition(currentGame.getBlackPlayer(), blackTile);
+		GamePosition startPosition = new GamePosition(position.size(),whitePosition,blackPosition,currentGame.getCurrentPosition().getPlayerToMove(), currentGame);
+		currentGame.setCurrentPosition(startPosition);
+		currentGame.addPosition(startPosition);
+		return currentGame;
+	}
+	
+	
+	/**
+	 * Sets current position the the defined final position in the features
+	 * @param currentGame
+	 * @return Game object
+	 * 
+	 * @author Ali Tapan
+	 */
+	public static Game jumpToFinalPosition(Game currentGame) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		List<GamePosition> position = currentGame.getPositions();
+		Tile whiteTile = new Tile(7,5,quoridor.getBoard());
+		Tile blackTile = new Tile(3,6,quoridor.getBoard());
+		PlayerPosition whitePosition = new PlayerPosition(currentGame.getWhitePlayer(), whiteTile);
+		PlayerPosition blackPosition = new PlayerPosition(currentGame.getBlackPlayer(), blackTile);
+		GamePosition finalPosition = new GamePosition(position.size(),whitePosition,blackPosition,currentGame.getCurrentPosition().getPlayerToMove(), currentGame);
+		currentGame.setCurrentPosition(finalPosition);
+		currentGame.addPosition(finalPosition);
+		return currentGame;
+	}
+	
 }
