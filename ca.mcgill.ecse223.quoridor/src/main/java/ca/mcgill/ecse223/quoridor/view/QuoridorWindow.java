@@ -530,7 +530,7 @@ public class QuoridorWindow extends JFrame {
 			}	
 		});
 		
-		btnContinuePlaying = new JButton("Continue from here");
+		btnContinuePlaying = new JButton("Continue from Here");
 		btnContinuePlaying.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnContinuePlaying.setFont(new Font(font, Font.PLAIN, fontSize));			
 		horizontalBox.add(btnContinuePlaying);
