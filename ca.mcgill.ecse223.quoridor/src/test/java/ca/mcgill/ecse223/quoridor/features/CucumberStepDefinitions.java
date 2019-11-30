@@ -1987,14 +1987,24 @@ public class CucumberStepDefinitions {
 		PlayerPosition player1Position = new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(), player1StartPos);
 		PlayerPosition player2Position = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), player2StartPos);
 		GamePosition initialPosition = new GamePosition(0, player1Position, player2Position, players[0], currentGame);
-		player1Position.setBlackInGame(initialPosition);
-		player2Position.setWhiteInGame(initialPosition);
 		currentGame.setCurrentPosition(initialPosition);
-		currentGame.addPosition(initialPosition);
-		
 
 		List<Map<String, String>> valueMaps = dataTable.asMaps();
 
+		
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < 10; j++) {
+				new Wall(i * 10 + j, players[i]);
+			}
+		}
+		for (int j = 1; j <= 10; j++) {
+			Wall wall = Wall.getWithId(j);
+			initialPosition.addWhiteWallsInStock(wall);
+		}
+		for (int j = 1; j <= 10; j++) {
+			Wall wall = Wall.getWithId(j + 10);
+			initialPosition.addBlackWallsInStock(wall);
+		}
 		
 		int positionId = 1;
 		for (Map<String, String> map : valueMaps) {
@@ -2017,25 +2027,16 @@ public class CucumberStepDefinitions {
 				//If the current player is white player
 				if(playerIdx%2 == 0)
 				{
-					PlayerPosition newWhitePosition = new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(), tile);
-					PlayerPosition newBlackPosition = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), currentBlackTile);
-					GamePosition newPosition = new GamePosition(positionId, newWhitePosition, newBlackPosition, currentPlayer, currentGame);
-					newWhitePosition.setBlackInGame(newPosition);
-					newBlackPosition.setWhiteInGame(newPosition);
-					currentGame.setCurrentPosition(newPosition);
-					currentGame.addPosition(newPosition);
-					
+					GamePosition currentPosition = quoridor.getCurrentGame().getCurrentPosition();
+					currentPosition.getWhitePosition().setTile(tile);
+					Controller.switchCurrentPlayer();
 				}
 				//If the current player is black player
 				else
 				{
-					PlayerPosition newBlackPosition = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), tile);
-					PlayerPosition newWhitePosition = new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(), currentWhiteTile);
-					GamePosition newPosition = new GamePosition(positionId, newWhitePosition, newBlackPosition, currentPlayer, currentGame);
-					newWhitePosition.setBlackInGame(newPosition);
-					newBlackPosition.setWhiteInGame(newPosition);
-					currentGame.setCurrentPosition(newPosition);
-					currentGame.addPosition(newPosition);
+					GamePosition currentPosition = quoridor.getCurrentGame().getCurrentPosition();
+					currentPosition.getBlackPosition().setTile(tile);
+					Controller.switchCurrentPlayer();
 				}
 				
 			StepMove newMove = new StepMove(mv, rnd, currentPlayer, tile, currentGame);
@@ -2075,9 +2076,20 @@ public class CucumberStepDefinitions {
 					char wallAllignment = move.charAt(2);
 
 					Tile tile = new Tile(row, col, quoridor.getBoard());
-					Wall newWall = new Wall(wallId, players[playerIdx%2]);
-					wallId--;
+					
+					
+					Wall newWall;
 
+					if(playerIdx%2 == 0)
+					{
+						newWall = quoridor.getCurrentGame().getCurrentPosition().getWhiteWallsInStock(0);
+					}
+					//If the current player is black player
+					else
+					{
+						newWall = quoridor.getCurrentGame().getCurrentPosition().getBlackWallsInStock(0);
+					}
+					
 					if(wallAllignment == 'v')
 					{
 						
@@ -2091,6 +2103,23 @@ public class CucumberStepDefinitions {
 						currentGame.addMove(newWallMove);
 
 					}
+					
+					if(playerIdx%2 == 0)
+					{
+						quoridor.getCurrentGame().getCurrentPosition().removeWhiteWallsInStock(newWall);
+						quoridor.getCurrentGame().getCurrentPosition().addWhiteWallsOnBoard(newWall);
+
+					}
+					//If the current player is black player
+					else
+					{
+						quoridor.getCurrentGame().getCurrentPosition().removeBlackWallsInStock(newWall);
+						quoridor.getCurrentGame().getCurrentPosition().addBlackWallsOnBoard(newWall);
+
+					}
+					
+					Controller.switchCurrentPlayer();
+
 					positionId++;
 				}
 			}
@@ -2131,6 +2160,7 @@ public class CucumberStepDefinitions {
 			currentGame.getCurrentPosition().setPlayerToMove(currentGame.getWhitePlayer());
 			try {
 				currentGame.getMove(index);
+				currentGame.setCurrentPosition(currentGame.getPosition((moveno-1)*2));
 			} catch (IndexOutOfBoundsException e)
 			{
 				//Game is over
@@ -2140,9 +2170,12 @@ public class CucumberStepDefinitions {
 			currentGame.getCurrentPosition().setPlayerToMove(currentGame.getBlackPlayer());
 			try {
 				currentGame.getMove(index);
+				currentGame.setCurrentPosition(currentGame.getPosition((moveno-1)*2+1));
+
 			}
 			catch (IndexOutOfBoundsException e)
 			{
+				
 				//Game is over
 			}
 		}
@@ -2301,11 +2334,11 @@ public class CucumberStepDefinitions {
 		//nmov for final move is always 1 more greater than number of moves
 		//the reason why we divide number of moves 2 is the way feature is given to us:
 		//number of moves increment every 2 rounds
-		assertEquals(nmov, currentGame.numberOfMoves()/2 + 1);
+		assertEquals(nmov, currentGame.getCurrentPosition().getId()/2 + 1);
 
 		//check number of moves, if its even then the next move shall be white's turn,
 		//otherwise it is black's turn.
-		assertEquals(nrnd, currentGame.numberOfMoves()%2 + 1);
+		assertEquals(nrnd, currentGame.getCurrentPosition().getId()%2 + 1);
 	}
 
 	/**
@@ -2370,7 +2403,7 @@ public class CucumberStepDefinitions {
 
 	@When("Jump to start position is initiated")
 	public void jump_to_start_position_is_initiated() {
-		Controller.jumpToStartPosition();
+		Controller.jumpToStartPosition(QuoridorApplication.getQuoridor().getCurrentGame());
 	}
 
 	/*****************************
@@ -2476,7 +2509,7 @@ public class CucumberStepDefinitions {
 	@When("Step backward is initiated")
 	public void step_backward_is_initiated() {
 		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+		Controller.stepBackward();
 	}
 
 	// ***********************************************
