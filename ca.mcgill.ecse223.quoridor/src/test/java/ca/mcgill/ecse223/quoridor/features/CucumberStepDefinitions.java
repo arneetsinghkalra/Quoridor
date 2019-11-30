@@ -52,7 +52,7 @@ public class CucumberStepDefinitions {
 	private boolean legalMove = true;
 	private boolean userConfirms;
 	private boolean privateStatus = false;
-	private boolean errorForLoadGame = false;
+	private boolean errorForLoadGame = true;
 	Wall returnedWall;
 	ArrayList<Player> createUsersAndPlayersLoad;
 	QuoridorWindow window = QuoridorApplication.quoridorWindow;
@@ -2165,8 +2165,7 @@ public class CucumberStepDefinitions {
 		createAndStartGame(createUsersAndPlayersLoad);
     	try{
     		Controller.loadGame(fileName);
-    		}
-    	catch(UnsupportedOperationException e){
+    	}catch(UnsupportedOperationException e) {
     		errorForLoadGame = false;
     	}
     }
