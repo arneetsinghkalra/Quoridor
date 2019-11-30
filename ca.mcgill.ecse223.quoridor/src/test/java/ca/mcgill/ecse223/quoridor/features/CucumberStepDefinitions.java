@@ -1984,8 +1984,8 @@ public class CucumberStepDefinitions {
 			}
 		}
 		
-		int[] wallIds = {9, 9};
-		int wallId = wallIds[playerIdx%2];
+		int whiteWalls = 9;
+		int blackWalls = 9;
 		
 		
 		Tile player1StartPos = quoridor.getBoard().getTile(76);
@@ -2019,7 +2019,8 @@ public class CucumberStepDefinitions {
 			int row = Character.getNumericValue(move.charAt(1));
 			int col = (Character.getNumericValue(move.charAt(0)))-9;
 
-			Tile tile = new Tile(row, col, quoridor.getBoard());
+			//Tile tile = new Tile(row, col, quoridor.getBoard());
+			Tile tile = quoridor.getBoard().getTile((row-1)*9 + col -1); 
 			
 				//If the current player is white player
 				if(playerIdx%2 == 0)
@@ -2080,28 +2081,29 @@ public class CucumberStepDefinitions {
 					int row = Character.getNumericValue(move.charAt(1));
 					int col = (Character.getNumericValue(move.charAt(0)))-9;
 					char wallAllignment = move.charAt(2);
+					Tile tile = quoridor.getBoard().getTile((row-1)*9 + col -1);
 					
-					Tile tile = new Tile(row, col, quoridor.getBoard());
+					//Tile tile = new Tile(row, col, quoridor.getBoard());
 					//Wall newWall = new Wall(wallId, players[playerIdx%2]);
 					//wallId--;
 
 					if(wallAllignment == 'v')
 					{
 						
-						WallMove newWallMove = new WallMove(mv, rnd, currentPlayer, tile, currentGame, Direction.Vertical, currentPlayer.getWall(wallId));
-						currentPlayer.removeWall(currentPlayer.getWall(wallId));
-						currentGame.addMove(newWallMove);
-						wallId--;
+						WallMove newWallMove = new WallMove(mv, rnd, currentPlayer, tile, currentGame, Direction.Vertical, currentPlayer.getWall(whiteWalls));
+						Controller.dropWall(newWallMove);
+						whiteWalls--;
+						
 						
 					}
 					else
 					{
-						WallMove newWallMove = new WallMove(mv, rnd, currentPlayer, tile, currentGame, Direction.Horizontal, currentPlayer.getWall(wallId));
-						currentPlayer.removeWall(currentPlayer.getWall(wallId));
-						currentGame.addMove(newWallMove);
-						wallId--;
+						WallMove newWallMove = new WallMove(mv, rnd, currentPlayer, tile, currentGame, Direction.Horizontal, currentPlayer.getWall(blackWalls));
+						Controller.dropWall(newWallMove);
+						blackWalls--;
 
 					}
+					playerIdx++;
 					positionId++;
 				}
 			}
