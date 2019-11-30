@@ -2088,16 +2088,16 @@ public class CucumberStepDefinitions {
 					if(wallAllignment == 'v')
 					{
 						
-						WallMove newWallMove = new WallMove(mv, rnd, players[playerIdx%2], tile, currentGame, Direction.Vertical, players[playerIdx%2].getWall(wallId));
-						players[playerIdx&2].removeWall(players[playerIdx%2].getWall(wallId));
+						WallMove newWallMove = new WallMove(mv, rnd, currentPlayer, tile, currentGame, Direction.Vertical, currentPlayer.getWall(wallId));
+						currentPlayer.removeWall(currentPlayer.getWall(wallId));
 						currentGame.addMove(newWallMove);
 						wallId--;
 						
 					}
 					else
 					{
-						WallMove newWallMove = new WallMove(mv, rnd, players[playerIdx%2], tile, currentGame, Direction.Horizontal, players[playerIdx%2].getWall(wallId));
-						players[playerIdx&2].removeWall(players[playerIdx%2].getWall(wallId));
+						WallMove newWallMove = new WallMove(mv, rnd, currentPlayer, tile, currentGame, Direction.Horizontal, currentPlayer.getWall(wallId));
+						currentPlayer.removeWall(currentPlayer.getWall(wallId));
 						currentGame.addMove(newWallMove);
 						wallId--;
 
