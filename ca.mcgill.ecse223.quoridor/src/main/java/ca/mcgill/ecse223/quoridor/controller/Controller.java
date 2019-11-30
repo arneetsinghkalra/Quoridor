@@ -1044,12 +1044,10 @@ public class Controller {
 		int whiteMoveRow;
 		int whiteWallMoveColumn;
 		int whiteWallMoveRow;
-		int whiteWallNum = 0;
 		int blackMoveColumn;
 		int blackMoveRow;
 		int blackWallMoveColumn;
 		int blackWallMoveRow;
-		int blackWallNum = 0;
 		String whiteWallDirection;
 		String blackWallDirection;
 		for(int i = 0; i<numRound;i++) {
@@ -1059,10 +1057,7 @@ public class Controller {
 			boolean one = (moveToken.countTokens()==1);
 			if(two) {
 				String whiteMoveTile = moveToken.nextToken();
-				System.out.println(whiteMoveTile);
 				String blackMoveTile = moveToken.nextToken();
-				System.out.println(blackMoveTile);
-
 				if(whiteMoveTile.toCharArray().length==2) {
 					try {
 						whiteMoveColumn = convertToInt(whiteMoveTile.substring(0,1));
@@ -1075,8 +1070,11 @@ public class Controller {
 					}
 					Tile whiteTile = quoridor.getBoard().getTile((whiteMoveRow - 1) * 9 + whiteMoveColumn - 1);
 					//Move move = new StepMove(rNumber*2,rNumber,whitePlayer,whiteTile,quoridor.getCurrentGame());
-					loadMove(whiteTile.getColumn(),whiteTile.getRow(),whitePlayer);
-					System.out.println("111111111111111111");
+					System.out.println(whiteTile.getColumn()+whiteTile.getRow());
+					Boolean returnvalue =loadMove(whiteTile.getColumn(),whiteTile.getRow(),whitePlayer);
+					System.out.println(returnvalue);
+
+					//System.out.println("111111111111111111");
 				}else if(whiteMoveTile.toCharArray().length==3) {
 					try {
 						whiteWallMoveColumn = convertToInt(whiteMoveTile.substring(0,1));
@@ -1097,9 +1095,9 @@ public class Controller {
 						quoridor.getCurrentGame().addMove(move);
 						quoridor.getCurrentGame().getCurrentPosition().removeWhiteWallsInStock(wallToBePlaced);
 						quoridor.getCurrentGame().getCurrentPosition().addWhiteWallsOnBoard(wallToBePlaced);
-						quoridor.getCurrentGame().getPositions().add(quoridor.getCurrentGame().getCurrentPosition());
+						//quoridor.getCurrentGame().getPositions().add(quoridor.getCurrentGame().getCurrentPosition());
 					}
-					System.out.println("1444444444444444441");
+					//System.out.println("1444444444444444441");
 
 				}else {
 					throw new UnsupportedOperationException("Invalid Game");
@@ -1117,8 +1115,9 @@ public class Controller {
 					}
 					Tile blackTile = quoridor.getBoard().getTile((blackMoveRow - 1) * 9 + blackMoveColumn - 1);
 					//Move move = new StepMove(rNumber*2,rNumber,blackPlayer,blackTile,quoridor.getCurrentGame());
-					loadMove(blackTile.getColumn(),blackTile.getRow(),blackPlayer);
-					System.out.println("222222222222222222222");
+					Boolean returnvalue = loadMove(blackTile.getColumn(),blackTile.getRow(),blackPlayer);
+					System.out.println(returnvalue);
+					//System.out.println("222222222222222222222");
 
 				}else if(blackMoveTile.toCharArray().length==3) {
 					try {
@@ -1140,9 +1139,9 @@ public class Controller {
 						quoridor.getCurrentGame().addMove(move);
 						quoridor.getCurrentGame().getCurrentPosition().removeBlackWallsInStock(wallToBePlaced);
 						quoridor.getCurrentGame().getCurrentPosition().addBlackWallsOnBoard(wallToBePlaced);
-						quoridor.getCurrentGame().getPositions().add(quoridor.getCurrentGame().getCurrentPosition());
+						//quoridor.getCurrentGame().getPositions().add(quoridor.getCurrentGame().getCurrentPosition());
 					}
-					System.out.println("33333333333333");
+					//System.out.println("33333333333333");
 
 				}else {
 					throw new UnsupportedOperationException("Invalid Game");
@@ -1162,6 +1161,7 @@ public class Controller {
 					Tile whiteTile = quoridor.getBoard().getTile((whiteMoveRow - 1) * 9 + whiteMoveColumn - 1);
 					//Move move = new StepMove(rNumber*2,rNumber,whitePlayer,whiteTile,quoridor.getCurrentGame());
 					loadMove(whiteTile.getColumn(),whiteTile.getRow(),whitePlayer);
+					System.out.print("123123123123123");
 				}else if(whiteMoveTile.toCharArray().length==3) {
 					try {
 						whiteWallMoveColumn = convertToInt(whiteMoveTile.substring(0,1));
@@ -1182,7 +1182,7 @@ public class Controller {
 						quoridor.getCurrentGame().addMove(move);
 						quoridor.getCurrentGame().getCurrentPosition().removeWhiteWallsInStock(wallToBePlaced);
 						quoridor.getCurrentGame().getCurrentPosition().addWhiteWallsOnBoard(wallToBePlaced);
-						quoridor.getCurrentGame().getPositions().add(quoridor.getCurrentGame().getCurrentPosition());
+						//quoridor.getCurrentGame().getPositions().add(quoridor.getCurrentGame().getCurrentPosition());
 					}
 					
 				}else {
@@ -1587,10 +1587,16 @@ public class Controller {
 			currentColumn = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn();
 			currentRow = quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow();
 		}
+		System.out.println("currentRow" + currentRow);
+		System.out.println("currentColumn" + currentColumn);
+
+		System.out.println("desMoveRow" + desMoveRow);
+		System.out.println("desMoveColumn" + desMoveColumn);
+
 		int vertAbsDiff = Math.abs(desMoveRow-currentRow);
-		int vertDiff = currentRow-desMoveRow;
+		int vertDiff = desMoveRow-currentRow;
 		int horAbsDiff = Math.abs(desMoveColumn -currentColumn);
-		int horDiff = currentColumn-desMoveColumn;
+		int horDiff = desMoveColumn-currentColumn;
 		if(vertAbsDiff+ horAbsDiff>2|| vertAbsDiff>2||horAbsDiff>2||vertAbsDiff+horAbsDiff==0) {
 			return false;
 		}
@@ -1660,7 +1666,7 @@ public class Controller {
 		data += String.valueOf((move.getTargetTile().getRow()));
 		if(move.getClass()==WallMove.class) {
 			WallMove move2 = (WallMove) move;
-			data+= move2.getWallDirection();
+			data+= convertWallDir(move2.getWallDirection());
 		}
 		System.out.print(data);
 		return data;

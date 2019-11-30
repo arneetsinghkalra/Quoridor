@@ -680,10 +680,9 @@ public class PawnBehavior {
 					int column = currentGame.getCurrentPosition().getBlackPosition().getTile().getColumn();
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((newRow - 1) * 9 + column - 1);
 					currentGame.getCurrentPosition().getBlackPosition().setTile(newTile);
-					Controller.switchCurrentPlayer();
 					ensureGrabWallDeleted();
-					
 					currentGame.addMove(new StepMove(moveNumber+1, roundNumber, currentGame.getCurrentPosition().getPlayerToMove(), newTile, currentGame));
+					Controller.switchCurrentPlayer();
 					return true;
 				} else if (dir == MoveDirection.South) {
 					int newRow = currentGame.getCurrentPosition().getBlackPosition().getTile().getRow() + 1;
@@ -701,7 +700,6 @@ public class PawnBehavior {
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((Row - 1) * 9 + newColumn - 1);
 					currentGame.getCurrentPosition().getBlackPosition().setTile(newTile);
 					ensureGrabWallDeleted();
-
 					currentGame.addMove(new StepMove(moveNumber+1, roundNumber, currentGame.getCurrentPosition().getPlayerToMove(), newTile, currentGame));
 					Controller.switchCurrentPlayer();
 					return true;
