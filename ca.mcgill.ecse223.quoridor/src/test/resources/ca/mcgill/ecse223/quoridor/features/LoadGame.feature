@@ -1,3 +1,4 @@
+@google
 Feature: Load Game
   As a player, I want to load a previously played game recorded in an algebraic notation in a text file 
   so that I can continue or review it. If the game is not yet finished, 
@@ -21,8 +22,8 @@ Feature: Load Game
 
     Examples: 
       | filename                 | player | p_row | p_col | opponent | o_row | o_col | pw_row | pw_col | pw_orientation | ow_row | ow_col | ow_orientation | remaining_walls |
-      | quoridor_test_game_1.mov | white  |     3 |     5 | black    |     7 |     5 |      6 |      5 | horizontal     |      3 |      5 | vertical       |               9 |
-      | quoridor_test_game_2.mov | white  |     2 |     5 | black    |     8 |     5 |      6 |      5 | horizontal     |      3 |      5 | vertical       |               8 |
+      | quoridor_test_game_1.mov | white  |     4 |     5 | black    |     7 |     5 |      6 |      5 | horizontal     |      3 |      5 | vertical       |               9 |
+      | quoridor_test_game_2.mov | white  |     3 |     5 | black    |     8 |     5 |      6 |      5 | horizontal     |      3 |      5 | vertical       |               8 |
 
   Scenario Outline: Load valid incomplete game 
     When I initiate to load a game in "<filename>"

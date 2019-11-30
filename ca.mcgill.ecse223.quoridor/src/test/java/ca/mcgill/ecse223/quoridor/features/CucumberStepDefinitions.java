@@ -52,6 +52,7 @@ public class CucumberStepDefinitions {
 	private boolean legalMove = true;
 	private boolean userConfirms;
 	private boolean privateStatus = false;
+	private boolean errorForLoadGame = false;
 	Wall returnedWall;
 	ArrayList<Player> createUsersAndPlayersLoad;
 	QuoridorWindow window = QuoridorApplication.quoridorWindow;
@@ -1888,11 +1889,11 @@ public class CucumberStepDefinitions {
 		throw new cucumber.api.PendingException();
 	}
 
-	@Then("The game shall be in replay mode")
-	public void the_game_shall_be_in_replay_mode() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
-	}
+//	@Then("The game shall be in replay mode")
+//	public void the_game_shall_be_in_replay_mode() {
+//		// Write code here that turns the phrase above into concrete actions
+//		throw new cucumber.api.PendingException();
+//	}
 
 	@Given("The game is replay mode")
 	public void the_game_is_replay_mode() {
@@ -1936,11 +1937,11 @@ public class CucumberStepDefinitions {
 		throw new cucumber.api.PendingException();
 	}
 
-	@And("The game has a final result")
-	public void the_game_has_a_final_result() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
-	}
+//	@And("The game has a final result")
+//	public void the_game_has_a_final_result() {
+//		// Write code here that turns the phrase above into concrete actions
+//		throw new cucumber.api.PendingException();
+//	}
 
 	@And("I shall be notified that finished games cannot be continued")
 	public void i_shall_be_notified_that_finished_games_cannot_be_continued() {
@@ -2157,6 +2158,48 @@ public class CucumberStepDefinitions {
 		// Write code here that turns the phrase above into concrete actions
 		throw new cucumber.api.PendingException();
 	}
+	
+    @When("I initiate to load a game in {string}")
+    public void I_initiate_to_load_a_game_in(String fileName) {
+    	QuoridorApplication.quoridorWindow= new QuoridorWindow();
+		createAndStartGame(createUsersAndPlayersLoad);
+    	try{
+    		Controller.loadGame(fileName);
+    		}
+    	catch(UnsupportedOperationException e){
+    		errorForLoadGame = false;
+    	}
+    }
+    @And("Each game move is valid")
+    public void each_game_move_is_valid() {
+    	boolean valid = true;
+    }
+    @And("The game has no final results")
+    public void the_game_has_no_final_results() {
+    	boolean noResults = true;
+    }
+    @And("The game has a final result")
+    public void the_game_has_a_final_result() {
+    	boolean noResults = false;
+    }
+    @Then("The game shall be in replay mode")
+    public void the_game_shall_be_in_replay_mode() {
+    	Quoridor quoridor = QuoridorApplication.getQuoridor();
+    	assertTrue(quoridor.getCurrentGame().getGameStatus().equals(Game.GameStatus.Replay));
+    }
+    @And("The game to load has an invalid move")
+    public void the_game_to_load_has_an_invalid_move() {
+    	boolean valid = false;
+    }
+
+    @Then("The game shall notify the user that the game file is invalid")
+    public void the_game_shall_notify_the_user_that_the_game_file_is_invalid() {
+    	assertEquals(false,errorForLoadGame);
+    }
+
+
+
+	
 
 	// ***********************************************
 	// Clean up

@@ -26,9 +26,9 @@ As a player, I wish to review a past game in replay mode to walk through the mov
 		Examples: 
       | movno | rndno | player |
       |     1 |     2 | black  | 
-			|     2 |     1 | white  | 
-			|     2 |     2 | black  | 
-			|     3 |     1 | white  | 
+	  |     2 |     1 | white  | 
+	  |     2 |     2 | black  | 
+	  |     3 |     1 | white  | 
 			
 	Scenario Outline: Continue a finished game  
 		Given The game is replay mode
@@ -50,7 +50,7 @@ As a player, I wish to review a past game in replay mode to walk through the mov
 		Examples: 
       | movno | rndno | 
       |     1 |     2 |  
-			|     2 |     1 |  
-			|     2 |     2 |  
-			|     4 |     1 |  
+	  |     2 |     1 |  
+	  |     2 |     2 |  
+	  |     4 |     1 |  
 				

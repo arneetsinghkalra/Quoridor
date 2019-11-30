@@ -720,7 +720,7 @@ public class PawnBehavior {
 					int column = currentGame.getCurrentPosition().getWhitePosition().getTile().getColumn();
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((newRow - 1) * 9 + column - 1);
 					currentGame.getCurrentPosition().getWhitePosition().setTile(newTile);
-					ensureGrabWallDeleted();
+					//ensureGrabWallDeleted();
 
 					currentGame.addMove(new StepMove(moveNumber+1, roundNumber+1, currentGame.getCurrentPosition().getPlayerToMove(), newTile, currentGame));
 					Controller.switchCurrentPlayer();
