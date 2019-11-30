@@ -2203,56 +2203,94 @@ public class CucumberStepDefinitions {
 	 * Identify Game Drawn Feature
 	 *****************************/
 
+	/**
+	 * @author Luke Barber
+	 */
 	@Given("The following moves were executed:")
 	public void the_following_moves_were_executed(io.cucumber.datatable.DataTable dataTable) {
-		// Write code here that turns the phrase above into concrete actions
-		// For automatic transformation, change DataTable to one of
-		// E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or
-		// Map<K, List<V>>. E,K,V must be a String, Integer, Float,
-		// Double, Byte, Short, Long, BigInteger or BigDecimal.
-		//
-		// For other transformations you can register a DataTableType.
-		throw new cucumber.api.PendingException();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		List<Map<String, Integer>> list = dataTable.asMaps(String.class, Integer.class);
+		for (int i =0; i<list.size(); i++) {
+			if (list.get(i).get("turn") == 1) {
+				quoridor.getCurrentGame().getCurrentPosition().setPlayerToMove(quoridor.getCurrentGame().getWhitePlayer());
+			}
+			else {
+				quoridor.getCurrentGame().getCurrentPosition().setPlayerToMove(quoridor.getCurrentGame().getBlackPlayer());
+			}
+			Tile targetTile = new Tile(list.get(i).get("row"), list.get(i).get("col"), quoridor.getBoard());
+			quoridor.getCurrentGame().addMove(new StepMove(list.get(i).get("move"), list.get(i).get("turn"), quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove(), targetTile, quoridor.getCurrentGame()));
+		}
 	}
 
+	/**
+	 * @author Luke Barber
+	 */
 	@Given("Player {string} has just completed his move")
 	public void player_has_just_completed_his_move(String string) {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+		Controller.stringToCurrentPlayer(string);
+		PawnBehavior.movePawn(MoveDirection.North);
 	}
 
+	/**
+	 * @author Luke Barber
+	 */
 	@And("The last move of {string} is pawn move to {int}:{int}")
 	public void the_last_move_of_is_pawn_move_to(String string, Integer int1, Integer int2) {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Controller.stringToCurrentPlayer(string);
+		Tile targetTile = new Tile(int1, int2, quoridor.getBoard());
+		quoridor.getCurrentGame().addMove(new StepMove(int1, int2, quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove(), targetTile, quoridor.getCurrentGame()));
 	}
 
+	/**
+	 * @author Luke Barber
+	 */
 	@When("Checking of game result is initated")
 	public void checking_of_game_result_is_initated() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+		Controller.checkGameResult();
 	}
-
+	
 	/*****************************
-	 * Identify Game Won Feature
+	 * Identify Game Won Feature - Luke Barber 260840096
 	 *****************************/
-
+	
+	/**
+	 * @author Luke Barber
+	 */
 	@And("The new position of {string} is {int}:{int}")
 	public void the_new_position_of_is(String string, Integer int1, Integer int2) {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Controller.stringToCurrentPlayer(string);
+		Tile newTile = new Tile(int1, int2, quoridor.getBoard());
+		if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().equals(quoridor.getCurrentGame().getWhitePlayer())) {
+			quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().setTile(newTile);
+		}
+		else if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().equals(quoridor.getCurrentGame().getBlackPlayer())) {
+			quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().setTile(newTile);
+		}
 	}
 
+	/**
+	 * @author Luke Barber
+	 */	
 	@And("The clock of {string} is more than zero")
 	public void the_clock_of_is_more_than_zero(String string) {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Time time = new Time(60);
+		Controller.stringToCurrentPlayer(string);
+		quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().setRemainingTime(time);
 	}
 
+	/**
+	 * @author Luke Barber
+	 */
 	@When("The clock of {string} counts down to zero")
 	public void the_clock_of_counts_down_to_zero(String string) {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Time time = new Time(0);
+		Controller.stringToCurrentPlayer(string);
+		quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().setRemainingTime(time);
+		Controller.checkGameResult();
 	}
 	
 	/***************************************************************
@@ -2445,20 +2483,25 @@ public class CucumberStepDefinitions {
 	}
 
 	/**
-	 * @author arneetkalra
-	 * @param result
+	 * @author Luke Barber & Arneet Kalra
 	 */
 	@Then("Game result shall be {string}")
 	public void game_result_shall_be(String result) {
-		Player playerToMove = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
-		Player whitePlayer = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
-
-
-		if (playerToMove == whitePlayer) {
-			assertEquals("BlackWon", result);
-		} else {
-			assertEquals("WhiteWon", result);
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		GameStatus status = null;
+		if (result.equals("pending")||result.equals("Pending")) {
+			status = GameStatus.Running;
 		}
+		else if (result.equals("whiteWon")||result.equals("WhiteWon")) {
+			status = GameStatus.WhiteWon;
+		}
+		else if (result.equals("blackWon")||result.equals("BlackWon")) {
+			status = GameStatus.BlackWon;
+		}
+		else if (result.equals("Drawn")||result.equals("Draw")) {
+			status = GameStatus.Draw;
+		}
+		assertEquals(status, quoridor.getCurrentGame().getGameStatus());
 	}
 
 	/**
