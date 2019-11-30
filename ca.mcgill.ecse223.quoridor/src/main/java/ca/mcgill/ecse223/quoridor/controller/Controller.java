@@ -6,10 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -168,7 +165,7 @@ public class Controller {
 	 * List of All Existing Usernames from the previous games
 	 * <p>
 	 * 
-	 * @return Array of Usernames that were previosuly used
+	 * @return Array of Usernames that were previously used
 	 * 
 	 * @author Ali Tapan
 	 * @version 1.0
@@ -532,6 +529,10 @@ public class Controller {
 			}
 		}
 
+
+		// Check validity of the new wall based on path existence
+        if(!checkIfPathExists(wallMoveCandidate.getTargetTile()))
+            return null;
 		// ----------- Now drop the wall -------
 
 		// Update parameters of game:
@@ -541,18 +542,22 @@ public class Controller {
 		if (player.equals(currentGame.getWhitePlayer())) {
 			currentGamePosition.addWhiteWallsOnBoard(wallMoveCandidate.getWallPlaced());// Also increments number of //
 																						// walls on board
+		int moveNumber = currentGame.numberOfMoves();
+			System.out.println(moveNumber);
+
+			currentGame.addMove(wallMoveCandidate);
 			switchCurrentPlayer();
-			// currentGamePosition.setPlayerToMove(currentGame.getBlackPlayer());// Update
-			// player to black player)
 			currentGame.setWallMoveCandidate(null);// Refreshes wall move candidate
 			return wallMoveCandidate.getWallPlaced();
 
 		} else if (player.equals(currentGame.getBlackPlayer())) {
 			currentGamePosition.addBlackWallsOnBoard(wallMoveCandidate.getWallPlaced());
-			// currentGamePosition.setPlayerToMove(currentGame.getWhitePlayer()); // Update
-			// player to white player
+			int moveNumber = currentGame.numberOfMoves();
+			System.out.println(moveNumber);
+			currentGame.addMove(wallMoveCandidate);
 			switchCurrentPlayer();
 			currentGame.setWallMoveCandidate(null);// Refreshes wall move candidate
+
 			return wallMoveCandidate.getWallPlaced();
 		} else {
 			return null;
@@ -562,7 +567,7 @@ public class Controller {
 	/**
 	 * Helper method which returns a list of all walls on the board, both black and
 	 * white.
-	 * 
+	 *
 	 * @author arneetkalra
 	 * @return List<Wall>
 	 */
@@ -594,10 +599,7 @@ public class Controller {
 		// If there are walls on the board
 		if (getAllWallsOnBoard().size() > 0) {
 			for (Wall wall : allWallsOnBoard) {
-				System.out.println(hoveredTile);
-				System.out.println(candidateDirection);
-				System.out.println(wall);
-				if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove()) == true) {
+				if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove())|| !checkIfPathExists(hoveredTile)) {
 
 					return false;
 				}
@@ -619,7 +621,7 @@ public class Controller {
 		// If there are walls on the board
 		if (getAllWallsOnBoard().size() > 0) {
 			for (Wall wall : allWallsOnBoard) {
-				if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove()) == true) {
+				if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove())) {
 					return wall.getMove().getTargetTile().getRow() - 1;
 				}
 			}
@@ -661,9 +663,9 @@ public class Controller {
 
 		List<Wall> allWallsOnBoard = getAllWallsOnBoard();
 		// If there are walls on the board
-		if (getAllWallsOnBoard().size() > 0) {
+		if (!getAllWallsOnBoard().isEmpty()) {
 			for (Wall wall : allWallsOnBoard) {
-				if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove()) == true) {
+				if (isWallAlreadyPresent(hoveredTile, candidateDirection, wall.getMove())) {
 					return wall.getMove().getWallDirection();
 				}
 			}
@@ -739,7 +741,6 @@ public class Controller {
 	 * position
 	 * 
 	 * @author Yin
-	 * @param quoridor This is the quoridor you want to load the game into
 	 * @param fileName This is the name of the file which stores the game
 	 * 
 	 */
@@ -1002,7 +1003,7 @@ public class Controller {
 	 * <p>
 	 * <p>
 	 * validate if the player positions and wall positions are valid e.g.
-	 * overlapping walls or outof-track pawn or wall positions.
+	 * overlapping walls or out-of-track pawn or wall positions.
 	 * <p>
 	 * 
 	 * @author William Wang
@@ -1081,8 +1082,8 @@ public class Controller {
 	 *         wall is already placed where a new wall is wanting to be placed.
 	 *         Returns true if wall is already present.
 	 *
-	 * @param WallMove wallOnBoard
-	 * @param WallMove wallCandidate
+	 * @param wallOnBoard
+	 * @param wallCandidate
 	 * @return Boolean
 	 */
 	private static Boolean isWallAlreadyPresent(WallMove wallOnBoard, WallMove wallCandidate) {
@@ -1122,7 +1123,7 @@ public class Controller {
 	/**
 	 * Another isWallAlreadyPresent method which takes different parameters, and is
 	 * used to validate the position for a hovered wall.
-	 * 
+	 *
 	 * @author arneetkalra
 	 * @param hoveredTile
 	 * @param candidateDirection
@@ -1212,7 +1213,6 @@ public class Controller {
 	 * <p>
 	 * 
 	 * @author William Wang
-	 * @param game the current quoridor game
 	 */
 	public static void switchCurrentPlayer() {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
@@ -1311,6 +1311,37 @@ public class Controller {
 			
 		}
 	}
+	/* 
+	 * Runs a path finding algorithm based on the wall move candidate location
+	 * to determine if both players are still able to reach their target destinations
+	 * from their current position
+     * @author Sam Perreault
+	 * @param hoveredTile associated with the move, to be assigned to the wall
+	 * @return true if the specified player can still reach their target destination
+	 */
+	public static boolean checkIfPathExists(Tile hoveredTile)
+	{
+	    Quoridor q = QuoridorApplication.getQuoridor();
+	    if(q.getCurrentGame().getWallMoveCandidate()==null)
+	        return false;
+	    Player p = q.getCurrentGame().getCurrentPosition().getPlayerToMove();
+	    WallMove wallMoveCandidate = q.getCurrentGame().getWallMoveCandidate();
+	    wallMoveCandidate.setTargetTile(hoveredTile);
+	    if(wallMoveCandidate.getPlayer().equals(q.getCurrentGame().getWhitePlayer()))
+	        q.getCurrentGame().getCurrentPosition().addWhiteWallsOnBoard(wallMoveCandidate.getWallPlaced());
+	    else
+	        q.getCurrentGame().getCurrentPosition().addBlackWallsOnBoard(wallMoveCandidate.getWallPlaced());
+
+	    boolean success = Controller.pathFinder(q.getCurrentGame().getWhitePlayer(), q.getCurrentGame().getCurrentPosition().getWhitePosition().getTile()) &&
+                 Controller.pathFinder(q.getCurrentGame().getBlackPlayer(), q.getCurrentGame().getCurrentPosition().getBlackPosition().getTile());
+
+	    if(wallMoveCandidate.getPlayer().equals(q.getCurrentGame().getWhitePlayer()))
+            q.getCurrentGame().getCurrentPosition().removeWhiteWallsOnBoard(wallMoveCandidate.getWallPlaced());
+        else
+            q.getCurrentGame().getCurrentPosition().removeBlackWallsOnBoard(wallMoveCandidate.getWallPlaced());
+        return success;
+	}
+
 	// Helper Methods ----------------------------
 
 	private static int convertToInt(String letter) {
@@ -1380,7 +1411,7 @@ public class Controller {
 
 	/**
 	 * Random helper method
-	 * 
+	 *
 	 * @author arneetkalra
 	 * @param row
 	 * @param column
@@ -1443,7 +1474,7 @@ public class Controller {
 			currentGame.setGameStatus(GameStatus.BlackWon);
 		}
 	}
-	
+
 	/**
 	 * @author arneetkalra
 	 */
@@ -1459,14 +1490,14 @@ public class Controller {
 		QuoridorWindow window = QuoridorApplication.quoridorWindow;
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
-		
+
 		resignGame();
-		
+
 		if (currentGame.getGameStatus() != GameStatus.Running) {
 			QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer().setGameAsBlack(null);
-			QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().setGameAsWhite(null);	
+			QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().setGameAsWhite(null);
 		}
-		
+
 
 		if (currentGame.getGameStatus() == GameStatus.WhiteWon) {
 			//window.notifyWhiteWon();
@@ -1474,11 +1505,11 @@ public class Controller {
 			//window.notifyBlackWon();
 		} else if (currentGame.getGameStatus() == GameStatus.Draw) {
 			//window.notifyDraw();
-		} 
-		
+		}
+
 		window.resultBeingDisplayed = true;
 	}
-	
+
 	/**
 	 * @author arneetkalra
 	 */
@@ -1486,12 +1517,12 @@ public class Controller {
 		QuoridorWindow window = QuoridorApplication.quoridorWindow;
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
-		
+
 		resignGame();
-		
+
 		if (currentGame.getGameStatus() != GameStatus.Running) {
 			QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer().setGameAsBlack(null);
-			QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().setGameAsWhite(null);	
+			QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().setGameAsWhite(null);
 		}
 
 		if (currentGame.getGameStatus() == GameStatus.WhiteWon) {
@@ -1500,8 +1531,8 @@ public class Controller {
 			window.notifyBlackWon();
 		} else if (currentGame.getGameStatus() == GameStatus.Draw) {
 			window.notifyDraw();
-		} 
-		
+		}
+
 		window.resultBeingDisplayed = true;
 	}
 
@@ -1554,58 +1585,357 @@ public class Controller {
 	 */
 	public static String displayRemainingTimeWhite() {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		Game currentGame = quoridor.getCurrentGame();
+        Game currentGame = quoridor.getCurrentGame();
 
-		Time whitePlayerTime = currentGame.getWhitePlayer().getRemainingTime();
+        Time whitePlayerTime = currentGame.getWhitePlayer().getRemainingTime();
 
-		@SuppressWarnings("deprecation")
-		int seconds = whitePlayerTime.getSeconds();
-		@SuppressWarnings("deprecation")
-		int minutes = whitePlayerTime.getMinutes();
+        @SuppressWarnings("deprecation")
+        int seconds = whitePlayerTime.getSeconds();
+        @SuppressWarnings("deprecation")
+        int minutes = whitePlayerTime.getMinutes();
 
-		String whiteDisplayedTime = minutes + ":" + seconds + "  ";
-		return whiteDisplayedTime;
-	}
+        String whiteDisplayedTime = minutes + ":" + seconds + "  ";
+        return whiteDisplayedTime;
+    }
 
-	/**
-	 * @author arneetkalra
-	 * @return
-	 */
-	public static String displayRemainingTimeBlack() {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		Game currentGame = quoridor.getCurrentGame();
+    /**
+     * @author arneetkalra
+     * @return
+     */
+    public static String displayRemainingTimeBlack() {
+        Quoridor quoridor = QuoridorApplication.getQuoridor();
+        Game currentGame = quoridor.getCurrentGame();
 
-		Time blackPlayerTime = currentGame.getBlackPlayer().getRemainingTime();
+        Time blackPlayerTime = currentGame.getBlackPlayer().getRemainingTime();
 
-		@SuppressWarnings("deprecation")
-		int seconds = blackPlayerTime.getSeconds();
-		@SuppressWarnings("deprecation")
-		int minutes = blackPlayerTime.getMinutes();
+        @SuppressWarnings("deprecation")
+        int seconds = blackPlayerTime.getSeconds();
+        @SuppressWarnings("deprecation")
+        int minutes = blackPlayerTime.getMinutes();
 
-		String whiteDisplayedTime = minutes + ":" + seconds + "  ";
-		return whiteDisplayedTime;
-	}
+        String whiteDisplayedTime = minutes + ":" + seconds + "  ";
+        return whiteDisplayedTime;
+    }
 
-	
-	/**
-	 * @author arneetkalra
-	 * @return
-	 */
-	public static boolean gameIsStillRunning() {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		Game currentGame = quoridor.getCurrentGame();
-		GameStatus currentGameStatus = currentGame.getGameStatus();
-		boolean isGameRunning;
 
-		if ((currentGameStatus == GameStatus.BlackWon) || (currentGameStatus == GameStatus.WhiteWon)
-				|| (currentGameStatus == GameStatus.Draw)) {
-			isGameRunning = false;
-		}
+    /**
+     * @author arneetkalra
+     * @return
+     */
+    public static boolean gameIsStillRunning() {
+        Quoridor quoridor = QuoridorApplication.getQuoridor();
+        Game currentGame = quoridor.getCurrentGame();
+        GameStatus currentGameStatus = currentGame.getGameStatus();
+        boolean isGameRunning;
 
-		else {
-			isGameRunning = true;
-		}
+        if ((currentGameStatus == GameStatus.BlackWon) || (currentGameStatus == GameStatus.WhiteWon)
+                || (currentGameStatus == GameStatus.Draw) || (currentGameStatus == GameStatus.Replay)) {
+            isGameRunning = false;
+        }
 
-		return isGameRunning;
-	}
+        else {
+            isGameRunning = true;
+        }
+
+        return isGameRunning;
+    }
+
+    /**
+     * @author arneetkalra
+     * @return
+     */
+    public static boolean isInReplayMode() {
+        Quoridor q = QuoridorApplication.getQuoridor();
+        if (q.getCurrentGame().getGameStatus() == GameStatus.Replay) {
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * Initiate the Replay Mode for the current game.
+     *
+     * @param currentGame
+     * @return Game object with GameStatus set as Replay Mode.
+     * @author Ali Tapan
+     */
+    public static Game initiateReplayMode(Game currentGame) {
+        Quoridor quoridor = QuoridorApplication.getQuoridor();
+        if(currentGame == null) {
+            //initialize new game with game status as replay mode
+            Game newGame = new Game(GameStatus.Replay, MoveMode.PlayerMove, quoridor);
+            return newGame;
+        }
+        else {
+            currentGame.setGameStatus(GameStatus.Replay);
+            return currentGame;
+        }
+    }
+
+    /**
+     * Switch back to the running game when the current user is in Replay mode.
+     * If the current game is over, the user stays in Replay mode.
+     *
+     * @param currentGame
+     * @return Game object with GameStatus set appropriately.
+     * @author Ali Tapan
+     */
+    public static Game initiateContinueGame(Game currentGame) {
+        if(currentGame.getGameStatus() == GameStatus.BlackWon
+                || currentGame.getGameStatus() == GameStatus.WhiteWon
+                ||currentGame.getGameStatus() == GameStatus.Draw)
+        {
+            currentGame.setGameStatus(GameStatus.Replay);
+        }
+        else {
+            currentGame.setGameStatus(GameStatus.Running);
+        }
+        return currentGame;
+    }
+
+
+    /**
+     * Sets current position the the defined final position in the features
+     * @param currentGame
+     * @return Game object
+     *
+     * @author Ali Tapan
+     */
+    public static Game jumpToFinalPosition(Game currentGame) {
+        Quoridor quoridor = QuoridorApplication.getQuoridor();
+        List<GamePosition> position = currentGame.getPositions();
+        Tile whiteTile = new Tile(7,5,quoridor.getBoard());
+        Tile blackTile = new Tile(3,6,quoridor.getBoard());
+        PlayerPosition whitePosition = new PlayerPosition(currentGame.getWhitePlayer(), whiteTile);
+        PlayerPosition blackPosition = new PlayerPosition(currentGame.getBlackPlayer(), blackTile);
+        GamePosition finalPosition = new GamePosition(position.size(),whitePosition,blackPosition,currentGame.getCurrentPosition().getPlayerToMove(), currentGame);
+        currentGame.setCurrentPosition(finalPosition);
+        currentGame.addPosition(finalPosition);
+        return currentGame;
+    }
+
+    /**
+     *
+     */
+    public static void jumpToStartPosition()
+    {
+        Quoridor q = QuoridorApplication.getQuoridor();
+        List<GamePosition> position = q.getCurrentGame().getPositions();
+        GamePosition p = position.get(0);
+        QuoridorWindow w =QuoridorApplication.quoridorWindow;
+        Tile whiteTile = p.getWhitePosition().getTile();
+        Tile blackTile = p.getBlackPosition().getTile();
+        w.placePlayer(whiteTile.getRow()-1, whiteTile.getColumn()-1, blackTile.getRow()-1, blackTile.getColumn()-1);
+        q.getCurrentGame().setCurrentPosition(p);
+        // Start should never have walls on board. This is for completeness sake
+        for(Wall wall: getAllWallsOnBoard())
+            w.displayWall(wall.getMove().getTargetTile().getRow()-1, wall.getMove().getTargetTile().getColumn()-1, wall.getMove().getWallDirection());
+
+    }
+
+    /**
+     * Helper method for finding a path from the current location to the target destination
+     * Performs recursive calls until the destination is reached, or until all possible options
+     * from the starting square have been exhausted
+     * @author Sam Perreault
+     * @return a boolean value specifying whether you can or cannot reach the destination from
+     *  the current position
+     */
+    public static boolean pathFinder(Player p, Tile currentTile)
+    {
+        // Determine if vertical or horizontal
+        // Feed that information directly into the other methods
+        List<Wall> walls = Controller.getAllWallsOnBoard();
+        boolean[][] visited = new boolean[9][9];
+        for(boolean[] b: visited)
+        {
+            Arrays.fill(b, false);
+        }
+
+        if(p.getDestination().getDirection().equals(Direction.Vertical))
+            return pathFinderVert(p, currentTile.getRow(), currentTile.getColumn(), walls, visited);
+        else
+            return pathFinderHor(p, currentTile.getRow(), currentTile.getColumn(), walls, visited);
+    }
+
+    /**
+     * Private helper method to calculate whether there exists a wall adjacent to the current tile
+     * @author Sam Perreault
+     * @param currentRow row of the queried tile
+     * @param currentColumn column of the queried tile
+     * @param walls a list of walls already placed on the board, and the candidate wall
+     * @return a boolean array, ordering the values for the tile ABOVE, BELOW, EAST, and WEST of the
+     * tile queried
+     */
+    private static boolean[] checkAdjacentWalls(int currentRow, int currentColumn, List<Wall> walls)
+    {
+        // 0,1,2,3 above below,east,west
+        boolean[] sides= new boolean[4];
+        Arrays.fill(sides,false);
+        for(Wall w: walls)
+        {
+            int wCol= w.getMove().getTargetTile().getColumn();
+            int wRow= w.getMove().getTargetTile().getRow();
+            Direction dir = w.getMove().getWallDirection();
+            if(dir.equals(Direction.Horizontal) && (wCol==currentColumn-1 || wCol==currentColumn))
+            {
+                if(wRow==currentRow-1)
+                {
+                    sides[0] = true;
+                    continue;
+                }
+                if(wRow==currentRow) {
+                    sides[1] = true;
+                    continue;
+                }
+            }
+            else if(dir.equals(Direction.Vertical)&& (wRow==currentRow-1|| wRow==currentRow)) {
+                if(wCol==currentColumn-1)
+                {
+                    sides[3]=true;
+                    continue;
+                }
+                if(wCol==currentColumn)
+                {
+                    sides[2]=true;
+                    continue;
+                }
+            }
+        }
+        return sides;
+    }
+
+    /**
+     * Helper method that searches for a path to the other side of the board
+     * Optimizes movement for both vertical destination possibilities
+     * @author Sam Perreault
+     * @param p the current player to path to the end
+     * @param currentRow the current row of the iteration
+     * @param currentColumn the current column of the iteration
+     * @param walls a list of already placed walls, as well as the candidate wall
+     * @param visited a 2D matrix to reduce operations
+     * @return a value of true if the current player can reach the destination
+     */
+    private static boolean pathFinderVert(Player p, int currentRow, int currentColumn, List<Wall> walls, boolean[][] visited)
+    {
+        if(p.getDestination().getTargetNumber()==currentRow)
+            return true;
+        if(currentColumn==0|| currentColumn==10|| currentRow==0|| currentRow==10||visited[currentRow-1][currentColumn-1])
+            return false;
+        visited[currentRow-1][currentColumn-1]=true;
+        // Check the direction, then start checking for walls
+        boolean success=false;
+        boolean[] sides = Controller.checkAdjacentWalls(currentRow, currentColumn, walls);
+        boolean above=sides[0], below=sides[1], east=sides[2], west=sides[3];
+        //Towards the top of the board
+        // Check if walls above first, then sides after try
+
+        if(p.getDestination().getTargetNumber()==1)
+        {
+            // Tries each direction, and ends method calls if there is a successful path
+            if(!above)
+                success = pathFinderVert(p, currentRow-1, currentColumn, walls,visited);
+            if(success)
+                return true;
+            if(!east)
+                success = pathFinderVert(p, currentRow, currentColumn+1, walls,visited);
+            if(success)
+                return true;
+            if(!west)
+                success = pathFinderVert(p, currentRow, currentColumn-1, walls,visited);
+            if(success)
+                return true;
+            if(!below)
+                success = pathFinderVert(p, currentRow+1, currentColumn, walls,visited);
+            return success;
+        }
+        else if(p.getDestination().getTargetNumber()==9)
+        {
+            // Tries each direction, and ends method calls if there is a successful path
+            if(!below)
+                success = pathFinderVert(p, currentRow+1, currentColumn, walls,visited);
+            if(success)
+                return true;
+            if(!east)
+                success = pathFinderVert(p, currentRow, currentColumn+1, walls,visited);
+            if(success)
+                return true;
+            if(!west)
+                success = pathFinderVert(p, currentRow, currentColumn-1, walls,visited);
+            if(success)
+                return true;
+            if(!above)
+                success = pathFinderVert(p, currentRow-1, currentColumn, walls,visited);
+            return success;
+        }
+        // This line reach iff pathfinding fails
+        return false;
+    }
+
+    /**
+     * Helper method that searches for a path to the other side of the board
+     * Optimizes movement for both horizontal destination possibilities
+     * @author Sam Perreault
+     * @param p the current player to path to the end
+     * @param currentRow the current row of the iteration
+     * @param currentColumn the current column of the iteration
+     * @param walls a list of already placed walls, as well as the candidate wall
+     * @param visited a 2D matrix to reduce operations
+     * @return a value of true if the current player can reach the destination
+     */
+    private static boolean pathFinderHor(Player p, int currentRow, int currentColumn, List<Wall> walls, boolean[][] visited)
+    {
+        if(p.getDestination().getTargetNumber()==currentColumn)
+            return true;
+        if(currentColumn==0|| currentColumn==10|| currentRow==0|| currentRow==10||visited[currentRow-1][currentColumn-1])
+            return false;
+        visited[currentRow-1][currentColumn-1]=true;
+        // Check the direction, then start checking for walls
+        boolean success=false;
+        boolean[] sides = Controller.checkAdjacentWalls(currentRow, currentColumn, walls);
+        boolean above=sides[0], below=sides[1], east=sides[2], west=sides[3];
+        //Towards the top of the board
+
+        if(p.getDestination().getTargetNumber()==1)
+        {
+            // Tries each direction, and ends method calls if there is a successful path
+            if(!west)
+                success = pathFinderHor(p, currentRow, currentColumn-1, walls,visited);
+            if(success)
+                return true;
+            if(!below)
+                success = pathFinderHor(p, currentRow+1, currentColumn, walls,visited);
+            if(success)
+                return true;
+            if(!above)
+                success = pathFinderHor(p, currentRow-1, currentColumn, walls,visited);
+            if(success)
+                return true;
+            if(!east)
+                success = pathFinderHor(p, currentRow, currentColumn+1, walls,visited);
+            return success;
+        }
+        else if(p.getDestination().getTargetNumber()==9)
+        {
+            // Tries each direction, and ends method calls if there is a successful path
+            if(!east)
+                success = pathFinderHor(p, currentRow, currentColumn+1, walls,visited);
+            if(success)
+                return true;
+            if(!below)
+                success = pathFinderHor(p, currentRow+1, currentColumn, walls,visited);
+            if(success)
+                return true;
+            if(!above)
+                success = pathFinderHor(p, currentRow-1, currentColumn, walls,visited);
+            if(success)
+                return true;
+            if(!west)
+                success = pathFinderHor(p, currentRow, currentColumn-1, walls,visited);
+            return success;
+        }
+        // This line reach iff pathfinding fails
+        return false;
+    }
 }
