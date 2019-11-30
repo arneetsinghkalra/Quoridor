@@ -1977,8 +1977,14 @@ public class CucumberStepDefinitions {
 		Player currentPlayer = players[playerIdx%2];
 		
 		
-		//Initialize positions and variables
-		int[] wallIds = {10, 10};
+		//Initialize walls
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < 10; j++) {
+				new Wall(i * 10 + j, players[i]);
+			}
+		}
+		
+		int[] wallIds = {9, 9};
 		int wallId = wallIds[playerIdx%2];
 		
 		
@@ -1998,6 +2004,7 @@ public class CucumberStepDefinitions {
 		
 		int positionId = 1;
 		for (Map<String, String> map : valueMaps) {
+			
 			Integer mv = Integer.decode(map.get("mv"));
 			Integer rnd = Integer.decode(map.get("rnd"));
 			String move = map.get("move");
@@ -2075,20 +2082,24 @@ public class CucumberStepDefinitions {
 					char wallAllignment = move.charAt(2);
 					
 					Tile tile = new Tile(row, col, quoridor.getBoard());
-					Wall newWall = new Wall(wallId, players[playerIdx%2]);
-					wallId--;
+					//Wall newWall = new Wall(wallId, players[playerIdx%2]);
+					//wallId--;
 
 					if(wallAllignment == 'v')
 					{
 						
-						WallMove newWallMove = new WallMove(mv, rnd, players[playerIdx%2], tile, currentGame, Direction.Vertical, newWall);
+						WallMove newWallMove = new WallMove(mv, rnd, players[playerIdx%2], tile, currentGame, Direction.Vertical, players[playerIdx%2].getWall(wallId));
+						players[playerIdx&2].removeWall(players[playerIdx%2].getWall(wallId));
 						currentGame.addMove(newWallMove);
+						wallId--;
 						
 					}
 					else
 					{
-						WallMove newWallMove = new WallMove(mv, rnd, players[playerIdx%2], tile, currentGame, Direction.Horizontal, newWall);
+						WallMove newWallMove = new WallMove(mv, rnd, players[playerIdx%2], tile, currentGame, Direction.Horizontal, players[playerIdx%2].getWall(wallId));
+						players[playerIdx&2].removeWall(players[playerIdx%2].getWall(wallId));
 						currentGame.addMove(newWallMove);
+						wallId--;
 
 					}
 					positionId++;
@@ -2167,11 +2178,12 @@ public class CucumberStepDefinitions {
 	public void the_remaining_moves_of_the_game_shall_be_removed() {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
+		int allPositionsSize = currentGame.getPositions().size();
+		int currentPositionIndex = currentGame.getCurrentPosition().getId();
 		//currentGame.getMove(index);
-		for(Move move :currentGame.getMoves()) {
-
+		for(int i = allPositionsSize-1; i>currentPositionIndex; i--) {
+			currentGame.removePosition(currentGame.getPosition(i));
 		}
-		//currentGame.removePosition(currentGame.getCurrentPosition());
 	}
 
 	/**
@@ -2298,6 +2310,8 @@ public class CucumberStepDefinitions {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
 
+		
+		
 		//nmov for final move is always 1 more greater than number of moves
 		//the reason why we divide number of moves 2 is the way feature is given to us:
 		//number of moves increment every 2 rounds
@@ -2320,7 +2334,7 @@ public class CucumberStepDefinitions {
 
 		Tile whiteTile = currentGame.getCurrentPosition().getWhitePosition().getTile();
 		
-		//assertEquals(wrow, whiteTile.getRow());
+		assertEquals(wrow, whiteTile.getRow());
 		assertEquals(wcol, whiteTile.getColumn());
 		
 	}
@@ -2351,7 +2365,7 @@ public class CucumberStepDefinitions {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
 		currentGame.getWhitePlayer().getWalls();
-		assertEquals((int) wwallno, 10 - currentGame.getWhitePlayer().getWalls().size());
+		assertEquals((int) wwallno, currentGame.getWhitePlayer().getWalls().size());
 	}
 	/**
 	 *
@@ -2362,7 +2376,7 @@ public class CucumberStepDefinitions {
 	public void black_has_on_stock(Integer bwallno) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
-		assertEquals((int) bwallno, 10 - currentGame.getBlackPlayer().getWalls().size());
+		assertEquals((int) bwallno, currentGame.getBlackPlayer().getWalls().size());
 	}
 
 	/*****************************
