@@ -2095,13 +2095,11 @@ public class CucumberStepDefinitions {
 						
 						WallMove newWallMove = new WallMove(mv, rnd, players[playerIdx%2], tile, currentGame, Direction.Vertical, newWall);
 						currentGame.addMove(newWallMove);
-						
 					}
 					else
 					{
 						WallMove newWallMove = new WallMove(mv, rnd, players[playerIdx%2], tile, currentGame, Direction.Horizontal, newWall);
 						currentGame.addMove(newWallMove);
-
 					}
 					
 					if(playerIdx%2 == 0)
