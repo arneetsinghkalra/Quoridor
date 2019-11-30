@@ -1966,29 +1966,35 @@ public class CucumberStepDefinitions {
 	 * @param dataTable
 	 *
 	 */
+	@SuppressWarnings("null")
 	@Given("The following moves have been played in game:")
 	public void the_following_moves_have_been_played_in_game(io.cucumber.datatable.DataTable dataTable) {
 
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game game = quoridor.getCurrentGame();
 		Player[] players = { quoridor.getCurrentGame().getWhitePlayer(), quoridor.getCurrentGame().getBlackPlayer() };
+		Board board = quoridor.getBoard();
 
 		//Initialize positions
-		Tile player1StartPos = quoridor.getBoard().getTile(76);
-		Tile player2StartPos = quoridor.getBoard().getTile(4);
+		Tile player1StartPos = board.getTile(76);
+		Tile player2StartPos = board.getTile(4);
 		PlayerPosition player1Position = new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(), player1StartPos);
 		PlayerPosition player2Position = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), player2StartPos);
-		GamePosition initialPosition = new GamePosition(0, player1Position, player2Position, players[0], game);
+		GamePosition initialPosition = new GamePosition(0, player1Position, player2Position,quoridor.getCurrentGame().getWhitePlayer(), game);
 		game.setCurrentPosition(initialPosition);
+		List<GamePosition> gamePositions = game.getPositions();
 
+		GamePosition currentPosition;
 		//player1Position.setBlackInGame(initialPosition);
 		//player2Position.setWhiteInGame(initialPosition);
 		game.addPosition(initialPosition);
+		Tile whiteTile = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition().getTile();
 
 		List<Map<String, String>> valueMaps = dataTable.asMaps();
 
 		int playerIdx = 0;
 		int wallId = 10;
+
 
 		for (Map<String, String> map : valueMaps) {
 			Integer mv = Integer.decode(map.get("mv"));
@@ -1999,17 +2005,25 @@ public class CucumberStepDefinitions {
 			{
 			int row = Character.getNumericValue(move.charAt(1));
 			int col = (Character.getNumericValue(move.charAt(0)))-9;
+			
+			
+			Tile targetTile =  quoridor.getBoard().getTile((row - 1) * 9 + col - 1);
 
-			Tile tile = new Tile(row, col, quoridor.getBoard());
-			StepMove newMove = new StepMove(mv, rnd, players[playerIdx%2], tile, game);
+			StepMove newMove = new StepMove(mv, rnd, players[playerIdx%2], targetTile, game);
 			game.addMove(newMove);
 			playerIdx++;
+			
+			System.out.println("In 2 length"+whiteTile.getRow());
+			System.out.println("GamePosition "+game.getCurrentPosition().getId());
+
 			}
 
 			//Check if the move argument is 3 characters long --> this indicates its either the game is over
 			//or a wall is placed on the wall
 			else if(move.length() == 3)
 			{
+				System.out.println("In 3  length"+whiteTile.getRow());
+
 				//This indicates the game is over
 				if(move.charAt(1) == '-')
 				{
@@ -2036,20 +2050,20 @@ public class CucumberStepDefinitions {
 					int col = (Character.getNumericValue(move.charAt(0)))-9;
 					char wallAllignment = move.charAt(2);
 
-					Tile tile = new Tile(row, col, quoridor.getBoard());
+					Tile targetTile =  quoridor.getBoard().getTile((row - 1) * 9 + col - 1);
 					Wall newWall = new Wall(wallId, players[playerIdx%2]);
 					wallId--;
 
 					if(wallAllignment == 'v')
 					{
-						WallMove newWallMove = new WallMove(mv, rnd, players[playerIdx%2], tile, game, Direction.Vertical, newWall);
+						WallMove newWallMove = new WallMove(mv, rnd, players[playerIdx%2], targetTile, game, Direction.Vertical, newWall);
 						game.addMove(newWallMove);
 
 
 					}
 					else
 					{
-						WallMove newWallMove = new WallMove(mv, rnd, players[playerIdx%2], tile, game, Direction.Horizontal, newWall);
+						WallMove newWallMove = new WallMove(mv, rnd, players[playerIdx%2], targetTile, game, Direction.Horizontal, newWall);
 						game.addMove(newWallMove);
 
 
@@ -2080,17 +2094,17 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * @author Ali Tapan
-	 * @param int1
-	 * @param int2
+	 * @param movno
+	 * @param rndno
 	 */
 	@And("The next move is {int}.{int}")
-	public void the_next_move_is(int int1, int int2) {
+	public void the_next_move_is(int movno, int rndno) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
 		int index = 0;
-		if(int2 == 1)
+		if(rndno == 1)
 		{
-			index = ((int1*2) - 1)-1;
+			index = ((movno*2) - 1)-1;
 			currentGame.getCurrentPosition().setPlayerToMove(currentGame.getWhitePlayer());
 			try {
 				currentGame.getMove(index);
@@ -2098,8 +2112,9 @@ public class CucumberStepDefinitions {
 			{
 				//Game is over
 			}
-		} else {
-			index = (int1*2)-1;
+		} 
+		else {
+			index = (movno*2)-1;
 			currentGame.getCurrentPosition().setPlayerToMove(currentGame.getBlackPlayer());
 			try {
 				currentGame.getMove(index);
@@ -2235,7 +2250,7 @@ public class CucumberStepDefinitions {
 		Game newGame = new Game(GameStatus.Replay, MoveMode.PlayerMove, quoridor);
 		newGame.setWhitePlayer(player1);
 		newGame.setBlackPlayer(player2);
-		newGame.setGameStatus(GameStatus.Replay);
+		//newGame.setGameStatus(GameStatus.Replay);
 	}
 
 	/**
@@ -2280,6 +2295,9 @@ public class CucumberStepDefinitions {
 	public void white_player_s_position_shall_be(double data) {
 		int wrow = (int) (data/10);
 		int wcol = (int) (((data/10) - wrow)*10);
+
+
+		
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
 
@@ -2335,8 +2353,9 @@ public class CucumberStepDefinitions {
 
 	@When("Jump to start position is initiated")
 	public void jump_to_start_position_is_initiated() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game currentGame = quoridor.getCurrentGame();
+		Controller.jumpToStartPosition(currentGame);
 	}
 
 	/*****************************

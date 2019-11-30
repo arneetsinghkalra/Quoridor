@@ -1667,6 +1667,7 @@ public class Controller {
      * @author Ali Tapan
      */
     public static Game jumpToStartPosition(Game currentGame) {
+    	/*
         Quoridor quoridor = QuoridorApplication.getQuoridor();
         List<GamePosition> position = currentGame.getPositions();
         Tile whiteTile = new Tile(9,5,quoridor.getBoard());
@@ -1676,6 +1677,22 @@ public class Controller {
         GamePosition startPosition = new GamePosition(position.size(),whitePosition,blackPosition,currentGame.getCurrentPosition().getPlayerToMove(), currentGame);
         currentGame.setCurrentPosition(startPosition);
         currentGame.addPosition(startPosition);
+        return currentGame;
+        */
+        
+		Quoridor q = QuoridorApplication.getQuoridor();
+		List<GamePosition> positionsList = q.getCurrentGame().getPositions();
+		GamePosition p = positionsList.get(0);
+		QuoridorWindow window = new QuoridorWindow();
+		Tile whiteTile = p.getWhitePosition().getTile();
+		Tile blackTile = p.getBlackPosition().getTile();
+		window.placePlayer(whiteTile.getRow() - 1, whiteTile.getColumn() - 1, blackTile.getRow() - 1,
+				blackTile.getColumn() - 1);
+		q.getCurrentGame().setCurrentPosition(p);
+		// Start should never have walls on board. This is for completeness sake
+		for (Wall wall : getAllWallsOnBoard())
+			window.displayWall(wall.getMove().getTargetTile().getRow() - 1, wall.getMove().getTargetTile().getColumn() - 1,
+					wall.getMove().getWallDirection());
         return currentGame;
     }
 
@@ -1688,6 +1705,7 @@ public class Controller {
      * @author Ali Tapan
      */
     public static Game jumpToFinalPosition(Game currentGame) {
+    	/*
         Quoridor quoridor = QuoridorApplication.getQuoridor();
         List<GamePosition> position = currentGame.getPositions();
         Tile whiteTile = new Tile(7,5,quoridor.getBoard());
@@ -1697,6 +1715,23 @@ public class Controller {
         GamePosition finalPosition = new GamePosition(position.size(),whitePosition,blackPosition,currentGame.getCurrentPosition().getPlayerToMove(), currentGame);
         currentGame.setCurrentPosition(finalPosition);
         currentGame.addPosition(finalPosition);
+        return currentGame;
+        */
+    	Quoridor q = QuoridorApplication.getQuoridor();
+		List<GamePosition> positionsList = q.getCurrentGame().getPositions();
+		
+		//Get last position in the list
+		GamePosition p = positionsList.get(positionsList.size()-1);
+		QuoridorWindow window = new QuoridorWindow();
+		Tile whiteTile = p.getWhitePosition().getTile();
+		Tile blackTile = p.getBlackPosition().getTile();
+
+		window.placePlayer(whiteTile.getRow() - 1, whiteTile.getColumn() - 1, blackTile.getRow() - 1,blackTile.getColumn() - 1);
+		q.getCurrentGame().setCurrentPosition(p);
+		// Start should never have walls on board. This is for completeness sake
+		for (Wall wall : getAllWallsOnBoard())
+			window.displayWall(wall.getMove().getTargetTile().getRow() - 1, wall.getMove().getTargetTile().getColumn() - 1,
+					wall.getMove().getWallDirection());
         return currentGame;
     }
 

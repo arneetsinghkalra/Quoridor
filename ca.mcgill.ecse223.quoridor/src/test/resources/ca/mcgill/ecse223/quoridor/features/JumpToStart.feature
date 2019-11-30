@@ -1,3 +1,4 @@
+@Arneet
 Feature: Jump to start position
 As a player using replay mode, I wish to scroll fast to the very beginning of the game.
 
@@ -24,7 +25,7 @@ As a player using replay mode, I wish to scroll fast to the very beginning of th
     And Black has <bwallno> on stock
 
     Examples: 
-      | movno | rndno | nmov | nrnd | wrow | wcol | wwall | brow | bcol | bwallno |
+      | movno | rndno | nmov | nrnd | wrow | wcol | wwallno | brow | bcol | bwallno |
       |     1 |     1 |    1 |    1 |    9 |    5 |    10 |    1 |    5 |      10 |
       |     1 |     2 |    1 |    1 |    9 |    5 |    10 |    1 |    5 |      10 |
       |     2 |     1 |    1 |    1 |    9 |    5 |    10 |    1 |    5 |      10 |
