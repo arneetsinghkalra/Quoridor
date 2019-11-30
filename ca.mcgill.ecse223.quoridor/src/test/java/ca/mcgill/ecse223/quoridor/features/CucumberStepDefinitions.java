@@ -2543,15 +2543,8 @@ public class CucumberStepDefinitions {
     public void the_game_has_no_final_results() {
     	boolean noResults = true;
     }
-    @And("The game has a final result")
-    public void the_game_has_a_final_result() {
-    	boolean noResults = false;
-    }
-    @Then("The game shall be in replay mode")
-    public void the_game_shall_be_in_replay_mode() {
-    	Quoridor quoridor = QuoridorApplication.getQuoridor();
-    	assertTrue(quoridor.getCurrentGame().getGameStatus().equals(Game.GameStatus.Replay));
-    }
+
+
     @And("The game to load has an invalid move")
     public void the_game_to_load_has_an_invalid_move() {
     	boolean valid = false;

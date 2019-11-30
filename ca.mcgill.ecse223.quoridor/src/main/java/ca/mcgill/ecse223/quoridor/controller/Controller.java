@@ -2479,4 +2479,3 @@ public class Controller {
 		quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().setRemainingTime(time);
 	}
 }
-}
