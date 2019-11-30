@@ -1,4 +1,3 @@
-@google
 Feature: Load Game
   As a player, I want to load a previously played game recorded in an algebraic notation in a text file 
   so that I can continue or review it. If the game is not yet finished, 
