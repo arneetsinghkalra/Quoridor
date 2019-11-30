@@ -2256,7 +2256,7 @@ public class QuoridorWindow extends JFrame {
 			displayWall(wall.getMove().getTargetTile().getRow()-1,wall.getMove().getTargetTile().getColumn()-1,
 					wall.getMove().getWallDirection());
 		}
-		
+	}
 
 	/**
 	 * @author arneetkalra
