@@ -2052,7 +2052,7 @@ public class CucumberStepDefinitions {
 			}
 			
 			//Check if the move argument is 3 characters long --> this indicates its either the game is over
-			//or a wall is placed on the wall
+			//or a wall is placed on the board
 			else if(move.length() == 3)
 			{
 				//This indicates the game is over
