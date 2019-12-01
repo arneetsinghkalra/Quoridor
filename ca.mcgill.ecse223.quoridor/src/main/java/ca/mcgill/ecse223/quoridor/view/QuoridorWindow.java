@@ -915,7 +915,33 @@ public class QuoridorWindow extends JFrame {
 					}
 				}
 				
-				//Add cases for existing usernames
+				// Checks if the user has selected an existing user name
+				if(!existingUsernames1.getSelectedItem().equals("or select existing username...") && player1Field.getText().length() == 0)
+				{
+					try {
+						Controller.provideNewUsername(existingUsernames1.getSelectedItem().toString(), Controller.initWhitePlayer("user1"));
+					} catch (HeadlessException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+				
+				if(!existingUsernames2.getSelectedItem().equals("or select existing username...") && player2Field.getText().length() == 0)
+				{
+					try {
+						Controller.provideNewUsername(existingUsernames2.getSelectedItem().toString(), Controller.initBlackPlayer("user2"));
+					} catch (HeadlessException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+				
 
 				// Checks if the player enters an input and also selects an existing user name,
 				// if true will show a dialog box
