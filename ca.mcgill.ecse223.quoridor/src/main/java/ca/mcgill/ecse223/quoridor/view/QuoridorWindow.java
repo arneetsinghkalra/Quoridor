@@ -1871,7 +1871,15 @@ public class QuoridorWindow extends JFrame {
 			sec = "" + seconds;
 		}
 		String tr = "Time remaining: " + min + ":" + sec;
+		//Changes Time remaining to red if less than 10 seconds left
+		if (Integer.parseInt(min) == 0 && Integer.parseInt(sec) <= 10) {
+			timeRemLabel.setForeground(Color.RED);
+		}
+		else {
+			timeRemLabel.setForeground(Color.BLACK);
+		}
 		timeRemLabel.setText(tr);
+		
 	}
 
 	/** @author Sam Perreault */
