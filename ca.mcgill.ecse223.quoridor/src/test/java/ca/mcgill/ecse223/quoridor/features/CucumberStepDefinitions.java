@@ -1511,7 +1511,7 @@ public class CucumberStepDefinitions {
 	 * @param direction
 	 * @param side
 	 */
-	@Given("There is a {string} wall {string} from the player")
+	@Given("There is a {string} wall {string} from the playe")
 	public void there_is_a_wall_from_the_player(String direction, String side) {
 		
 		Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
@@ -2193,6 +2193,45 @@ public class CucumberStepDefinitions {
 					
 					Tile tile = quoridor.getBoard().getTile((row - 1) * 9 + col -1);
 					
+					if(playerIdx%2 == 0)
+					{
+						PlayerPosition newWhitePosition = new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(), currentWhiteTile);
+						PlayerPosition newBlackPosition = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), currentBlackTile);
+						//GamePosition newPosition = new GamePosition(positionId, newWhitePosition, newBlackPosition, currentPlayer, currentGame);
+						GamePosition newPosition = new GamePosition(positionId, newWhitePosition, newBlackPosition, nextPlayer, currentGame);
+		
+						for(Wall bwall : currentGamePosition.getBlackWallsInStock())
+						{
+							newPosition.addBlackWallsInStock(bwall);
+						}
+						for(Wall wwall : currentGamePosition.getWhiteWallsInStock())
+						{
+							newPosition.addWhiteWallsInStock(wwall);
+						}
+						currentGame.setCurrentPosition(newPosition);
+
+						
+					}
+					//If the current player is black player
+					else
+					{
+						PlayerPosition newBlackPosition = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), currentBlackTile);
+						PlayerPosition newWhitePosition = new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(), currentWhiteTile);
+						//GamePosition newPosition = new GamePosition(positionId, newWhitePosition, newBlackPosition, currentPlayer, currentGame);
+						GamePosition newPosition = new GamePosition(positionId, newWhitePosition, newBlackPosition, nextPlayer, currentGame);
+						for(Wall bwall : currentGamePosition.getBlackWallsInStock())
+						{
+							newPosition.addBlackWallsInStock(bwall);
+						}
+						for(Wall wwall : currentGamePosition.getWhiteWallsInStock())
+						{
+							newPosition.addWhiteWallsInStock(wwall);
+						}
+						currentGame.setCurrentPosition(newPosition);
+					}
+					
+					
+					
 					if(wallAllignment == 'v')
 					{
 						//If white
@@ -2230,7 +2269,12 @@ public class CucumberStepDefinitions {
 						}
 
 					}
-					Controller.switchCurrentPlayer();
+					
+					
+					
+					
+					
+					
 					wallId--;
 					positionId++;
 					playerIdx++;
