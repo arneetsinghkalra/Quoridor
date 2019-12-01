@@ -2059,6 +2059,8 @@ public class QuoridorWindow extends JFrame {
 		//Replay mode Button
 		else if(finalResult == JOptionPane.NO_OPTION) {
 			//Do replay mode here
+			setBoardConitionsWhenEnteringReplayMode();
+			Controller.initiateReplayMode(Controller.getCurrentGame());
 		}
 		//Home Screen button
 		else {
@@ -2086,6 +2088,8 @@ public class QuoridorWindow extends JFrame {
 		// Replay mode Button
 		else if (finalResult == JOptionPane.NO_OPTION) {
 			//Do replay mode here
+			setBoardConitionsWhenEnteringReplayMode();
+			Controller.initiateReplayMode(Controller.getCurrentGame());
 
 		}
 		// Home Screen button
@@ -2117,6 +2121,8 @@ public class QuoridorWindow extends JFrame {
 		// Replay mode Button
 		else if (finalResult == JOptionPane.NO_OPTION) {
 			//Do replay mode here
+			setBoardConitionsWhenEnteringReplayMode();
+			Controller.initiateReplayMode(Controller.getCurrentGame());
 		}
 		// Home Screen button
 		else {
