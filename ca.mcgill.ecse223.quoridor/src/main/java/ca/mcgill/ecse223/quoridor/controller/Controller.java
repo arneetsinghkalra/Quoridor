@@ -1644,11 +1644,11 @@ public class Controller {
 		PlayerPosition player2Position = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(),
 				currentPosition.getBlackPosition().getTile());
 		if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsBlack() == null) {
-			newPosition = new GamePosition(currentPosition.getId() + 1, player1Position, player2Position,
+			newPosition = new GamePosition(game.getPositions().size(), player1Position, player2Position,
 					game.getBlackPlayer(), game);
 
 		} else {
-			newPosition = new GamePosition(currentPosition.getId() + 1, player1Position, player2Position,
+			newPosition = new GamePosition(game.getPositions().size(), player1Position, player2Position,
 					game.getWhitePlayer(), game);
 		}
 		// Update Game position for the walls
@@ -2209,9 +2209,31 @@ public class Controller {
 		else {
 			currentGame.setGameStatus(GameStatus.Running);
 		}
+		
+		
 		return currentGame;
 	}
 
+	/**
+	 * For view only, switches back to the current player after returning from replay mode.
+	 * @param currentGame
+	 * @return Game object
+	 * @author Ali Tapan
+	 */
+	public static Game continueGameWithTheCurrentPlayer(Game currentGame) {
+		Player currentPlayer = currentGame.getCurrentPosition().getPlayerToMove();
+		if(currentPlayer.hasGameAsWhite())
+		{
+			currentGame.getCurrentPosition().setPlayerToMove(currentGame.getBlackPlayer());
+		}
+		else {
+			currentGame.getCurrentPosition().setPlayerToMove(currentGame.getWhitePlayer());
+		}
+		
+		return currentGame;
+	}
+	
+	
 	/**
 	 * Sets current position to the defined final position in the features
 	 *

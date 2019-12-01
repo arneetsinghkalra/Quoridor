@@ -2273,7 +2273,6 @@ public class CucumberStepDefinitions {
 
 
 
-
 					wallId--;
 					positionId++;
 					playerIdx++;
@@ -2599,6 +2598,9 @@ public class CucumberStepDefinitions {
 	 */
 	@When("The game is no longer running")
 	public void the_game_is_no_longer_running() {
+		initQuoridorAndBoard();
+		ArrayList<Player> createUsersAndPlayers = createUsersAndPlayers("user1", "user2");
+		createAndStartGame(createUsersAndPlayers);
 		// Call a Controller Method here, it should pretty much do this ->
 		Controller.whenGameIsNoLongerRunning();
 	}
