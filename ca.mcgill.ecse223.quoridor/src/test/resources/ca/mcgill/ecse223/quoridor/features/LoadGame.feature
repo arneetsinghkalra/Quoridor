@@ -21,8 +21,8 @@ Feature: Load Game
 
     Examples: 
       | filename                 | player | p_row | p_col | opponent | o_row | o_col | pw_row | pw_col | pw_orientation | ow_row | ow_col | ow_orientation | remaining_walls |
-      | quoridor_test_game_1.mov | white  |     3 |     5 | black    |     7 |     5 |      6 |      5 | horizontal     |      3 |      5 | vertical       |               9 |
-      | quoridor_test_game_2.mov | white  |     2 |     5 | black    |     8 |     5 |      6 |      5 | horizontal     |      3 |      5 | vertical       |               8 |
+      | quoridor_test_game_1.mov | white  |     4 |     5 | black    |     7 |     5 |      6 |      5 | horizontal     |      3 |      5 | vertical       |               9 |
+      | quoridor_test_game_2.mov | white  |     3 |     5 | black    |     8 |     5 |      6 |      5 | horizontal     |      3 |      5 | vertical       |               8 |
 
   Scenario Outline: Load valid incomplete game 
     When I initiate to load a game in "<filename>"
@@ -36,7 +36,7 @@ Feature: Load Game
       | quoridor_test_game_3.mov |  
 
   Scenario Outline: Invalid move in game file
-    When I initiate to load a saved game "<filename>"
+    When I initiate to load a game in "<filename>"
     And The game to load has an invalid move
     Then The game shall notify the user that the game file is invalid
 

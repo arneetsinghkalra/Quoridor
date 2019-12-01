@@ -9,11 +9,15 @@ import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.Controller;
 import ca.mcgill.ecse223.quoridor.controller.PawnBehavior;
 import ca.mcgill.ecse223.quoridor.model.Direction;
+import ca.mcgill.ecse223.quoridor.model.Game;
+import ca.mcgill.ecse223.quoridor.model.GamePosition;
 import ca.mcgill.ecse223.quoridor.model.Player;
+import ca.mcgill.ecse223.quoridor.model.PlayerPosition;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
 import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
+import ca.mcgill.ecse223.quoridor.persistence.QuoridorPersistence;
 import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
 
 import java.awt.*;
@@ -26,6 +30,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.awt.event.ActionEvent;
+import java.util.List;
 
 public class QuoridorWindow extends JFrame {
 
@@ -153,7 +158,7 @@ public class QuoridorWindow extends JFrame {
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
 					File selectedFile = jfc.getSelectedFile();
 					try {
-						Controller.loadPosition(selectedFile.getName());
+						Controller.loadGame(selectedFile.getName());
 					} catch (UnsupportedOperationException e) {
 						JFrame f = new JFrame();
 						JTextField tf1;
@@ -497,7 +502,7 @@ public class QuoridorWindow extends JFrame {
 					notifyNotInReplayMode();
 				}
 				else {
-					Controller.jumpToStartPosition(Controller.getCurrentGame());
+					Controller.jumpToStartPosition();
 				}
 			}
 		});
@@ -573,7 +578,7 @@ public class QuoridorWindow extends JFrame {
 					notifyNotInReplayMode();
 				}
 				else {
-					Controller.jumpToFinalPosition(Controller.getCurrentGame());
+					Controller.jumpToFinalPosition();
 				}
 			}
 		});
@@ -604,21 +609,21 @@ public class QuoridorWindow extends JFrame {
 				b1.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent b) {
 						f.setVisible(false);
-						Path path = Paths.get("src/test/resources/savePosition/" + tf1.getText());
+						Path path = Paths.get("src/test/resources/saveGame/" + tf1.getText());
 						if (Files.exists(path)) {
 							JFrame f = new JFrame();
-							JTextField tf1;
+							JTextField tf2;
 							JButton b1;
 							JButton b2;
-							tf1 = new JTextField();
-							tf1.setText("confirms to overwrite");
-							tf1.setBounds(50, 50, 150, 20);
-							tf1.setEditable(false);
+							tf2 = new JTextField();
+							tf2.setText("confirms to overwrite");
+							tf2.setBounds(50, 50, 150, 20);
+							tf2.setEditable(false);
 							b1 = new JButton("Yes");
 							b1.setBounds(50, 200, 100, 50);
 							b2 = new JButton("No");
 							b2.setBounds(150, 200, 100, 50);
-							f.getContentPane().add(tf1);
+							f.getContentPane().add(tf2);
 							f.getContentPane().add(b1);
 							f.getContentPane().add(b2);
 							f.setSize(300, 300);
@@ -629,9 +634,7 @@ public class QuoridorWindow extends JFrame {
 									confirms = true;
 									f.setVisible(false);
 									try {
-										Controller.savePosition(tf1.getText(),
-												QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition(),
-												confirms);
+										Controller.saveGame(tf1.getText(),confirms);
 									} catch (IOException e) {
 										// TODO Auto-generated catch block
 										e.printStackTrace();
@@ -646,8 +649,7 @@ public class QuoridorWindow extends JFrame {
 							});
 						} else {
 							try {
-								Controller.savePosition(tf1.getText(),
-										QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition(),
+								Controller.saveGame(tf1.getText(),
 										confirms);
 
 							} catch (IOException e) {
@@ -766,6 +768,7 @@ public class QuoridorWindow extends JFrame {
 		secondField = new JTextField();
 		timefieldBox.add(secondField);
 		secondField.setColumns(2);
+
 
 		JComboBox existingUsernames1 = new JComboBox();
 		sl_setupPanel.putConstraint(SpringLayout.NORTH, existingUsernames1, 0, SpringLayout.NORTH, player1NameBox);
@@ -948,6 +951,7 @@ public class QuoridorWindow extends JFrame {
 		});
 		setupPanel.add(startGameButton);
 
+
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
 				int curI=i, curJ=j;
@@ -960,6 +964,7 @@ public class QuoridorWindow extends JFrame {
 
 				tiles[i][j].addMouseListener(new MouseAdapter() {
 					public void mouseEntered(MouseEvent e) {
+
 						//Only hover if not in replay mode
 						if (!isNotReplayMode()) {
 							// Calls pawnBehavior's isLegalMove/Jump, and determines if legal
@@ -1132,9 +1137,20 @@ public class QuoridorWindow extends JFrame {
 					}
 				});
 
+
 				tiles[i][j].addActionListener(new ActionListener() {
 					/** @author Sam Perreault */
 					public void actionPerformed(ActionEvent e) {
+						Controller.identifyIfGameWonPosition();
+						//If you pressed grab wall but then choose to place a player, youll get an error
+						if(QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate() != null) {
+							Controller.returnWallToPlayer();
+							lblWallsLeftWhite.setText("Walls Left = "
+									+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock());
+							lblWallsLeftBlack.setText("Walls Left = "
+									+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock());
+						}
+
 						//Manipulate Buttons when changing players
 						/**
 						 * @author arneetkalra
@@ -1214,21 +1230,16 @@ public class QuoridorWindow extends JFrame {
 						}
 						PawnBehavior.MoveDirection dir = null;
 						switch(vertDiff) {
+
 							case 1:
 							case 2:
 								dir = PawnBehavior.MoveDirection.South;
-								lblWallsLeftWhite.setText("Walls Left = "
-										+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock());
-								lblWallsLeftBlack.setText("Walls Left = "
-										+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock());
+
 								break;
 							case -1:
 							case -2:
 								dir = PawnBehavior.MoveDirection.North;
-								lblWallsLeftWhite.setText("Walls Left = "
-										+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock());
-								lblWallsLeftBlack.setText("Walls Left = "
-										+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock());
+
 							default:
 								break;
 						}
@@ -1305,8 +1316,13 @@ public class QuoridorWindow extends JFrame {
 						//Update Total Time Left Labels
 						lblTimeWhite.setText(Controller.displayRemainingTimeWhite());
 						lblTimeBlack.setText(Controller.displayRemainingTimeBlack());
+
+						Controller.identifyIfGameWonPosition();
+
 					}
-					
+
+
+
 				});
 				GridBagConstraints c = new GridBagConstraints();
 				c.gridx = j * 2;
@@ -2174,7 +2190,7 @@ public class QuoridorWindow extends JFrame {
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 			File selectedFile = jfc.getSelectedFile();
 			try {
-				Controller.loadPosition(selectedFile.getName());
+				Controller.loadGame(selectedFile.getName());
 			} catch (UnsupportedOperationException e) {
 				JFrame f = new JFrame();
 				JTextField tf1;
@@ -2221,6 +2237,40 @@ public class QuoridorWindow extends JFrame {
 			Quoridor quoridor = QuoridorApplication.getQuoridor();
 			quoridor.delete();
 			quoridor = new Quoridor();
+		}
+	}
+/**
+	 * @author William Wang
+	 */
+	public void updatePositions() {
+
+		//Reset the board:
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				// Erase Colouring of board
+				wallCenters[i][j].setBackground(boardBackgroundColor);
+				hWalls[i][j].setBackground(boardBackgroundColor);
+				vWalls[i][j].setBackground(boardBackgroundColor);
+			}
+		}
+
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		GamePosition currentPosition = quoridor.getCurrentGame().getCurrentPosition();
+
+		PlayerPosition WhitePosition = currentPosition.getWhitePosition();
+		PlayerPosition BlackPosition = currentPosition.getWhitePosition();
+		List<Wall> whiteWalls = currentPosition.getWhiteWallsOnBoard();
+		List<Wall> blackWalls = currentPosition.getBlackWallsOnBoard();
+
+		placePlayer(WhitePosition.getTile().getRow() - 1, WhitePosition.getTile().getColumn() - 1,
+				BlackPosition.getTile().getRow() - 1, BlackPosition.getTile().getColumn() - 1);
+		for (Wall wall : whiteWalls) {
+			displayWall(wall.getMove().getTargetTile().getRow() - 1, wall.getMove().getTargetTile().getColumn() - 1,
+					wall.getMove().getWallDirection());
+		}
+		for (Wall wall : blackWalls) {
+			displayWall(wall.getMove().getTargetTile().getRow() - 1, wall.getMove().getTargetTile().getColumn() - 1,
+					wall.getMove().getWallDirection());
 		}
 	}
 
