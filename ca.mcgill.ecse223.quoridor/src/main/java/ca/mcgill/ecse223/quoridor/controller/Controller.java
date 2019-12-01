@@ -495,11 +495,6 @@ public class Controller {
 		return false;
 	}
 
-	public static boolean isAValidWallPosition() {
-
-		return true;
-	}
-
 	/**
 	 * <p>
 	 * 8. Drop Wall
@@ -2163,35 +2158,27 @@ public class Controller {
 	}
 
 	/**
-	 * Sets current position the the defined final position in the features
-	 * @param currentGame
-	 * @return Game object
+	 * Sets current position to the defined final position in the features
 	 *
 	 * @author Ali Tapan
 	 */
-	public static Game jumpToFinalPosition(Game currentGame) {
-		currentGame.setCurrentPosition(currentGame.getPositions().get(currentGame.getPositions().size()-1));
-		return currentGame;
+	public static void jumpToFinalPosition() {
+		Quoridor q = QuoridorApplication.getQuoridor();
+		q.getCurrentGame().setCurrentPosition(q.getCurrentGame().getPositions().get(q.getCurrentGame().getPositions().size()-1));
+		QuoridorApplication.quoridorWindow.updatePositions();
+
 	}
 
 
 	/**
-	 *
+	 *	Sets current position to the first position of the game, and updates the view accordingly
+	 * @author Sam Perreault
 	 */
 	public static void jumpToStartPosition()
 	{
 		Quoridor q = QuoridorApplication.getQuoridor();
-		List<GamePosition> position = q.getCurrentGame().getPositions();
-		GamePosition p = position.get(0);
-		QuoridorWindow w =QuoridorApplication.quoridorWindow;
-		Tile whiteTile = p.getWhitePosition().getTile();
-		Tile blackTile = p.getBlackPosition().getTile();
-		w.placePlayer(whiteTile.getRow()-1, whiteTile.getColumn()-1, blackTile.getRow()-1, blackTile.getColumn()-1);
-		q.getCurrentGame().setCurrentPosition(p);
-		// Start should never have walls on board. This is for completeness sake
-		for(Wall wall: getAllWallsOnBoard())
-			w.displayWall(wall.getMove().getTargetTile().getRow()-1, wall.getMove().getTargetTile().getColumn()-1, wall.getMove().getWallDirection());
-
+		q.getCurrentGame().setCurrentPosition(q.getCurrentGame().getPosition(0));
+		QuoridorApplication.quoridorWindow.updatePositions();
 	}
 
 	/**
@@ -2397,5 +2384,82 @@ public class Controller {
 		}
 		// This line reach iff pathfinding fails
 		return false;
+	}
+
+	/**
+	 * @author arneetkalra
+	 * @return
+	 */
+	public static Game getCurrentGame() {
+		Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
+		return currentGame;
+	}
+	/**
+	 * @author Luke Barber
+	 * Checks row, column, and time of current player and changes the game status to reflect the current game's win status
+	 */
+	public static void checkGameResult() {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Time zero = new Time(0);
+		if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().equals(quoridor.getCurrentGame().getWhitePlayer())) {
+			if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getRemainingTime().equals(zero)) {
+				quoridor.getCurrentGame().setGameStatus(GameStatus.BlackWon);
+			}
+			else if (quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow() == 9) {
+				quoridor.getCurrentGame().setGameStatus(GameStatus.WhiteWon);
+			}
+			else if(quoridor.getCurrentGame().getMoves().size() >=8) {
+				int size = quoridor.getCurrentGame().getMoves().size();
+				ArrayList<Move> threeMovesWhite = new ArrayList<Move>();
+
+				for (int i = 0; i < 9; i+=4) {
+					threeMovesWhite.add(quoridor.getCurrentGame().getMove(size-1-i));
+				}
+				if ((threeMovesWhite.get(0).getTargetTile().getRow() == threeMovesWhite.get(1).getTargetTile().getRow()
+						&& (threeMovesWhite.get(0).getTargetTile().getRow() == threeMovesWhite.get(2).getTargetTile().getRow()))
+						&& ((threeMovesWhite.get(0).getTargetTile().getColumn() == threeMovesWhite.get(1).getTargetTile().getColumn())
+						&& (threeMovesWhite.get(0).getTargetTile().getColumn() == threeMovesWhite.get(2).getTargetTile().getColumn()))) {
+					quoridor.getCurrentGame().setGameStatus(GameStatus.Draw);
+				}
+			}
+		}
+		else if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().equals(quoridor.getCurrentGame().getBlackPlayer())) {
+			if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getRemainingTime().equals(zero)) {
+				quoridor.getCurrentGame().setGameStatus(GameStatus.WhiteWon);
+			}
+			else if(quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow() == 1) {
+				quoridor.getCurrentGame().setGameStatus(GameStatus.BlackWon);
+			}
+			else if(quoridor.getCurrentGame().getMoves().size() >=6) {
+				int size = quoridor.getCurrentGame().getMoves().size()-1;
+				ArrayList<Move> threeMovesBlack = new ArrayList<Move>();
+				for (int i = 0; i < 9; i+=4) {
+					threeMovesBlack.add(quoridor.getCurrentGame().getMove(size-i));
+				}
+				if ((threeMovesBlack.get(0).getTargetTile().getRow() == threeMovesBlack.get(1).getTargetTile().getRow()
+						&& (threeMovesBlack.get(0).getTargetTile().getRow() == threeMovesBlack.get(2).getTargetTile().getRow()))
+						&& ((threeMovesBlack.get(0).getTargetTile().getColumn() == threeMovesBlack.get(1).getTargetTile().getColumn())
+						&& (threeMovesBlack.get(0).getTargetTile().getColumn() == threeMovesBlack.get(2).getTargetTile().getColumn()))) {
+					quoridor.getCurrentGame().setGameStatus(GameStatus.Draw);
+				}
+			}
+
+		}
+	}
+
+	/**
+	 * @author Luke Barber
+	 * Changes string (either white or black) into being current player
+	 */
+	public static void stringToCurrentPlayer(String player) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		if (player.equals("white")) {
+			quoridor.getCurrentGame().getCurrentPosition().setPlayerToMove(quoridor.getCurrentGame().getWhitePlayer());
+		}
+		else if (player.equals("black")) {
+			quoridor.getCurrentGame().getCurrentPosition().setPlayerToMove(quoridor.getCurrentGame().getBlackPlayer());
+		}
+		Time time = new Time(60);
+		quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().setRemainingTime(time);
 	}
 }

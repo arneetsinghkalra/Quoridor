@@ -501,7 +501,7 @@ public class QuoridorWindow extends JFrame {
 					notifyNotInReplayMode();
 				}
 				else {
-					Controller.jumpToStartPosition(Controller.getCurrentGame());
+					Controller.jumpToStartPosition();
 				}
 			}
 		});
@@ -577,7 +577,7 @@ public class QuoridorWindow extends JFrame {
 					notifyNotInReplayMode();
 				}
 				else {
-					Controller.jumpToFinalPosition(Controller.getCurrentGame());
+					Controller.jumpToFinalPosition();
 				}
 			}
 		});
@@ -2250,6 +2250,10 @@ public class QuoridorWindow extends JFrame {
 		placePlayer(WhitePosition.getTile().getRow() - 1, WhitePosition.getTile().getColumn() - 1,
 				BlackPosition.getTile().getRow() - 1, BlackPosition.getTile().getColumn() - 1);
 		for (Wall wall : whiteWalls) {
+			displayWall(wall.getMove().getTargetTile().getRow() - 1, wall.getMove().getTargetTile().getColumn() - 1,
+					wall.getMove().getWallDirection());
+		}
+		for (Wall wall : blackWalls) {
 			displayWall(wall.getMove().getTargetTile().getRow() - 1, wall.getMove().getTargetTile().getColumn() - 1,
 					wall.getMove().getWallDirection());
 		}

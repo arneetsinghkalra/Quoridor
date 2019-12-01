@@ -56,8 +56,6 @@ public class CucumberStepDefinitions {
 	private boolean whitePathExists = false;
 	private boolean blackPathExists = false;
 	private boolean errorForLoadGame = true;
-	private boolean whitePathExists = false;
-	private boolean blackPathExists = false;
 	Wall returnedWall;
 	ArrayList<Player> createUsersAndPlayersLoad;
 	QuoridorWindow window = QuoridorApplication.quoridorWindow;
@@ -1990,8 +1988,8 @@ public class CucumberStepDefinitions {
 		PlayerPosition player1Position = new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(), player1StartPos);
 		PlayerPosition player2Position = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), player2StartPos);
 		GamePosition initialPosition = new GamePosition(0, player1Position, player2Position, players[0], currentGame);
-		player1Position.setBlackInGame(initialPosition);
-		player2Position.setWhiteInGame(initialPosition);
+		player1Position.setWhiteInGame(initialPosition);
+		player2Position.setBlackInGame(initialPosition);
 		currentGame.setCurrentPosition(initialPosition);
 		currentGame.addPosition(initialPosition);
 
@@ -2120,8 +2118,6 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * @author Ali Tapan
-	 * @param int1
-	 * @param int2
 	 */
 	@And("The next move is {int}.{int}")
 	public void the_next_move_is(int moveno, int rndno) {
@@ -2313,7 +2309,6 @@ public class CucumberStepDefinitions {
 		Game newGame = new Game(GameStatus.Replay, MoveMode.PlayerMove, quoridor);
 		newGame.setWhitePlayer(player1);
 		newGame.setBlackPlayer(player2);
-		newGame.setGameStatus(GameStatus.Replay);
 	}
 
 	/**
@@ -2323,8 +2318,7 @@ public class CucumberStepDefinitions {
 	@When("Jump to final position is initiated")
 	public void jump_to_final_position_is_initiated() {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		Game currentGame = quoridor.getCurrentGame();
-		Controller.jumpToFinalPosition(currentGame);
+		Controller.jumpToFinalPosition();
 	}
 
 
