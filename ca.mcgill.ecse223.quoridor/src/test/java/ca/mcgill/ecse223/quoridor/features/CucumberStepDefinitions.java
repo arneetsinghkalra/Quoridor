@@ -2351,27 +2351,14 @@ public class CucumberStepDefinitions {
 	public void the_remaining_moves_of_the_game_shall_be_removed() {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
-		int current = currentGame.getPositions().size();
+		
 		int allPositionsSize = currentGame.getPositions().size();
 		int currentPositionIndex = currentGame.getCurrentPosition().getId();
-
+		
 		for(int i = allPositionsSize-1; i>=currentPositionIndex; i--) {
 			currentGame.removePosition(currentGame.getPosition(i));
-			System.out.println("  ");
 		}
-		
-		int after = currentGame.getPositions().size();
-		
-		assertFalse(current == after);
-		/*Player player = currentGame.getCurrentPosition().getPlayerToMove();
-		if(player.hasGameAsBlack())
-		{
-			currentGame.getCurrentPosition().setPlayerToMove(currentGame.getWhitePlayer());
-		}
-		else
-		{
-			currentGame.getCurrentPosition().setPlayerToMove(currentGame.getBlackPlayer());
-		}*/
+	
 	}
 
 	/**
