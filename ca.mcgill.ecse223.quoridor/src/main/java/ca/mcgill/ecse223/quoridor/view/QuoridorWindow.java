@@ -528,6 +528,9 @@ public class QuoridorWindow extends JFrame {
 			public void actionPerformed(ActionEvent a) {
 				setBoardConitionsWhenEnteringReplayMode();
 				Controller.initiateReplayMode(Controller.getCurrentGame());
+				QuoridorApplication.getQuoridor().getCurrentGame().setCurrentPosition(
+						QuoridorApplication.getQuoridor().getCurrentGame().getPosition(
+						QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getId()-1));
 			}
 		});
 
@@ -541,6 +544,7 @@ public class QuoridorWindow extends JFrame {
 			public void actionPerformed(ActionEvent a) {
 				setBoardConitionsWhenExitingReplayMode();
 				Controller.initiateContinueGame(Controller.getCurrentGame());
+				Controller.switchCurrentPlayer();
 			}
 		});
 
