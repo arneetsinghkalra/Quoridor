@@ -726,6 +726,7 @@ public class Controller {
 			currentGamePosition.addWhiteWallsInStock(wallMove.getWallPlaced()); // Puts wall attempted to be placed back
 																				// in
 			// their stock
+			currentGamePosition.removeWhiteWallsOnBoard(wallMove.getWallPlaced());
 		}
 		// Black player move
 		else { // (player.equals(currentGame.getBlackPlayer())) {
@@ -735,6 +736,29 @@ public class Controller {
 		}
 		// currentGame.setWallMoveCandidate(null);
 		return true;
+	}
+	
+	/**
+	 * @author arneetkalra
+	 */
+	public static void returnWallToPlayer() {
+		Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
+		GamePosition currentGamePosition = currentGame.getCurrentPosition();
+		WallMove wallMove = currentGame.getWallMoveCandidate();
+		Player player = currentGamePosition.getPlayerToMove();
+		
+		// If it is white players move
+		if (player.equals(currentGame.getWhitePlayer())) {
+			currentGamePosition.addWhiteWallsInStock(wallMove.getWallPlaced()); // Puts wall attempted to be placed 
+			//currentGamePosition.removeWhiteWallsOnBoard(wallMove.getWallPlaced());
+			wallMove.getWallPlaced().delete();
+		}
+		// Black player move
+		else { 
+			currentGamePosition.addBlackWallsInStock(wallMove.getWallPlaced());
+			//currentGamePosition.removeWhiteWallsOnBoard(wallMove.getWallPlaced());
+			wallMove.getWallPlaced().delete();
+		}
 	}
 
 	/**
@@ -2003,6 +2027,26 @@ public class Controller {
 
 		window.resultBeingDisplayed = true;
 	}
+	
+	/**
+	 * @author arneetkalra
+	 */
+	public static void reportResult() {
+		QuoridorWindow window = QuoridorApplication.quoridorWindow;
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game currentGame = quoridor.getCurrentGame();
+
+
+		if (currentGame.getGameStatus() == GameStatus.WhiteWon) {
+			window.notifyWhiteWon();
+		} else if (currentGame.getGameStatus() == GameStatus.BlackWon) {
+			window.notifyBlackWon();
+		} else if (currentGame.getGameStatus() == GameStatus.Draw) {
+			window.notifyDraw();
+		}
+
+		window.resultBeingDisplayed = true;
+	}
 
 	/**
 	 * @author arneetkalra
@@ -2438,6 +2482,8 @@ public class Controller {
 					quoridor.getCurrentGame().setGameStatus(GameStatus.Draw);
 				}
 			}
+			else {
+			}
 		}
 		else if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().equals(quoridor.getCurrentGame().getBlackPlayer())) {
 			if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getRemainingTime().equals(zero)) {
@@ -2459,8 +2505,35 @@ public class Controller {
 					quoridor.getCurrentGame().setGameStatus(GameStatus.Draw);
 				}
 			}
-			
+			else {
+				
+			}
 		}
+	}
+	
+	public static void identifyIfGameWonPosition() {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().equals(quoridor.getCurrentGame().getWhitePlayer())) {
+			 if (quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow() == 1) {
+					quoridor.getCurrentGame().setGameStatus(GameStatus.WhiteWon);
+					reportResult();
+			}
+		}
+		// Black Player
+		else {
+			if (quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow() == 9) {
+				quoridor.getCurrentGame().setGameStatus(GameStatus.BlackWon);
+				reportResult();
+			}
+		}
+	}
+	
+	public static boolean returnTrueIfGameIsWonOrDraw() {
+		GameStatus status = QuoridorApplication.getQuoridor().getCurrentGame().getGameStatus();
+		if (status == GameStatus.BlackWon ||status == GameStatus.WhiteWon ||status == GameStatus.Draw) {
+			return true;
+		}
+		return false;
 	}
 	
 	/**
