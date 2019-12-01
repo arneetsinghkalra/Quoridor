@@ -784,7 +784,13 @@ public class QuoridorWindow extends JFrame {
 		existingUsernames1.setFont(new Font("Cooper Black", Font.PLAIN, 14));
 		existingUsernames1.setModel(new DefaultComboBoxModel(Controller.listExistingUsernames()));
 		setupPanel.add(existingUsernames1);
-
+		existingUsernames1.addItem("Ali");
+		existingUsernames1.addItem("William");
+		existingUsernames1.addItem("Arneet");
+		existingUsernames1.addItem("Sam");
+		existingUsernames1.addItem("Luke");
+		existingUsernames1.addItem("Yin");
+		
 		JButton startGameButton = new JButton("Start Game");
 		sl_setupPanel.putConstraint(SpringLayout.SOUTH, startGameButton, 0, SpringLayout.SOUTH, thinkingTimeBox);
 		sl_setupPanel.putConstraint(SpringLayout.EAST, startGameButton, -55, SpringLayout.EAST, setupPanel);
@@ -797,7 +803,13 @@ public class QuoridorWindow extends JFrame {
 		existingUsernames2.setFont(new Font("Cooper Black", Font.PLAIN, 14));
 		existingUsernames2.setModel(new DefaultComboBoxModel(Controller.listExistingUsernames()));
 		setupPanel.add(existingUsernames2);
-
+		existingUsernames2.addItem("Ali");
+		existingUsernames2.addItem("William");
+		existingUsernames2.addItem("Arneet");
+		existingUsernames2.addItem("Sam");
+		existingUsernames2.addItem("Luke");
+		existingUsernames2.addItem("Yin");
+		
 		startGameButton.addActionListener(new ActionListener() {
 			/**
 			 * <p>
@@ -850,6 +862,17 @@ public class QuoridorWindow extends JFrame {
 						return;
 					}
 				}
+				
+				if ((!existingUsernames1.getSelectedItem().equals("or select existing username...") && (player1Field.getText().length() > 0)) 
+						|| (!existingUsernames2.getSelectedItem().equals("or select existing username...") && (player2Field.getText().length() > 0)))
+				{
+					JOptionPane.showMessageDialog(null,
+							"Cannot enter and select user names at the same time!", "Invalid Username",
+							JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+				
+					
 				if (!minuteField.getText().matches("[0-9]*") || !secondField.getText().matches("[0-9]*")) {
 					JOptionPane.showMessageDialog(null, "Please provide integers for user time!",
 							"Invalid Remaining Time", JOptionPane.WARNING_MESSAGE);
@@ -898,6 +921,8 @@ public class QuoridorWindow extends JFrame {
 						e1.printStackTrace();
 					}
 				}
+				
+				//Add cases for existing usernames
 
 				// Checks if the player enters an input and also selects an existing user name,
 				// if true will show a dialog box
@@ -949,6 +974,10 @@ public class QuoridorWindow extends JFrame {
 				}
 
 				time = "00:" + minutes + ":" + seconds;
+				
+				//Add selected user name
+				
+				
 				Controller.setTotalThinkingTime(time);
 				Controller.startClock();
 				Controller.createBoard();
