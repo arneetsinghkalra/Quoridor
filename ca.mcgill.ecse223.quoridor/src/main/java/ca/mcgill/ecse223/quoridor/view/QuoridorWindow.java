@@ -519,7 +519,9 @@ public class QuoridorWindow extends JFrame {
 					notifyNotInReplayMode();
 				}
 				else {
-					//Go backwards method
+					//Go forwards method
+					Controller.stepBackward();
+					updatePositions();
 				}
 			}
 		});
@@ -561,6 +563,9 @@ public class QuoridorWindow extends JFrame {
 				}
 				else {
 					//Go forwards method
+					Controller.stepForward();
+					updatePositions();
+
 				}
 			}
 		});
@@ -2242,7 +2247,7 @@ public class QuoridorWindow extends JFrame {
 		GamePosition currentPosition = quoridor.getCurrentGame().getCurrentPosition();
 
 		PlayerPosition WhitePosition = currentPosition.getWhitePosition();
-		PlayerPosition BlackPosition = currentPosition.getWhitePosition();
+		PlayerPosition BlackPosition = currentPosition.getBlackPosition();
 		List<Wall> whiteWalls = currentPosition.getWhiteWallsOnBoard();
 		List<Wall> blackWalls = currentPosition.getBlackWallsOnBoard();
 

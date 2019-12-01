@@ -1512,6 +1512,7 @@ public class CucumberStepDefinitions {
 	 */
 	@Given("There is a {string} wall {string} from the player")
 	public void there_is_a_wall_from_the_player(String direction, String side) {
+		
 		Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
 		Player blackPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer();
 		
@@ -1577,6 +1578,7 @@ public class CucumberStepDefinitions {
 
 			break;
 		}
+		
 
 	}
 
@@ -1724,6 +1726,7 @@ public class CucumberStepDefinitions {
 	 */
 	@And("Player's new position shall be {int}:{int}")
 	public void player_s_new_position_shall_be(int nrow, int ncol) {
+		
 		// Get Player whose turn it is
 		Player currentPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
 				.getPlayerToMove();
@@ -1767,6 +1770,7 @@ public class CucumberStepDefinitions {
 
 			}
 		}
+		
 	}
 
 	/**
