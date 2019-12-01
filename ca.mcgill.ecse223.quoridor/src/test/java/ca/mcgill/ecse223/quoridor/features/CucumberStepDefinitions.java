@@ -1504,6 +1504,68 @@ public class CucumberStepDefinitions {
 			currentPlayerPosition.setTile(targetPosition);
 		}
 	}
+	
+	/**
+	 * @author arneetkalra
+	 * @param direction
+	 * @param side
+	 */
+	@Given("There is a {string} wall {string} from the player")
+	public void there_is_a_wall_from_the_player(String direction, String side) {
+		Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
+		Player blackPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer();
+		
+	   Direction dir = Controller.stringToDirection(direction);
+	   
+	   Player currentPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
+	   int whiteRow = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow();
+	   int whiteCol = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow();
+	   
+	   Wall wallOnBoard = currentGame.getCurrentPosition().getBlackWallsInStock(9);
+	   WallMove placeWall;
+	   Tile targetTile;
+	   int targetRow;
+	   int targetCol;
+	   int tileIndex;
+
+	   switch(side)
+	   {
+		case ("up"):
+			targetRow = whiteRow + 1;
+			targetCol = whiteCol;
+			tileIndex = (targetRow - 1) * 9 + (targetCol - 1);
+			targetTile = QuoridorApplication.getQuoridor().getBoard().getTile(tileIndex);
+			placeWall = new WallMove(1, 1, blackPlayer, targetTile, currentGame, dir, wallOnBoard);
+			currentGame.addMove(placeWall);
+
+		case ("down"):
+			targetRow = whiteRow;
+			targetCol = whiteCol;
+			tileIndex = (targetRow - 1) * 9 + (targetCol - 1);
+			targetTile = QuoridorApplication.getQuoridor().getBoard().getTile(tileIndex);
+			placeWall = new WallMove(1, 2, blackPlayer, targetTile, currentGame, dir, wallOnBoard);
+			currentGame.addMove(placeWall);
+
+		case ("left"):
+			targetRow = whiteRow;
+			targetCol = whiteCol - 1;
+			tileIndex = (targetRow - 1) * 9 + (targetCol - 1);
+			targetTile = QuoridorApplication.getQuoridor().getBoard().getTile(tileIndex);
+			placeWall = new WallMove(1, 3, blackPlayer, targetTile, currentGame, dir, wallOnBoard);
+			currentGame.addMove(placeWall);
+
+		case ("right"):
+			targetRow = whiteRow;
+			targetCol = whiteCol;
+			tileIndex = (targetRow - 1) * 9 + (targetCol - 1);
+			targetTile = QuoridorApplication.getQuoridor().getBoard().getTile(tileIndex);
+			System.out.println(wallOnBoard);
+			placeWall = new WallMove(1, 4, blackPlayer, targetTile, currentGame, dir, wallOnBoard);
+			currentGame.addMove(placeWall);
+
+		}
+
+	}
 
 	/**
 	 * @author arneetkalra
