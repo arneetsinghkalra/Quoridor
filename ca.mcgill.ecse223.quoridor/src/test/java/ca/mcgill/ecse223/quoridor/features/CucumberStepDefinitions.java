@@ -1521,7 +1521,7 @@ public class CucumberStepDefinitions {
 	   int whiteRow = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow();
 	   int whiteCol = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow();
 	   
-	   Wall wallOnBoard = currentGame.getCurrentPosition().getBlackWallsInStock(9);
+	   Wall wallOnBoard = currentGame.getCurrentPosition().getBlackWallsInStock(0);
 	   WallMove placeWall;
 	   Tile targetTile;
 	   int targetRow;
@@ -1531,12 +1531,16 @@ public class CucumberStepDefinitions {
 	   switch(side)
 	   {
 		case ("up"):
-			targetRow = whiteRow + 1;
+			targetRow = whiteRow - 1;
 			targetCol = whiteCol;
 			tileIndex = (targetRow - 1) * 9 + (targetCol - 1);
 			targetTile = QuoridorApplication.getQuoridor().getBoard().getTile(tileIndex);
 			placeWall = new WallMove(1, 1, blackPlayer, targetTile, currentGame, dir, wallOnBoard);
 			currentGame.addMove(placeWall);
+			currentGame.getCurrentPosition().removeBlackWallsInStock(wallOnBoard);
+			currentGame.getCurrentPosition().addBlackWallsOnBoard(wallOnBoard);
+
+			break;
 
 		case ("down"):
 			targetRow = whiteRow;
@@ -1545,7 +1549,10 @@ public class CucumberStepDefinitions {
 			targetTile = QuoridorApplication.getQuoridor().getBoard().getTile(tileIndex);
 			placeWall = new WallMove(1, 2, blackPlayer, targetTile, currentGame, dir, wallOnBoard);
 			currentGame.addMove(placeWall);
+			currentGame.getCurrentPosition().removeBlackWallsInStock(wallOnBoard);
+			currentGame.getCurrentPosition().addBlackWallsOnBoard(wallOnBoard);
 
+			break;
 		case ("left"):
 			targetRow = whiteRow;
 			targetCol = whiteCol - 1;
@@ -1553,7 +1560,10 @@ public class CucumberStepDefinitions {
 			targetTile = QuoridorApplication.getQuoridor().getBoard().getTile(tileIndex);
 			placeWall = new WallMove(1, 3, blackPlayer, targetTile, currentGame, dir, wallOnBoard);
 			currentGame.addMove(placeWall);
+			currentGame.getCurrentPosition().removeBlackWallsInStock(wallOnBoard);
+			currentGame.getCurrentPosition().addBlackWallsOnBoard(wallOnBoard);
 
+			break;
 		case ("right"):
 			targetRow = whiteRow;
 			targetCol = whiteCol;
@@ -1562,7 +1572,10 @@ public class CucumberStepDefinitions {
 			System.out.println(wallOnBoard);
 			placeWall = new WallMove(1, 4, blackPlayer, targetTile, currentGame, dir, wallOnBoard);
 			currentGame.addMove(placeWall);
+			currentGame.getCurrentPosition().removeBlackWallsInStock(wallOnBoard);
+			currentGame.getCurrentPosition().addBlackWallsOnBoard(wallOnBoard);
 
+			break;
 		}
 
 	}
@@ -1789,6 +1802,7 @@ public class CucumberStepDefinitions {
 		currentGame.getCurrentPosition().addWhiteWallsOnBoard(aWall);
 	}
 
+	
 	// Move Pawn ------------------------
 
 	/**
