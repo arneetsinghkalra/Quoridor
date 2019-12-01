@@ -239,6 +239,11 @@ public class Controller {
 		GamePosition gp = new GamePosition(0, whitePlayerPosition, blackPlayerPosition,
 				q.getCurrentGame().getWhitePlayer(), q.getCurrentGame());
 		q.getCurrentGame().setCurrentPosition(gp);
+		whitePlayerPosition = new PlayerPosition(q.getCurrentGame().getWhitePlayer(), board.getTile(76));
+		blackPlayerPosition = new PlayerPosition(q.getCurrentGame().getBlackPlayer(), board.getTile(4));
+		gp = new GamePosition(1, whitePlayerPosition, blackPlayerPosition,
+				q.getCurrentGame().getWhitePlayer(), q.getCurrentGame());
+		q.getCurrentGame().setCurrentPosition(gp);
 		for (int i = 0; i < 10; i++) {
 			Wall a, b;
 			a = new Wall(i, q.getCurrentGame().getWhitePlayer());
