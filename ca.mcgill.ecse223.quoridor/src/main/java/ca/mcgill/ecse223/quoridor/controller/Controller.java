@@ -2204,9 +2204,31 @@ public class Controller {
 		else {
 			currentGame.setGameStatus(GameStatus.Running);
 		}
+		
+		
 		return currentGame;
 	}
 
+	/**
+	 * For view only, switches back to the current player after returning from replay mode.
+	 * @param currentGame
+	 * @return Game object
+	 * @author Ali Tapan
+	 */
+	public static Game continueGameWithTheCurrentPlayer(Game currentGame) {
+		Player currentPlayer = currentGame.getCurrentPosition().getPlayerToMove();
+		if(currentPlayer.hasGameAsWhite())
+		{
+			currentGame.getCurrentPosition().setPlayerToMove(currentGame.getBlackPlayer());
+		}
+		else {
+			currentGame.getCurrentPosition().setPlayerToMove(currentGame.getWhitePlayer());
+		}
+		
+		return currentGame;
+	}
+	
+	
 	/**
 	 * Sets current position to the defined final position in the features
 	 *
