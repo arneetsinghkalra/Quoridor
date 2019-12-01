@@ -528,6 +528,9 @@ public class QuoridorWindow extends JFrame {
 			public void actionPerformed(ActionEvent a) {
 				setBoardConitionsWhenEnteringReplayMode();
 				Controller.initiateReplayMode(Controller.getCurrentGame());
+				QuoridorApplication.getQuoridor().getCurrentGame().setCurrentPosition(
+						QuoridorApplication.getQuoridor().getCurrentGame().getPosition(
+						QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getId()-1));
 			}
 		});
 
@@ -541,6 +544,7 @@ public class QuoridorWindow extends JFrame {
 			public void actionPerformed(ActionEvent a) {
 				setBoardConitionsWhenExitingReplayMode();
 				Controller.initiateContinueGame(Controller.getCurrentGame());
+				Controller.switchCurrentPlayer();
 			}
 		});
 
@@ -783,7 +787,7 @@ public class QuoridorWindow extends JFrame {
 		existingUsernames1.addItem("Sam");
 		existingUsernames1.addItem("Luke");
 		existingUsernames1.addItem("Yin");
-		
+
 		JButton startGameButton = new JButton("Start Game");
 		sl_setupPanel.putConstraint(SpringLayout.SOUTH, startGameButton, 0, SpringLayout.SOUTH, thinkingTimeBox);
 		sl_setupPanel.putConstraint(SpringLayout.EAST, startGameButton, -55, SpringLayout.EAST, setupPanel);
@@ -802,7 +806,7 @@ public class QuoridorWindow extends JFrame {
 		existingUsernames2.addItem("Sam");
 		existingUsernames2.addItem("Luke");
 		existingUsernames2.addItem("Yin");
-		
+
 		startGameButton.addActionListener(new ActionListener() {
 			/**
 			 * <p>
@@ -834,7 +838,9 @@ public class QuoridorWindow extends JFrame {
 							JOptionPane.WARNING_MESSAGE);
 					return;
 				}
-				if (minuteField.getText().length() == 0 && secondField.getText().length() == 0) {
+				if (minuteField.getText().length() == 0 && secondField.getText().length() == 0 ||
+						!minuteField.getText().matches("\\d+") || !minuteField.getText().matches("[1-9]?")&& !secondField.getText().matches("[1-9]?")
+						||!minuteField.getText().matches("[1-9]?") && secondField.getText().isEmpty()) {
 					JOptionPane.showMessageDialog(null, "Please provide user time!", "Invalid Remaining Time",
 							JOptionPane.WARNING_MESSAGE);
 					return;
@@ -855,8 +861,8 @@ public class QuoridorWindow extends JFrame {
 						return;
 					}
 				}
-				
-				if ((!existingUsernames1.getSelectedItem().equals("or select existing username...") && (player1Field.getText().length() > 0)) 
+
+				if ((!existingUsernames1.getSelectedItem().equals("or select existing username...") && (player1Field.getText().length() > 0))
 						|| (!existingUsernames2.getSelectedItem().equals("or select existing username...") && (player2Field.getText().length() > 0)))
 				{
 					JOptionPane.showMessageDialog(null,
@@ -864,8 +870,8 @@ public class QuoridorWindow extends JFrame {
 							JOptionPane.WARNING_MESSAGE);
 					return;
 				}
-				
-					
+
+
 				if (!minuteField.getText().matches("[0-9]*") || !secondField.getText().matches("[0-9]*")) {
 					JOptionPane.showMessageDialog(null, "Please provide integers for user time!",
 							"Invalid Remaining Time", JOptionPane.WARNING_MESSAGE);
@@ -922,7 +928,7 @@ public class QuoridorWindow extends JFrame {
 						e1.printStackTrace();
 					}
 				}
-				
+
 				// Checks if the user has selected an existing user name
 				if(!existingUsernames1.getSelectedItem().equals("or select existing username...") && player1Field.getText().length() == 0)
 				{
@@ -936,7 +942,7 @@ public class QuoridorWindow extends JFrame {
 						e1.printStackTrace();
 					}
 				}
-				
+
 				if(!existingUsernames2.getSelectedItem().equals("or select existing username...") && player2Field.getText().length() == 0)
 				{
 					try {
@@ -949,7 +955,7 @@ public class QuoridorWindow extends JFrame {
 						e1.printStackTrace();
 					}
 				}
-				
+
 
 				// Checks if the player enters an input and also selects an existing user name,
 				// if true will show a dialog box
@@ -1001,10 +1007,10 @@ public class QuoridorWindow extends JFrame {
 				}
 
 				time = "00:" + minutes + ":" + seconds;
-				
+
 				//Add selected user name
-				
-				
+
+
 				Controller.setTotalThinkingTime(time);
 				Controller.startClock();
 				Controller.createBoard();
@@ -1298,12 +1304,13 @@ public class QuoridorWindow extends JFrame {
 						//Update Total Time Left Labels
 						lblTimeWhite.setText(Controller.displayRemainingTimeWhite());
 						lblTimeBlack.setText(Controller.displayRemainingTimeBlack());
+
 						Controller.identifyIfGameWonOrDrawPosition();
 						updatePlayerWallAndForfeitButtonsVisually();
 
 					}
 
-					
+
 
 
 				});
@@ -1780,7 +1787,7 @@ public class QuoridorWindow extends JFrame {
 			timeRemLabel.setForeground(Color.BLACK);
 		}
 		timeRemLabel.setText(tr);
-		
+
 	}
 
 	/** @author Sam Perreault */
@@ -1820,7 +1827,7 @@ public class QuoridorWindow extends JFrame {
 					subtractSecondFromView();
 					// Deduct a second from model
 					Controller.subtractSecond();
-					
+
 				}
 			}
 		};
@@ -1982,7 +1989,7 @@ public class QuoridorWindow extends JFrame {
 		if (finalResult == JOptionPane.YES_OPTION) {
 			//loadGame();
 			QuoridorApplication.getQuoridor().delete();
-			
+
 
 		}
 		// Replay mode Button
@@ -2261,7 +2268,7 @@ public class QuoridorWindow extends JFrame {
 		QuoridorWindow.inReplayMode = inReplayMode;
 		return inReplayMode;
 	}
-	
+
 	/**
 	 * @author arneetkalra
 	 */
@@ -2290,7 +2297,7 @@ public class QuoridorWindow extends JFrame {
 			btnRotateWallBlack.setForeground(Color.black);
 			btnResignGameBlack.setForeground(Color.black);
 		}
-		
+
 		if (Controller.isWhitePlayerTurn()) {
 			btnGrabButtonWhite.setBackground(mainScreenBackgroundColor);
 			btnRotateWallWhite.setBackground(mainScreenBackgroundColor);
@@ -2316,7 +2323,7 @@ public class QuoridorWindow extends JFrame {
 			btnResignGameWhite.setForeground(Color.black);
 		}
 	}
-	
+
 	public void ensureNoWallInHand() {
 		if (QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate() != null) {
 			Controller.returnWallToPlayer();
