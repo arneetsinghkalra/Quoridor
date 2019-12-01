@@ -733,7 +733,6 @@ public class PawnBehavior {
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((newRow - 1) * 9 + column - 1);
 					currentGame.getCurrentPosition().getWhitePosition().setTile(newTile);
 					ensureGrabWallDeleted();
-					currentGame.addMove(createStepMove(newTile));
 
 					currentGame.addMove(new StepMove(moveNumber+1, roundNumber+1, currentGame.getCurrentPosition().getPlayerToMove(), newTile, currentGame));
 					Controller.switchCurrentPlayer();
@@ -744,7 +743,6 @@ public class PawnBehavior {
 					Tile newTile = currentGame.getQuoridor().getBoard().getTile((Row - 1) * 9 + newColumn - 1);
 					currentGame.getCurrentPosition().getWhitePosition().setTile(newTile);
 					ensureGrabWallDeleted();
-					currentGame.addMove(createStepMove(newTile));
 
 					currentGame.addMove(new StepMove(moveNumber+1, roundNumber+1, currentGame.getCurrentPosition().getPlayerToMove(), newTile, currentGame));
 					Controller.switchCurrentPlayer();
