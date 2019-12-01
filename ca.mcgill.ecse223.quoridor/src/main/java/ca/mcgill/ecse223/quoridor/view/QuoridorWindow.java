@@ -837,8 +837,8 @@ public class QuoridorWindow extends JFrame {
 					return;
 				}
 				if (minuteField.getText().length() == 0 && secondField.getText().length() == 0 ||
-						!minuteField.getText().matches("\\d+") || !minuteField.getText().matches("[1-9]?")&& !secondField.getText().matches("[1-9]?")
-						||!minuteField.getText().matches("[1-9]?") && secondField.getText().isEmpty()) {
+						!minuteField.getText().matches("\\d+") || !minuteField.getText().matches("[1-9]+0*")&& !secondField.getText().matches("[1-9]+0*")
+						||!minuteField.getText().matches("[1-9]+0*") && secondField.getText().isEmpty()) {
 					JOptionPane.showMessageDialog(null, "Please provide user time!", "Invalid Remaining Time",
 							JOptionPane.WARNING_MESSAGE);
 					return;
