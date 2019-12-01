@@ -1195,14 +1195,7 @@ public class QuoridorWindow extends JFrame {
 				tiles[i][j].addActionListener(new ActionListener() {
 					/** @author Sam Perreault */
 					public void actionPerformed(ActionEvent e) {
-						//If you pressed grab wall but then choose to place a player, youll get an error
-						if(QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate() != null) {
-							Controller.returnWallToPlayer();
-							lblWallsLeftWhite.setText("Walls Left = "
-									+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock());
-							lblWallsLeftBlack.setText("Walls Left = "
-									+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock());
-						}
+
 
 						updatePlayerWallAndForfeitButtonsVisually();
 
@@ -1230,59 +1223,65 @@ public class QuoridorWindow extends JFrame {
 						PawnBehavior.MoveDirection dir = null;
 						switch(vertDiff) {
 
-							case 1:
-							case 2:
-								dir = PawnBehavior.MoveDirection.South;
+						case 1:
+						case 2:
+							dir = PawnBehavior.MoveDirection.South;
+							ensureNoWallInHand();
 
-								break;
-							case -1:
-							case -2:
-								dir = PawnBehavior.MoveDirection.North;
+							break;
+						case -1:
+						case -2:
+							dir = PawnBehavior.MoveDirection.North;
+							ensureNoWallInHand();
 
-							default:
-								break;
+						default:
+							break;
 						}
-						switch(horDiff) {
-							case -1:
-								if(vertDiff<0) {
-									dir = PawnBehavior.MoveDirection.NorthWest;
-									
-									break;
-								}
-								else if(vertDiff>0) {
-									dir = PawnBehavior.MoveDirection.SouthWest;
-									
-									break;
-								}
-								else
-									dir = PawnBehavior.MoveDirection.West;
-							
+						switch (horDiff) {
+						case -1:
+							if (vertDiff < 0) {
+								dir = PawnBehavior.MoveDirection.NorthWest;
+								ensureNoWallInHand();
+
 								break;
-							case -2:
+							} else if (vertDiff > 0) {
+								dir = PawnBehavior.MoveDirection.SouthWest;
+								ensureNoWallInHand();
+
+								break;
+							} else
 								dir = PawnBehavior.MoveDirection.West;
-								
+							ensureNoWallInHand();
+
+							break;
+						case -2:
+							dir = PawnBehavior.MoveDirection.West;
+							ensureNoWallInHand();
+
+							break;
+						case 1:
+							if (vertDiff < 0) {
+								dir = PawnBehavior.MoveDirection.NorthEast;
+								ensureNoWallInHand();
+
 								break;
-							case 1:
-								if(vertDiff<0) {
-									dir = PawnBehavior.MoveDirection.NorthEast;
-								
-									break;
-								}
-								else if(vertDiff>0) {
-									dir = PawnBehavior.MoveDirection.SouthEast;
-								
-									break;
-								}
-								else
-									dir = PawnBehavior.MoveDirection.East;
-						
+							} else if (vertDiff > 0) {
+								dir = PawnBehavior.MoveDirection.SouthEast;
+								ensureNoWallInHand();
+
 								break;
-							case 2:
+							} else {
 								dir = PawnBehavior.MoveDirection.East;
-							
-								break;
-							default:
-								break;
+								ensureNoWallInHand();
+							}
+							break;
+						case 2:
+							dir = PawnBehavior.MoveDirection.East;
+							ensureNoWallInHand();
+
+							break;
+						default:
+							break;
 						}
 						// If dir isn't set to this point something went horribly wrong
 						if(!PawnBehavior.moveOrJump(dir)) {
@@ -2307,6 +2306,16 @@ public class QuoridorWindow extends JFrame {
 			btnGrabButtonWhite.setForeground(Color.black);
 			btnRotateWallWhite.setForeground(Color.black);
 			btnResignGameWhite.setForeground(Color.black);
+		}
+	}
+	
+	public void ensureNoWallInHand() {
+		if (QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate() != null) {
+			Controller.returnWallToPlayer();
+			lblWallsLeftWhite.setText("Walls Left = " + QuoridorApplication.getQuoridor().getCurrentGame()
+					.getCurrentPosition().numberOfWhiteWallsInStock());
+			lblWallsLeftBlack.setText("Walls Left = " + QuoridorApplication.getQuoridor().getCurrentGame()
+					.getCurrentPosition().numberOfBlackWallsInStock());
 		}
 	}
 
