@@ -1462,9 +1462,10 @@ public class CucumberStepDefinitions {
 	public void nextPlayToMoveShallBe(String player) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		if (player.equals("white")) {
-			assertTrue(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsWhite() != null);
+			assertTrue(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().hasGameAsWhite());
 		} else {
-			assertTrue(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsBlack() != null);
+			assertTrue(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().hasGameAsBlack());
+			
 		}
 	}
 
@@ -2058,7 +2059,7 @@ public class CucumberStepDefinitions {
 		//Lets us dynamically change players in the loop below
 		int playerIdx = 0;
 		Player currentPlayer = players[playerIdx%2];
-
+		Player nextPlayer = players[1-playerIdx%2];
 
 		//Initialize positions and variables
 		int[] wallIds = {9, 9};
@@ -2122,7 +2123,9 @@ public class CucumberStepDefinitions {
 				{
 					PlayerPosition newWhitePosition = new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(), tile);
 					PlayerPosition newBlackPosition = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), currentBlackTile);
-					GamePosition newPosition = new GamePosition(positionId, newWhitePosition, newBlackPosition, currentPlayer, currentGame);
+					//GamePosition newPosition = new GamePosition(positionId, newWhitePosition, newBlackPosition, currentPlayer, currentGame);
+					GamePosition newPosition = new GamePosition(positionId, newWhitePosition, newBlackPosition, nextPlayer, currentGame);
+	
 					for(Wall bwall : currentGamePosition.getBlackWallsInStock())
 					{
 						newPosition.addBlackWallsInStock(bwall);
@@ -2140,7 +2143,8 @@ public class CucumberStepDefinitions {
 				{
 					PlayerPosition newBlackPosition = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), tile);
 					PlayerPosition newWhitePosition = new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(), currentWhiteTile);
-					GamePosition newPosition = new GamePosition(positionId, newWhitePosition, newBlackPosition, currentPlayer, currentGame);
+					//GamePosition newPosition = new GamePosition(positionId, newWhitePosition, newBlackPosition, currentPlayer, currentGame);
+					GamePosition newPosition = new GamePosition(positionId, newWhitePosition, newBlackPosition, nextPlayer, currentGame);
 					for(Wall bwall : currentGamePosition.getBlackWallsInStock())
 					{
 						newPosition.addBlackWallsInStock(bwall);
@@ -2188,9 +2192,7 @@ public class CucumberStepDefinitions {
 					char wallAllignment = move.charAt(2);
 					
 					Tile tile = quoridor.getBoard().getTile((row - 1) * 9 + col -1);
-					//Wall newWall = new Wall(wallId, players[playerIdx%2]);
-
-
+					
 					if(wallAllignment == 'v')
 					{
 						//If white
@@ -2263,11 +2265,13 @@ public class CucumberStepDefinitions {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
 		int index = 0;
+		currentGame.setCurrentPosition(currentGame.getPosition((moveno-1)*2+rndno-1));
 		if(rndno == 1)
 		{
 			index = ((moveno*2) - 1)-1;
 			currentGame.getCurrentPosition().setPlayerToMove(currentGame.getWhitePlayer());
-			try {
+			
+			try {	
 				currentGame.getMove(index);
 			} catch (IndexOutOfBoundsException e)
 			{
@@ -2284,7 +2288,6 @@ public class CucumberStepDefinitions {
 				//Game is over
 			}
 		}
-		currentGame.setCurrentPosition(currentGame.getPosition((moveno-1)*2+rndno-1));
 	}
 
 	/**
@@ -2306,11 +2309,21 @@ public class CucumberStepDefinitions {
 	public void the_remaining_moves_of_the_game_shall_be_removed() {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
-		//currentGame.getMove(index);
-		for(Move move :currentGame.getMoves()) {
+		int allPositionsSize = currentGame.getPositions().size();
+		int currentPositionIndex = currentGame.getCurrentPosition().getId();
 
+		for(int i = allPositionsSize-1; i>currentPositionIndex; i--) {
+			currentGame.removePosition(currentGame.getPosition(i));
 		}
-		//currentGame.removePosition(currentGame.getCurrentPosition());
+		/*Player player = currentGame.getCurrentPosition().getPlayerToMove();
+		if(player.hasGameAsBlack())
+		{
+			currentGame.getCurrentPosition().setPlayerToMove(currentGame.getWhitePlayer());
+		}
+		else
+		{
+			currentGame.getCurrentPosition().setPlayerToMove(currentGame.getBlackPlayer());
+		}*/
 	}
 
 	/**
