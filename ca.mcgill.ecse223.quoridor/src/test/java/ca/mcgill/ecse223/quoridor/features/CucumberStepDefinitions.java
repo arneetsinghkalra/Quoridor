@@ -1840,6 +1840,7 @@ public class CucumberStepDefinitions {
 		// Just verify my logic
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
+	
 		Player currentPlayer = currentGame.getCurrentPosition().getPlayerToMove();
 		Tile currentPlayerTile;
 		Tile opponentTile;
@@ -1909,6 +1910,7 @@ public class CucumberStepDefinitions {
 				break;
 			}
 		}
+		
 	}
 
 	/**
@@ -2222,6 +2224,7 @@ public class CucumberStepDefinitions {
 						}
 
 					}
+					Controller.switchCurrentPlayer();
 					wallId--;
 					positionId++;
 					playerIdx++;
@@ -2277,6 +2280,7 @@ public class CucumberStepDefinitions {
 				//Game is over
 			}
 		}
+		currentGame.setCurrentPosition(currentGame.getPosition((moveno-1)*2+rndno-1));
 	}
 
 	/**
@@ -2634,8 +2638,16 @@ public class CucumberStepDefinitions {
 	@When("Step backward is initiated")
 	public void step_backward_is_initiated() {
 		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+		Controller.stepBackward();
 	}
+	
+	@When("Step forward is initiated")
+	public void step_forward_is_initiated() {
+	    // Write code here that turns the phrase above into concrete actions
+		Controller.stepForward();
+	}
+
+	
 
     @When("I initiate to load a game in {string}")
     public void I_initiate_to_load_a_game_in(String fileName) {
