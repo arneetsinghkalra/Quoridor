@@ -18,7 +18,6 @@ import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
 import ca.mcgill.ecse223.quoridor.persistence.QuoridorPersistence;
-//import com.sun.org.apache.xpath.internal.operations.Quo;
 import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
 
 import java.awt.*;
@@ -31,7 +30,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.awt.event.ActionEvent;
-import java.util.List;;
+import java.util.List;
 
 public class QuoridorWindow extends JFrame {
 
@@ -503,7 +502,7 @@ public class QuoridorWindow extends JFrame {
 					notifyNotInReplayMode();
 				}
 				else {
-					Controller.jumpToStartPosition(Controller.getCurrentGame());
+					Controller.jumpToStartPosition();
 				}
 			}
 		});
@@ -579,7 +578,7 @@ public class QuoridorWindow extends JFrame {
 					notifyNotInReplayMode();
 				}
 				else {
-					Controller.jumpToFinalPosition(Controller.getCurrentGame());
+					Controller.jumpToFinalPosition();
 				}
 			}
 		});
@@ -951,7 +950,7 @@ public class QuoridorWindow extends JFrame {
 			}
 		});
 		setupPanel.add(startGameButton);
-		
+
 
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
@@ -1137,8 +1136,8 @@ public class QuoridorWindow extends JFrame {
 						}
 					}
 				});
-				
-				
+
+
 				tiles[i][j].addActionListener(new ActionListener() {
 					/** @author Sam Perreault */
 					public void actionPerformed(ActionEvent e) {
@@ -1231,16 +1230,16 @@ public class QuoridorWindow extends JFrame {
 						}
 						PawnBehavior.MoveDirection dir = null;
 						switch(vertDiff) {
-						
+
 							case 1:
 							case 2:
 								dir = PawnBehavior.MoveDirection.South;
-								
+
 								break;
 							case -1:
 							case -2:
 								dir = PawnBehavior.MoveDirection.North;
-								
+
 							default:
 								break;
 						}
@@ -1317,12 +1316,12 @@ public class QuoridorWindow extends JFrame {
 						//Update Total Time Left Labels
 						lblTimeWhite.setText(Controller.displayRemainingTimeWhite());
 						lblTimeBlack.setText(Controller.displayRemainingTimeBlack());
-						
+
 						Controller.identifyIfGameWonPosition();
 
 					}
 
-					
+
 
 				});
 				GridBagConstraints c = new GridBagConstraints();
@@ -1971,7 +1970,7 @@ public class QuoridorWindow extends JFrame {
 	public static void notifyNotYourTurn() {
 		JOptionPane.showMessageDialog(null, "It's not your turn!", "Wait your turn bro", JOptionPane.PLAIN_MESSAGE);
 	}
-	
+
 	/**
 	 * @author arneetkalra
 	 */
@@ -2240,13 +2239,11 @@ public class QuoridorWindow extends JFrame {
 			quoridor = new Quoridor();
 		}
 	}
-	
-	
-	/**
+/**
 	 * @author William Wang
 	 */
 	public void updatePositions() {
-		
+
 		//Reset the board:
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
@@ -2256,23 +2253,26 @@ public class QuoridorWindow extends JFrame {
 				vWalls[i][j].setBackground(boardBackgroundColor);
 			}
 		}
-		
+
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		GamePosition currentPosition = quoridor.getCurrentGame().getCurrentPosition();
-		
+
 		PlayerPosition WhitePosition = currentPosition.getWhitePosition();
 		PlayerPosition BlackPosition = currentPosition.getWhitePosition();
 		List<Wall> whiteWalls = currentPosition.getWhiteWallsOnBoard();
 		List<Wall> blackWalls = currentPosition.getBlackWallsOnBoard();
-		
-		placePlayer(WhitePosition.getTile().getRow()-1, WhitePosition.getTile().getColumn()-1, 
-				BlackPosition.getTile().getRow()-1, BlackPosition.getTile().getColumn()-1);
-		for(Wall wall: whiteWalls) {
-			displayWall(wall.getMove().getTargetTile().getRow()-1,wall.getMove().getTargetTile().getColumn()-1,
+
+		placePlayer(WhitePosition.getTile().getRow() - 1, WhitePosition.getTile().getColumn() - 1,
+				BlackPosition.getTile().getRow() - 1, BlackPosition.getTile().getColumn() - 1);
+		for (Wall wall : whiteWalls) {
+			displayWall(wall.getMove().getTargetTile().getRow() - 1, wall.getMove().getTargetTile().getColumn() - 1,
+					wall.getMove().getWallDirection());
+		}
+		for (Wall wall : blackWalls) {
+			displayWall(wall.getMove().getTargetTile().getRow() - 1, wall.getMove().getTargetTile().getColumn() - 1,
 					wall.getMove().getWallDirection());
 		}
 	}
-		
 
 	/**
 	 * @author arneetkalra
