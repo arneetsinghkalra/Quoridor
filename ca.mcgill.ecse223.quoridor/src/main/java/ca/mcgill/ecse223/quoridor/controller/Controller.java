@@ -2484,7 +2484,7 @@ public class Controller {
 				int size = quoridor.getCurrentGame().getMoves().size()-1;
 				ArrayList<Move> threeMovesBlack = new ArrayList<Move>();
 				for (int i = 0; i < 9; i+=4) {
-					threeMovesBlack.add(quoridor.getCurrentGame().getMove(size-i));
+					threeMovesBlack.add(quoridor.getCurrentGame().getMove(size-1-i));
 				}
 				if ((threeMovesBlack.get(0).getTargetTile().getRow() == threeMovesBlack.get(1).getTargetTile().getRow()
 						&& (threeMovesBlack.get(0).getTargetTile().getRow() == threeMovesBlack.get(2).getTargetTile().getRow()))
@@ -2496,10 +2496,11 @@ public class Controller {
 		}
 	}
 
+	/**
+	 * @author Luke Barber
+	 */
 	public static void identifyIfGameWonOrDrawPosition() {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
-			Player blackPlayer= QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer();
-			Player whitePlayer= QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
 
 			//If white player is at opposite 
 			if (quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow() == 9) {
@@ -2513,36 +2514,41 @@ public class Controller {
 			}
 			//Conditions for Game won due to Time over is covered by Controller.subtractSecond()
 			
-			if(quoridor.getCurrentGame().getMoves().size() >=8) {
-				int size = quoridor.getCurrentGame().getMoves().size();
-				ArrayList<Move> threeMovesWhite = new ArrayList<Move>();
+			if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().equals(quoridor.getCurrentGame().getWhitePlayer())) {
+				if(quoridor.getCurrentGame().getMoves().size() >=8) {
+					int size = quoridor.getCurrentGame().getMoves().size();
+					ArrayList<Move> threeMovesWhite = new ArrayList<Move>();
 
-				for (int i = 0; i < 9; i+=4) {
-					threeMovesWhite.add(quoridor.getCurrentGame().getMove(size-1-i));
-				}
-				if ((threeMovesWhite.get(0).getTargetTile().getRow() == threeMovesWhite.get(1).getTargetTile().getRow()
-						&& (threeMovesWhite.get(0).getTargetTile().getRow() == threeMovesWhite.get(2).getTargetTile().getRow()))
-						&& ((threeMovesWhite.get(0).getTargetTile().getColumn() == threeMovesWhite.get(1).getTargetTile().getColumn())
-						&& (threeMovesWhite.get(0).getTargetTile().getColumn() == threeMovesWhite.get(2).getTargetTile().getColumn()))) {
-					quoridor.getCurrentGame().setGameStatus(GameStatus.Draw);
-					reportResult();
+					for (int i = 0; i < 9; i+=4) {
+						threeMovesWhite.add(quoridor.getCurrentGame().getMove(size-1-i));
+					}
+					if ((threeMovesWhite.get(0).getTargetTile().getRow() == threeMovesWhite.get(1).getTargetTile().getRow()
+							&& (threeMovesWhite.get(0).getTargetTile().getRow() == threeMovesWhite.get(2).getTargetTile().getRow()))
+							&& ((threeMovesWhite.get(0).getTargetTile().getColumn() == threeMovesWhite.get(1).getTargetTile().getColumn())
+							&& (threeMovesWhite.get(0).getTargetTile().getColumn() == threeMovesWhite.get(2).getTargetTile().getColumn()))) {
+						quoridor.getCurrentGame().setGameStatus(GameStatus.Draw);
+						reportResult();
+					}
 				}
 			}
 			
-			if(quoridor.getCurrentGame().getMoves().size() >=6) {
-				int size = quoridor.getCurrentGame().getMoves().size()-1;
-				ArrayList<Move> threeMovesBlack = new ArrayList<Move>();
-				for (int i = 0; i < 9; i+=4) {
-					threeMovesBlack.add(quoridor.getCurrentGame().getMove(size-i));
-				}
-				if ((threeMovesBlack.get(0).getTargetTile().getRow() == threeMovesBlack.get(1).getTargetTile().getRow()
-						&& (threeMovesBlack.get(0).getTargetTile().getRow() == threeMovesBlack.get(2).getTargetTile().getRow()))
-						&& ((threeMovesBlack.get(0).getTargetTile().getColumn() == threeMovesBlack.get(1).getTargetTile().getColumn())
-						&& (threeMovesBlack.get(0).getTargetTile().getColumn() == threeMovesBlack.get(2).getTargetTile().getColumn()))) {
-					quoridor.getCurrentGame().setGameStatus(GameStatus.Draw);
-					reportResult();
+			else if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().equals(quoridor.getCurrentGame().getBlackPlayer())) {
+				if(quoridor.getCurrentGame().getMoves().size() >=8) {
+					int size = quoridor.getCurrentGame().getMoves().size()-1;
+					ArrayList<Move> threeMovesBlack = new ArrayList<Move>();
+					for (int i = 0; i < 9; i+=4) {
+						threeMovesBlack.add(quoridor.getCurrentGame().getMove(size-1-i));
+					}
+					if ((threeMovesBlack.get(0).getTargetTile().getRow() == threeMovesBlack.get(1).getTargetTile().getRow()
+							&& (threeMovesBlack.get(0).getTargetTile().getRow() == threeMovesBlack.get(2).getTargetTile().getRow()))
+							&& ((threeMovesBlack.get(0).getTargetTile().getColumn() == threeMovesBlack.get(1).getTargetTile().getColumn())
+							&& (threeMovesBlack.get(0).getTargetTile().getColumn() == threeMovesBlack.get(2).getTargetTile().getColumn()))) {
+						quoridor.getCurrentGame().setGameStatus(GameStatus.Draw);
+						reportResult();
+					}
 				}
 			}
+			
 	}
 
 	public static boolean returnTrueIfGameIsWonOrDraw() {
