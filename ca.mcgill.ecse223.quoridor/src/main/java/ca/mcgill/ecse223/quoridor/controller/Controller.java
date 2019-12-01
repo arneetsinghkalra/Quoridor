@@ -239,6 +239,11 @@ public class Controller {
 		GamePosition gp = new GamePosition(0, whitePlayerPosition, blackPlayerPosition,
 				q.getCurrentGame().getWhitePlayer(), q.getCurrentGame());
 		q.getCurrentGame().setCurrentPosition(gp);
+		whitePlayerPosition = new PlayerPosition(q.getCurrentGame().getWhitePlayer(), board.getTile(76));
+		blackPlayerPosition = new PlayerPosition(q.getCurrentGame().getBlackPlayer(), board.getTile(4));
+		gp = new GamePosition(1, whitePlayerPosition, blackPlayerPosition,
+				q.getCurrentGame().getWhitePlayer(), q.getCurrentGame());
+		q.getCurrentGame().setCurrentPosition(gp);
 		for (int i = 0; i < 10; i++) {
 			Wall a, b;
 			a = new Wall(i, q.getCurrentGame().getWhitePlayer());
@@ -261,7 +266,7 @@ public class Controller {
 	 *         current player. If the remaining time becomes zero, then the other
 	 *         player wins
 	 */
-	public static void subtractSecond() {		
+	public static void subtractSecond() {
 		Quoridor q = QuoridorApplication.getQuoridor();
 
 		Player curPlayer = q.getCurrentGame().getCurrentPosition().getPlayerToMove();
@@ -279,8 +284,8 @@ public class Controller {
 			return;
 		}
 		curPlayer.setRemainingTime(new Time(remaining));
-		
-		
+
+
 
 	}
 	// Global variables to make life easier
@@ -2517,25 +2522,24 @@ public class Controller {
 			}
 		}
 	}
-
-	/**
+/**
 	 * @author Luke Barber
 	 */
 	public static void identifyIfGameWonOrDrawPosition() {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 
-			//If white player is at opposite 
+			//If white player is at opposite
 			if (quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow() == 9) {
 				quoridor.getCurrentGame().setGameStatus(GameStatus.BlackWon);
 				reportResult();
 			}
-			//If Black player is at opposite 
+			//If Black player is at opposite
 			if (quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow() == 1) {
 				quoridor.getCurrentGame().setGameStatus(GameStatus.WhiteWon);
 				reportResult();
 			}
 			//Conditions for Game won due to Time over is covered by Controller.subtractSecond()
-			
+
 			if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().equals(quoridor.getCurrentGame().getWhitePlayer())) {
 				if(quoridor.getCurrentGame().getMoves().size() >=8) {
 					int size = quoridor.getCurrentGame().getMoves().size();
@@ -2553,7 +2557,7 @@ public class Controller {
 					}
 				}
 			}
-			
+
 			else if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().equals(quoridor.getCurrentGame().getBlackPlayer())) {
 				if(quoridor.getCurrentGame().getMoves().size() >=8) {
 					int size = quoridor.getCurrentGame().getMoves().size()-1;
@@ -2570,7 +2574,7 @@ public class Controller {
 					}
 				}
 			}
-			
+
 	}
 
 	public static boolean returnTrueIfGameIsWonOrDraw() {

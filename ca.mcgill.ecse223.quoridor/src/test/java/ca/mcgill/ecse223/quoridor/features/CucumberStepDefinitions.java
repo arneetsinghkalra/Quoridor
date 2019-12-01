@@ -1465,7 +1465,7 @@ public class CucumberStepDefinitions {
 			assertTrue(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().hasGameAsWhite());
 		} else {
 			assertTrue(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().hasGameAsBlack());
-			
+
 		}
 	}
 
@@ -1505,7 +1505,7 @@ public class CucumberStepDefinitions {
 			currentPlayerPosition.setTile(targetPosition);
 		}
 	}
-	
+
 	/**
 	 * @author arneetkalra
 	 * @param direction
@@ -1513,16 +1513,16 @@ public class CucumberStepDefinitions {
 	 */
 	@Given("There is a {string} wall {string} from the playe")
 	public void there_is_a_wall_from_the_player(String direction, String side) {
-		
+
 		Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
 		Player blackPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer();
-		
+
 	   Direction dir = Controller.stringToDirection(direction);
-	   
+
 	   Player currentPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
 	   int whiteRow = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow();
 	   int whiteCol = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow();
-	   
+
 	   Wall wallOnBoard = currentGame.getCurrentPosition().getBlackWallsInStock(0);
 	   WallMove placeWall;
 	   Tile targetTile;
@@ -1579,7 +1579,7 @@ public class CucumberStepDefinitions {
 
 			break;
 		}
-		
+
 
 	}
 
@@ -1727,7 +1727,7 @@ public class CucumberStepDefinitions {
 	 */
 	@And("Player's new position shall be {int}:{int}")
 	public void player_s_new_position_shall_be(int nrow, int ncol) {
-		
+
 		// Get Player whose turn it is
 		Player currentPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
 				.getPlayerToMove();
@@ -1771,7 +1771,7 @@ public class CucumberStepDefinitions {
 
 			}
 		}
-		
+
 	}
 
 	/**
@@ -1807,7 +1807,7 @@ public class CucumberStepDefinitions {
 		currentGame.getCurrentPosition().addWhiteWallsOnBoard(aWall);
 	}
 
-	
+
 	// Move Pawn ------------------------
 
 	/**
@@ -1845,7 +1845,7 @@ public class CucumberStepDefinitions {
 		// Just verify my logic
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
-	
+
 		Player currentPlayer = currentGame.getCurrentPosition().getPlayerToMove();
 		Tile currentPlayerTile;
 		Tile opponentTile;
@@ -1915,7 +1915,7 @@ public class CucumberStepDefinitions {
 				break;
 			}
 		}
-		
+
 	}
 
 	/**
@@ -2125,7 +2125,7 @@ public class CucumberStepDefinitions {
 					PlayerPosition newBlackPosition = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), currentBlackTile);
 					//GamePosition newPosition = new GamePosition(positionId, newWhitePosition, newBlackPosition, currentPlayer, currentGame);
 					GamePosition newPosition = new GamePosition(positionId, newWhitePosition, newBlackPosition, nextPlayer, currentGame);
-	
+
 					for(Wall bwall : currentGamePosition.getBlackWallsInStock())
 					{
 						newPosition.addBlackWallsInStock(bwall);
@@ -2143,8 +2143,7 @@ public class CucumberStepDefinitions {
 				{
 					PlayerPosition newBlackPosition = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), tile);
 					PlayerPosition newWhitePosition = new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(), currentWhiteTile);
-					//GamePosition newPosition = new GamePosition(positionId, newWhitePosition, newBlackPosition, currentPlayer, currentGame);
-					GamePosition newPosition = new GamePosition(positionId, newWhitePosition, newBlackPosition, nextPlayer, currentGame);
+					GamePosition newPosition = new GamePosition(positionId, newWhitePosition, newBlackPosition, currentPlayer, currentGame);
 					for(Wall bwall : currentGamePosition.getBlackWallsInStock())
 					{
 						newPosition.addBlackWallsInStock(bwall);
@@ -2192,14 +2191,14 @@ public class CucumberStepDefinitions {
 					char wallAllignment = move.charAt(2);
 					
 					Tile tile = quoridor.getBoard().getTile((row - 1) * 9 + col -1);
-					
+
 					if(playerIdx%2 == 0)
 					{
 						PlayerPosition newWhitePosition = new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(), currentWhiteTile);
 						PlayerPosition newBlackPosition = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), currentBlackTile);
 						//GamePosition newPosition = new GamePosition(positionId, newWhitePosition, newBlackPosition, currentPlayer, currentGame);
 						GamePosition newPosition = new GamePosition(positionId, newWhitePosition, newBlackPosition, nextPlayer, currentGame);
-		
+
 						for(Wall bwall : currentGamePosition.getBlackWallsInStock())
 						{
 							newPosition.addBlackWallsInStock(bwall);
@@ -2210,7 +2209,7 @@ public class CucumberStepDefinitions {
 						}
 						currentGame.setCurrentPosition(newPosition);
 
-						
+
 					}
 					//If the current player is black player
 					else
@@ -2229,9 +2228,9 @@ public class CucumberStepDefinitions {
 						}
 						currentGame.setCurrentPosition(newPosition);
 					}
-					
-					
-					
+
+
+
 					if(wallAllignment == 'v')
 					{
 						//If white
@@ -2269,11 +2268,11 @@ public class CucumberStepDefinitions {
 						}
 
 					}
-				
-					
-					
-					
-					
+
+
+
+
+
 					wallId--;
 					positionId++;
 					playerIdx++;
@@ -2313,8 +2312,8 @@ public class CucumberStepDefinitions {
 		{
 			index = ((moveno*2) - 1)-1;
 			currentGame.getCurrentPosition().setPlayerToMove(currentGame.getWhitePlayer());
-			
-			try {	
+
+			try {
 				currentGame.getMove(index);
 			} catch (IndexOutOfBoundsException e)
 			{
@@ -2424,7 +2423,7 @@ public class CucumberStepDefinitions {
 	public void player_has_just_completed_his_move(String string) {
 		Controller.stringToCurrentPlayer(string);
 		PawnBehavior.movePawn(MoveDirection.North);
-		
+
 	}
 
 	/**
@@ -2703,14 +2702,12 @@ public class CucumberStepDefinitions {
 		// Write code here that turns the phrase above into concrete actions
 		Controller.stepBackward();
 	}
-	
-	@When("Step forward is initiated")
+@When("Step forward is initiated")
 	public void step_forward_is_initiated() {
 	    // Write code here that turns the phrase above into concrete actions
 		Controller.stepForward();
 	}
 
-	
 
     @When("I initiate to load a game in {string}")
     public void I_initiate_to_load_a_game_in(String fileName) {
