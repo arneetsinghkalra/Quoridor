@@ -2223,7 +2223,9 @@ public class QuoridorWindow extends JFrame {
 			quoridor = new Quoridor();
 		}
 	}
-/**
+	
+	
+	/**
 	 * @author William Wang
 	 */
 	public void updatePositions() {
