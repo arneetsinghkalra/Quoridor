@@ -1639,11 +1639,11 @@ public class Controller {
 		PlayerPosition player2Position = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(),
 				currentPosition.getBlackPosition().getTile());
 		if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getGameAsBlack() == null) {
-			newPosition = new GamePosition(currentPosition.getId() + 1, player1Position, player2Position,
+			newPosition = new GamePosition(game.getPositions().size(), player1Position, player2Position,
 					game.getBlackPlayer(), game);
 
 		} else {
-			newPosition = new GamePosition(currentPosition.getId() + 1, player1Position, player2Position,
+			newPosition = new GamePosition(game.getPositions().size(), player1Position, player2Position,
 					game.getWhitePlayer(), game);
 		}
 		// Update Game position for the walls
