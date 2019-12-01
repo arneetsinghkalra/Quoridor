@@ -2209,7 +2209,13 @@ public class Controller {
 		else {
 			currentGame.setGameStatus(GameStatus.Running);
 		}
-		
+		/*
+		int allPositionsSize = currentGame.getPositions().size();
+		int currentPositionIndex = currentGame.getCurrentPosition().getId();
+
+		for(int i = allPositionsSize-1; i>currentPositionIndex; i--) {
+			currentGame.removePosition(currentGame.getPosition(i));
+		}*/
 		
 		return currentGame;
 	}
