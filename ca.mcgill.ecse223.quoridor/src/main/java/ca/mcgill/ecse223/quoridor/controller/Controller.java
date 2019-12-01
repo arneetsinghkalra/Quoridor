@@ -1092,9 +1092,11 @@ public class Controller {
 			e.printStackTrace();
 		}
 		int numRound = lines.size();
-		StringTokenizer lastline = new StringTokenizer(lines.get(numRound-1));
-		if(lastline.nextToken().toCharArray().length==3) {
-			finished = true;
+		if(numRound != 0) {
+			StringTokenizer lastline = new StringTokenizer(lines.get(numRound-1));
+			if(lastline.nextToken().toCharArray().length==3) {
+				finished = true;
+			}
 		}
 		int whiteMoveColumn;
 		int whiteMoveRow;
@@ -1254,11 +1256,12 @@ public class Controller {
 					throw new UnsupportedOperationException("Invalid Game");
 				}
 			}
-	//		if(CheckIfGAMEWON) {
-	//			REPORTFINAL;
-	//			ENTERREPLAYMODE;
-	//		}
 			quoridor.getCurrentGame().setGameStatus(Game.GameStatus.ReadyToStart);
+			if(quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow()==9||
+					quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow()==1) {
+				quoridor.getCurrentGame().setGameStatus(Game.GameStatus.Replay);
+			}
+
 		}else {
 			for(int i = 0; i<numRound-1;i++) {
 				StringTokenizer moveToken = new StringTokenizer(lines.get(i));
@@ -1817,7 +1820,7 @@ public class Controller {
 			return null;
 		}
 	}
-	private static boolean loadMove(int desMoveColumn, int desMoveRow, Player player) {
+	public static boolean loadMove(int desMoveColumn, int desMoveRow, Player player) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		int currentColumn=0;
 		int currentRow=0;
