@@ -1979,7 +1979,7 @@ public class CucumberStepDefinitions {
 		
 		
 		//Initialize positions and variables
-		int[] wallIds = {10, 10};
+		int[] wallIds = {9, 9};
 		int wallId = wallIds[playerIdx%2];
 		
 		
@@ -1993,9 +1993,27 @@ public class CucumberStepDefinitions {
 		currentGame.setCurrentPosition(initialPosition);
 		currentGame.addPosition(initialPosition);
 		
-
+		//////////////////////////////////////////////
+		// Add the walls as in stock for the players
+		
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < 10; j++) {
+				new Wall(i * 10 + j, players[i]);
+			}
+		}
+		
+		for (int j = 1; j <= 10; j++) {
+			Wall wall = Wall.getWithId(j);
+			initialPosition.addWhiteWallsInStock(wall);
+		}
+		for (int j = 1; j <= 10; j++) {
+			Wall wall = Wall.getWithId(j + 10);
+			initialPosition.addBlackWallsInStock(wall);
+		}
+		
+		//////////////////////////////////////////////	
+		
 		List<Map<String, String>> valueMaps = dataTable.asMaps();
-
 		
 		int positionId = 1;
 		for (Map<String, String> map : valueMaps) {
@@ -2005,6 +2023,7 @@ public class CucumberStepDefinitions {
 			
 			PlayerPosition currentWhitePosition = currentGame.getCurrentPosition().getWhitePosition();
 			PlayerPosition currentBlackPosition = currentGame.getCurrentPosition().getBlackPosition();
+			GamePosition currentGamePosition = currentGame.getCurrentPosition();
 			Tile currentWhiteTile = currentWhitePosition.getTile();
 			Tile currentBlackTile = currentBlackPosition.getTile();
 			
@@ -2013,7 +2032,8 @@ public class CucumberStepDefinitions {
 			int row = Character.getNumericValue(move.charAt(1));
 			int col = (Character.getNumericValue(move.charAt(0)))-9;
 
-			Tile tile = new Tile(row, col, quoridor.getBoard());
+			//Tile tile = new Tile(row, col, quoridor.getBoard());
+			Tile tile = quoridor.getBoard().getTile((row - 1) * 9 + col -1);
 			
 				//If the current player is white player
 				if(playerIdx%2 == 0)
@@ -2021,10 +2041,16 @@ public class CucumberStepDefinitions {
 					PlayerPosition newWhitePosition = new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(), tile);
 					PlayerPosition newBlackPosition = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), currentBlackTile);
 					GamePosition newPosition = new GamePosition(positionId, newWhitePosition, newBlackPosition, currentPlayer, currentGame);
-					newWhitePosition.setBlackInGame(newPosition);
-					newBlackPosition.setWhiteInGame(newPosition);
+					for(Wall bwall : currentGamePosition.getBlackWallsInStock())
+					{
+						newPosition.addBlackWallsInStock(bwall);
+					}
+					for(Wall wwall : currentGamePosition.getWhiteWallsInStock())
+					{
+						newPosition.addWhiteWallsInStock(wwall);
+					}
 					currentGame.setCurrentPosition(newPosition);
-					currentGame.addPosition(newPosition);
+					
 					
 				}
 				//If the current player is black player
@@ -2033,12 +2059,17 @@ public class CucumberStepDefinitions {
 					PlayerPosition newBlackPosition = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), tile);
 					PlayerPosition newWhitePosition = new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(), currentWhiteTile);
 					GamePosition newPosition = new GamePosition(positionId, newWhitePosition, newBlackPosition, currentPlayer, currentGame);
-					newWhitePosition.setBlackInGame(newPosition);
-					newBlackPosition.setWhiteInGame(newPosition);
+					for(Wall bwall : currentGamePosition.getBlackWallsInStock())
+					{
+						newPosition.addBlackWallsInStock(bwall);
+					}
+					for(Wall wwall : currentGamePosition.getWhiteWallsInStock())
+					{
+						newPosition.addWhiteWallsInStock(wwall);
+					}
 					currentGame.setCurrentPosition(newPosition);
-					currentGame.addPosition(newPosition);
 				}
-				
+			
 			StepMove newMove = new StepMove(mv, rnd, currentPlayer, tile, currentGame);
 			currentGame.addMove(newMove);
 			playerIdx++;
@@ -2075,24 +2106,50 @@ public class CucumberStepDefinitions {
 					int col = (Character.getNumericValue(move.charAt(0)))-9;
 					char wallAllignment = move.charAt(2);
 					
-					Tile tile = new Tile(row, col, quoridor.getBoard());
-					Wall newWall = new Wall(wallId, players[playerIdx%2]);
-					wallId--;
+					Tile tile = quoridor.getBoard().getTile((row - 1) * 9 + col -1);
+					//Wall newWall = new Wall(wallId, players[playerIdx%2]);
+					
 
 					if(wallAllignment == 'v')
 					{
+						//If white
+						if(playerIdx%2 == 0)
+						{
+							WallMove newWallMove = new WallMove(mv, rnd, currentPlayer, tile, currentGame, Direction.Vertical, currentGame.getCurrentPosition().getWhiteWallsInStock(wallId));
+							currentGame.getCurrentPosition().removeWhiteWallsInStock(currentGame.getCurrentPosition().getWhiteWallsInStock(wallId));
+							currentGame.addMove(newWallMove);
+						}
+						//If black
+						else
+						{
+							WallMove newWallMove = new WallMove(mv, rnd, currentPlayer, tile, currentGame, Direction.Vertical, currentGame.getCurrentPosition().getBlackWallsInStock(wallId));
+							currentGame.getCurrentPosition().removeBlackWallsInStock(currentGame.getCurrentPosition().getBlackWallsInStock(wallId));
+							currentGame.addMove(newWallMove);
+						}
 						
-						WallMove newWallMove = new WallMove(mv, rnd, players[playerIdx%2], tile, currentGame, Direction.Vertical, newWall);
-						currentGame.addMove(newWallMove);
 						
 					}
 					else
 					{
-						WallMove newWallMove = new WallMove(mv, rnd, players[playerIdx%2], tile, currentGame, Direction.Horizontal, newWall);
-						currentGame.addMove(newWallMove);
+						//If white
+						if(playerIdx%2 == 0)
+						{
+							WallMove newWallMove = new WallMove(mv, rnd, currentPlayer, tile, currentGame, Direction.Horizontal, currentGame.getCurrentPosition().getWhiteWallsInStock(wallId));
+							currentGame.getCurrentPosition().removeWhiteWallsInStock(currentGame.getCurrentPosition().getWhiteWallsInStock(wallId));
+							currentGame.addMove(newWallMove);
+						}
+						//If black
+						else
+						{
+							WallMove newWallMove = new WallMove(mv, rnd, currentPlayer, tile, currentGame, Direction.Horizontal, currentGame.getCurrentPosition().getBlackWallsInStock(wallId));
+							currentGame.getCurrentPosition().removeBlackWallsInStock(currentGame.getCurrentPosition().getBlackWallsInStock(wallId));
+							currentGame.addMove(newWallMove);
+						}
 
 					}
+					wallId--;
 					positionId++;
+					playerIdx++;
 				}
 			}
 		}
@@ -2359,11 +2416,10 @@ public class CucumberStepDefinitions {
 
 		Tile whiteTile = currentGame.getCurrentPosition().getWhitePosition().getTile();
 		
-		//assertEquals(wrow, whiteTile.getRow());
+		assertEquals(wrow, whiteTile.getRow());
 		assertEquals(wcol, whiteTile.getColumn());
 		
 	}
-
 
 	/**
 	 *
@@ -2390,7 +2446,8 @@ public class CucumberStepDefinitions {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
 		currentGame.getWhitePlayer().getWalls();
-		assertEquals((int) wwallno, 10 - currentGame.getWhitePlayer().getWalls().size());
+		//assertEquals((int) wwallno, 10 - currentGame.getWhitePlayer().getWalls().size());
+		assertEquals((int) wwallno,currentGame.getCurrentPosition().getWhiteWallsInStock().size());
 	}
 	/**
 	 *
@@ -2401,7 +2458,8 @@ public class CucumberStepDefinitions {
 	public void black_has_on_stock(Integer bwallno) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game currentGame = quoridor.getCurrentGame();
-		assertEquals((int) bwallno, 10 - currentGame.getBlackPlayer().getWalls().size());
+		//assertEquals((int) bwallno, 10 - currentGame.getBlackPlayer().getWalls().size());
+		assertEquals((int) bwallno,currentGame.getCurrentPosition().getBlackWallsInStock().size());
 	}
 
 	/*****************************
