@@ -2192,6 +2192,7 @@ public class CucumberStepDefinitions {
 	public void player_has_just_completed_his_move(String string) {
 		Controller.stringToCurrentPlayer(string);
 		PawnBehavior.movePawn(MoveDirection.North);
+		
 	}
 
 	/**
@@ -2202,7 +2203,7 @@ public class CucumberStepDefinitions {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Controller.stringToCurrentPlayer(string);
 		Tile targetTile = new Tile(int1, int2, quoridor.getBoard());
-		quoridor.getCurrentGame().addMove(new StepMove(int1, int2, quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove(), targetTile, quoridor.getCurrentGame()));
+		quoridor.getCurrentGame().getMove(quoridor.getCurrentGame().getMoves().size()-1).setTargetTile(targetTile);
 	}
 
 	/**

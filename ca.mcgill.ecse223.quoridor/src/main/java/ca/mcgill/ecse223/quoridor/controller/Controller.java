@@ -1922,7 +1922,7 @@ public class Controller {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Time zero = new Time(0);
 		if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().equals(quoridor.getCurrentGame().getWhitePlayer())) {
-			if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getRemainingTime().equals(zero)) {
+			if (quoridor.getCurrentGame().getWhitePlayer().getRemainingTime().equals(zero)) {
 				quoridor.getCurrentGame().setGameStatus(GameStatus.BlackWon);
 			}
 			else if (quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow() == 9) {
@@ -1944,7 +1944,7 @@ public class Controller {
 			}
 		}
 		else if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().equals(quoridor.getCurrentGame().getBlackPlayer())) {
-			if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getRemainingTime().equals(zero)) {
+			if (quoridor.getCurrentGame().getBlackPlayer().getRemainingTime().equals(zero)) {
 				quoridor.getCurrentGame().setGameStatus(GameStatus.WhiteWon);
 			}	
 			else if(quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow() == 1) {
@@ -1963,7 +1963,34 @@ public class Controller {
 					quoridor.getCurrentGame().setGameStatus(GameStatus.Draw);
 				}
 			}
+<<<<<<< Updated upstream
 			
+=======
+		}
+	}
+	
+	public static void identifyIfGameWonPosition() {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().equals(quoridor.getCurrentGame().getWhitePlayer())) {
+			 if (quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow() == 1) {
+					quoridor.getCurrentGame().setGameStatus(GameStatus.WhiteWon);
+					reportResult();
+			}
+		}
+		// Black Player
+		else {
+			if (quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow() == 9) {
+				quoridor.getCurrentGame().setGameStatus(GameStatus.BlackWon);
+				reportResult();
+			}
+		}
+	}
+	
+	public static boolean returnTrueIfGameIsWonOrDraw() {
+		GameStatus status = QuoridorApplication.getQuoridor().getCurrentGame().getGameStatus();
+		if (status == GameStatus.BlackWon ||status == GameStatus.WhiteWon ||status == GameStatus.Draw) {
+			return true;
+>>>>>>> Stashed changes
 		}
 	}
 	
