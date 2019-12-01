@@ -1986,7 +1986,7 @@ public class CucumberStepDefinitions {
 		Tile player2StartPos = quoridor.getBoard().getTile(4);
 		PlayerPosition player1Position = new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(), player1StartPos);
 		PlayerPosition player2Position = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), player2StartPos);
-		GamePosition initialPosition = new GamePosition(0, player1Position, player2Position, players[0], currentGame);
+		GamePosition initialPosition = new GamePosition(0, player1Position, player2Position, players[1], currentGame);
 		currentGame.setCurrentPosition(initialPosition);
 
 		List<Map<String, String>> valueMaps = dataTable.asMaps();
@@ -2005,7 +2005,7 @@ public class CucumberStepDefinitions {
 			Wall wall = Wall.getWithId(j + 10);
 			initialPosition.addBlackWallsInStock(wall);
 		}
-		
+		Controller.switchCurrentPlayer();
 		int positionId = 1;
 		for (Map<String, String> map : valueMaps) {
 			Integer mv = Integer.decode(map.get("mv"));
@@ -2157,7 +2157,6 @@ public class CucumberStepDefinitions {
 			currentGame.getCurrentPosition().setPlayerToMove(currentGame.getWhitePlayer());
 			try {
 				currentGame.getMove(index);
-				currentGame.setCurrentPosition(currentGame.getPosition(Math.max((moveno-1)*2 - 1,0)));
 			} catch (IndexOutOfBoundsException e)
 			{
 				//Game is over
@@ -2167,14 +2166,20 @@ public class CucumberStepDefinitions {
 			currentGame.getCurrentPosition().setPlayerToMove(currentGame.getBlackPlayer());
 			try {
 				currentGame.getMove(index);
-				currentGame.setCurrentPosition(currentGame.getPosition(Math.max((moveno-1)*2,1)));
 
 			}
 			catch (IndexOutOfBoundsException e)
 			{
-				
 				//Game is over
 			}
+		}
+		try {
+			currentGame.setCurrentPosition(currentGame.getPosition(Math.max((moveno-1)*2+rndno-1,0)));
+
+		}
+		catch (IndexOutOfBoundsException e)
+		{
+			//Game is over
 		}
 	}
 
@@ -2331,16 +2336,10 @@ public class CucumberStepDefinitions {
 		//nmov for final move is always 1 more greater than number of moves
 		//the reason why we divide number of moves 2 is the way feature is given to us:
 		//number of moves increment every 2 rounds
-		if(nmov==1) {
-			assertEquals(currentGame.getCurrentPosition().getId(),0);
-		}
-		else {
-			assertEquals(nmov, (currentGame.getCurrentPosition().getId()+1)/2 +1);
-	
-			//check number of moves, if its even then the next move shall be white's turn,
-			//otherwise it is black's turn.
-			assertEquals(nrnd, (currentGame.getCurrentPosition().getId()+1)%2 + 1);
-		}
+		if(nmov==1&&nrnd==1) assertEquals(0, currentGame.getCurrentPosition().getId());
+
+		else assertEquals((nmov-1)*2+nrnd-1, currentGame.getCurrentPosition().getId());
+
 	}
 
 	/**
@@ -2355,7 +2354,7 @@ public class CucumberStepDefinitions {
 
 		Tile whiteTile = currentGame.getCurrentPosition().getWhitePosition().getTile();
 		
-		//assertEquals(wrow, whiteTile.getRow());
+		assertEquals(wrow, whiteTile.getRow());
 		assertEquals(wcol, whiteTile.getColumn());
 		
 	}
@@ -2523,7 +2522,7 @@ public class CucumberStepDefinitions {
 	@When("Step forward is initiated")
 	public void step_forward_is_initiated() {
 	    // Write code here that turns the phrase above into concrete actions
-		Controller.stepBackward();	
+		Controller.stepForward();	
 	}
 
 	// ***********************************************
