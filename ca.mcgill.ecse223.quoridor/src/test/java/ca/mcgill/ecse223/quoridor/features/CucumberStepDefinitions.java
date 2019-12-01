@@ -2115,9 +2115,8 @@ public class CucumberStepDefinitions {
 						quoridor.getCurrentGame().getCurrentPosition().addBlackWallsOnBoard(newWall);
 
 					}
-					
 					Controller.switchCurrentPlayer();
-
+					playerIdx++;
 					positionId++;
 				}
 			}
@@ -2158,7 +2157,7 @@ public class CucumberStepDefinitions {
 			currentGame.getCurrentPosition().setPlayerToMove(currentGame.getWhitePlayer());
 			try {
 				currentGame.getMove(index);
-				currentGame.setCurrentPosition(currentGame.getPosition((moveno-1)*2));
+				currentGame.setCurrentPosition(currentGame.getPosition(Math.max((moveno-1)*2 - 1,0)));
 			} catch (IndexOutOfBoundsException e)
 			{
 				//Game is over
@@ -2168,7 +2167,7 @@ public class CucumberStepDefinitions {
 			currentGame.getCurrentPosition().setPlayerToMove(currentGame.getBlackPlayer());
 			try {
 				currentGame.getMove(index);
-				currentGame.setCurrentPosition(currentGame.getPosition((moveno-1)*2+1));
+				currentGame.setCurrentPosition(currentGame.getPosition(Math.max((moveno-1)*2,1)));
 
 			}
 			catch (IndexOutOfBoundsException e)
@@ -2332,11 +2331,16 @@ public class CucumberStepDefinitions {
 		//nmov for final move is always 1 more greater than number of moves
 		//the reason why we divide number of moves 2 is the way feature is given to us:
 		//number of moves increment every 2 rounds
-		assertEquals(nmov, currentGame.getCurrentPosition().getId()/2 + 1);
-
-		//check number of moves, if its even then the next move shall be white's turn,
-		//otherwise it is black's turn.
-		assertEquals(nrnd, currentGame.getCurrentPosition().getId()%2 + 1);
+		if(nmov==1) {
+			assertEquals(currentGame.getCurrentPosition().getId(),0);
+		}
+		else {
+			assertEquals(nmov, (currentGame.getCurrentPosition().getId()+1)/2 +1);
+	
+			//check number of moves, if its even then the next move shall be white's turn,
+			//otherwise it is black's turn.
+			assertEquals(nrnd, (currentGame.getCurrentPosition().getId()+1)%2 + 1);
+		}
 	}
 
 	/**
@@ -2504,10 +2508,22 @@ public class CucumberStepDefinitions {
 	 * are used for other step definitions too Coordinate with that person to get it
 	 * done.
 	 *********************/
+	/**
+	 * @author William Wang
+	 */
 	@When("Step backward is initiated")
 	public void step_backward_is_initiated() {
 		// Write code here that turns the phrase above into concrete actions
 		Controller.stepBackward();
+	}
+
+	/**
+	 * @author William Wang
+	 */
+	@When("Step forward is initiated")
+	public void step_forward_is_initiated() {
+	    // Write code here that turns the phrase above into concrete actions
+		Controller.stepBackward();	
 	}
 
 	// ***********************************************
