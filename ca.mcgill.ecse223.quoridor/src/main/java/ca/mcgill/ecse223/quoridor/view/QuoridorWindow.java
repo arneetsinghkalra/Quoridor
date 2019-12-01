@@ -892,6 +892,10 @@ public class QuoridorWindow extends JFrame {
 									JOptionPane.WARNING_MESSAGE);
 							return;
 						}
+						else
+						{
+							existingUsernames1.addItem(player1Field.getText());
+						}
 					} catch (HeadlessException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -908,6 +912,10 @@ public class QuoridorWindow extends JFrame {
 							JOptionPane.showMessageDialog(null, "This user name already exists!", "Invalid Username",
 									JOptionPane.WARNING_MESSAGE);
 							return;
+						}
+						else
+						{
+							existingUsernames2.addItem(player2Field.getText());
 						}
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
