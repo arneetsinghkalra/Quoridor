@@ -547,6 +547,7 @@ public class QuoridorWindow extends JFrame {
 		btnContinuePlaying.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent a) {
 				setBoardConitionsWhenExitingReplayMode();
+				Controller.initiateContinueGame(Controller.getCurrentGame());
 			}
 		});
 
