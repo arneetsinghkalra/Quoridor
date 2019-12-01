@@ -1,3 +1,4 @@
+@Arneet
 Feature: Jump to final position
 As a player using replay mode, I wish to scroll fast to the very beginning of the game.
 

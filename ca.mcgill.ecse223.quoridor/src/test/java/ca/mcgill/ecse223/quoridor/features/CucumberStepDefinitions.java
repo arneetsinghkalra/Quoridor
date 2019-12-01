@@ -1987,6 +1987,8 @@ public class CucumberStepDefinitions {
 		int whiteWalls = 9;
 		int blackWalls = 9;
 		
+		Wall wallPlaced = null;
+		
 		
 		Tile player1StartPos = quoridor.getBoard().getTile(76);
 		Tile player2StartPos = quoridor.getBoard().getTile(4);
@@ -2089,19 +2091,36 @@ public class CucumberStepDefinitions {
 
 					if(wallAllignment == 'v')
 					{
+						if (currentPlayer == QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer()) {
+							 wallPlaced = currentPlayer.getGameAsWhite().getCurrentPosition().getWhiteWallsInStock(currentGame.getCurrentPosition().numberOfWhiteWallsInStock());
+						}
+						else  {
+							 wallPlaced = currentPlayer.getGameAsWhite().getCurrentPosition().getWhiteWallsInStock(currentGame.getCurrentPosition().numberOfBlackWallsInStock());
+						}
 						
-						WallMove newWallMove = new WallMove(mv, rnd, currentPlayer, tile, currentGame, Direction.Vertical, currentPlayer.getWall(whiteWalls));
-						Controller.dropWall(newWallMove);
+						WallMove newWallMove = new WallMove(mv, rnd, currentPlayer, tile, currentGame, Direction.Vertical, wallPlaced);
+						//Controller.dropWall(newWallMove);
+
+							//newPosition.addWhiteWallsOnBoard(newWallMove.getWallPlaced());// Also increments number of walls on board
+							currentGame.addMove(newWallMove);
+							currentGame.setWallMoveCandidate(null);// Refreshes wall move candidate
+
 						whiteWalls--;
-						
-						
 					}
 					else
 					{
-						WallMove newWallMove = new WallMove(mv, rnd, currentPlayer, tile, currentGame, Direction.Horizontal, currentPlayer.getWall(blackWalls));
-						Controller.dropWall(newWallMove);
+						if (currentPlayer == QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer()) {
+							 wallPlaced = currentPlayer.getGameAsWhite().getCurrentPosition().getWhiteWallsInStock(currentGame.getCurrentPosition().numberOfWhiteWallsInStock());
+						}
+						else  {
+							 wallPlaced = currentPlayer.getGameAsWhite().getCurrentPosition().getWhiteWallsInStock(currentGame.getCurrentPosition().numberOfBlackWallsInStock());
+						}
+						WallMove newWallMove = new WallMove(mv, rnd, currentPlayer, tile, currentGame, Direction.Horizontal, wallPlaced);
+						//Controller.dropWall(newWallMove);
+						//newPosition.addWhiteWallsOnBoard(newWallMove.getWallPlaced());// Also increments number of walls on board
+						currentGame.addMove(newWallMove);
+						currentGame.setWallMoveCandidate(null);// Refreshes wall move candidate
 						blackWalls--;
-
 					}
 					playerIdx++;
 					positionId++;

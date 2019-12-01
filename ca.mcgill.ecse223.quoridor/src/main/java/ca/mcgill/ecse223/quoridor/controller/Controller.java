@@ -542,8 +542,6 @@ public class Controller {
 		if (player.equals(currentGame.getWhitePlayer())) {
 			currentGamePosition.addWhiteWallsOnBoard(wallMoveCandidate.getWallPlaced());// Also increments number of //
 																						// walls on board
-		int moveNumber = currentGame.numberOfMoves();
-			System.out.println(moveNumber);
 
 			currentGame.addMove(wallMoveCandidate);
 			switchCurrentPlayer();
@@ -552,8 +550,7 @@ public class Controller {
 
 		} else if (player.equals(currentGame.getBlackPlayer())) {
 			currentGamePosition.addBlackWallsOnBoard(wallMoveCandidate.getWallPlaced());
-			int moveNumber = currentGame.numberOfMoves();
-			System.out.println(moveNumber);
+		
 			currentGame.addMove(wallMoveCandidate);
 			switchCurrentPlayer();
 			currentGame.setWallMoveCandidate(null);// Refreshes wall move candidate
