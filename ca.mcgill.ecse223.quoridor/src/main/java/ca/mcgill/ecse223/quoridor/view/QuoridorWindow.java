@@ -144,13 +144,6 @@ public class QuoridorWindow extends JFrame {
 		loadGameButton.setFont(new Font("Cooper Black", Font.PLAIN, 20));
 		loadGameButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent a) {
-				Controller.startNewGame();
-				Controller.initBlackPlayer("Black");
-				Controller.initWhitePlayer("White");
-				Controller.setTotalThinkingTime("00:03:00");
-				Controller.startClock();
-				Controller.createBoard();
-				Controller.initializeBoard();
 				boolean wrong = false;
 				JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 				int returnValue = jfc.showOpenDialog(null);
@@ -182,6 +175,10 @@ public class QuoridorWindow extends JFrame {
 						wrong = true;
 						e.printStackTrace();
 					}
+				}else if(returnValue == JFileChooser.CANCEL_OPTION) {
+					Quoridor quoridor = QuoridorApplication.getQuoridor();
+					quoridor.delete();
+					quoridor = new Quoridor();
 				}
 				if (!wrong) {
 					Quoridor quoridor = QuoridorApplication.getQuoridor();
@@ -2082,14 +2079,6 @@ public class QuoridorWindow extends JFrame {
 	 */
 	public void loadGame() {
 		homeScreen();
-
-		Controller.startNewGame();
-		Controller.initBlackPlayer("Black");
-		Controller.initWhitePlayer("White");
-		Controller.setTotalThinkingTime("00:03:00");
-		Controller.startClock();
-		Controller.createBoard();
-		Controller.initializeBoard();
 		boolean wrong = false;
 		JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 		int returnValue = jfc.showOpenDialog(null);
@@ -2097,6 +2086,13 @@ public class QuoridorWindow extends JFrame {
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 			File selectedFile = jfc.getSelectedFile();
 			try {
+				Controller.startNewGame();
+				Controller.initBlackPlayer("Black");
+				Controller.initWhitePlayer("White");
+				Controller.setTotalThinkingTime("00:03:00");
+				Controller.startClock();
+				Controller.createBoard();
+				Controller.initializeBoard();
 				Controller.loadGame(selectedFile.getName());
 			} catch (UnsupportedOperationException e) {
 				JFrame f = new JFrame();
@@ -2121,6 +2117,11 @@ public class QuoridorWindow extends JFrame {
 				wrong = true;
 				e.printStackTrace();
 			}
+		}else if(returnValue == JFileChooser.CANCEL_OPTION) {
+			wrong = true;
+			Quoridor quoridor = QuoridorApplication.getQuoridor();
+			quoridor.delete();
+			quoridor = new Quoridor();
 		}
 		if (!wrong) {
 			Quoridor quoridor = QuoridorApplication.getQuoridor();
