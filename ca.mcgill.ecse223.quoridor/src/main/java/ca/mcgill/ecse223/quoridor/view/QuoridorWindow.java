@@ -49,7 +49,7 @@ public class QuoridorWindow extends JFrame {
 	private JLabel timeRemLabel;
 	private JLabel currentPlayerName;
 	private JLabel lblBlackPlayerName;
-	private JLabel whitePlayerName;
+	private JLabel lblwhitePlayerName;
 	private JLabel lblTimeBlack;
 	private JLabel lblTimeWhite;
 	private JLabel lblWallsLeftBlack;
@@ -355,10 +355,10 @@ public class QuoridorWindow extends JFrame {
 		lblExtraWhite.setForeground(Color.white);
 		whitePlayerInfoVerticalBox.add(lblExtraWhite);
 
-		whitePlayerName = new JLabel("White Player");
-		whitePlayerName.setAlignmentX(Component.CENTER_ALIGNMENT);
-		whitePlayerName.setFont(new Font(font, Font.PLAIN, fontSize));
-		whitePlayerInfoVerticalBox.add(whitePlayerName);
+		lblwhitePlayerName = new JLabel("White Player");
+		lblwhitePlayerName.setAlignmentX(Component.CENTER_ALIGNMENT);
+		lblwhitePlayerName.setFont(new Font(font, Font.PLAIN, fontSize));
+		whitePlayerInfoVerticalBox.add(lblwhitePlayerName);
 
 		lblWallsLeftWhite = new JLabel("Walls Left = 10");
 		lblWallsLeftWhite.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -1849,7 +1849,7 @@ public class QuoridorWindow extends JFrame {
 	/** @author Sam Perreault */
 	public void setPlayerNames(String white, String black) {	
 		lblBlackPlayerName.setText(blackPawn +" "+ black +" "+blackPawn);
-		whitePlayerName.setText(whitePawn +" "+ white +" "+whitePawn);
+		lblwhitePlayerName.setText(whitePawn +" "+ white +" "+whitePawn);
 	}
 
 	/** @author Sam Perreault */
@@ -2040,7 +2040,7 @@ public class QuoridorWindow extends JFrame {
 		int finalResultBotton = JOptionPane.YES_NO_CANCEL_OPTION;
 
 		Object[] finalResultOptionButtons = {"Load Game", "Replay Mode", "Home Screen"};
-		int finalResult = JOptionPane.showOptionDialog(null, "Congraulations White Player, you win!", "White Wins",
+		int finalResult = JOptionPane.showOptionDialog(null, "Congraulations "+lblwhitePlayerName.getText()+" , you win!", "White Wins",
 				finalResultBotton,
 				JOptionPane.PLAIN_MESSAGE,
 				whitePawnIcon,
@@ -2070,7 +2070,7 @@ public class QuoridorWindow extends JFrame {
 		int finalResultBotton = JOptionPane.YES_NO_CANCEL_OPTION;
 		Object[] finalResultOptionButtons = {"Load Game", "Replay Mode", "Home Screen"};
 
-		int finalResult = JOptionPane.showOptionDialog(null, "Congraulations Black Player, you win!", "Black Wins",
+		int finalResult = JOptionPane.showOptionDialog(null, "Congraulations "+lblBlackPlayerName.getText()+" , you win!", "Black Wins",
 				finalResultBotton, JOptionPane.PLAIN_MESSAGE, blackPawnIcon, finalResultOptionButtons,
 				finalResultOptionButtons[2]);
 
