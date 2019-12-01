@@ -2446,7 +2446,7 @@ public class Controller {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Time zero = new Time(0);
 		if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().equals(quoridor.getCurrentGame().getWhitePlayer())) {
-			if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getRemainingTime().equals(zero)) {
+			if (quoridor.getCurrentGame().getWhitePlayer().getRemainingTime().equals(zero)) {
 				quoridor.getCurrentGame().setGameStatus(GameStatus.BlackWon);
 			}
 			else if (quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow() == 9) {
@@ -2468,7 +2468,7 @@ public class Controller {
 			}
 		}
 		else if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().equals(quoridor.getCurrentGame().getBlackPlayer())) {
-			if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getRemainingTime().equals(zero)) {
+			if (quoridor.getCurrentGame().getBlackPlayer().getRemainingTime().equals(zero)) {
 				quoridor.getCurrentGame().setGameStatus(GameStatus.WhiteWon);
 			}
 			else if(quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow() == 1) {
@@ -2486,9 +2486,6 @@ public class Controller {
 						&& (threeMovesBlack.get(0).getTargetTile().getColumn() == threeMovesBlack.get(2).getTargetTile().getColumn()))) {
 					quoridor.getCurrentGame().setGameStatus(GameStatus.Draw);
 				}
-			}
-			else {
-
 			}
 		}
 	}
