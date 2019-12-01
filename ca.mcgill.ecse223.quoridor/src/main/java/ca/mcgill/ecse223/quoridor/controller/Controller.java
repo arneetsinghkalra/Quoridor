@@ -1719,8 +1719,8 @@ public class Controller {
 		Game game = quoridor.getCurrentGame();
 		GamePosition currentPosition = game.getCurrentPosition();
 		try {
-			GamePosition prePosition = game.getPosition(currentPosition.getId()-1);
-			game.setCurrentPosition(prePosition);
+			GamePosition nextPosition = game.getPosition(currentPosition.getId()+1);
+			game.setCurrentPosition(nextPosition);
 		}
 		catch(IndexOutOfBoundsException e) {
 
