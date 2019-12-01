@@ -176,6 +176,7 @@ public class QuoridorWindow extends JFrame {
 						e.printStackTrace();
 					}
 				}else if(returnValue == JFileChooser.CANCEL_OPTION) {
+					wrong =true;
 					Quoridor quoridor = QuoridorApplication.getQuoridor();
 					quoridor.delete();
 					quoridor = new Quoridor();
