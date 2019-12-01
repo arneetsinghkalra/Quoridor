@@ -666,6 +666,7 @@ public class PawnBehavior {
 	}
 
 	public static boolean movePawn(MoveDirection dir) {
+		
 
 		if (isLegalStep(dir)) {
 			int moveNumber = -1;

@@ -1,3 +1,4 @@
+@Arneet
 Feature: Move Player
   As a player
   I want to move to a neighboring tile. 

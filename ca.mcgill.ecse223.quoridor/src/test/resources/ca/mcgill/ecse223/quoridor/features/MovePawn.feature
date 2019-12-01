@@ -1,3 +1,4 @@
+@Arneet
 Feature: Move Pawn
   As a player
   I want to move to a neighboring tile.

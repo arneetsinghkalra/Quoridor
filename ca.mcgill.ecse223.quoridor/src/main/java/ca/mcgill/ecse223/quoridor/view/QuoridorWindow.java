@@ -49,7 +49,7 @@ public class QuoridorWindow extends JFrame {
 	private JLabel timeRemLabel;
 	private JLabel currentPlayerName;
 	private JLabel lblBlackPlayerName;
-	private JLabel whitePlayerName;
+	private JLabel lblwhitePlayerName;
 	private JLabel lblTimeBlack;
 	private JLabel lblTimeWhite;
 	private JLabel lblWallsLeftBlack;
@@ -355,10 +355,10 @@ public class QuoridorWindow extends JFrame {
 		lblExtraWhite.setForeground(Color.white);
 		whitePlayerInfoVerticalBox.add(lblExtraWhite);
 
-		whitePlayerName = new JLabel("White Player");
-		whitePlayerName.setAlignmentX(Component.CENTER_ALIGNMENT);
-		whitePlayerName.setFont(new Font(font, Font.PLAIN, fontSize));
-		whitePlayerInfoVerticalBox.add(whitePlayerName);
+		lblwhitePlayerName = new JLabel("White Player");
+		lblwhitePlayerName.setAlignmentX(Component.CENTER_ALIGNMENT);
+		lblwhitePlayerName.setFont(new Font(font, Font.PLAIN, fontSize));
+		whitePlayerInfoVerticalBox.add(lblwhitePlayerName);
 
 		lblWallsLeftWhite = new JLabel("Walls Left = 10");
 		lblWallsLeftWhite.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -519,7 +519,9 @@ public class QuoridorWindow extends JFrame {
 					notifyNotInReplayMode();
 				}
 				else {
-					//Go backwards method
+					//Go forwards method
+					Controller.stepBackward();
+					updatePositions();
 				}
 			}
 		});
@@ -561,6 +563,9 @@ public class QuoridorWindow extends JFrame {
 				}
 				else {
 					//Go forwards method
+					Controller.stepForward();
+					updatePositions();
+
 				}
 			}
 		});
@@ -1141,7 +1146,6 @@ public class QuoridorWindow extends JFrame {
 				tiles[i][j].addActionListener(new ActionListener() {
 					/** @author Sam Perreault */
 					public void actionPerformed(ActionEvent e) {
-						Controller.identifyIfGameWonPosition();
 						//If you pressed grab wall but then choose to place a player, youll get an error
 						if(QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate() != null) {
 							Controller.returnWallToPlayer();
@@ -1247,77 +1251,53 @@ public class QuoridorWindow extends JFrame {
 							case -1:
 								if(vertDiff<0) {
 									dir = PawnBehavior.MoveDirection.NorthWest;
-									lblWallsLeftWhite.setText("Walls Left = "
-											+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock());
-									lblWallsLeftBlack.setText("Walls Left = "
-											+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock());
+
 									break;
 								}
 								else if(vertDiff>0) {
 									dir = PawnBehavior.MoveDirection.SouthWest;
-									lblWallsLeftWhite.setText("Walls Left = "
-											+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock());
-									lblWallsLeftBlack.setText("Walls Left = "
-											+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock());
+
 									break;
 								}
 								else
 									dir = PawnBehavior.MoveDirection.West;
-								lblWallsLeftWhite.setText("Walls Left = "
-										+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock());
-								lblWallsLeftBlack.setText("Walls Left = "
-										+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock());
+
 								break;
 							case -2:
 								dir = PawnBehavior.MoveDirection.West;
-								lblWallsLeftWhite.setText("Walls Left = "
-										+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock());
-								lblWallsLeftBlack.setText("Walls Left = "
-										+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock());
+
 								break;
 							case 1:
 								if(vertDiff<0) {
 									dir = PawnBehavior.MoveDirection.NorthEast;
-									lblWallsLeftWhite.setText("Walls Left = "
-											+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock());
-									lblWallsLeftBlack.setText("Walls Left = "
-											+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock());
+
 									break;
 								}
 								else if(vertDiff>0) {
 									dir = PawnBehavior.MoveDirection.SouthEast;
-									lblWallsLeftWhite.setText("Walls Left = "
-											+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock());
-									lblWallsLeftBlack.setText("Walls Left = "
-											+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock());
+
 									break;
 								}
 								else
 									dir = PawnBehavior.MoveDirection.East;
-								lblWallsLeftWhite.setText("Walls Left = "
-										+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock());
-								lblWallsLeftBlack.setText("Walls Left = "
-										+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock());
+
 								break;
 							case 2:
 								dir = PawnBehavior.MoveDirection.East;
-								lblWallsLeftWhite.setText("Walls Left = "
-										+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock());
-								lblWallsLeftBlack.setText("Walls Left = "
-										+ QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock());
+
 								break;
 							default:
 								break;
 						}
 						// If dir isn't set to this point something went horribly wrong
-						if(!PawnBehavior.moveOrJump(dir))
+						if(!PawnBehavior.moveOrJump(dir)) {
 							JOptionPane.showMessageDialog(null, "Illegal move. Please select a different move", "Illegal Move", JOptionPane.WARNING_MESSAGE);
-
+						}
 						//Update Total Time Left Labels
 						lblTimeWhite.setText(Controller.displayRemainingTimeWhite());
 						lblTimeBlack.setText(Controller.displayRemainingTimeBlack());
 
-						Controller.identifyIfGameWonPosition();
+						Controller.identifyIfGameWonOrDrawPosition();
 
 					}
 
@@ -1875,7 +1855,7 @@ public class QuoridorWindow extends JFrame {
 	/** @author Sam Perreault */
 	public void setPlayerNames(String white, String black) {	
 		lblBlackPlayerName.setText(blackPawn +" "+ black +" "+blackPawn);
-		whitePlayerName.setText(whitePawn +" "+ white +" "+whitePawn);
+		lblwhitePlayerName.setText(whitePawn +" "+ white +" "+whitePawn);
 	}
 
 	/** @author Sam Perreault */
@@ -1897,7 +1877,15 @@ public class QuoridorWindow extends JFrame {
 			sec = "" + seconds;
 		}
 		String tr = "Time remaining: " + min + ":" + sec;
+		//Changes Time remaining to red if less than 10 seconds left
+		if (Integer.parseInt(min) == 0 && Integer.parseInt(sec) <= 10) {
+			timeRemLabel.setForeground(Color.RED);
+		}
+		else {
+			timeRemLabel.setForeground(Color.BLACK);
+		}
 		timeRemLabel.setText(tr);
+
 	}
 
 	/** @author Sam Perreault */
@@ -1932,10 +1920,12 @@ public class QuoridorWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(Controller.gameIsStillRunning()) {
+
 					// Deduct a second from view
 					subtractSecondFromView();
 					// Deduct a second from model
 					Controller.subtractSecond();
+
 				}
 			}
 		};
@@ -2056,7 +2046,7 @@ public class QuoridorWindow extends JFrame {
 		int finalResultBotton = JOptionPane.YES_NO_CANCEL_OPTION;
 
 		Object[] finalResultOptionButtons = {"Load Game", "Replay Mode", "Home Screen"};
-		int finalResult = JOptionPane.showOptionDialog(null, "Congraulations White Player, you win!", "White Wins",
+		int finalResult = JOptionPane.showOptionDialog(null, "Congraulations "+lblwhitePlayerName.getText()+" , you win!", "White Wins",
 				finalResultBotton,
 				JOptionPane.PLAIN_MESSAGE,
 				whitePawnIcon,
@@ -2070,6 +2060,8 @@ public class QuoridorWindow extends JFrame {
 		//Replay mode Button
 		else if(finalResult == JOptionPane.NO_OPTION) {
 			//Do replay mode here
+			setBoardConitionsWhenEnteringReplayMode();
+			Controller.initiateReplayMode(Controller.getCurrentGame());
 		}
 		//Home Screen button
 		else {
@@ -2086,7 +2078,7 @@ public class QuoridorWindow extends JFrame {
 		int finalResultBotton = JOptionPane.YES_NO_CANCEL_OPTION;
 		Object[] finalResultOptionButtons = {"Load Game", "Replay Mode", "Home Screen"};
 
-		int finalResult = JOptionPane.showOptionDialog(null, "Congraulations Black Player, you win!", "Black Wins",
+		int finalResult = JOptionPane.showOptionDialog(null, "Congraulations "+lblBlackPlayerName.getText()+" , you win!", "Black Wins",
 				finalResultBotton, JOptionPane.PLAIN_MESSAGE, blackPawnIcon, finalResultOptionButtons,
 				finalResultOptionButtons[2]);
 
@@ -2097,6 +2089,8 @@ public class QuoridorWindow extends JFrame {
 		// Replay mode Button
 		else if (finalResult == JOptionPane.NO_OPTION) {
 			//Do replay mode here
+			setBoardConitionsWhenEnteringReplayMode();
+			Controller.initiateReplayMode(Controller.getCurrentGame());
 
 		}
 		// Home Screen button
@@ -2128,6 +2122,8 @@ public class QuoridorWindow extends JFrame {
 		// Replay mode Button
 		else if (finalResult == JOptionPane.NO_OPTION) {
 			//Do replay mode here
+			setBoardConitionsWhenEnteringReplayMode();
+			Controller.initiateReplayMode(Controller.getCurrentGame());
 		}
 		// Home Screen button
 		else {
@@ -2258,7 +2254,7 @@ public class QuoridorWindow extends JFrame {
 		GamePosition currentPosition = quoridor.getCurrentGame().getCurrentPosition();
 
 		PlayerPosition WhitePosition = currentPosition.getWhitePosition();
-		PlayerPosition BlackPosition = currentPosition.getWhitePosition();
+		PlayerPosition BlackPosition = currentPosition.getBlackPosition();
 		List<Wall> whiteWalls = currentPosition.getWhiteWallsOnBoard();
 		List<Wall> blackWalls = currentPosition.getBlackWallsOnBoard();
 

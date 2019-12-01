@@ -268,13 +268,19 @@ public class Controller {
 		long remaining = curPlayer.getRemainingTime().getTime();
 		remaining -= 1000L;
 		if (remaining == 0) {
-			if (curPlayer.equals(q.getCurrentGame().getWhitePlayer()))
+			if (curPlayer.equals(q.getCurrentGame().getWhitePlayer())) {
 				q.getCurrentGame().setGameStatus(GameStatus.BlackWon);
-			else
+				reportResult();
+				}
+			else {
 				q.getCurrentGame().setGameStatus(GameStatus.WhiteWon);
+				reportResult();
+				}
 			return;
 		}
 		curPlayer.setRemainingTime(new Time(remaining));
+
+
 
 	}
 	// Global variables to make life easier
@@ -1713,7 +1719,7 @@ public class Controller {
 		Game game = quoridor.getCurrentGame();
 		GamePosition currentPosition = game.getCurrentPosition();
 		try {
-			GamePosition nextPosition = game.getPosition(currentPosition.getId()+1);
+			GamePosition nextPosition = game.getPosition(currentPosition.getId()-1);
 			game.setCurrentPosition(nextPosition);
 		}
 		catch(IndexOutOfBoundsException e) {
@@ -2446,7 +2452,7 @@ public class Controller {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Time zero = new Time(0);
 		if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().equals(quoridor.getCurrentGame().getWhitePlayer())) {
-			if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getRemainingTime().equals(zero)) {
+			if (quoridor.getCurrentGame().getWhitePlayer().getRemainingTime().equals(zero)) {
 				quoridor.getCurrentGame().setGameStatus(GameStatus.BlackWon);
 			}
 			else if (quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow() == 9) {
@@ -2468,7 +2474,7 @@ public class Controller {
 			}
 		}
 		else if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().equals(quoridor.getCurrentGame().getBlackPlayer())) {
-			if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().getRemainingTime().equals(zero)) {
+			if (quoridor.getCurrentGame().getBlackPlayer().getRemainingTime().equals(zero)) {
 				quoridor.getCurrentGame().setGameStatus(GameStatus.WhiteWon);
 			}
 			else if(quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow() == 1) {
@@ -2478,7 +2484,7 @@ public class Controller {
 				int size = quoridor.getCurrentGame().getMoves().size()-1;
 				ArrayList<Move> threeMovesBlack = new ArrayList<Move>();
 				for (int i = 0; i < 9; i+=4) {
-					threeMovesBlack.add(quoridor.getCurrentGame().getMove(size-i));
+					threeMovesBlack.add(quoridor.getCurrentGame().getMove(size-1-i));
 				}
 				if ((threeMovesBlack.get(0).getTargetTile().getRow() == threeMovesBlack.get(1).getTargetTile().getRow()
 						&& (threeMovesBlack.get(0).getTargetTile().getRow() == threeMovesBlack.get(2).getTargetTile().getRow()))
@@ -2487,27 +2493,61 @@ public class Controller {
 					quoridor.getCurrentGame().setGameStatus(GameStatus.Draw);
 				}
 			}
-			else {
-
-			}
 		}
 	}
-
-	public static void identifyIfGameWonPosition() {
+/**
+	 * @author Luke Barber
+	 */
+	public static void identifyIfGameWonOrDrawPosition() {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().equals(quoridor.getCurrentGame().getWhitePlayer())) {
-			 if (quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow() == 1) {
-					quoridor.getCurrentGame().setGameStatus(GameStatus.WhiteWon);
-					reportResult();
-			}
-		}
-		// Black Player
-		else {
+
+			//If white player is at opposite
 			if (quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow() == 9) {
 				quoridor.getCurrentGame().setGameStatus(GameStatus.BlackWon);
 				reportResult();
 			}
-		}
+			//If Black player is at opposite
+			if (quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow() == 1) {
+				quoridor.getCurrentGame().setGameStatus(GameStatus.WhiteWon);
+				reportResult();
+			}
+			//Conditions for Game won due to Time over is covered by Controller.subtractSecond()
+
+			if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().equals(quoridor.getCurrentGame().getWhitePlayer())) {
+				if(quoridor.getCurrentGame().getMoves().size() >=8) {
+					int size = quoridor.getCurrentGame().getMoves().size();
+					ArrayList<Move> threeMovesWhite = new ArrayList<Move>();
+
+					for (int i = 0; i < 9; i+=4) {
+						threeMovesWhite.add(quoridor.getCurrentGame().getMove(size-1-i));
+					}
+					if ((threeMovesWhite.get(0).getTargetTile().getRow() == threeMovesWhite.get(1).getTargetTile().getRow()
+							&& (threeMovesWhite.get(0).getTargetTile().getRow() == threeMovesWhite.get(2).getTargetTile().getRow()))
+							&& ((threeMovesWhite.get(0).getTargetTile().getColumn() == threeMovesWhite.get(1).getTargetTile().getColumn())
+							&& (threeMovesWhite.get(0).getTargetTile().getColumn() == threeMovesWhite.get(2).getTargetTile().getColumn()))) {
+						quoridor.getCurrentGame().setGameStatus(GameStatus.Draw);
+						reportResult();
+					}
+				}
+			}
+
+			else if (quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove().equals(quoridor.getCurrentGame().getBlackPlayer())) {
+				if(quoridor.getCurrentGame().getMoves().size() >=8) {
+					int size = quoridor.getCurrentGame().getMoves().size()-1;
+					ArrayList<Move> threeMovesBlack = new ArrayList<Move>();
+					for (int i = 0; i < 9; i+=4) {
+						threeMovesBlack.add(quoridor.getCurrentGame().getMove(size-1-i));
+					}
+					if ((threeMovesBlack.get(0).getTargetTile().getRow() == threeMovesBlack.get(1).getTargetTile().getRow()
+							&& (threeMovesBlack.get(0).getTargetTile().getRow() == threeMovesBlack.get(2).getTargetTile().getRow()))
+							&& ((threeMovesBlack.get(0).getTargetTile().getColumn() == threeMovesBlack.get(1).getTargetTile().getColumn())
+							&& (threeMovesBlack.get(0).getTargetTile().getColumn() == threeMovesBlack.get(2).getTargetTile().getColumn()))) {
+						quoridor.getCurrentGame().setGameStatus(GameStatus.Draw);
+						reportResult();
+					}
+				}
+			}
+
 	}
 
 	public static boolean returnTrueIfGameIsWonOrDraw() {
