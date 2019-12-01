@@ -1965,6 +1965,9 @@ public class QuoridorWindow extends JFrame {
 			//Do replay mode here
 			setBoardConitionsWhenEnteringReplayMode();
 			Controller.initiateReplayMode(Controller.getCurrentGame());
+			QuoridorApplication.getQuoridor().getCurrentGame().setCurrentPosition(
+					QuoridorApplication.getQuoridor().getCurrentGame().getPosition(
+					QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getId()-1));
 		}
 		//Home Screen button
 		else {
@@ -1997,7 +2000,9 @@ public class QuoridorWindow extends JFrame {
 			//Do replay mode here
 			setBoardConitionsWhenEnteringReplayMode();
 			Controller.initiateReplayMode(Controller.getCurrentGame());
-
+			QuoridorApplication.getQuoridor().getCurrentGame().setCurrentPosition(
+					QuoridorApplication.getQuoridor().getCurrentGame().getPosition(
+					QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getId()-1));
 		}
 		// Home Screen button
 		else {
