@@ -840,7 +840,7 @@ public class QuoridorWindow extends JFrame {
 					return;
 				}
 
-				if (player1Field.getText().equals(player2Field.getText())) {
+				if (player1Field.getText().equals(player2Field.getText()) && existingUsernames2.getSelectedItem().toString().equals(existingUsernames1.getSelectedItem().toString())) {
 					JOptionPane.showMessageDialog(null, "Player 1 user name and Player 2 user name cannot be the same!",
 							"Invalid Username", JOptionPane.WARNING_MESSAGE);
 					return;
