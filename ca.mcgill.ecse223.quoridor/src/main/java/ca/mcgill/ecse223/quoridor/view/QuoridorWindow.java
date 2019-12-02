@@ -724,12 +724,22 @@ public class QuoridorWindow extends JFrame {
 		existingUsernames1.setFont(new Font("Cooper Black", Font.PLAIN, 14));
 		existingUsernames1.setModel(new DefaultComboBoxModel(Controller.listExistingUsernames()));
 		setupPanel.add(existingUsernames1);
+		existingUsernames1.addItem("Superman");
+		existingUsernames1.addItem("Batman");
+		existingUsernames1.addItem("Spiderman");
+		existingUsernames1.addItem("Thor");
+		existingUsernames1.addItem("Mario");
+		existingUsernames1.addItem("Luigi");
+		existingUsernames1.addItem("Wario");
 		existingUsernames1.addItem("Ali");
 		existingUsernames1.addItem("William");
 		existingUsernames1.addItem("Arneet");
 		existingUsernames1.addItem("Sam");
 		existingUsernames1.addItem("Luke");
 		existingUsernames1.addItem("Yin");
+
+
+
 
 		JButton startGameButton = new JButton("Start Game");
 		sl_setupPanel.putConstraint(SpringLayout.SOUTH, startGameButton, 0, SpringLayout.SOUTH, thinkingTimeBox);
@@ -743,6 +753,13 @@ public class QuoridorWindow extends JFrame {
 		existingUsernames2.setFont(new Font("Cooper Black", Font.PLAIN, 14));
 		existingUsernames2.setModel(new DefaultComboBoxModel(Controller.listExistingUsernames()));
 		setupPanel.add(existingUsernames2);
+		existingUsernames2.addItem("Superman");
+		existingUsernames2.addItem("Batman");
+		existingUsernames2.addItem("Spiderman");
+		existingUsernames2.addItem("Thor");
+		existingUsernames2.addItem("Mario");
+		existingUsernames2.addItem("Luigi");
+		existingUsernames2.addItem("Wario");
 		existingUsernames2.addItem("Ali");
 		existingUsernames2.addItem("William");
 		existingUsernames2.addItem("Arneet");
