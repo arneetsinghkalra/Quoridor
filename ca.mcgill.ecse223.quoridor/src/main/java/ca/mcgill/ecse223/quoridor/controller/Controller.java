@@ -1260,6 +1260,7 @@ public class Controller {
 			if(quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow()==9||
 					quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow()==1) {
 				quoridor.getCurrentGame().setGameStatus(Game.GameStatus.Replay);
+				Controller.initiateReplayMode(quoridor.getCurrentGame());
 			}
 
 		}else {

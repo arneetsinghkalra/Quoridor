@@ -211,6 +211,9 @@ public class QuoridorWindow extends JFrame {
 					quoridor.delete();
 					quoridor = new Quoridor();
 				}
+				if (QuoridorApplication.getQuoridor().getCurrentGame().getGameStatus() == GameStatus.Replay) {
+					setBoardConitionsWhenEnteringReplayMode();
+				}
 			}
 		});
 
@@ -602,75 +605,9 @@ public class QuoridorWindow extends JFrame {
 
 		btnSaveGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent a) {
-				JFrame f = new JFrame();
-				JTextField tf1;
-				JButton b1;
-				tf1 = new JTextField();
-				tf1.setBounds(50, 50, 150, 20);
-				tf1.setEditable(true);
-				b1 = new JButton("create");
-				b1.setBounds(50, 200, 50, 50);
-				f.getContentPane().add(tf1);
-				f.getContentPane().add(b1);
-				f.setSize(300, 300);
-				f.getContentPane().setLayout(null);
-				f.setVisible(true);
-				b1.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent b) {
-						f.setVisible(false);
-						Path path = Paths.get("src/test/resources/saveGame/" + tf1.getText());
-						if (Files.exists(path)) {
-							JFrame f = new JFrame();
-							JTextField tf2;
-							JButton b1;
-							JButton b2;
-							tf2 = new JTextField();
-							tf2.setText("confirms to overwrite");
-							tf2.setBounds(50, 50, 150, 20);
-							tf2.setEditable(false);
-							b1 = new JButton("Yes");
-							b1.setBounds(50, 200, 100, 50);
-							b2 = new JButton("No");
-							b2.setBounds(150, 200, 100, 50);
-							f.getContentPane().add(tf2);
-							f.getContentPane().add(b1);
-							f.getContentPane().add(b2);
-							f.setSize(300, 300);
-							f.getContentPane().setLayout(null);
-							f.setVisible(true);
-							b1.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent b) {
-									confirms = true;
-									f.setVisible(false);
-									try {
-										Controller.saveGame(tf1.getText(),confirms);
-									} catch (IOException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
-								}
-							});
-
-							b2.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent b) {
-									f.setVisible(false);
-								}
-							});
-						} else {
-							try {
-								Controller.saveGame(tf1.getText(),
-										confirms);
-
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						}
-					}
-				});
+				saveGame();
 			}
-
 		});
-
 
 
 		Box titleTimeBox = Box.createVerticalBox();
@@ -1953,7 +1890,7 @@ public class QuoridorWindow extends JFrame {
 
 		int finalResultBotton = JOptionPane.YES_NO_CANCEL_OPTION;
 
-		Object[] finalResultOptionButtons = {"Load Game", "Replay Mode", "Home Screen"};
+		Object[] finalResultOptionButtons = {"Save Game", "Replay Mode", "Home Screen"};
 		int finalResult = JOptionPane.showOptionDialog(null, "Congraulations "+lblwhitePlayerName.getText()+" , you win!", "White Wins",
 				finalResultBotton,
 				JOptionPane.PLAIN_MESSAGE,
@@ -1961,10 +1898,9 @@ public class QuoridorWindow extends JFrame {
 				finalResultOptionButtons,
 				finalResultOptionButtons[2]);
 
-		// Load Game Button
+		// Save Game Button
 		if (finalResult == JOptionPane.YES_OPTION) {
-			//loadGame();
-			QuoridorApplication.getQuoridor().delete();
+			saveGame();
 		}
 		//Replay mode Button
 		else if(finalResult == JOptionPane.NO_OPTION) {
@@ -1988,18 +1924,15 @@ public class QuoridorWindow extends JFrame {
 		Image blackImage= new ImageIcon("src/main/resources/blackPawn.png").getImage().getScaledInstance(180, 300, Image.SCALE_SMOOTH);
 		ImageIcon blackPawnIcon = new ImageIcon(blackImage);
 		int finalResultBotton = JOptionPane.YES_NO_CANCEL_OPTION;
-		Object[] finalResultOptionButtons = {"Load Game", "Replay Mode", "Home Screen"};
+		Object[] finalResultOptionButtons = {"Save Game", "Replay Mode", "Home Screen"};
 
 		int finalResult = JOptionPane.showOptionDialog(null, "Congraulations "+lblBlackPlayerName.getText()+" , you win!", "Black Wins",
 				finalResultBotton, JOptionPane.PLAIN_MESSAGE, blackPawnIcon, finalResultOptionButtons,
 				finalResultOptionButtons[2]);
 
-		// Load Game Button
+		// Save Game Button
 		if (finalResult == JOptionPane.YES_OPTION) {
-			//loadGame();
-			QuoridorApplication.getQuoridor().delete();
-
-
+			saveGame();
 		}
 		// Replay mode Button
 		else if (finalResult == JOptionPane.NO_OPTION) {
@@ -2024,7 +1957,7 @@ public class QuoridorWindow extends JFrame {
 		ImageIcon drawIcon = new ImageIcon(drawImage);
 		int finalResultBotton = JOptionPane.YES_NO_CANCEL_OPTION;
 
-		Object[] finalResultOptionButtons = {"Load Game", "Replay Mode", "Home Screen"};
+		Object[] finalResultOptionButtons = {"Save Game", "Replay Mode", "Home Screen"};
 
 		int finalResult = JOptionPane.showOptionDialog(null, "What a Game! It's a draw!", "Draw",
 				finalResultBotton,
@@ -2032,9 +1965,9 @@ public class QuoridorWindow extends JFrame {
 				drawIcon,
 				finalResultOptionButtons, finalResultOptionButtons[2]);
 
-		// Load Game Button
+		// Save Game Button
 		if (finalResult == JOptionPane.YES_OPTION) {
-			loadGame();
+			saveGame();
 		}
 		// Replay mode Button
 		else if (finalResult == JOptionPane.NO_OPTION) {
@@ -2154,6 +2087,10 @@ public class QuoridorWindow extends JFrame {
 			Quoridor quoridor = QuoridorApplication.getQuoridor();
 			quoridor.delete();
 			quoridor = new Quoridor();
+		}
+		
+		if (QuoridorApplication.getQuoridor().getCurrentGame().getGameStatus() == GameStatus.Replay) {
+			setBoardConitionsWhenEnteringReplayMode();
 		}
 	}
 /**
@@ -2348,5 +2285,73 @@ public class QuoridorWindow extends JFrame {
 					.getCurrentPosition().numberOfBlackWallsInStock());
 		}
 	}
+	
+	public void saveGame() {
+		JFrame f = new JFrame();
+		JTextField tf1;
+		JButton b1;
+		tf1 = new JTextField();
+		tf1.setBounds(50, 50, 150, 20);
+		tf1.setEditable(true);
+		b1 = new JButton("create");
+		b1.setBounds(50, 200, 50, 50);
+		f.getContentPane().add(tf1);
+		f.getContentPane().add(b1);
+		f.setSize(300, 300);
+		f.getContentPane().setLayout(null);
+		f.setVisible(true);
+		b1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent b) {
+				f.setVisible(false);
+				Path path = Paths.get("src/test/resources/saveGame/" + tf1.getText());
+				if (Files.exists(path)) {
+					JFrame f = new JFrame();
+					JTextField tf2;
+					JButton b1;
+					JButton b2;
+					tf2 = new JTextField();
+					tf2.setText("confirms to overwrite");
+					tf2.setBounds(50, 50, 150, 20);
+					tf2.setEditable(false);
+					b1 = new JButton("Yes");
+					b1.setBounds(50, 200, 100, 50);
+					b2 = new JButton("No");
+					b2.setBounds(150, 200, 100, 50);
+					f.getContentPane().add(tf2);
+					f.getContentPane().add(b1);
+					f.getContentPane().add(b2);
+					f.setSize(300, 300);
+					f.getContentPane().setLayout(null);
+					f.setVisible(true);
+					b1.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent b) {
+							confirms = true;
+							f.setVisible(false);
+							try {
+								Controller.saveGame(tf1.getText(),confirms);
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					});
 
+					b2.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent b) {
+							f.setVisible(false);
+						}
+					});
+				} else {
+					try {
+						Controller.saveGame(tf1.getText(),
+								confirms);
+
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+	}
 }
+
